@@ -2338,12 +2338,10 @@ async function uploadPortfolioBeforePhoto(input){
     document.getElementById('port-before-url').value=urlData.publicUrl
     preview.innerHTML=`<img src="${urlData.publicUrl}" style="width:100px;height:100px;border-radius:10px;object-fit:cover"/>`
   }catch(e){
-    const reader=new FileReader()
-    reader.onload=ev=>{
-      document.getElementById('port-before-url').value=ev.target.result
-      preview.innerHTML=`<img src="${ev.target.result}" style="width:100px;height:100px;border-radius:10px;object-fit:cover"/>`
-    }
-    reader.readAsDataURL(file)
+  console.error('Erro ao carregar foto "antes":', e);
+  showAlert('port-error','Não foi possível carregar a foto. Tenta novamente.','error');
+  preview.style.display = 'none';
+  document.getElementById('port-before-url').value = '';
   }
 }
 
@@ -2420,12 +2418,10 @@ async function uploadDiaryPhoto(input){
     document.getElementById('diary-photo-url').value=urlData.publicUrl
     preview.innerHTML=`<img src="${urlData.publicUrl}" style="width:100px;height:100px;border-radius:10px;object-fit:cover"/>`
   }catch(e){
-    const reader=new FileReader()
-    reader.onload=ev=>{
-      document.getElementById('diary-photo-url').value=ev.target.result
-      preview.innerHTML=`<img src="${ev.target.result}" style="width:100px;height:100px;border-radius:10px;object-fit:cover"/>`
-    }
-    reader.readAsDataURL(file)
+    console.error('Erro ao carregar foto do diário:', e);
+    showAlert('diary-error','Não foi possível carregar a foto. Tenta novamente.','error');
+    preview.style.display = 'none';
+    document.getElementById('diary-photo-url').value = '';
   }
 }
 
