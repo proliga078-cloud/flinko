@@ -1482,17 +1482,12 @@ const { data: urlData } = db.storage.from('proliga-media').getPublicUrl(path);
 const url = urlData.publicUrl;
 document.getElementById('p-photo').value = url;
 preview.innerHTML = `<img src="${url}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--blue)"/>`;
-} catch(e) {
-// Fallback: converter para base64 e usar como data URL (solução sem Storage)
-const reader = new FileReader();
-reader.onload = (ev) => {
-const dataUrl = ev.target.result;
-document.getElementById('p-photo').value = dataUrl;
-preview.innerHTML = `<img src="${dataUrl}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--blue)"/>`;
-preview.style.display = 'block';
-};
-reader.readAsDataURL(file);
-}
+  } catch(e) {
+  console.error('Erro ao carregar foto de perfil:', e);
+  showAlert('profile-error','Não foi possível carregar a foto. Tenta novamente.','error');
+  preview.style.display = 'none';
+  document.getElementById('p-photo').value = '';
+  }
 }
 
 // Upload foto de portfólio para Supabase Storage
@@ -1520,16 +1515,12 @@ const { data: urlData } = db.storage.from('proliga-media').getPublicUrl(path);
 const url = urlData.publicUrl;
 document.getElementById('port-url').value = url;
 preview.innerHTML = `<img src="${url}" style="width:100px;height:100px;border-radius:10px;object-fit:cover;border:2px solid var(--blue)"/>`;
-} catch(e) {
-// Fallback: usar FileReader
-const reader = new FileReader();
-reader.onload = (ev) => {
-document.getElementById('port-url').value = ev.target.result;
-preview.innerHTML = `<img src="${ev.target.result}" style="width:100px;height:100px;border-radius:10px;object-fit:cover"/>`;
-preview.style.display = 'block';
-};
-reader.readAsDataURL(file);
-}
+  } catch(e) {
+  console.error('Erro ao carregar foto de portfólio:', e);
+  showAlert('port-error','Não foi possível carregar a foto. Tenta novamente.','error');
+  preview.style.display = 'none';
+  document.getElementById('port-url').value = '';
+  }
 }
 
 async function init(){
