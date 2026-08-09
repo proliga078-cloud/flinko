@@ -39,4 +39,3 @@
 
  if(document.readyState==='complete'){sendVisit()}else{window.addEventListener('load',sendVisit)}
 })();
-})();
