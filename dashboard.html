@@ -1547,11 +1547,7 @@ async function init(){
       subscribeJobsRealtime()
       setTimeout(maybeShowPushBanner, 2000)
     }
-    checkUpgrade()
-    if(profileData?.account_type==='client'){
-      document.getElementById('quick-calc-card').style.display='none'
-      showPage('myrequests')
-    }
+    checkUpgrade();if(profileData?.account_type==='client'){document.getElementById('quick-calc-card').style.display='none';var hidePages=['overview','trabalhos','clientes','agenda','profile','financas','mercado','reviews','referrals','convidar'];hidePages.forEach(function(p){document.querySelectorAll('[onclick*="showPage(\'' + p + '\')"]').forEach(function(el){el.style.display='none'})});document.querySelectorAll('[onclick*="viewPublicProfile"]').forEach(function(el){el.style.display='none'});var mobBar=document.querySelector('.mobile-nav-items');if(mobBar){var btn=document.createElement('div');btn.className='mob-item';btn.innerHTML='<span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg></span>Pedidos';btn.onclick=function(){showPage('myrequests');document.querySelectorAll('.mob-item').forEach(function(el){el.classList.remove('active')});btn.classList.add('active')};mobBar.appendChild(btn)}showPage('myrequests')}
   } catch(e) {
     console.error('init error:',e)
   }
