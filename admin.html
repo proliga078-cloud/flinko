@@ -1,379 +1,404 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Admin – Proliga</title>
-  <meta name="robots" content="noindex, nofollow"/>
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Admin – Proliga</title>
+<meta name="robots" content="noindex, nofollow"/>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
 <link rel="shortcut icon" href="/favicon.ico"/>
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#0F1A33"/>
 <script src="/assets/pwa.js" defer></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--blue:#E8720A;--blue-dark:#C25A06;--blue-light:#FDECDD;--gold:#AF620A;--green:#1A8649;--red:#C0362C;--purple:#7c3aed;--purple-light:#f3e8ff;--amber:#b45309;--text:#14181F;--muted:#5B6270;--border:#ECECE9;--bg:#F7F8FA;--white:#fff;--shadow-sm:0 1px 3px rgba(20,24,31,.05);--shadow-md:0 6px 20px rgba(20,24,31,.08);--shadow-lg:0 20px 60px rgba(20,24,31,.22)}
-    body{font-family:'Inter',sans-serif;color:var(--text);background:linear-gradient(180deg,#F8F9FB 0%,#F2F3F7 100%);min-height:100vh}
-    a{text-decoration:none;color:inherit}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#E8720A;--blue-dark:#C25A06;--blue-light:#FDECDD;--gold:#AF620A;--green:#1A8649;--red:#C0362C;--purple:#7c3aed;--purple-light:#f3e8ff;--amber:#b45309;--text:#14181F;--muted:#5B6270;--border:#ECECE9;--bg:#F7F8FA;--white:#fff;--shadow-sm:0 1px 3px rgba(20,24,31,.05);--shadow-md:0 6px 20px rgba(20,24,31,.08);--shadow-lg:0 20px 60px rgba(20,24,31,.22)}
+body{font-family:'Inter',sans-serif;color:var(--text);background:linear-gradient(180deg,#F8F9FB 0%,#F2F3F7 100%);min-height:100vh}
+a{text-decoration:none;color:inherit}
 
-    /* LOGIN */
-    #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
-    .login-box{background:var(--white);border-radius:20px;padding:40px;width:100%;max-width:400px;box-shadow:var(--shadow-lg);border:1px solid var(--border)}
-    .login-logo{font-size:28px;font-weight:900;color:var(--blue);letter-spacing:-1px;margin-bottom:6px}.login-logo span{color:var(--gold)}
-    .login-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
-    .login-title{font-size:20px;font-weight:800;margin-bottom:20px}
-    .form-group{margin-bottom:16px}
-    label{display:block;font-size:13px;font-weight:600;color:#475569;margin-bottom:5px}
-    input,textarea,select{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:inherit;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
-    input:focus,textarea:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-light)}
-    .btn-login{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;margin-top:4px;box-shadow:0 2px 10px rgba(232,114,10,.25)}
-    .btn-login:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 4px 14px rgba(232,114,10,.32)}
-    .btn-login:disabled{background:#93c5fd;cursor:not-allowed;transform:none}
-    .login-error{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none}
+/* LOGIN */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-box{background:var(--white);border-radius:20px;padding:40px;width:100%;max-width:400px;box-shadow:var(--shadow-lg);border:1px solid var(--border)}
+.login-logo{font-size:28px;font-weight:900;color:var(--blue);letter-spacing:-1px;margin-bottom:6px}.login-logo span{color:var(--gold)}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+.login-title{font-size:20px;font-weight:800;margin-bottom:20px}
+.form-group{margin-bottom:16px}
+label{display:block;font-size:13px;font-weight:600;color:#475569;margin-bottom:5px}
+input,textarea,select{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:inherit;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-light)}
+.btn-login{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;margin-top:4px;box-shadow:0 2px 10px rgba(232,114,10,.25)}
+.btn-login:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 4px 14px rgba(232,114,10,.32)}
+.btn-login:disabled{background:#93c5fd;cursor:not-allowed;transform:none}
+.login-error{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none}
 
-    /* ADMIN LAYOUT */
-    #admin-panel{display:none;flex-direction:column;min-height:100vh}
-    .admin-topbar{background:linear-gradient(120deg,var(--blue-dark),#12296e);color:#fff;padding:0 28px;height:60px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 14px rgba(10,20,50,.25)}
-    .admin-logo{font-size:20px;font-weight:900;letter-spacing:-0.5px}.admin-logo span{color:var(--gold)}
-    .admin-badge{background:rgba(255,255,255,.15);font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;letter-spacing:.5px}
-    .topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
-    .topbar-email{font-size:12px;color:rgba(255,255,255,.7)}
-    .btn-signout{padding:7px 14px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.2);border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .2s}
-    .btn-signout:hover{background:rgba(255,255,255,.2);color:#fff}
+/* ADMIN LAYOUT */
+#admin-panel{display:none;flex-direction:column;min-height:100vh}
+.admin-topbar{background:linear-gradient(120deg,var(--blue-dark),#12296e);color:#fff;padding:0 28px;height:60px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 14px rgba(10,20,50,.25)}
+.admin-logo{font-size:20px;font-weight:900;letter-spacing:-0.5px}.admin-logo span{color:var(--gold)}
+.admin-badge{background:rgba(255,255,255,.15);font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;letter-spacing:.5px}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.topbar-email{font-size:12px;color:rgba(255,255,255,.7)}
+.btn-signout{padding:7px 14px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.2);border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn-signout:hover{background:rgba(255,255,255,.2);color:#fff}
 
-    .admin-tabs{background:var(--white);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;gap:6px;overflow-x:auto;box-shadow:0 1px 4px rgba(20,24,31,.03)}
-    .atab{padding:9px 16px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;border-radius:10px;transition:all .15s;display:flex;align-items:center;gap:6px;white-space:nowrap}
-    .atab:hover{color:var(--text);background:#f4f5f9}
-    .atab.active{color:var(--blue);background:var(--blue-light)}
+.admin-tabs{background:var(--white);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;gap:6px;overflow-x:auto;box-shadow:0 1px 4px rgba(20,24,31,.03)}
+.atab{padding:9px 16px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;border-radius:10px;transition:all .15s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.atab:hover{color:var(--text);background:#f4f5f9}
+.atab.active{color:var(--blue);background:var(--blue-light)}
 
-    .admin-body{padding:28px;flex:1}
-    .page-section{display:none}.page-section.active{display:block;animation:fadein .18s ease}
-    @keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.admin-body{padding:28px;flex:1}
+.page-section{display:none}.page-section.active{display:block;animation:fadein .18s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 
-    /* STATS */
-    .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:28px}
-    .stat-card{background:var(--white);border-radius:14px;padding:22px;border:1px solid var(--border);border-left:4px solid var(--border);display:flex;align-items:center;gap:16px;transition:transform .15s,box-shadow .15s}
-    .stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
-    .stat-card.accent-blue{border-left-color:var(--blue)}
-    .stat-card.accent-purple{border-left-color:var(--purple)}
-    .stat-card.accent-gold{border-left-color:var(--gold)}
-    .stat-card.accent-green{border-left-color:var(--green)}
-    .stat-card.accent-red{border-left-color:var(--red)}
-    .stat-icon{font-size:28px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:var(--blue-light);flex-shrink:0}
-    .stat-val{font-size:28px;font-weight:900;color:var(--text);line-height:1}
-    .stat-lbl{font-size:13px;color:var(--muted);margin-top:2px}
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--white);border-radius:14px;padding:22px;border:1px solid var(--border);border-left:4px solid var(--border);display:flex;align-items:center;gap:16px;transition:transform .15s,box-shadow .15s}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.stat-card.accent-blue{border-left-color:var(--blue)}
+.stat-card.accent-purple{border-left-color:var(--purple)}
+.stat-card.accent-gold{border-left-color:var(--gold)}
+.stat-card.accent-green{border-left-color:var(--green)}
+.stat-card.accent-red{border-left-color:var(--red)}
+.stat-icon{font-size:28px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:var(--blue-light);flex-shrink:0}
+.stat-val{font-size:28px;font-weight:900;color:var(--text);line-height:1}
+.stat-lbl{font-size:13px;color:var(--muted);margin-top:2px}
 
-    /* TABLES */
-    .table-wrap{background:var(--white);border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:24px}
-    .table-head{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px}
-    .table-title{font-size:15px;font-weight:700}
-    table{width:100%;border-collapse:collapse}
-    th{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);background:#fafbfc}
-    td{font-size:13px;padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
-    tr:last-child td{border-bottom:none}
-    tr:hover td{background:#f8f9fc}
-    .btn{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s;display:inline-flex;align-items:center;gap:4px}
-    .btn:hover{transform:translateY(-1px)}
-    .btn-approve{background:#dcfce7;color:#166534}.btn-approve:hover{background:#bbf7d0}
-    .btn-unapprove{background:#fef9c3;color:#854d0e}.btn-unapprove:hover{background:#fef08a}
-    .btn-delete{background:#fef2f2;color:var(--red);border:1px solid #fecaca}.btn-delete:hover{background:#fee2e2}
-    .btn-view{background:var(--blue-light);color:var(--blue)}.btn-view:hover{background:#bfdbfe}
-    .btn-edit{background:var(--purple-light);color:#6b21a8}.btn-edit:hover{background:#e9d5ff}
-    .badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;display:inline-block;letter-spacing:.3px}
-    .badge-approved{background:#dcfce7;color:#166534}
-    .badge-pending{background:#fef9c3;color:#854d0e}
-    .badge-premium{background:var(--gold);color:#fff}
-    .badge-pro{background:var(--purple);color:#fff}
-    .badge-free{background:var(--border);color:var(--muted)}
-    .badge-demo{background:#fee2e2;color:#991b1b;margin-left:6px}
-    .pro-avatar{width:34px;height:34px;border-radius:50%;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--blue);overflow:hidden;flex-shrink:0}
-    .pro-avatar img{width:100%;height:100%;object-fit:cover}
-    .td-flex{display:flex;align-items:center;gap:10px}
-    .td-name{font-weight:600;display:flex;align-items:center;flex-wrap:wrap}
-    .td-sub{font-size:11px;color:var(--muted)}
-    .search-box{padding:8px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:inherit;outline:none;width:220px;transition:border-color .2s,box-shadow .2s}
-    .search-box:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-light)}
-    .empty-row td{text-align:center;padding:32px;color:var(--muted)}
-    .msg-preview{max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted)}
-    .unread-dot{width:8px;height:8px;background:var(--blue);border-radius:50%;display:inline-block;margin-right:4px}
-    .overview-grids{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-    @media(max-width:900px){.overview-grids{grid-template-columns:1fr}}
-    @media(max-width:768px){.admin-body{padding:16px}.stats-grid{grid-template-columns:repeat(2,1fr)}.table-wrap{overflow-x:auto}table{min-width:580px}}
+/* TABLES */
+.table-wrap{background:var(--white);border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:24px}
+.table-head{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px}
+.table-title{font-size:15px;font-weight:700}
+table{width:100%;border-collapse:collapse}
+th{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);background:#fafbfc}
+td{font-size:13px;padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f8f9fc}
+.btn{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s;display:inline-flex;align-items:center;gap:4px}
+.btn:hover{transform:translateY(-1px)}
+.btn-approve{background:#dcfce7;color:#166534}.btn-approve:hover{background:#bbf7d0}
+.btn-unapprove{background:#fef9c3;color:#854d0e}.btn-unapprove:hover{background:#fef08a}
+.btn-delete{background:#fef2f2;color:var(--red);border:1px solid #fecaca}.btn-delete:hover{background:#fee2e2}
+.btn-view{background:var(--blue-light);color:var(--blue)}.btn-view:hover{background:#bfdbfe}
+.btn-edit{background:var(--purple-light);color:#6b21a8}.btn-edit:hover{background:#e9d5ff}
+.badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;display:inline-block;letter-spacing:.3px}
+.badge-approved{background:#dcfce7;color:#166534}
+.badge-pending{background:#fef9c3;color:#854d0e}
+.badge-premium{background:var(--gold);color:#fff}
+.badge-pro{background:var(--purple);color:#fff}
+.badge-free{background:var(--border);color:var(--muted)}
+.badge-demo{background:#fee2e2;color:#991b1b;margin-left:6px}
+.pro-avatar{width:34px;height:34px;border-radius:50%;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--blue);overflow:hidden;flex-shrink:0}
+.pro-avatar img{width:100%;height:100%;object-fit:cover}
+.td-flex{display:flex;align-items:center;gap:10px}
+.td-name{font-weight:600;display:flex;align-items:center;flex-wrap:wrap}
+.td-sub{font-size:11px;color:var(--muted)}
+.search-box{padding:8px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:inherit;outline:none;width:220px;transition:border-color .2s,box-shadow .2s}
+.search-box:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-light)}
+.empty-row td{text-align:center;padding:32px;color:var(--muted)}
+.msg-preview{max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted)}
+.unread-dot{width:8px;height:8px;background:var(--blue);border-radius:50%;display:inline-block;margin-right:4px}
+.overview-grids{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:900px){.overview-grids{grid-template-columns:1fr}}
+@media(max-width:768px){.admin-body{padding:16px}.stats-grid{grid-template-columns:repeat(2,1fr)}.table-wrap{overflow-x:auto}table{min-width:580px}}
 
-    /* CONVERSATIONS */
-    .conv-list{display:flex;flex-direction:column;gap:10px}
-    .conv-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s}
-    .conv-card:hover{border-color:var(--blue);box-shadow:var(--shadow-sm)}
-    .conv-card.open{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-light)}
-    .conv-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-    .conv-title{font-size:13.5px;font-weight:700}
-    .conv-date{font-size:11px;color:var(--muted)}
-    .conv-last{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .conv-thread{margin-top:14px;background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px;display:none}
-    .conv-thread.active{display:block}
-    .msg-bubble{max-width:70%;padding:9px 13px;border-radius:12px;font-size:13px;margin-bottom:8px;line-height:1.5}
-    .msg-pro{background:var(--blue-light);color:var(--text);margin-right:auto}
-    .msg-client{background:var(--bg);border:1px solid var(--border);color:var(--text);margin-left:auto}
-    .msg-meta{font-size:10.5px;color:var(--muted-2,#707580);margin-bottom:2px}
+/* CONVERSATIONS */
+.conv-list{display:flex;flex-direction:column;gap:10px}
+.conv-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s}
+.conv-card:hover{border-color:var(--blue);box-shadow:var(--shadow-sm)}
+.conv-card.open{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-light)}
+.conv-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.conv-title{font-size:13.5px;font-weight:700}
+.conv-date{font-size:11px;color:var(--muted)}
+.conv-last{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conv-thread{margin-top:14px;background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px;display:none}
+.conv-thread.active{display:block}
+.msg-bubble{max-width:70%;padding:9px 13px;border-radius:12px;font-size:13px;margin-bottom:8px;line-height:1.5}
+.msg-pro{background:var(--blue-light);color:var(--text);margin-right:auto}
+.msg-client{background:var(--bg);border:1px solid var(--border);color:var(--text);margin-left:auto}
+.msg-meta{font-size:10.5px;color:var(--muted-2,#707580);margin-bottom:2px}
 
-    /* MODAL */
-    .modal-bg{display:none;position:fixed;inset:0;background:rgba(20,24,31,.5);z-index:1000;align-items:center;justify-content:center;padding:20px}
-    .modal-bg.active{display:flex}
-    .modal-box{background:#fff;border-radius:18px;padding:26px;width:100%;max-width:440px;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg);position:relative}
-    .modal-title{font-size:17px;font-weight:800;margin-bottom:18px}
-    .modal-actions{display:flex;gap:10px;margin-top:20px}
-    .btn-save{flex:1;padding:11px;background:var(--blue);color:#fff;border:none;border-radius:9px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:all .15s;box-shadow:0 2px 10px rgba(232,114,10,.22)}
-    .btn-save:hover{background:var(--blue-dark);transform:translateY(-1px)}
-    .btn-cancel{flex:1;padding:11px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:9px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:all .15s}
-    .btn-cancel:hover{background:#eceef3}
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(20,24,31,.5);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal-bg.active{display:flex}
+.modal-box{background:#fff;border-radius:18px;padding:26px;width:100%;max-width:440px;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg);position:relative}
+.modal-title{font-size:17px;font-weight:800;margin-bottom:18px}
+.modal-actions{display:flex;gap:10px;margin-top:20px}
+.btn-save{flex:1;padding:11px;background:var(--blue);color:#fff;border:none;border-radius:9px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:all .15s;box-shadow:0 2px 10px rgba(232,114,10,.22)}
+.btn-save:hover{background:var(--blue-dark);transform:translateY(-1px)}
+.btn-cancel{flex:1;padding:11px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:9px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-cancel:hover{background:#eceef3}
 
-    /* SUBSCRIPTIONS */
-    .sub-quick-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-    .sub-origin-box{font-size:13px;color:var(--muted);padding:10px 14px;background:var(--bg);border-radius:9px;border:1px solid var(--border)}
-    .credits-stepper{display:flex;gap:8px;align-items:center}
-    .credits-stepper input{text-align:center}
-    .btn-revert-free{width:100%;margin-top:12px;justify-content:center;padding:10px;font-size:13px}
-  </style>
+/* SUBSCRIPTIONS */
+.sub-quick-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.sub-origin-box{font-size:13px;color:var(--muted);padding:10px 14px;background:var(--bg);border-radius:9px;border:1px solid var(--border)}
+.credits-stepper{display:flex;gap:8px;align-items:center}
+.credits-stepper input{text-align:center}
+.btn-revert-free{width:100%;margin-top:12px;justify-content:center;padding:10px;font-size:13px}
+</style>
 </head>
 <body>
 
 <!-- LOGIN -->
 <div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">Pro<span>liga</span></div>
-    <div class="login-sub">Área restrita — apenas administradores</div>
-    <div class="login-title">🔐 Acesso Admin</div>
-    <div class="login-error" id="login-error"></div>
-    <div class="form-group">
-      <label>Email</label>
-      <input id="admin-email" type="email" placeholder="admin@proliga.pt" autocomplete="username"/>
-    </div>
-    <div class="form-group">
-      <label>Palavra-passe</label>
-      <input id="admin-pass" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')adminLogin()"/>
-    </div>
-    <button class="btn-login" id="login-btn" onclick="adminLogin()">Entrar no painel</button>
-  </div>
+<div class="login-box">
+<div class="login-logo">Pro<span>liga</span></div>
+<div class="login-sub">Área restrita — apenas administradores</div>
+<div class="login-title">🔐 Acesso Admin</div>
+<div class="login-error" id="login-error"></div>
+<div class="form-group">
+<label>Email</label>
+<input id="admin-email" type="email" placeholder="admin@proliga.pt" autocomplete="username"/>
+</div>
+<div class="form-group">
+<label>Palavra-passe</label>
+<input id="admin-pass" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')adminLogin()"/>
+</div>
+<button class="btn-login" id="login-btn" onclick="adminLogin()">Entrar no painel</button>
+</div>
 </div>
 
 <!-- ADMIN PANEL -->
 <div id="admin-panel">
-  <div class="admin-topbar">
-    <div class="admin-logo">Pro<span>liga</span></div>
-    <div class="admin-badge">ADMIN</div>
-    <div class="topbar-right">
-      <div class="topbar-email" id="topbar-email"></div>
-      <button class="btn-signout" onclick="adminSignOut()">Sair</button>
-    </div>
-  </div>
-  <div class="admin-tabs">
-    <div class="atab active" onclick="showAdminPage('overview')">📊 Visão Geral</div>
-    <div class="atab" onclick="showAdminPage('profiles')">👤 Profissionais</div>
-    <div class="atab" onclick="showAdminPage('subscricoes')">💳 Subscrições</div>
-    <div class="atab" onclick="showAdminPage('conversations')">🗨️ Conversas</div>
-    <div class="atab" onclick="showAdminPage('messages')">📋 Contactos (Formulário)</div>
-    <div class="atab" onclick="showAdminPage('reviews')">⭐ Avaliações</div>
-    <div class="atab" onclick="showAdminPage('services')">🛠️ Serviços</div>
-    <div class="atab" onclick="showAdminPage('portfolio')">🖼️ Portfólio</div>
-  </div>
-  <div class="admin-body">
+<div class="admin-topbar">
+<div class="admin-logo">Pro<span>liga</span></div>
+<div class="admin-badge">ADMIN</div>
+<div class="topbar-right">
+<div class="topbar-email" id="topbar-email"></div>
+<button class="btn-signout" onclick="adminSignOut()">Sair</button>
+</div>
+</div>
+<div class="admin-tabs">
+<div class="atab active" onclick="showAdminPage('overview')">📊 Visão Geral</div>
+<div class="atab" onclick="showAdminPage('profiles')">👤 Profissionais</div>
+<div class="atab" onclick="showAdminPage('subscricoes')">💳 Subscrições</div>
+<div class="atab" onclick="showAdminPage('conversations')">🗨️ Conversas</div>
+<div class="atab" onclick="showAdminPage('messages')">📋 Contactos (Formulário)</div>
+<div class="atab" onclick="showAdminPage('reviews')">⭐ Avaliações</div>
+<div class="atab" onclick="showAdminPage('services')">🛠️ Serviços</div>
+<div class="atab" onclick="showAdminPage('portfolio')">🖼️ Portfólio</div>
+<div class="atab" onclick="showAdminPage('stats')">📈 Estatísticas</div>
+</div>
+<div class="admin-body">
 
-    <!-- OVERVIEW -->
-    <div id="page-overview" class="page-section active">
-      <div class="stats-grid">
-        <div class="stat-card accent-blue"><div class="stat-icon">👤</div><div><div class="stat-val" id="s-pros">—</div><div class="stat-lbl">Profissionais</div></div></div>
-        <div class="stat-card accent-purple"><div class="stat-icon">🗨️</div><div><div class="stat-val" id="s-conv">—</div><div class="stat-lbl">Conversas</div></div></div>
-        <div class="stat-card accent-gold"><div class="stat-icon">⭐</div><div><div class="stat-val" id="s-revs">—</div><div class="stat-lbl">Avaliações</div></div></div>
-        <div class="stat-card accent-green"><div class="stat-icon">🛠️</div><div><div class="stat-val" id="s-srvs">—</div><div class="stat-lbl">Serviços</div></div></div>
-      </div>
-      <div class="overview-grids">
-        <div class="table-wrap">
-          <div class="table-head"><div class="table-title">👤 Últimos Profissionais</div></div>
-          <table><thead><tr><th>Nome</th><th>Categoria</th><th>Plano</th></tr></thead>
-          <tbody id="recent-pros"></tbody></table>
-        </div>
-        <div class="table-wrap">
-          <div class="table-head"><div class="table-title">🗨️ Últimas Conversas</div></div>
-          <table><thead><tr><th>Última mensagem</th><th>Quando</th></tr></thead>
-          <tbody id="recent-conv-tbl"></tbody></table>
-        </div>
-      </div>
-    </div>
+<!-- OVERVIEW -->
+<div id="page-overview" class="page-section active">
+<div class="stats-grid">
+<div class="stat-card accent-blue"><div class="stat-icon">👤</div><div><div class="stat-val" id="s-pros">—</div><div class="stat-lbl">Profissionais</div></div></div>
+<div class="stat-card accent-purple"><div class="stat-icon">🗨️</div><div><div class="stat-val" id="s-conv">—</div><div class="stat-lbl">Conversas</div></div></div>
+<div class="stat-card accent-gold"><div class="stat-icon">⭐</div><div><div class="stat-val" id="s-revs">—</div><div class="stat-lbl">Avaliações</div></div></div>
+<div class="stat-card accent-green"><div class="stat-icon">🛠️</div><div><div class="stat-val" id="s-srvs">—</div><div class="stat-lbl">Serviços</div></div></div>
+</div>
+<div class="overview-grids">
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">👤 Últimos Profissionais</div></div>
+<table><thead><tr><th>Nome</th><th>Categoria</th><th>Plano</th></tr></thead>
+<tbody id="recent-pros"></tbody></table>
+</div>
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">🗨️ Últimas Conversas</div></div>
+<table><thead><tr><th>Última mensagem</th><th>Quando</th></tr></thead>
+<tbody id="recent-conv-tbl"></tbody></table>
+</div>
+</div>
+</div>
 
-    <!-- PROFILES -->
-    <div id="page-profiles" class="page-section">
-      <div class="table-wrap">
-        <div class="table-head">
-          <div class="table-title">👤 Todos os Profissionais <span id="pros-count" style="font-weight:400;color:var(--muted);font-size:13px"></span></div>
-          <input class="search-box" type="search" placeholder="🔍 Pesquisar nome, categoria..." oninput="filterPros(this.value)"/>
-        </div>
-        <table>
-          <thead><tr><th>Profissional</th><th>Categoria</th><th>Localização</th><th>Plano</th><th>Estado</th><th>Ações</th></tr></thead>
-          <tbody id="pros-tbody"></tbody>
-        </table>
-      </div>
-    </div>
+<!-- PROFILES -->
+<div id="page-profiles" class="page-section">
+<div class="table-wrap">
+<div class="table-head">
+<div class="table-title">👤 Todos os Profissionais <span id="pros-count" style="font-weight:400;color:var(--muted);font-size:13px"></span></div>
+<input class="search-box" type="search" placeholder="🔍 Pesquisar nome, categoria..." oninput="filterPros(this.value)"/>
+</div>
+<table>
+<thead><tr><th>Profissional</th><th>Categoria</th><th>Localização</th><th>Plano</th><th>Estado</th><th>Ações</th></tr></thead>
+<tbody id="pros-tbody"></tbody>
+</table>
+</div>
+</div>
 
-    <!-- SUBSCRIPTIONS -->
-    <div id="page-subscricoes" class="page-section">
-      <div class="stats-grid">
-        <div class="stat-card accent-blue"><div class="stat-icon">🆓</div><div><div class="stat-val" id="sub-free">—</div><div class="stat-lbl">Free</div></div></div>
-        <div class="stat-card accent-purple"><div class="stat-icon">💼</div><div><div class="stat-val" id="sub-pro">—</div><div class="stat-lbl">Pro</div></div></div>
-        <div class="stat-card accent-gold"><div class="stat-icon">👑</div><div><div class="stat-val" id="sub-premium">—</div><div class="stat-lbl">Premium (legado)</div></div></div>
-        <div class="stat-card accent-green"><div class="stat-icon">💶</div><div><div class="stat-val" id="sub-mrr">—</div><div class="stat-lbl">Receita mensal estimada</div></div></div>
-        <div class="stat-card accent-red"><div class="stat-icon">⏳</div><div><div class="stat-val" id="sub-expiring">—</div><div class="stat-lbl">A expirar em 7 dias</div></div></div>
-      </div>
-      <div class="table-wrap">
-        <div class="table-head">
-          <div class="table-title">💳 Subscrições <span id="subs-count" style="font-weight:400;color:var(--muted);font-size:13px"></span></div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <select class="search-box" id="sub-filter" style="width:170px" onchange="filterSubs()">
-              <option value="">Todos os planos</option>
-              <option value="free">Free</option>
-              <option value="pro">Pro</option>
-              <option value="premium">Premium</option>
-              <option value="expiring">A expirar em breve</option>
-            </select>
-            <input class="search-box" type="search" placeholder="🔍 Pesquisar nome..." oninput="filterSubs()" id="sub-search"/>
-          </div>
-        </div>
-        <table>
-          <thead><tr><th>Profissional</th><th>Plano</th><th>Validade</th><th>Origem</th><th>Créditos</th><th>Ações</th></tr></thead>
-          <tbody id="subs-tbody"></tbody>
-        </table>
-      </div>
-    </div>
+<!-- SUBSCRIPTIONS -->
+<div id="page-subscricoes" class="page-section">
+<div class="stats-grid">
+<div class="stat-card accent-blue"><div class="stat-icon">🆓</div><div><div class="stat-val" id="sub-free">—</div><div class="stat-lbl">Free</div></div></div>
+<div class="stat-card accent-purple"><div class="stat-icon">💼</div><div><div class="stat-val" id="sub-pro">—</div><div class="stat-lbl">Pro</div></div></div>
+<div class="stat-card accent-gold"><div class="stat-icon">👑</div><div><div class="stat-val" id="sub-premium">—</div><div class="stat-lbl">Premium (legado)</div></div></div>
+<div class="stat-card accent-green"><div class="stat-icon">💶</div><div><div class="stat-val" id="sub-mrr">—</div><div class="stat-lbl">Receita mensal estimada</div></div></div>
+<div class="stat-card accent-red"><div class="stat-icon">⏳</div><div><div class="stat-val" id="sub-expiring">—</div><div class="stat-lbl">A expirar em 7 dias</div></div></div>
+</div>
+<div class="table-wrap">
+<div class="table-head">
+<div class="table-title">💳 Subscrições <span id="subs-count" style="font-weight:400;color:var(--muted);font-size:13px"></span></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<select class="search-box" id="sub-filter" style="width:170px" onchange="filterSubs()">
+<option value="">Todos os planos</option>
+<option value="free">Free</option>
+<option value="pro">Pro</option>
+<option value="premium">Premium</option>
+<option value="expiring">A expirar em breve</option>
+</select>
+<input class="search-box" type="search" placeholder="🔍 Pesquisar nome..." oninput="filterSubs()" id="sub-search"/>
+</div>
+</div>
+<table>
+<thead><tr><th>Profissional</th><th>Plano</th><th>Validade</th><th>Origem</th><th>Créditos</th><th>Ações</th></tr></thead>
+<tbody id="subs-tbody"></tbody>
+</table>
+</div>
+</div>
 
-    <!-- CONVERSATIONS (real chat) -->
-    <div id="page-conversations" class="page-section">
-      <div class="table-wrap" style="padding:20px">
-        <div class="table-title" style="margin-bottom:14px">🗨️ Conversas entre profissionais e clientes <span style="font-weight:400;color:var(--muted);font-size:13px">— visível apenas para administradores</span></div>
-        <div class="conv-list" id="conv-list"></div>
-      </div>
-    </div>
+<!-- CONVERSATIONS (real chat) -->
+<div id="page-conversations" class="page-section">
+<div class="table-wrap" style="padding:20px">
+<div class="table-title" style="margin-bottom:14px">🗨️ Conversas entre profissionais e clientes <span style="font-weight:400;color:var(--muted);font-size:13px">— visível apenas para administradores</span></div>
+<div class="conv-list" id="conv-list"></div>
+</div>
+</div>
 
-    <!-- LEGACY CONTACT FORM MESSAGES -->
-    <div id="page-messages" class="page-section">
-      <div class="table-wrap">
-        <div class="table-head"><div class="table-title">📋 Mensagens do formulário de contacto</div></div>
-        <table>
-          <thead><tr><th>De</th><th>Para</th><th>Assunto</th><th>Mensagem</th><th>Data</th><th>Lida</th></tr></thead>
-          <tbody id="msgs-tbody"></tbody>
-        </table>
-      </div>
-    </div>
+<!-- LEGACY CONTACT FORM MESSAGES -->
+<div id="page-messages" class="page-section">
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">📋 Mensagens do formulário de contacto</div></div>
+<table>
+<thead><tr><th>De</th><th>Para</th><th>Assunto</th><th>Mensagem</th><th>Data</th><th>Lida</th></tr></thead>
+<tbody id="msgs-tbody"></tbody>
+</table>
+</div>
+</div>
 
-    <!-- REVIEWS -->
-    <div id="page-reviews" class="page-section">
-      <div class="table-wrap">
-        <div class="table-head"><div class="table-title">⭐ Todas as Avaliações</div></div>
-        <table>
-          <thead><tr><th>Avaliador</th><th>Profissional</th><th>Nota</th><th>Comentário</th><th>Data</th><th>Ações</th></tr></thead>
-          <tbody id="revs-tbody"></tbody>
-        </table>
-      </div>
-    </div>
+<!-- REVIEWS -->
+<div id="page-reviews" class="page-section">
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">⭐ Todas as Avaliações</div></div>
+<table>
+<thead><tr><th>Avaliador</th><th>Profissional</th><th>Nota</th><th>Comentário</th><th>Data</th><th>Ações</th></tr></thead>
+<tbody id="revs-tbody"></tbody>
+</table>
+</div>
+</div>
 
-    <!-- SERVICES -->
-    <div id="page-services" class="page-section">
-      <div class="table-wrap">
-        <div class="table-head"><div class="table-title">🛠️ Todos os Serviços</div></div>
-        <table>
-          <thead><tr><th>Serviço</th><th>Profissional</th><th>Preço</th><th>Data</th><th>Ações</th></tr></thead>
-          <tbody id="srvs-tbody"></tbody>
-        </table>
-      </div>
-    </div>
+<!-- SERVICES -->
+<div id="page-services" class="page-section">
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">🛠️ Todos os Serviços</div></div>
+<table>
+<thead><tr><th>Serviço</th><th>Profissional</th><th>Preço</th><th>Data</th><th>Ações</th></tr></thead>
+<tbody id="srvs-tbody"></tbody>
+</table>
+</div>
+</div>
 
-    <!-- PORTFOLIO -->
-    <div id="page-portfolio" class="page-section">
-      <div class="table-wrap">
-        <div class="table-head"><div class="table-title">🖼️ Todos os itens de portfólio</div></div>
-        <table>
-          <thead><tr><th>Foto</th><th>Legenda</th><th>Profissional</th><th>Data</th><th>Ações</th></tr></thead>
-          <tbody id="port-tbody"></tbody>
-        </table>
-      </div>
-    </div>
+<!-- PORTFOLIO -->
+<div id="page-portfolio" class="page-section">
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">🖼️ Todos os itens de portfólio</div></div>
+<table>
+<thead><tr><th>Foto</th><th>Legenda</th><th>Profissional</th><th>Data</th><th>Ações</th></tr></thead>
+<tbody id="port-tbody"></tbody>
+</table>
+</div>
+</div>
 
-  </div>
+<!-- STATS -->
+<div id="page-stats" class="page-section">
+<div class="stats-grid">
+<div class="stat-card accent-blue"><div class="stat-icon">📝</div><div><div class="stat-val" id="st-total">—</div><div class="stat-lbl">Total de registos</div></div></div>
+<div class="stat-card accent-purple"><div class="stat-icon">🛠️</div><div><div class="stat-val" id="st-pros">—</div><div class="stat-lbl">Profissionais</div></div></div>
+<div class="stat-card accent-gold"><div class="stat-icon">🙋</div><div><div class="stat-val" id="st-clients">—</div><div class="stat-lbl">Clientes</div></div></div>
+<div class="stat-card accent-red"><div class="stat-icon">⏳</div><div><div class="stat-val" id="st-noprofile">—</div><div class="stat-lbl">Sem perfil</div></div></div>
+<div class="stat-card accent-green"><div class="stat-icon">👀</div><div><div class="stat-val" id="st-visits">—</div><div class="stat-lbl">Visitas (30 dias)</div></div></div>
+<div class="stat-card accent-blue"><div class="stat-icon">👥</div><div><div class="stat-val" id="st-visitors">—</div><div class="stat-lbl">Visitantes (30 dias)</div></div></div>
+</div>
+<div class="overview-grids">
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">📝 Registos por dia</div></div>
+<table><thead><tr><th>Dia</th><th>Total</th><th>Profissionais</th><th>Clientes</th></tr></thead>
+<tbody id="signups-tbody"></tbody></table>
+</div>
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">👀 Visitas por dia</div></div>
+<table><thead><tr><th>Dia</th><th>Visitas</th><th>Únicos</th></tr></thead>
+<tbody id="visits-tbody"></tbody></table>
+</div>
+</div>
+</div>
+
+</div>
 </div>
 
 <!-- EDIT PROFILE MODAL -->
 <div class="modal-bg" id="edit-modal">
-  <div class="modal-box">
-    <div class="modal-title">✏️ Editar profissional</div>
-    <div class="form-group"><label>Nome</label><input id="ed-name"/></div>
-    <div class="form-group"><label>Categoria</label><input id="ed-category"/></div>
-    <div class="form-group"><label>Localização</label><input id="ed-location"/></div>
-    <div class="form-group"><label>Plano</label>
-      <select id="ed-plan"><option value="free">Free</option><option value="pro">Pro</option><option value="premium" disabled>Premium (legado — já não é vendido)</option></select>
-    </div>
-    <div class="form-group"><label>Bio</label><textarea id="ed-bio" rows="4"></textarea></div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
-      <button class="btn-save" onclick="saveProfileEdit()">Guardar alterações</button>
-    </div>
-  </div>
+<div class="modal-box">
+<div class="modal-title">✏️ Editar profissional</div>
+<div class="form-group"><label>Nome</label><input id="ed-name"/></div>
+<div class="form-group"><label>Categoria</label><input id="ed-category"/></div>
+<div class="form-group"><label>Localização</label><input id="ed-location"/></div>
+<div class="form-group"><label>Plano</label>
+<select id="ed-plan"><option value="free">Free</option><option value="pro">Pro</option><option value="premium" disabled>Premium (legado — já não é vendido)</option></select>
+</div>
+<div class="form-group"><label>Bio</label><textarea id="ed-bio" rows="4"></textarea></div>
+<div class="modal-actions">
+<button class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
+<button class="btn-save" onclick="saveProfileEdit()">Guardar alterações</button>
+</div>
+</div>
 </div>
 
 <!-- EDIT SERVICE MODAL -->
 <div class="modal-bg" id="edit-service-modal">
-  <div class="modal-box">
-    <div class="modal-title">✏️ Editar serviço</div>
-    <div class="form-group"><label>Título</label><input id="es-title"/></div>
-    <div class="form-group"><label>Descrição</label><textarea id="es-desc" rows="3"></textarea></div>
-    <div class="form-group"><label>Preço desde (€)</label><input id="es-from" type="number"/></div>
-    <div class="form-group"><label>Preço até (€)</label><input id="es-to" type="number"/></div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeEditServiceModal()">Cancelar</button>
-      <button class="btn-save" onclick="saveServiceEdit()">Guardar alterações</button>
-    </div>
-  </div>
+<div class="modal-box">
+<div class="modal-title">✏️ Editar serviço</div>
+<div class="form-group"><label>Título</label><input id="es-title"/></div>
+<div class="form-group"><label>Descrição</label><textarea id="es-desc" rows="3"></textarea></div>
+<div class="form-group"><label>Preço desde (€)</label><input id="es-from" type="number"/></div>
+<div class="form-group"><label>Preço até (€)</label><input id="es-to" type="number"/></div>
+<div class="modal-actions">
+<button class="btn-cancel" onclick="closeEditServiceModal()">Cancelar</button>
+<button class="btn-save" onclick="saveServiceEdit()">Guardar alterações</button>
+</div>
+</div>
 </div>
 
 <!-- EDIT SUBSCRIPTION MODAL -->
 <div class="modal-bg" id="edit-sub-modal">
-  <div class="modal-box">
-    <div class="modal-title">💳 Gerir subscrição</div>
-    <div id="sub-modal-name" style="font-size:14px;font-weight:700;color:var(--muted);margin-bottom:16px"></div>
-    <div class="form-group">
-      <label>Plano</label>
-      <select id="sub-plan"><option value="free">Free</option><option value="pro">Pro</option><option value="premium" disabled>Premium (legado — já não é vendido)</option></select>
-      <div style="font-size:11.5px;color:var(--muted);margin-top:5px">Só o Pro está à venda atualmente. Premium é um plano legado — só aparece aqui se o profissional já o tiver.</div>
-    </div>
-    <div class="form-group">
-      <label>Validade do plano</label>
-      <input id="sub-expires" type="date"/>
-      <div class="sub-quick-row">
-        <button type="button" class="btn btn-view" onclick="extendSub(7)">+7 dias</button>
-        <button type="button" class="btn btn-view" onclick="extendSub(30)">+30 dias</button>
-        <button type="button" class="btn btn-view" onclick="extendSub(90)">+90 dias</button>
-        <button type="button" class="btn btn-edit" onclick="document.getElementById('sub-expires').value=''">Sem validade</button>
-      </div>
-      <div style="font-size:11.5px;color:var(--muted);margin-top:6px">Ao passar esta data, o plano volta a Free automaticamente (verificação diária às 3h). Não se aplica a subscrições Stripe — essas são geridas pelos pagamentos.</div>
-    </div>
-    <div class="form-group">
-      <label>Créditos</label>
-      <div class="credits-stepper">
-        <button type="button" class="btn btn-view" onclick="bumpCredits(-10)">−10</button>
-        <input id="sub-credits" type="number" min="0"/>
-        <button type="button" class="btn btn-view" onclick="bumpCredits(10)">+10</button>
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Origem</label>
-      <div class="sub-origin-box" id="sub-origin"></div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeSubModal()">Cancelar</button>
-      <button class="btn-save" onclick="saveSubEdit()">Guardar alterações</button>
-    </div>
-    <button class="btn btn-delete btn-revert-free" onclick="revertToFreePlan()">↩️ Reverter para Free agora</button>
-  </div>
+<div class="modal-box">
+<div class="modal-title">💳 Gerir subscrição</div>
+<div id="sub-modal-name" style="font-size:14px;font-weight:700;color:var(--muted);margin-bottom:16px"></div>
+<div class="form-group">
+<label>Plano</label>
+<select id="sub-plan"><option value="free">Free</option><option value="pro">Pro</option><option value="premium" disabled>Premium (legado — já não é vendido)</option></select>
+<div style="font-size:11.5px;color:var(--muted);margin-top:5px">Só o Pro está à venda atualmente. Premium é um plano legado — só aparece aqui se o profissional já o tiver.</div>
+</div>
+<div class="form-group">
+<label>Validade do plano</label>
+<input id="sub-expires" type="date"/>
+<div class="sub-quick-row">
+<button type="button" class="btn btn-view" onclick="extendSub(7)">+7 dias</button>
+<button type="button" class="btn btn-view" onclick="extendSub(30)">+30 dias</button>
+<button type="button" class="btn btn-view" onclick="extendSub(90)">+90 dias</button>
+<button type="button" class="btn btn-edit" onclick="document.getElementById('sub-expires').value=''">Sem validade</button>
+</div>
+<div style="font-size:11.5px;color:var(--muted);margin-top:6px">Ao passar esta data, o plano volta a Free automaticamente (verificação diária às 3h). Não se aplica a subscrições Stripe — essas são geridas pelos pagamentos.</div>
+</div>
+<div class="form-group">
+<label>Créditos</label>
+<div class="credits-stepper">
+<button type="button" class="btn btn-view" onclick="bumpCredits(-10)">−10</button>
+<input id="sub-credits" type="number" min="0"/>
+<button type="button" class="btn btn-view" onclick="bumpCredits(10)">+10</button>
+</div>
+</div>
+<div class="form-group">
+<label>Origem</label>
+<div class="sub-origin-box" id="sub-origin"></div>
+</div>
+<div class="modal-actions">
+<button class="btn-cancel" onclick="closeSubModal()">Cancelar</button>
+<button class="btn-save" onclick="saveSubEdit()">Guardar alterações</button>
+</div>
+<button class="btn btn-delete btn-revert-free" onclick="revertToFreePlan()">↩️ Reverter para Free agora</button>
+</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -390,42 +415,42 @@ let allSubs=[]
 let editingSubId=null
 
 async function init(){
-  try{
-    const{data:{session}}=await db.auth.getSession()
-    if(!session)return
-    const isAdminEmail=session.user.email===ADMIN_EMAIL
-    const{data:prof}=await db.from('profiles').select('is_admin').eq('user_id',session.user.id).single()
-    if(isAdminEmail||prof?.is_admin===true)showAdmin(session.user)
-  }catch(e){console.error('init:',e)}
+try{
+const{data:{session}}=await db.auth.getSession()
+if(!session)return
+const isAdminEmail=session.user.email===ADMIN_EMAIL
+const{data:prof}=await db.from('profiles').select('is_admin').eq('user_id',session.user.id).single()
+if(isAdminEmail||prof?.is_admin===true)showAdmin(session.user)
+}catch(e){console.error('init:',e)}
 }
 
 async function adminLogin(){
-  const email=document.getElementById('admin-email').value.trim()
-  const pass=document.getElementById('admin-pass').value
-  const btn=document.getElementById('login-btn')
-  const errEl=document.getElementById('login-error')
-  errEl.style.display='none'
-  if(!email||!pass){showLoginError('Preenche email e palavra-passe.');return}
-  btn.disabled=true;btn.textContent='A verificar...'
-  const{data,error}=await db.auth.signInWithPassword({email,password:pass})
-  if(error){showLoginError('Credenciais inválidas.');btn.disabled=false;btn.textContent='Entrar no painel';return}
-  const{data:prof2}=await db.from('profiles').select('is_admin').eq('user_id',data.user.id).single()
-  if(data.user.email!==ADMIN_EMAIL&&prof2?.is_admin!==true){
-    await db.auth.signOut()
-    showLoginError('Acesso negado. Esta conta não tem permissões de administrador.')
-    btn.disabled=false;btn.textContent='Entrar no painel';return
-  }
-  showAdmin(data.user)
+const email=document.getElementById('admin-email').value.trim()
+const pass=document.getElementById('admin-pass').value
+const btn=document.getElementById('login-btn')
+const errEl=document.getElementById('login-error')
+errEl.style.display='none'
+if(!email||!pass){showLoginError('Preenche email e palavra-passe.');return}
+btn.disabled=true;btn.textContent='A verificar...'
+const{data,error}=await db.auth.signInWithPassword({email,password:pass})
+if(error){showLoginError('Credenciais inválidas.');btn.disabled=false;btn.textContent='Entrar no painel';return}
+const{data:prof2}=await db.from('profiles').select('is_admin').eq('user_id',data.user.id).single()
+if(data.user.email!==ADMIN_EMAIL&&prof2?.is_admin!==true){
+await db.auth.signOut()
+showLoginError('Acesso negado. Esta conta não tem permissões de administrador.')
+btn.disabled=false;btn.textContent='Entrar no painel';return
+}
+showAdmin(data.user)
 }
 
 function showLoginError(msg){const el=document.getElementById('login-error');el.textContent=msg;el.style.display='block'}
 
 function showAdmin(user){
-  document.getElementById('login-screen').style.display='none'
-  const p=document.getElementById('admin-panel')
-  p.style.display='flex';p.style.flexDirection='column'
-  document.getElementById('topbar-email').textContent=user.email
-  loadOverview();loadProfiles()
+document.getElementById('login-screen').style.display='none'
+const p=document.getElementById('admin-panel')
+p.style.display='flex';p.style.flexDirection='column'
+document.getElementById('topbar-email').textContent=user.email
+loadOverview();loadProfiles()
 }
 
 async function adminSignOut(){await db.auth.signOut();location.reload()}
@@ -434,407 +459,438 @@ function demoBadge(p){return p&&p.is_demo?'<span class="badge badge-demo">🧪 D
 
 // OVERVIEW
 async function loadOverview(){
-  const[{count:pc},{count:cc},{count:rc},{count:sc}]=await Promise.all([
-    db.from('profiles').select('*',{count:'exact',head:true}),
-    db.from('conversations').select('*',{count:'exact',head:true}),
-    db.from('reviews').select('*',{count:'exact',head:true}),
-    db.from('services').select('*',{count:'exact',head:true})
-  ])
-  document.getElementById('s-pros').textContent=pc||0
-  document.getElementById('s-conv').textContent=cc||0
-  document.getElementById('s-revs').textContent=rc||0
-  document.getElementById('s-srvs').textContent=sc||0
-  const{data:pros}=await db.from('profiles').select('name,category,plan,is_demo').order('created_at',{ascending:false}).limit(5)
-  document.getElementById('recent-pros').innerHTML=(pros||[]).map(p=>`
-    <tr><td><div class="td-name">${p.name||'—'}${demoBadge(p)}</div></td>
-    <td>${p.category||'—'}</td>
-    <td><span class="badge badge-${p.plan||'free'}">${p.plan||'free'}</span></td></tr>`).join('')||'<tr class="empty-row"><td colspan="3">Sem registos</td></tr>'
-  const{data:convs}=await db.from('conversations').select('last_message,last_message_at').order('last_message_at',{ascending:false}).limit(5)
-  document.getElementById('recent-conv-tbl').innerHTML=(convs||[]).map(c=>`
-    <tr><td class="msg-preview">${c.last_message||'(sem mensagens)'}</td>
-    <td>${c.last_message_at?new Date(c.last_message_at).toLocaleDateString('pt-PT'):'—'}</td></tr>`).join('')||'<tr class="empty-row"><td colspan="2">Sem conversas</td></tr>'
+const[{count:pc},{count:cc},{count:rc},{count:sc}]=await Promise.all([
+db.from('profiles').select('*',{count:'exact',head:true}),
+db.from('conversations').select('*',{count:'exact',head:true}),
+db.from('reviews').select('*',{count:'exact',head:true}),
+db.from('services').select('*',{count:'exact',head:true})
+])
+document.getElementById('s-pros').textContent=pc||0
+document.getElementById('s-conv').textContent=cc||0
+document.getElementById('s-revs').textContent=rc||0
+document.getElementById('s-srvs').textContent=sc||0
+const{data:pros}=await db.from('profiles').select('name,category,plan,is_demo').order('created_at',{ascending:false}).limit(5)
+document.getElementById('recent-pros').innerHTML=(pros||[]).map(p=>`
+<tr><td><div class="td-name">${p.name||'—'}${demoBadge(p)}</div></td>
+<td>${p.category||'—'}</td>
+<td><span class="badge badge-${p.plan||'free'}">${p.plan||'free'}</span></td></tr>`).join('')||'<tr class="empty-row"><td colspan="3">Sem registos</td></tr>'
+const{data:convs}=await db.from('conversations').select('last_message,last_message_at').order('last_message_at',{ascending:false}).limit(5)
+document.getElementById('recent-conv-tbl').innerHTML=(convs||[]).map(c=>`
+<tr><td class="msg-preview">${c.last_message||'(sem mensagens)'}</td>
+<td>${c.last_message_at?new Date(c.last_message_at).toLocaleDateString('pt-PT'):'—'}</td></tr>`).join('')||'<tr class="empty-row"><td colspan="2">Sem conversas</td></tr>'
 }
 
 // PROFILES
 async function loadProfiles(){
-  const{data}=await db.from('profiles').select('*').order('created_at',{ascending:false})
-  allPros=data||[]
-  const ids=allPros.map(p=>p.id)
-  if(ids.length){
-    const{data:priv}=await db.from('profile_private').select('profile_id,phone').in('profile_id',ids)
-    const phoneMap={}
-    ;(priv||[]).forEach(r=>phoneMap[r.profile_id]=r.phone)
-    allPros.forEach(p=>p.phone=phoneMap[p.id]||'')
-  }
-  renderPros(allPros)
+const{data}=await db.from('profiles').select('*').order('created_at',{ascending:false})
+allPros=data||[]
+const ids=allPros.map(p=>p.id)
+if(ids.length){
+const{data:priv}=await db.from('profile_private').select('profile_id,phone').in('profile_id',ids)
+const phoneMap={}
+;(priv||[]).forEach(r=>phoneMap[r.profile_id]=r.phone)
+allPros.forEach(p=>p.phone=phoneMap[p.id]||'')
+}
+renderPros(allPros)
 }
 
 function renderPros(pros){
-  document.getElementById('pros-count').textContent=`(${pros.length})`
-  const tbody=document.getElementById('pros-tbody')
-  if(!pros.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Nenhum profissional encontrado</td></tr>';return}
-  tbody.innerHTML=pros.map(p=>{
-    const approved=p.approved!==false
-    const av=p.photo_url?`<img src="${p.photo_url}" alt=""/>`:((p.name||'?').split(' ').map(n=>n[0]).slice(0,2).join(''))
-    return`<tr>
-      <td><div class="td-flex"><div class="pro-avatar">${av}</div>
-        <div><div class="td-name">${p.name||'—'}${demoBadge(p)}</div><div class="td-sub">${p.phone||''}</div></div></div></td>
-      <td>${p.category||'—'}</td>
-      <td>${p.location||'—'}</td>
-      <td><span class="badge badge-${p.plan||'free'}">${p.plan||'free'}</span></td>
-      <td><span class="badge ${approved?'badge-approved':'badge-pending'}">${approved?'Ativo':'Pendente'}</span></td>
-      <td><div style="display:flex;gap:6px;flex-wrap:wrap">
-        <button class="btn btn-edit" onclick="openEditModal('${p.id}')">✏️ Editar</button>
-        <button class="btn btn-approve" onclick="toggleAdmin('${p.id}',!p.is_admin)" title="${p.is_admin?'Remover admin':'Tornar admin'}">${p.is_admin?'👑':'⬆️'}</button>
+document.getElementById('pros-count').textContent=`(${pros.length})`
+const tbody=document.getElementById('pros-tbody')
+if(!pros.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Nenhum profissional encontrado</td></tr>';return}
+tbody.innerHTML=pros.map(p=>{
+const approved=p.approved!==false
+const av=p.photo_url?`<img src="${p.photo_url}" alt=""/>`:((p.name||'?').split(' ').map(n=>n[0]).slice(0,2).join(''))
+return`<tr>
+<td><div class="td-flex"><div class="pro-avatar">${av}</div>
+<div><div class="td-name">${p.name||'—'}${demoBadge(p)}</div><div class="td-sub">${p.phone||''}</div></div></div></td>
+<td>${p.category||'—'}</td>
+<td>${p.location||'—'}</td>
+<td><span class="badge badge-${p.plan||'free'}">${p.plan||'free'}</span></td>
+<td><span class="badge ${approved?'badge-approved':'badge-pending'}">${approved?'Ativo':'Pendente'}</span></td>
+<td><div style="display:flex;gap:6px;flex-wrap:wrap">
+<button class="btn btn-edit" onclick="openEditModal('${p.id}')">✏️ Editar</button>
+<button class="btn btn-approve" onclick="toggleAdmin('${p.id}',!p.is_admin)" title="${p.is_admin?'Remover admin':'Tornar admin'}">${p.is_admin?'👑':'⬆️'}</button>
 <button class="btn btn-view" onclick="window.open('profile.html?id=${p.id}','_blank')">👁 Ver</button>
-        ${approved
-          ?`<button class="btn btn-unapprove" onclick="toggleApprove('${p.id}',false)">⏸ Suspender</button>`
-          :`<button class="btn btn-approve" onclick="toggleApprove('${p.id}',true)">✅ Aprovar</button>`}
-        ${p.verified?`<button class="btn btn-unapprove" onclick="toggleVerified('${p.id}',false)">✔️ Verificado</button>`:`<button class="btn btn-approve" onclick="toggleVerified('${p.id}',true)">☆ Verificar</button>`}
-        <button class="btn btn-delete" onclick="deletePro('${p.id}','${(p.name||'').replace(/'/g,"\\'")}')">🗑</button>
-      </div></td></tr>`
-  }).join('')
+${approved
+?`<button class="btn btn-unapprove" onclick="toggleApprove('${p.id}',false)">⏸ Suspender</button>`
+:`<button class="btn btn-approve" onclick="toggleApprove('${p.id}',true)">✅ Aprovar</button>`}
+${p.verified?`<button class="btn btn-unapprove" onclick="toggleVerified('${p.id}',false)">✔️ Verificado</button>`:`<button class="btn btn-approve" onclick="toggleVerified('${p.id}',true)">☆ Verificar</button>`}
+<button class="btn btn-delete" onclick="deletePro('${p.id}','${(p.name||'').replace(/'/g,"\\'")}')">🗑</button>
+</div></td></tr>`
+}).join('')
 }
 
 function filterPros(q){
-  const lq=q.toLowerCase()
-  renderPros(allPros.filter(p=>(p.name||'').toLowerCase().includes(lq)||(p.category||'').toLowerCase().includes(lq)||(p.location||'').toLowerCase().includes(lq)))
+const lq=q.toLowerCase()
+renderPros(allPros.filter(p=>(p.name||'').toLowerCase().includes(lq)||(p.category||'').toLowerCase().includes(lq)||(p.location||'').toLowerCase().includes(lq)))
 }
 
 async function toggleAdmin(id,isAdmin){
-  await db.from('profiles').update({is_admin:isAdmin}).eq('id',id)
-  loadProfiles()
+await db.from('profiles').update({is_admin:isAdmin}).eq('id',id)
+loadProfiles()
 }
 
 async function toggleApprove(id,approved){
-  await db.from('profiles').update({approved}).eq('id',id);loadProfiles()
+await db.from('profiles').update({approved}).eq('id',id);loadProfiles()
 }
 
 async function toggleVerified(id,verified){
-  await db.from('profiles').update({verified}).eq('id',id);loadProfiles()
+await db.from('profiles').update({verified}).eq('id',id);loadProfiles()
 }
 
 async function deletePro(id,name){
-  if(!confirm(`Eliminar "${name}"? Esta acção é irreversível.`))return
-  await db.from('profiles').delete().eq('id',id)
-  allPros=allPros.filter(p=>p.id!==id);renderPros(allPros);loadOverview()
+if(!confirm(`Eliminar "${name}"? Esta acção é irreversível.`))return
+await db.from('profiles').delete().eq('id',id)
+allPros=allPros.filter(p=>p.id!==id);renderPros(allPros);loadOverview()
 }
 
 // EDIT PROFILE MODAL
 function openEditModal(id){
-  const p=allPros.find(x=>x.id===id)
-  if(!p)return
-  editingProId=id
-  document.getElementById('ed-name').value=p.name||''
-  document.getElementById('ed-category').value=p.category||''
-  document.getElementById('ed-location').value=p.location||''
-  document.getElementById('ed-plan').value=p.plan||'free'
-  document.getElementById('ed-bio').value=p.bio||''
-  document.getElementById('edit-modal').classList.add('active')
+const p=allPros.find(x=>x.id===id)
+if(!p)return
+editingProId=id
+document.getElementById('ed-name').value=p.name||''
+document.getElementById('ed-category').value=p.category||''
+document.getElementById('ed-location').value=p.location||''
+document.getElementById('ed-plan').value=p.plan||'free'
+document.getElementById('ed-bio').value=p.bio||''
+document.getElementById('edit-modal').classList.add('active')
 }
 function closeEditModal(){document.getElementById('edit-modal').classList.remove('active');editingProId=null}
 async function saveProfileEdit(){
-  if(!editingProId)return
-  const updates={
-    name:document.getElementById('ed-name').value.trim(),
-    category:document.getElementById('ed-category').value.trim(),
-    location:document.getElementById('ed-location').value.trim(),
-    plan:document.getElementById('ed-plan').value,
-    bio:document.getElementById('ed-bio').value.trim()
-  }
-  const{error}=await db.from('profiles').update(updates).eq('id',editingProId)
-  if(error){alert('Erro ao guardar: '+error.message);return}
-  closeEditModal();loadProfiles();loadOverview()
+if(!editingProId)return
+const updates={
+name:document.getElementById('ed-name').value.trim(),
+category:document.getElementById('ed-category').value.trim(),
+location:document.getElementById('ed-location').value.trim(),
+plan:document.getElementById('ed-plan').value,
+bio:document.getElementById('ed-bio').value.trim()
+}
+const{error}=await db.from('profiles').update(updates).eq('id',editingProId)
+if(error){alert('Erro ao guardar: '+error.message);return}
+closeEditModal();loadProfiles();loadOverview()
 }
 
 // SUBSCRIPTIONS
 async function loadSubscriptions(){
-  const{data,error}=await db.from('profiles').select('id,name,plan,plan_expires_at,stripe_customer_id,stripe_subscription_id,credits').order('name',{ascending:true})
-  if(error){document.getElementById('subs-tbody').innerHTML=`<tr class="empty-row"><td colspan="6">Erro a carregar: ${error.message}</td></tr>`;return}
-  allSubs=data||[]
-  renderSubStats(allSubs)
-  filterSubs()
+const{data,error}=await db.from('profiles').select('id,name,plan,plan_expires_at,stripe_customer_id,stripe_subscription_id,credits').order('name',{ascending:true})
+if(error){document.getElementById('subs-tbody').innerHTML=`<tr class="empty-row"><td colspan="6">Erro a carregar: ${error.message}</td></tr>`;return}
+allSubs=data||[]
+renderSubStats(allSubs)
+filterSubs()
 }
 
 function renderSubStats(subs){
-  const free=subs.filter(s=>(s.plan||'free')==='free').length
-  const pro=subs.filter(s=>s.plan==='pro').length
-  const premium=subs.filter(s=>s.plan==='premium').length
-  const mrr=pro*PRO_MONTHLY_PRICE
-  const now=Date.now(),soon=now+7*86400000
-  const expiring=subs.filter(s=>s.plan_expires_at&&new Date(s.plan_expires_at).getTime()<=soon&&new Date(s.plan_expires_at).getTime()>=now).length
-  document.getElementById('sub-free').textContent=free
-  document.getElementById('sub-pro').textContent=pro
-  document.getElementById('sub-premium').textContent=premium
-  document.getElementById('sub-mrr').textContent='€'+mrr.toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})
-  document.getElementById('sub-expiring').textContent=expiring
+const free=subs.filter(s=>(s.plan||'free')==='free').length
+const pro=subs.filter(s=>s.plan==='pro').length
+const premium=subs.filter(s=>s.plan==='premium').length
+const mrr=pro*PRO_MONTHLY_PRICE
+const now=Date.now(),soon=now+7*86400000
+const expiring=subs.filter(s=>s.plan_expires_at&&new Date(s.plan_expires_at).getTime()<=soon&&new Date(s.plan_expires_at).getTime()>=now).length
+document.getElementById('sub-free').textContent=free
+document.getElementById('sub-pro').textContent=pro
+document.getElementById('sub-premium').textContent=premium
+document.getElementById('sub-mrr').textContent='€'+mrr.toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})
+document.getElementById('sub-expiring').textContent=expiring
 }
 
 function subStatusInfo(s){
-  const plan=s.plan||'free'
-  const now=Date.now()
-  let expLabel='—',expStyle=''
-  if(s.plan_expires_at){
-    const t=new Date(s.plan_expires_at).getTime()
-    expLabel=new Date(s.plan_expires_at).toLocaleDateString('pt-PT')
-    if(t<now){expLabel+=' (expirado)';expStyle='color:var(--red);font-weight:700'}
-    else if(t<=now+7*86400000){expStyle='color:var(--amber);font-weight:700'}
-  }else if(plan!=='free'){
-    expLabel='Sem validade'
-  }
-  const origin=s.stripe_subscription_id?'💳 Stripe':(plan==='free'?'—':'✋ Manual')
-  return{plan,expLabel,expStyle,origin}
+const plan=s.plan||'free'
+const now=Date.now()
+let expLabel='—',expStyle=''
+if(s.plan_expires_at){
+const t=new Date(s.plan_expires_at).getTime()
+expLabel=new Date(s.plan_expires_at).toLocaleDateString('pt-PT')
+if(t<now){expLabel+=' (expirado)';expStyle='color:var(--red);font-weight:700'}
+else if(t<=now+7*86400000){expStyle='color:var(--amber);font-weight:700'}
+}else if(plan!=='free'){
+expLabel='Sem validade'
+}
+const origin=s.stripe_subscription_id?'💳 Stripe':(plan==='free'?'—':'✋ Manual')
+return{plan,expLabel,expStyle,origin}
 }
 
 function renderSubs(subs){
-  document.getElementById('subs-count').textContent=`(${subs.length})`
-  const tbody=document.getElementById('subs-tbody')
-  if(!subs.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Nenhuma subscrição encontrada</td></tr>';return}
-  tbody.innerHTML=subs.map(s=>{
-    const info=subStatusInfo(s)
-    return`<tr>
-      <td class="td-name">${s.name||'—'}</td>
-      <td><span class="badge badge-${info.plan}">${info.plan}</span></td>
-      <td style="${info.expStyle}">${info.expLabel}</td>
-      <td>${info.origin}</td>
-      <td>${s.credits||0}</td>
-      <td><button class="btn btn-edit" onclick="openSubModal('${s.id}')">✏️ Gerir</button></td>
-    </tr>`
-  }).join('')
+document.getElementById('subs-count').textContent=`(${subs.length})`
+const tbody=document.getElementById('subs-tbody')
+if(!subs.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Nenhuma subscrição encontrada</td></tr>';return}
+tbody.innerHTML=subs.map(s=>{
+const info=subStatusInfo(s)
+return`<tr>
+<td class="td-name">${s.name||'—'}</td>
+<td><span class="badge badge-${info.plan}">${info.plan}</span></td>
+<td style="${info.expStyle}">${info.expLabel}</td>
+<td>${info.origin}</td>
+<td>${s.credits||0}</td>
+<td><button class="btn btn-edit" onclick="openSubModal('${s.id}')">✏️ Gerir</button></td>
+</tr>`
+}).join('')
 }
 
 function filterSubs(){
-  const q=(document.getElementById('sub-search').value||'').toLowerCase()
-  const f=document.getElementById('sub-filter').value
-  let list=allSubs.filter(s=>(s.name||'').toLowerCase().includes(q))
-  if(f==='expiring'){
-    const now=Date.now(),soon=now+7*86400000
-    list=list.filter(s=>s.plan_expires_at&&new Date(s.plan_expires_at).getTime()<=soon&&new Date(s.plan_expires_at).getTime()>=now)
-  }else if(f){
-    list=list.filter(s=>(s.plan||'free')===f)
-  }
-  renderSubs(list)
+const q=(document.getElementById('sub-search').value||'').toLowerCase()
+const f=document.getElementById('sub-filter').value
+let list=allSubs.filter(s=>(s.name||'').toLowerCase().includes(q))
+if(f==='expiring'){
+const now=Date.now(),soon=now+7*86400000
+list=list.filter(s=>s.plan_expires_at&&new Date(s.plan_expires_at).getTime()<=soon&&new Date(s.plan_expires_at).getTime()>=now)
+}else if(f){
+list=list.filter(s=>(s.plan||'free')===f)
+}
+renderSubs(list)
 }
 
 function openSubModal(id){
-  const s=allSubs.find(x=>x.id===id)
-  if(!s)return
-  editingSubId=id
-  document.getElementById('sub-modal-name').textContent=s.name||'—'
-  document.getElementById('sub-plan').value=s.plan||'free'
-  document.getElementById('sub-expires').value=s.plan_expires_at?s.plan_expires_at.slice(0,10):''
-  document.getElementById('sub-credits').value=s.credits||0
-  document.getElementById('sub-origin').textContent=s.stripe_subscription_id?`Pago via Stripe (subscrição: ${s.stripe_subscription_id})`:'Atribuído manualmente pela administração'
-  document.getElementById('edit-sub-modal').classList.add('active')
+const s=allSubs.find(x=>x.id===id)
+if(!s)return
+editingSubId=id
+document.getElementById('sub-modal-name').textContent=s.name||'—'
+document.getElementById('sub-plan').value=s.plan||'free'
+document.getElementById('sub-expires').value=s.plan_expires_at?s.plan_expires_at.slice(0,10):''
+document.getElementById('sub-credits').value=s.credits||0
+document.getElementById('sub-origin').textContent=s.stripe_subscription_id?`Pago via Stripe (subscrição: ${s.stripe_subscription_id})`:'Atribuído manualmente pela administração'
+document.getElementById('edit-sub-modal').classList.add('active')
 }
 function closeSubModal(){document.getElementById('edit-sub-modal').classList.remove('active');editingSubId=null}
 
 function extendSub(days){
-  const el=document.getElementById('sub-expires')
-  const current=el.value?new Date(el.value+'T00:00:00'):null
-  const base=(current&&current.getTime()>Date.now())?current:new Date()
-  base.setDate(base.getDate()+days)
-  el.value=base.toISOString().slice(0,10)
+const el=document.getElementById('sub-expires')
+const current=el.value?new Date(el.value+'T00:00:00'):null
+const base=(current&&current.getTime()>Date.now())?current:new Date()
+base.setDate(base.getDate()+days)
+el.value=base.toISOString().slice(0,10)
 }
 
 function bumpCredits(n){
-  const el=document.getElementById('sub-credits')
-  el.value=Math.max(0,(Number(el.value)||0)+n)
+const el=document.getElementById('sub-credits')
+el.value=Math.max(0,(Number(el.value)||0)+n)
 }
 
 async function saveSubEdit(){
-  if(!editingSubId)return
-  const expiresVal=document.getElementById('sub-expires').value
-  const updates={
-    plan:document.getElementById('sub-plan').value,
-    plan_expires_at:expiresVal?new Date(expiresVal+'T23:59:59').toISOString():null,
-    credits:Number(document.getElementById('sub-credits').value)||0
-  }
-  const{error}=await db.from('profiles').update(updates).eq('id',editingSubId)
-  if(error){alert('Erro ao guardar: '+error.message);return}
-  closeSubModal();loadSubscriptions();loadProfiles()
+if(!editingSubId)return
+const expiresVal=document.getElementById('sub-expires').value
+const updates={
+plan:document.getElementById('sub-plan').value,
+plan_expires_at:expiresVal?new Date(expiresVal+'T23:59:59').toISOString():null,
+credits:Number(document.getElementById('sub-credits').value)||0
+}
+const{error}=await db.from('profiles').update(updates).eq('id',editingSubId)
+if(error){alert('Erro ao guardar: '+error.message);return}
+closeSubModal();loadSubscriptions();loadProfiles()
 }
 
 async function revertToFreePlan(){
-  if(!editingSubId)return
-  if(!confirm('Reverter esta subscrição para Free imediatamente?'))return
-  const{error}=await db.from('profiles').update({plan:'free',plan_expires_at:null}).eq('id',editingSubId)
-  if(error){alert('Erro: '+error.message);return}
-  closeSubModal();loadSubscriptions();loadProfiles()
+if(!editingSubId)return
+if(!confirm('Reverter esta subscrição para Free imediatamente?'))return
+const{error}=await db.from('profiles').update({plan:'free',plan_expires_at:null}).eq('id',editingSubId)
+if(error){alert('Erro: '+error.message);return}
+closeSubModal();loadSubscriptions();loadProfiles()
 }
 
 // CONVERSATIONS (real chat between professionals and clients)
 async function loadConversations(){
-  const list=document.getElementById('conv-list')
-  list.innerHTML='<div style="padding:20px;color:var(--muted)">A carregar...</div>'
-  const{data:convs,error}=await db.from('conversations').select('*').order('last_message_at',{ascending:false})
-  if(error){list.innerHTML=`<div style="padding:20px;color:var(--red)">Erro a carregar conversas: ${error.message}</div>`;return}
-  if(!convs||!convs.length){list.innerHTML='<div style="padding:20px;color:var(--muted)">Ainda não há conversas na plataforma.</div>';return}
-  const proIds=[...new Set(convs.map(c=>c.professional_id).filter(Boolean))]
-  const{data:pros}=await db.from('profiles').select('id,name').in('id',proIds.length?proIds:['00000000-0000-0000-0000-000000000000'])
-  const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
-  list.innerHTML=convs.map(c=>{
-    const proName=pm[c.professional_id]||'Profissional'
-    return`<div class="conv-card" id="conv-${c.id}" onclick="toggleThread('${c.id}','${c.professional_id}')">
-      <div class="conv-top"><div class="conv-title">${proName} ↔ cliente</div><div class="conv-date">${c.last_message_at?new Date(c.last_message_at).toLocaleString('pt-PT'):''}</div></div>
-      <div class="conv-last">${(c.last_message||'(sem mensagens)').replace(/</g,'&lt;')}</div>
-      <div class="conv-thread" id="thread-${c.id}"></div>
-    </div>`
-  }).join('')
+const list=document.getElementById('conv-list')
+list.innerHTML='<div style="padding:20px;color:var(--muted)">A carregar...</div>'
+const{data:convs,error}=await db.from('conversations').select('*').order('last_message_at',{ascending:false})
+if(error){list.innerHTML=`<div style="padding:20px;color:var(--red)">Erro a carregar conversas: ${error.message}</div>`;return}
+if(!convs||!convs.length){list.innerHTML='<div style="padding:20px;color:var(--muted)">Ainda não há conversas na plataforma.</div>';return}
+const proIds=[...new Set(convs.map(c=>c.professional_id).filter(Boolean))]
+const{data:pros}=await db.from('profiles').select('id,name').in('id',proIds.length?proIds:['00000000-0000-0000-0000-000000000000'])
+const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
+list.innerHTML=convs.map(c=>{
+const proName=pm[c.professional_id]||'Profissional'
+return`<div class="conv-card" id="conv-${c.id}" onclick="toggleThread('${c.id}','${c.professional_id}')">
+<div class="conv-top"><div class="conv-title">${proName} ↔ cliente</div><div class="conv-date">${c.last_message_at?new Date(c.last_message_at).toLocaleString('pt-PT'):''}</div></div>
+<div class="conv-last">${(c.last_message||'(sem mensagens)').replace(/</g,'&lt;')}</div>
+<div class="conv-thread" id="thread-${c.id}"></div>
+</div>`
+}).join('')
 }
 
 async function toggleThread(convId,proId){
-  const card=document.getElementById(`conv-${convId}`)
-  const thread=document.getElementById(`thread-${convId}`)
-  const isOpen=thread.classList.contains('active')
-  document.querySelectorAll('.conv-thread.active').forEach(t=>t.classList.remove('active'))
-  document.querySelectorAll('.conv-card.open').forEach(c=>c.classList.remove('open'))
-  if(isOpen)return
-  card.classList.add('open')
-  thread.classList.add('active')
-  thread.innerHTML='<div style="color:var(--muted);font-size:12px">A carregar mensagens...</div>'
-  const{data:msgs,error}=await db.from('messages').select('*').eq('conversation_id',convId).order('created_at',{ascending:true})
-  if(error){thread.innerHTML=`<div style="color:var(--red);font-size:12px">Erro: ${error.message}</div>`;return}
-  if(!msgs||!msgs.length){thread.innerHTML='<div style="color:var(--muted);font-size:12px">Sem mensagens nesta conversa.</div>';return}
-  thread.innerHTML=msgs.map(m=>{
-    const isPro=m.sender_id===proId
-    return`<div class="msg-bubble ${isPro?'msg-pro':'msg-client'}">
-      <div class="msg-meta">${isPro?'Profissional':'Cliente'} · ${m.created_at?new Date(m.created_at).toLocaleString('pt-PT'):''}</div>
-      ${(m.content||'').replace(/</g,'&lt;')}
-    </div>`
-  }).join('')
+const card=document.getElementById(`conv-${convId}`)
+const thread=document.getElementById(`thread-${convId}`)
+const isOpen=thread.classList.contains('active')
+document.querySelectorAll('.conv-thread.active').forEach(t=>t.classList.remove('active'))
+document.querySelectorAll('.conv-card.open').forEach(c=>c.classList.remove('open'))
+if(isOpen)return
+card.classList.add('open')
+thread.classList.add('active')
+thread.innerHTML='<div style="color:var(--muted);font-size:12px">A carregar mensagens...</div>'
+const{data:msgs,error}=await db.from('messages').select('*').eq('conversation_id',convId).order('created_at',{ascending:true})
+if(error){thread.innerHTML=`<div style="color:var(--red);font-size:12px">Erro: ${error.message}</div>`;return}
+if(!msgs||!msgs.length){thread.innerHTML='<div style="color:var(--muted);font-size:12px">Sem mensagens nesta conversa.</div>';return}
+thread.innerHTML=msgs.map(m=>{
+const isPro=m.sender_id===proId
+return`<div class="msg-bubble ${isPro?'msg-pro':'msg-client'}">
+<div class="msg-meta">${isPro?'Profissional':'Cliente'} · ${m.created_at?new Date(m.created_at).toLocaleString('pt-PT'):''}</div>
+${(m.content||'').replace(/</g,'&lt;')}
+</div>`
+}).join('')
 }
 
 // LEGACY CONTACT FORM MESSAGES
 async function loadMessages(){
-  const[{data:msgs},{data:pros}]=await Promise.all([
-    db.from('messages_legacy_contact_form').select('*').order('created_at',{ascending:false}),
-    db.from('profiles').select('id,name')
-  ])
-  const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
-  const tbody=document.getElementById('msgs-tbody')
-  if(!msgs||!msgs.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Sem mensagens</td></tr>';return}
-  tbody.innerHTML=msgs.map(m=>`
-    <tr>
-      <td><div class="td-name">${m.sender_name}</div><div class="td-sub">${m.sender_email}</div></td>
-      <td>${pm[m.professional_id]||'—'}</td>
-      <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.subject}</td>
-      <td class="msg-preview">${m.content}</td>
-      <td>${new Date(m.created_at).toLocaleDateString('pt-PT')}</td>
-      <td>${m.read?'✅':'<span class="unread-dot"></span>Não lida'}</td></tr>`).join('')
+const[{data:msgs},{data:pros}]=await Promise.all([
+db.from('messages_legacy_contact_form').select('*').order('created_at',{ascending:false}),
+db.from('profiles').select('id,name')
+])
+const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
+const tbody=document.getElementById('msgs-tbody')
+if(!msgs||!msgs.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Sem mensagens</td></tr>';return}
+tbody.innerHTML=msgs.map(m=>`
+<tr>
+<td><div class="td-name">${m.sender_name}</div><div class="td-sub">${m.sender_email}</div></td>
+<td>${pm[m.professional_id]||'—'}</td>
+<td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.subject}</td>
+<td class="msg-preview">${m.content}</td>
+<td>${new Date(m.created_at).toLocaleDateString('pt-PT')}</td>
+<td>${m.read?'✅':'<span class="unread-dot"></span>Não lida'}</td></tr>`).join('')
 }
 
 // REVIEWS
 async function loadReviews(){
-  const[{data:revs},{data:pros}]=await Promise.all([
-    db.from('reviews').select('*').order('created_at',{ascending:false}),
-    db.from('profiles').select('id,name')
-  ])
-  const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
-  const tbody=document.getElementById('revs-tbody')
-  if(!revs||!revs.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Sem avaliações</td></tr>';return}
-  tbody.innerHTML=revs.map(r=>`
-    <tr>
-      <td><div class="td-name">${r.reviewer_name}</div><div class="td-sub">${r.reviewer_email}</div></td>
-      <td>${pm[r.professional_id]||'—'}</td>
-      <td><span style="color:var(--gold)">${'★'.repeat(r.rating)+'☆'.repeat(5-r.rating)}</span></td>
-      <td class="msg-preview">${r.comment||'(sem comentário)'}</td>
-      <td>${new Date(r.created_at).toLocaleDateString('pt-PT')}</td>
-      <td><button class="btn btn-delete" onclick="deleteReview('${r.id}')">🗑</button></td></tr>`).join('')
+const[{data:revs},{data:pros}]=await Promise.all([
+db.from('reviews').select('*').order('created_at',{ascending:false}),
+db.from('profiles').select('id,name')
+])
+const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
+const tbody=document.getElementById('revs-tbody')
+if(!revs||!revs.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Sem avaliações</td></tr>';return}
+tbody.innerHTML=revs.map(r=>`
+<tr>
+<td><div class="td-name">${r.reviewer_name}</div><div class="td-sub">${r.reviewer_email}</div></td>
+<td>${pm[r.professional_id]||'—'}</td>
+<td><span style="color:var(--gold)">${'★'.repeat(r.rating)+'☆'.repeat(5-r.rating)}</span></td>
+<td class="msg-preview">${r.comment||'(sem comentário)'}</td>
+<td>${new Date(r.created_at).toLocaleDateString('pt-PT')}</td>
+<td><button class="btn btn-delete" onclick="deleteReview('${r.id}')">🗑</button></td></tr>`).join('')
 }
 
 async function deleteReview(id){
-  if(!confirm('Eliminar esta avaliação?'))return
-  await db.from('reviews').delete().eq('id',id);loadReviews()
+if(!confirm('Eliminar esta avaliação?'))return
+await db.from('reviews').delete().eq('id',id);loadReviews()
 }
 
 // SERVICES
 let allServices=[]
 async function loadServices(){
-  const[{data:srvs},{data:pros}]=await Promise.all([
-    db.from('services').select('*').order('created_at',{ascending:false}),
-    db.from('profiles').select('id,name')
-  ])
-  allServices=srvs||[]
-  const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
-  const tbody=document.getElementById('srvs-tbody')
-  if(!srvs||!srvs.length){tbody.innerHTML='<tr class="empty-row"><td colspan="5">Sem serviços</td></tr>';return}
-  tbody.innerHTML=srvs.map(s=>`
-    <tr>
-      <td><div class="td-name">${s.title}</div><div class="td-sub msg-preview">${s.description||''}</div></td>
-      <td>${pm[s.professional_id]||'—'}</td>
-      <td>${s.price_from?`€${s.price_from}${s.price_to?'–€'+s.price_to:''} / ${s.price_unit||'hora'}`:'—'}</td>
-      <td>${new Date(s.created_at).toLocaleDateString('pt-PT')}</td>
-      <td><div style="display:flex;gap:6px">
-        <button class="btn btn-edit" onclick="openEditServiceModal('${s.id}')">✏️</button>
-        <button class="btn btn-delete" onclick="deleteService('${s.id}')">🗑</button>
-      </div></td></tr>`).join('')
+const[{data:srvs},{data:pros}]=await Promise.all([
+db.from('services').select('*').order('created_at',{ascending:false}),
+db.from('profiles').select('id,name')
+])
+allServices=srvs||[]
+const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
+const tbody=document.getElementById('srvs-tbody')
+if(!srvs||!srvs.length){tbody.innerHTML='<tr class="empty-row"><td colspan="5">Sem serviços</td></tr>';return}
+tbody.innerHTML=srvs.map(s=>`
+<tr>
+<td><div class="td-name">${s.title}</div><div class="td-sub msg-preview">${s.description||''}</div></td>
+<td>${pm[s.professional_id]||'—'}</td>
+<td>${s.price_from?`€${s.price_from}${s.price_to?'–€'+s.price_to:''} / ${s.price_unit||'hora'}`:'—'}</td>
+<td>${new Date(s.created_at).toLocaleDateString('pt-PT')}</td>
+<td><div style="display:flex;gap:6px">
+<button class="btn btn-edit" onclick="openEditServiceModal('${s.id}')">✏️</button>
+<button class="btn btn-delete" onclick="deleteService('${s.id}')">🗑</button>
+</div></td></tr>`).join('')
 }
 
 function openEditServiceModal(id){
-  const s=allServices.find(x=>x.id===id)
-  if(!s)return
-  editingServiceId=id
-  document.getElementById('es-title').value=s.title||''
-  document.getElementById('es-desc').value=s.description||''
-  document.getElementById('es-from').value=s.price_from||''
-  document.getElementById('es-to').value=s.price_to||''
-  document.getElementById('edit-service-modal').classList.add('active')
+const s=allServices.find(x=>x.id===id)
+if(!s)return
+editingServiceId=id
+document.getElementById('es-title').value=s.title||''
+document.getElementById('es-desc').value=s.description||''
+document.getElementById('es-from').value=s.price_from||''
+document.getElementById('es-to').value=s.price_to||''
+document.getElementById('edit-service-modal').classList.add('active')
 }
 function closeEditServiceModal(){document.getElementById('edit-service-modal').classList.remove('active');editingServiceId=null}
 async function saveServiceEdit(){
-  if(!editingServiceId)return
-  const updates={
-    title:document.getElementById('es-title').value.trim(),
-    description:document.getElementById('es-desc').value.trim(),
-    price_from:document.getElementById('es-from').value?Number(document.getElementById('es-from').value):null,
-    price_to:document.getElementById('es-to').value?Number(document.getElementById('es-to').value):null
-  }
-  const{error}=await db.from('services').update(updates).eq('id',editingServiceId)
-  if(error){alert('Erro ao guardar: '+error.message);return}
-  closeEditServiceModal();loadServices()
+if(!editingServiceId)return
+const updates={
+title:document.getElementById('es-title').value.trim(),
+description:document.getElementById('es-desc').value.trim(),
+price_from:document.getElementById('es-from').value?Number(document.getElementById('es-from').value):null,
+price_to:document.getElementById('es-to').value?Number(document.getElementById('es-to').value):null
+}
+const{error}=await db.from('services').update(updates).eq('id',editingServiceId)
+if(error){alert('Erro ao guardar: '+error.message);return}
+closeEditServiceModal();loadServices()
 }
 
 async function deleteService(id){
-  if(!confirm('Eliminar este serviço?'))return
-  await db.from('services').delete().eq('id',id);loadServices()
+if(!confirm('Eliminar este serviço?'))return
+await db.from('services').delete().eq('id',id);loadServices()
 }
 
 // PORTFOLIO
 async function loadPortfolio(){
-  const[{data:items},{data:pros}]=await Promise.all([
-    db.from('portfolio_items').select('*').order('created_at',{ascending:false}),
-    db.from('profiles').select('id,name')
-  ])
-  const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
-  const tbody=document.getElementById('port-tbody')
-  if(!items||!items.length){tbody.innerHTML='<tr class="empty-row"><td colspan="5">Sem itens de portfólio</td></tr>';return}
-  tbody.innerHTML=items.map(it=>`
-    <tr>
-      <td><img src="${it.photo_url}" alt="" style="width:52px;height:52px;object-fit:cover;border-radius:8px"/></td>
-      <td class="msg-preview">${it.caption||'—'}</td>
-      <td>${pm[it.professional_id]||'—'}</td>
-      <td>${it.created_at?new Date(it.created_at).toLocaleDateString('pt-PT'):'—'}</td>
-      <td><button class="btn btn-delete" onclick="deletePortfolioItem('${it.id}')">🗑</button></td></tr>`).join('')
+const[{data:items},{data:pros}]=await Promise.all([
+db.from('portfolio_items').select('*').order('created_at',{ascending:false}),
+db.from('profiles').select('id,name')
+])
+const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
+const tbody=document.getElementById('port-tbody')
+if(!items||!items.length){tbody.innerHTML='<tr class="empty-row"><td colspan="5">Sem itens de portfólio</td></tr>';return}
+tbody.innerHTML=items.map(it=>`
+<tr>
+<td><img src="${it.photo_url}" alt="" style="width:52px;height:52px;object-fit:cover;border-radius:8px"/></td>
+<td class="msg-preview">${it.caption||'—'}</td>
+<td>${pm[it.professional_id]||'—'}</td>
+<td>${it.created_at?new Date(it.created_at).toLocaleDateString('pt-PT'):'—'}</td>
+<td><button class="btn btn-delete" onclick="deletePortfolioItem('${it.id}')">🗑</button></td></tr>`).join('')
 }
 
 async function deletePortfolioItem(id){
-  if(!confirm('Eliminar este item do portfólio?'))return
-  await db.from('portfolio_items').delete().eq('id',id);loadPortfolio()
+if(!confirm('Eliminar este item do portfólio?'))return
+await db.from('portfolio_items').delete().eq('id',id);loadPortfolio()
+}
+
+// STATS
+async function loadSiteStats(){
+const[{data:signups,error:e1},{data:visits,error:e2}]=await Promise.all([
+db.rpc('admin_get_signups_daily'),
+db.rpc('admin_get_site_visits_daily')
+])
+if(e1)console.error('signups:',e1)
+if(e2)console.error('visits:',e2)
+const s=signups||[]
+const totalReg=s.reduce((a,d)=>a+Number(d.total_registos||0),0)
+const totalPros=s.reduce((a,d)=>a+Number(d.profissionais||0),0)
+const totalClients=s.reduce((a,d)=>a+Number(d.clientes||0),0)
+const totalNoProfile=s.reduce((a,d)=>a+Number(d.sem_perfil||0),0)
+document.getElementById('st-total').textContent=totalReg
+document.getElementById('st-pros').textContent=totalPros
+document.getElementById('st-clients').textContent=totalClients
+document.getElementById('st-noprofile').textContent=totalNoProfile
+const last30Signups=s.slice(-30).slice().reverse()
+document.getElementById('signups-tbody').innerHTML=last30Signups.map(d=>`
+<tr><td>${new Date(d.dia).toLocaleDateString('pt-PT')}</td><td>${d.total_registos}</td><td>${d.profissionais}</td><td>${d.clientes}</td></tr>`).join('')||'<tr class="empty-row"><td colspan="4">Sem dados</td></tr>'
+const v=visits||[]
+const last30Visits=v.slice(-30)
+const totalVisits=last30Visits.reduce((a,d)=>a+Number(d.visitas||0),0)
+const totalVisitors=last30Visits.reduce((a,d)=>a+Number(d.visitantes_unicos||0),0)
+document.getElementById('st-visits').textContent=totalVisits
+document.getElementById('st-visitors').textContent=totalVisitors
+document.getElementById('visits-tbody').innerHTML=last30Visits.slice().reverse().map(d=>`
+<tr><td>${new Date(d.dia).toLocaleDateString('pt-PT')}</td><td>${d.visitas}</td><td>${d.visitantes_unicos}</td></tr>`).join('')||'<tr class="empty-row"><td colspan="3">Sem visitas registadas ainda</td></tr>'
 }
 
 // NAVIGATION
 function showAdminPage(name){
-  document.querySelectorAll('.page-section').forEach(p=>p.classList.remove('active'))
-  document.getElementById(`page-${name}`).classList.add('active')
-  const names=['overview','profiles','subscricoes','conversations','messages','reviews','services','portfolio']
-  document.querySelectorAll('.atab').forEach((t,i)=>t.classList.toggle('active',names[i]===name))
-  if(name==='subscricoes')loadSubscriptions()
-  if(name==='conversations')loadConversations()
-  if(name==='messages')loadMessages()
-  if(name==='reviews')loadReviews()
-  if(name==='services')loadServices()
-  if(name==='portfolio')loadPortfolio()
+document.querySelectorAll('.page-section').forEach(p=>p.classList.remove('active'))
+document.getElementById(`page-${name}`).classList.add('active')
+const names=['overview','profiles','subscricoes','conversations','messages','reviews','services','portfolio','stats']
+document.querySelectorAll('.atab').forEach((t,i)=>t.classList.toggle('active',names[i]===name))
+if(name==='subscricoes')loadSubscriptions()
+if(name==='conversations')loadConversations()
+if(name==='messages')loadMessages()
+if(name==='reviews')loadReviews()
+if(name==='services')loadServices()
+if(name==='portfolio')loadPortfolio()
+if(name==='stats')loadSiteStats()
 }
 
 init()
