@@ -1561,7 +1561,7 @@ async function createProfile(){
   const name=user.user_metadata?.name||user.email.split('@')[0]
   // Use upsert so duplicate user_id never causes a crash
   const{data,error}=await db.from('profiles').upsert({
-    id:user.id,user_id:user.id,name,email:user.email,
+            id:user.id,user_id:user.id,name,
     plan:'free',approved:true,location:'',category:'',bio:''
   },{onConflict:'user_id'}).select().single()
   if(error){
