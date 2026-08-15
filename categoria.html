@@ -263,7 +263,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
 const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
-function escapeHtml(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
+function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 
 
 const params=new URLSearchParams(location.search)

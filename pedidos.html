@@ -342,7 +342,7 @@ grid.innerHTML=list.map(r=>{
 const budget=r.budget_from?('€'+r.budget_from+(r.budget_to?' – €'+r.budget_to:'+')):''
 const clientName=r.profiles?.name||'Cliente'
 const cover=(r.photo_urls&&r.photo_urls[0])
-  ?`<div class="req-cover" style="background-image:url('${cover0(r)}')"><div class="req-cover-fade"></div><span class="req-cover-cat">${escapeHtml(r.category)}</span></div>`
+  ?`<div class="req-cover" style="background-image:url('${escapeHtml(cover0(r))}')"><div class="req-cover-fade"></div><span class="req-cover-cat">${escapeHtml(r.category)}</span></div>`
   :`<div class="req-cover placeholder">${CAT_ICONS[r.category]||'🛠️'}</div>`
 const nOffers=offerCounts[r.id]||0
 const isOwner=session&&session.user.id===r.client_id
@@ -440,7 +440,7 @@ await loadOfferCounts()
 renderList()
 }
 
-function escapeHtml(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
+function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 
 function contactClient(clientId){
 if(!session){location.href='auth.html?tab=login&redirect='+encodeURIComponent('messages.html?with='+clientId);return}
@@ -458,7 +458,7 @@ function closeModal(){document.getElementById('modal-overlay').classList.remove(
 
 function renderPhotoStrip(){
 const strip=document.getElementById('m-photo-strip')
-const thumbs=pendingPhotos.map((url,i)=>`<div class="photo-thumb"><img src="${url}"/><div class="rm" onclick="removePhoto(${i})">✕</div></div>`).join('')
+const thumbs=pendingPhotos.map((url,i)=>`<div class="photo-thumb"><img src="${escapeHtml(url)}"/><div class="rm" onclick="removePhoto(${i})">✕</div></div>`).join('')
 const addBtn=pendingPhotos.length<4?'<div class="photo-add" onclick="document.getElementById(&quot;m-photo-file&quot;).click()">➕</div>':''
 strip.innerHTML=thumbs+addBtn
 }

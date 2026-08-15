@@ -716,8 +716,9 @@ const avgRating=revs&&revs.length?(revs.reduce((s,r)=>s+r.rating,0)/revs.length)
 const stars=n=>'★'.repeat(Math.round(n))+'☆'.repeat(5-Math.round(n))
 const ratingLine=revs&&revs.length?('<span style="color:#FFD8A8">'+stars(avgRating)+'</span> <strong>'+avgRating.toFixed(1)+'</strong> · '):''
 const verifLine=p.verified?'<strong>✓ Verificado</strong> · ':''
-const headline=PROMO_HEADLINES[p.category]||('Precisas de um '+(p.category||'profissional')+' de confiança?')
-const mediaUrl=pick.media_url||p.photo_url
+const headline=PROMO_HEADLINES[p.category]||('Precisas de um '+escapeHtml(p.category||'profissional')+' de confiança?')
+const mediaUrlRaw=pick.media_url||p.photo_url
+const mediaUrl=mediaUrlRaw?escapeHtml(mediaUrlRaw):''
 const isVideo=pick.media_url&&pick.media_type==='video'
 const mediaHtml=isVideo
   ?'<video class="promo-video" src="'+mediaUrl+'" muted autoplay loop playsinline></video>'
@@ -742,7 +743,7 @@ if(diff<86400)return Math.floor(diff/3600)+'h'
 if(diff<604800)return Math.floor(diff/86400)+'d'
 return new Date(iso).toLocaleDateString('pt-PT')
 }
-function escapeHtml(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
+function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 
 async function loadHeroRequests(){
 const{data}=await db.from('requests').select('title,category,location,created_at').eq('status','open').order('created_at',{ascending:false}).limit(3)
@@ -888,26 +889,27 @@ try{
 const top=destacado||ranked[0]
 const rest=ranked.filter(p=>p.id!==top.id).slice(0,3)
 const stars=n=>'★'.repeat(Math.round(n))+'☆'.repeat(5-Math.round(n))
-const topPhoto=top.photo_url?('background-image:url('+top.photo_url+')'):''
+const topPhoto=top.photo_url?('background-image:url('+escapeHtml(top.photo_url)+')'):''
 const destaqueChip=destacado?'<span class="spotlight-badge" style="top:auto;bottom:14px;color:var(--blue)">Destaque</span>':''
 const verifBadge=top.verified?'<span class="spotlight-badge"><svg class="ic" viewBox="0 0 24 24" style="width:11px;height:11px"><path d="M20 6 9 17l-5-5"/></svg>Verificado</span>':''
 wrap.innerHTML=
 '<div class="spotlight-card">'+
 '<div class="spotlight-photo" style="'+topPhoto+'">'+verifBadge+destaqueChip+'</div>'+
 '<div class="spotlight-body">'+
-'<div class="cat">'+(top.category||'Profissional')+' · '+(top.location||'Portugal')+'</div>'+
-'<div class="name">'+top.name+'</div>'+
+'<div class="cat">'+escapeHtml(top.category||'Profissional')+' · '+escapeHtml(top.location||'Portugal')+'</div>'+
+'<div class="name">'+escapeHtml(top.name)+'</div>'+
 '<div class="rating">'+(top.count?(stars(top.avg)+' <strong>'+top.avg.toFixed(1)+'</strong> ('+top.count+(top.count===1?' avaliação':' avaliações')+')'):'<strong style="color:var(--muted)">Ainda sem avaliações</strong>')+'</div>'+
-'<p class="quote">'+(top.bio?top.bio:'Perfil verificado manualmente pela equipa da Proliga antes de ser publicado.')+'</p>'+
+'<p class="quote">'+(top.bio?escapeHtml(top.bio):'Perfil verificado manualmente pela equipa da Proliga antes de ser publicado.')+'</p>'+
 '<a href="'+perfilHref(top)+'" class="btn btn-blue" style="align-self:flex-start">Ver perfil</a>'+
 '</div></div>'+
 '<div class="other-pros">'+
 '<p class="lbl">outros profissionais verificados</p>'+
 rest.map(p=>{
-const initials=p.name.split(' ').map(n=>n[0]).slice(0,2).join('')
-const avatar=p.photo_url?('<img src="'+p.photo_url+'" alt="'+p.name+'"/>'):initials
+const safeName=escapeHtml(p.name)
+const initials=escapeHtml(p.name.split(' ').map(n=>n[0]).slice(0,2).join(''))
+const avatar=p.photo_url?('<img src="'+escapeHtml(p.photo_url)+'" alt="'+safeName+'"/>'):initials
 const rmark=p.count?(stars(p.avg)+' <strong>'+p.avg.toFixed(1)+'</strong>'):'<span style="color:var(--green);font-weight:700;font-size:12px">✓ Verificado</span>'
-return '<a href="'+perfilHref(p)+'" class="other-pro-row"><div class="av">'+avatar+'</div><div class="info"><div class="n">'+p.name+'</div><div class="c">'+(p.category||'Profissional')+' · '+(p.location||'Portugal')+'</div></div><div class="r">'+rmark+'</div></a>'
+return '<a href="'+perfilHref(p)+'" class="other-pro-row"><div class="av">'+avatar+'</div><div class="info"><div class="n">'+safeName+'</div><div class="c">'+escapeHtml(p.category||'Profissional')+' · '+escapeHtml(p.location||'Portugal')+'</div></div><div class="r">'+rmark+'</div></a>'
 }).join('')+
 '</div>'+
 '<div class="spotlight-more"><a href="categoria.html" class="btn btn-line">Ver todos os profissionais</a></div>'

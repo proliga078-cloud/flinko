@@ -422,7 +422,7 @@ const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
 const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
 
-function escapeHtml(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
+function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 function escAttrJs(s){return escapeHtml(String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"))}
 const params=new URLSearchParams(location.search)
 // O perfil abre por id (?id=uuid) ou pelo link proprio do plano Pro,
@@ -789,8 +789,8 @@ async function loadDiary(){
   if(!data||!data.length){el.innerHTML=`<p style="color:var(--muted);font-size:14px;text-align:center;padding:20px">Ainda sem publicações no diário de trabalhos.</p>`;return}
   el.innerHTML=`<div class="diary-track">${data.map(u=>{
     const date=new Date(u.created_at).toLocaleDateString('pt-PT',{day:'numeric',month:'short'})
-    const photo=u.photo_url?`<img class="diary-photo" src="${u.photo_url}" alt=""/>`:`<div class="diary-photo-empty"><svg class="ic" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>`
-    return `<div class="diary-item"><div class="diary-dot"></div><div class="diary-card">${photo}<div><div class="diary-text">${u.content}</div><div class="diary-meta">${u.location_label?u.location_label+' · ':''}${date}</div></div></div></div>`
+    const photo=u.photo_url?`<img class="diary-photo" src="${escapeHtml(u.photo_url)}" alt=""/>`:`<div class="diary-photo-empty"><svg class="ic" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>`
+    return `<div class="diary-item"><div class="diary-dot"></div><div class="diary-card">${photo}<div><div class="diary-text">${escapeHtml(u.content)}</div><div class="diary-meta">${u.location_label?escapeHtml(u.location_label)+' · ':''}${date}</div></div></div></div>`
   }).join('')}</div>`
 }
 

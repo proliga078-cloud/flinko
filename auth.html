@@ -208,9 +208,22 @@ document.getElementById('form-recovery').style.display = 'block'
 }
 })
 
+// Impede open redirect: só aceita um ?redirect= que aponte para uma página
+// do próprio site (caminho relativo), nunca para um domínio externo — caso
+// contrário um link como auth.html?redirect=https://site-falso.com podia
+// usar o nosso login genuíno para depois atirar a vítima para phishing.
+function safeRedirect(path) {
+try {
+if (!path) return null
+const url = new URL(path, location.origin)
+if (url.origin === location.origin) return url.pathname + url.search + url.hash
+} catch (e) {}
+return null
+}
+
 // If already logged in (and not in the middle of a recovery flow), redirect to dashboard
 db.auth.getSession().then(({ data }) => {
-if (data.session && !inRecovery && !location.hash.includes('type=recovery')) location.href = params.get('redirect') || 'dashboard.html'
+if (data.session && !inRecovery && !location.hash.includes('type=recovery')) location.href = safeRedirect(params.get('redirect')) || 'dashboard.html'
 })
 
 // Check if coming from ?tab=register
@@ -225,7 +238,7 @@ document.getElementById('intent-client').classList.toggle('on', t === 'client')
 document.getElementById('intent-professional').classList.toggle('on', t === 'professional')
 }
 function postAuthDestination(accountType) {
-const r = params.get('redirect')
+const r = safeRedirect(params.get('redirect'))
 if (r) return r
 return accountType === 'client' ? 'pedidos.html' : 'dashboard.html'
 }
@@ -271,7 +284,7 @@ return
 }
 
 showMsg('login-msg', 'Bem-vindo! A redirecionar...', 'success')
-setTimeout(() => location.href = params.get('redirect') || 'dashboard.html', 800)
+setTimeout(() => location.href = safeRedirect(params.get('redirect')) || 'dashboard.html', 800)
 } catch (e) {
 showMsg('login-msg', 'Erro de ligação. Tenta novamente.', 'error')
 btn.disabled = false

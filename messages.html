@@ -229,7 +229,7 @@ return
 }
 el.innerHTML=conversations.map(c=>{
 const unread=c._unread
-const avatar=c.other.photo_url?'<img src="'+c.other.photo_url+'" alt="">':initialsOf(c.other.name)
+const avatar=c.other.photo_url?'<img src="'+escapeHtml(c.other.photo_url)+'" alt="">':escapeHtml(initialsOf(c.other.name))
 const time=c.last_message_at?timeAgo(c.last_message_at):''
 return '<div class="conv-item'+(c.id===activeConvId?' active':'')+(unread?' unread':'')+'" onclick="openConversation(\''+c.id+'\')">'+
 '<div class="conv-avatar">'+avatar+'</div>'+
@@ -270,7 +270,7 @@ activeOther=conv.other
 document.getElementById('chat-empty').style.display='none'
 document.getElementById('chat-active').style.display='flex'
 document.getElementById('conv-panel').classList.add('hide-mobile')
-document.getElementById('ch-avatar').innerHTML=conv.other.photo_url?'<img src="'+conv.other.photo_url+'">':initialsOf(conv.other.name)
+document.getElementById('ch-avatar').innerHTML=conv.other.photo_url?'<img src="'+escapeHtml(conv.other.photo_url)+'">':escapeHtml(initialsOf(conv.other.name))
 document.getElementById('ch-name').textContent=conv.other.name
 document.getElementById('ch-cat').textContent=conv.other.category||''
 const lnk=document.getElementById('ch-profile-link')
@@ -475,11 +475,7 @@ function formatMessage(txt){
   })
 }
 
-function escapeHtml(s){
-const d=document.createElement('div')
-d.textContent=s||''
-return d.innerHTML
-}
+function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 
 document.getElementById('msg-input').addEventListener('keydown',e=>{
 if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}

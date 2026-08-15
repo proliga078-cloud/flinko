@@ -1481,7 +1481,7 @@ if(error) throw error;
 const { data: urlData } = db.storage.from('proliga-media').getPublicUrl(path);
 const url = urlData.publicUrl;
 document.getElementById('p-photo').value = url;
-preview.innerHTML = `<img src="${url}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--blue)"/>`;
+preview.innerHTML = `<img src="${escapeHtml(url)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--blue)"/>`;
   } catch(e) {
   console.error('Erro ao carregar foto de perfil:', e);
   showAlert('profile-error','Não foi possível carregar a foto. Tenta novamente.','error');
@@ -1514,7 +1514,7 @@ if(error) throw error;
 const { data: urlData } = db.storage.from('proliga-media').getPublicUrl(path);
 const url = urlData.publicUrl;
 document.getElementById('port-url').value = url;
-preview.innerHTML = `<img src="${url}" style="width:100px;height:100px;border-radius:10px;object-fit:cover;border:2px solid var(--blue)"/>`;
+preview.innerHTML = `<img src="${escapeHtml(url)}" style="width:100px;height:100px;border-radius:10px;object-fit:cover;border:2px solid var(--blue)"/>`;
   } catch(e) {
   console.error('Erro ao carregar foto de portfólio:', e);
   showAlert('port-error','Não foi possível carregar a foto. Tenta novamente.','error');
@@ -1577,7 +1577,7 @@ function updateSidebar(){
   document.getElementById('sb-plan').textContent=plan==='premium'?'Premium':plan==='pro'?'Pro':'Plano Grátis'
   const initials=name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase()
   const av=document.getElementById('sb-avatar')
-  if(profileData?.photo_url)av.innerHTML=`<img src="${profileData.photo_url}" alt="${name}"/>`
+  if(profileData?.photo_url)av.innerHTML=`<img src="${escapeHtml(profileData.photo_url)}" alt="${escapeHtml(name)}"/>`
   else av.textContent=initials
   const nt=document.getElementById('notif-toggle')
   if(nt)nt.checked=profileData?.notify_email!==false
@@ -2264,7 +2264,7 @@ async function loadServices(){
     <div class="list-item">
       <div class="list-item-body">
         <div class="list-item-title">${escapeHtml(s.title)}</div>
-        <div class="list-item-sub">${s.description||''} ${s.price_from?`· €${s.price_from}${s.price_to?'–€'+s.price_to:''} / ${s.price_unit||'hora'}`:''}
+        <div class="list-item-sub">${escapeHtml(s.description||'')} ${s.price_from?`· €${s.price_from}${s.price_to?'–€'+s.price_to:''} / ${s.price_unit||'hora'}`:''}
         </div>
       </div>
       <div><button class="btn btn-danger btn-sm" onclick="deleteService('${s.id}')"><svg class="ic" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/><path d="M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/></svg></button></div>
@@ -2307,7 +2307,7 @@ async function loadPortfolio(){
   if(!data||!data.length){grid.innerHTML='<div class="empty">Sem fotos ainda.</div>';return}
   grid.innerHTML=data.map(item=>`
     <div class="port-img">
-      <img src="${item.photo_url}" alt="${item.caption||item.title||''}"/>
+      <img src="${escapeHtml(item.photo_url)}" alt="${escapeHtml(item.caption||item.title||'')}"/>
       ${item.title?`<span style="position:absolute;top:6px;left:6px;background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px">Caso de sucesso</span>`:''}
       <button class="del" onclick="deletePortItem('${item.id}')">✕</button>
     </div>`).join('')
@@ -2332,7 +2332,7 @@ async function uploadPortfolioBeforePhoto(input){
     if(error)throw error
     const{data:urlData}=db.storage.from('proliga-media').getPublicUrl(path)
     document.getElementById('port-before-url').value=urlData.publicUrl
-    preview.innerHTML=`<img src="${urlData.publicUrl}" style="width:100px;height:100px;border-radius:10px;object-fit:cover"/>`
+    preview.innerHTML=`<img src="${escapeHtml(urlData.publicUrl)}" style="width:100px;height:100px;border-radius:10px;object-fit:cover"/>`
   }catch(e){
   console.error('Erro ao carregar foto "antes":', e);
   showAlert('port-error','Não foi possível carregar a foto. Tenta novamente.','error');
@@ -2374,7 +2374,7 @@ async function loadDiaryDash(){
     <div class="list-item">
       <div class="list-item-body">
         <div class="list-item-title">${escapeHtml(u.content)}</div>
-        <div class="list-item-sub">${u.location_label?u.location_label+' · ':''}${new Date(u.created_at).toLocaleDateString('pt-PT')}</div>
+        <div class="list-item-sub">${u.location_label?escapeHtml(u.location_label)+' · ':''}${new Date(u.created_at).toLocaleDateString('pt-PT')}</div>
       </div>
       <div><button class="btn btn-danger btn-sm" onclick="deleteDiaryUpdate('${u.id}')">✕</button></div>
     </div>`).join('')
@@ -2412,7 +2412,7 @@ async function uploadDiaryPhoto(input){
     if(error)throw error
     const{data:urlData}=db.storage.from('proliga-media').getPublicUrl(path)
     document.getElementById('diary-photo-url').value=urlData.publicUrl
-    preview.innerHTML=`<img src="${urlData.publicUrl}" style="width:100px;height:100px;border-radius:10px;object-fit:cover"/>`
+    preview.innerHTML=`<img src="${escapeHtml(urlData.publicUrl)}" style="width:100px;height:100px;border-radius:10px;object-fit:cover"/>`
   }catch(e){
     console.error('Erro ao carregar foto do diário:', e);
     showAlert('diary-error','Não foi possível carregar a foto. Tenta novamente.','error');
@@ -2949,7 +2949,7 @@ async function loadMyRequests(){
   el.innerHTML=data.map(r=>{
     const budget=r.budget_from?('€'+r.budget_from+(r.budget_to?' – €'+r.budget_to:'')):'Sem orçamento definido'
     const resolved=r.status==='resolved'
-    const photos=(r.photo_urls||[]).length?`<div class="req-photo-row">${r.photo_urls.map(u=>`<img src="${u}"/>`).join('')}</div>`:''
+    const photos=(r.photo_urls||[]).length?`<div class="req-photo-row">${r.photo_urls.map(u=>`<img src="${escapeHtml(u)}"/>`).join('')}</div>`:''
     const myOffers=offersByReq[r.id]||[]
     const offersHtml=myOffers.length
       ?`<div class="offers-box"><div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px">${myOffers.length} proposta${myOffers.length>1?'s':''} recebida${myOffers.length>1?'s':''}</div>${myOffers.map(o=>{
@@ -3036,11 +3036,7 @@ function toggleAiChat(){
   if(aiChatOpen)document.getElementById('ai-chat-input').focus()
 }
 
-function escapeHtml(s){
-  const d=document.createElement('div')
-  d.textContent=s
-  return d.innerHTML
-}
+function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 
 async function sendAiChat(){
   const input=document.getElementById('ai-chat-input')
@@ -4003,8 +3999,8 @@ async function searchReferralPros(){
   const el=document.getElementById('ref-results')
   if(!refSearchResults.length){el.innerHTML='<div class="empty" style="padding:10px 0">Nenhum profissional encontrado.</div>';return}
   el.innerHTML=refSearchResults.map((p,i)=>{
-    const initials=p.name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase()
-    const avatar=p.photo_url?`<img src="${p.photo_url}"/>`:initials
+    const initials=escapeHtml(p.name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase())
+    const avatar=p.photo_url?`<img src="${escapeHtml(p.photo_url)}"/>`:initials
     const sel=refSelectedPro&&refSelectedPro.id===p.id?'selected':''
     return`<div class="pro-pick-row ${sel}" onclick="selectReferralPro(${i})">
       <div class="pro-pick-avatar">${avatar}</div>
@@ -4118,7 +4114,7 @@ async function uploadAdMedia(input){
     const{data:urlData}=db.storage.from('proliga-media').getPublicUrl(path)
     pendingAdMedia={url:urlData.publicUrl,type:isVideo?'video':'photo'}
     preview.innerHTML=isVideo
-      ?`<video src="${urlData.publicUrl}" style="width:120px;height:68px;border-radius:8px;object-fit:cover" muted autoplay loop playsinline></video>`
+      ?`<video src="${escapeHtml(urlData.publicUrl)}" style="width:120px;height:68px;border-radius:8px;object-fit:cover" muted autoplay loop playsinline></video>`
       :`<img src="${urlData.publicUrl}" style="width:68px;height:68px;border-radius:8px;object-fit:cover"/>`
   }catch(e){
     preview.innerHTML=''
