@@ -1561,15 +1561,13 @@ async function init(){
 
 async function createProfile(){
   const name=user.user_metadata?.name||user.email.split('@')[0]
-  // Use upsert so duplicate user_id never causes a crash. Sem .select() a
-  // seguir (RETURNING exigiria as mesmas permissões de leitura que um
-  // SELECT direto, incluindo colunas sensíveis) — vamos buscar o perfil
-  // completo a seguir através de get_my_profile(), que é sempre permitido
-  // para o próprio dono, independentemente das colunas.
-  const{error}=await db.from('profiles').upsert({
-            id:user.id,user_id:user.id,name,
-    plan:'free',approved:true,location:'',category:'',bio:''
-  },{onConflict:'user_id'})
+  // Criar o perfil pela primeira vez passa por uma função (RPC) em vez de
+  // um upsert direto: o "on conflict ... do update" do Postgres exige
+  // SELECT sobre as colunas em causa (incluindo user_id) mesmo sem pedir
+  // dados de volta — deixou de ser possível para o role authenticated
+  // depois de restringirmos as colunas legíveis. A função corre com
+  // privilégios completos, por isso não tem esse problema.
+  const{error}=await db.rpc('create_my_profile_if_missing',{p_name:name})
   if(error){
     console.error('createProfile upsert error:',error)
   }

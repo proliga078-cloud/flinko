@@ -378,17 +378,12 @@ btn.textContent = 'Criar conta'
 }
 
 async function insertProfile(userId, name, email, accountType) {
-await db.from('profiles').upsert({
-id: userId,
-user_id: userId,
-name: name,
-plan: 'free',
-approved: true,
-location: '',
-category: '',
-bio: '',
-account_type: accountType || 'professional'
-}, { onConflict: 'user_id' })
+// Criar o perfil passa por uma função (RPC): um "upsert" direto com
+// "on conflict ... do update" exige privilégio de SELECT sobre as
+// colunas em causa mesmo sem pedir dados de volta — deixou de estar
+// disponível para contas normais depois de restringirmos as colunas
+// legíveis da tabela profiles. A função corre com privilégios completos.
+await db.rpc('create_my_profile_if_missing', { p_name: name, p_account_type: accountType || 'professional' })
 }
 
 async function applyReferral(newUserId) {
