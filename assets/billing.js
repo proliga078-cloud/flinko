@@ -8,7 +8,7 @@ const original=btn?btn.textContent:null
 if(btn){btn.textContent='A processar...';btn.disabled=true}
 try{
 const billing=(typeof isYearly!=='undefined'&&isYearly)?'yearly':'monthly'
-const res=await fetch('/.netlify/functions/create-checkout-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan,billing,userId:session.user.id,email:session.user.email})})
+const res=await fetch('/.netlify/functions/create-checkout-session',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},body:JSON.stringify({plan,billing})})
 const data=await res.json()
 if(res.ok&&data.url){location.href=data.url}else{alert(data.error||'Não foi possível iniciar o pagamento. Tenta novamente.')}
 }catch(e){
@@ -19,10 +19,11 @@ if(btn){btn.textContent=original;btn.disabled=false}
 }
 
 window.manageBilling=async function(){
-const customerId=(typeof profileData!=='undefined'&&profileData)?profileData.stripe_customer_id:null
-if(!customerId){alert('Ainda não tens uma subscrição paga ativa.');return}
+if(typeof db==='undefined'){alert('Erro a carregar o sistema de pagamentos. Recarrega a página.');return}
+const{data:{session}}=await db.auth.getSession()
+if(!session){location.href='auth.html?tab=login&redirect=dashboard.html';return}
 try{
-const res=await fetch('/.netlify/functions/create-portal-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId})})
+const res=await fetch('/.netlify/functions/create-portal-session',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},body:'{}'})
 const data=await res.json()
 if(res.ok&&data.url){location.href=data.url}else{alert(data.error||'Erro ao abrir o portal de gestão da subscrição.')}
 }catch(e){
