@@ -1528,7 +1528,10 @@ async function init(){
     const{data:{session}}=await db.auth.getSession()
     if(!session){location.href='auth.html';return}
     user=session.user
-    const{data:pro}=await db.from('profiles').select('*').eq('user_id',user.id).single()
+    // O proprio perfil (com campos sensiveis como creditos/plano/stripe)
+    // ja nao se le diretamente da tabela — usa-se get_my_profile(), que so
+    // devolve dados de quem esta autenticado a pedir.
+    const{data:pro}=await db.rpc('get_my_profile')
     if(pro){profileData=pro;profileId=pro.id;await loadPrivatePhone();fillProfileForm(profileData)}
     else await createProfile()
     updateSidebar()
@@ -1555,19 +1558,20 @@ async function init(){
 
 async function createProfile(){
   const name=user.user_metadata?.name||user.email.split('@')[0]
-  // Use upsert so duplicate user_id never causes a crash
-  const{data,error}=await db.from('profiles').upsert({
+  // Use upsert so duplicate user_id never causes a crash. Sem .select() a
+  // seguir (RETURNING exigiria as mesmas permissões de leitura que um
+  // SELECT direto, incluindo colunas sensíveis) — vamos buscar o perfil
+  // completo a seguir através de get_my_profile(), que é sempre permitido
+  // para o próprio dono, independentemente das colunas.
+  const{error}=await db.from('profiles').upsert({
             id:user.id,user_id:user.id,name,
     plan:'free',approved:true,location:'',category:'',bio:''
-  },{onConflict:'user_id'}).select().single()
+  },{onConflict:'user_id'})
   if(error){
     console.error('createProfile upsert error:',error)
-    // Fallback: try to fetch any existing row for this user
-    const{data:existing}=await db.from('profiles').select('*').eq('user_id',user.id).maybeSingle()
-    if(existing){profileData=existing;profileId=existing.id;await loadPrivatePhone();fillProfileForm(profileData)}
-    return
   }
-  if(data){profileData=data;profileId=data.id;await loadPrivatePhone();fillProfileForm(profileData)}
+  const{data:existing}=await db.rpc('get_my_profile')
+  if(existing){profileData=existing;profileId=existing.id;await loadPrivatePhone();fillProfileForm(profileData)}
 }
 
 function updateSidebar(){
@@ -4053,7 +4057,7 @@ async function loadInvites(){
   if(box){
     let code=profileData?.referral_code
     if(!code){
-      const{data}=await db.from('profiles').select('referral_code').eq('id',profileId).maybeSingle()
+      const{data}=await db.rpc('get_my_profile')
       code=data?.referral_code
       if(code)profileData={...profileData,referral_code:code}
     }
@@ -4082,7 +4086,7 @@ async function loadInvites(){
 }
 
 async function refreshCreditsBalance(){
-  const{data}=await db.from('profiles').select('credits').eq('id',profileId).maybeSingle()
+  const{data}=await db.rpc('get_my_profile')
   const credits=data?.credits||0
   profileData={...profileData,credits}
   const el=document.getElementById('credits-balance')

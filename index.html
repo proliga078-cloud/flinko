@@ -762,7 +762,7 @@ return '<a href="pedidos.html" class="req-card"'+(i===data.length-1?' style="mar
 async function loadStats(){
 try{
 const[{count:pc},{data:revs}]=await Promise.all([
-db.from('profiles').select('*',{count:'exact',head:true}).eq('is_demo',false),
+db.from('profiles').select('id',{count:'exact',head:true}).eq('is_demo',false),
 db.from('reviews').select('rating')
 ])
 if(pc!=null){document.getElementById('t-pros').textContent=pc+'+';document.getElementById('stat-pros-inline').textContent=pc+'+'}

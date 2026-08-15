@@ -421,8 +421,11 @@ try{
 const{data:{session}}=await db.auth.getSession()
 if(!session)return
 const isAdminEmail=session.user.email===ADMIN_EMAIL
-const{data:prof}=await db.from('profiles').select('is_admin').eq('user_id',session.user.id).single()
-if(isAdminEmail||prof?.is_admin===true)showAdmin(session.user)
+// is_admin já não é uma coluna legível diretamente (só o próprio dono podia
+// lê-la de qualquer forma) — usa-se a função is_admin(), que verifica
+// sempre a sessão de quem pede.
+const{data:isAdminFlag}=await db.rpc('is_admin')
+if(isAdminEmail||isAdminFlag===true)showAdmin(session.user)
 }catch(e){console.error('init:',e)}
 }
 
@@ -436,8 +439,8 @@ if(!email||!pass){showLoginError('Preenche email e palavra-passe.');return}
 btn.disabled=true;btn.textContent='A verificar...'
 const{data,error}=await db.auth.signInWithPassword({email,password:pass})
 if(error){showLoginError('Credenciais inválidas.');btn.disabled=false;btn.textContent='Entrar no painel';return}
-const{data:prof2}=await db.from('profiles').select('is_admin').eq('user_id',data.user.id).single()
-if(data.user.email!==ADMIN_EMAIL&&prof2?.is_admin!==true){
+const{data:isAdminFlag2}=await db.rpc('is_admin')
+if(data.user.email!==ADMIN_EMAIL&&isAdminFlag2!==true){
 await db.auth.signOut()
 showLoginError('Acesso negado. Esta conta não tem permissões de administrador.')
 btn.disabled=false;btn.textContent='Entrar no painel';return
@@ -462,7 +465,7 @@ function demoBadge(p){return p&&p.is_demo?'<span class="badge badge-demo">🧪 D
 // OVERVIEW
 async function loadOverview(){
 const[{count:pc},{count:cc},{count:rc},{count:sc}]=await Promise.all([
-db.from('profiles').select('*',{count:'exact',head:true}),
+db.from('profiles').select('id',{count:'exact',head:true}),
 db.from('conversations').select('*',{count:'exact',head:true}),
 db.from('reviews').select('*',{count:'exact',head:true}),
 db.from('services').select('*',{count:'exact',head:true})
@@ -484,8 +487,13 @@ document.getElementById('recent-conv-tbl').innerHTML=(convs||[]).map(c=>`
 
 // PROFILES
 async function loadProfiles(){
-const{data}=await db.from('profiles').select('*').order('created_at',{ascending:false})
-allPros=data||[]
+// A listagem de admin precisa de TODAS as colunas de TODOS os perfis
+// (créditos, planos, stripe, is_admin) — isso já não é possível por
+// leitura direta da tabela (só o próprio dono ou um admin, e o Postgres
+// não distingue isso por linha ao nível das colunas). admin_list_profiles()
+// é uma função dedicada que confirma is_admin() antes de devolver tudo.
+const{data}=await db.rpc('admin_list_profiles')
+allPros=(data||[]).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))
 const ids=allPros.map(p=>p.id)
 if(ids.length){
 const{data:priv}=await db.from('profile_private').select('profile_id,phone').in('profile_id',ids)
@@ -576,9 +584,9 @@ closeEditModal();loadProfiles();loadOverview()
 
 // SUBSCRIPTIONS
 async function loadSubscriptions(){
-const{data,error}=await db.from('profiles').select('id,name,plan,plan_expires_at,stripe_customer_id,stripe_subscription_id,credits').order('name',{ascending:true})
+const{data,error}=await db.rpc('admin_list_profiles')
 if(error){document.getElementById('subs-tbody').innerHTML=`<tr class="empty-row"><td colspan="6">Erro a carregar: ${error.message}</td></tr>`;return}
-allSubs=data||[]
+allSubs=(data||[]).sort((a,b)=>(a.name||'').localeCompare(b.name||''))
 renderSubStats(allSubs)
 filterSubs()
 }

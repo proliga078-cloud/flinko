@@ -438,11 +438,16 @@ function slugFromPath(){
 }
 const proSlug=(params.get('u')||slugFromPath()).toLowerCase().trim()
 let currentRating=0,proData=null,preloadedPro=null
+// Colunas publicas de um perfil (o que qualquer visitante pode ver). Usadas
+// aqui em vez de select('*') porque a tabela profiles tambem tem colunas
+// sensiveis (creditos, ids do Stripe, is_admin, etc.) que so o proprio dono
+// ou um admin podem ler — pedir '*' falharia com "permission denied".
+const PUBLIC_PROFILE_COLS='id,name,bio,category,location,photo_url,plan,verified,created_at,slug,avg_response_minutes,response_sample_count,unavailable_until,unavailable_message,weekly_schedule,cover_url,certifications,has_insurance,experience_years,languages,specialties,website,is_demo'
 
 async function resolveSlug(){
   if(proId&&proId!=='null'&&proId!=='undefined')return true
   if(!proSlug)return false
-  const{data}=await db.from('profiles').select('*').eq('slug',proSlug).maybeSingle()
+  const{data}=await db.from('profiles').select(PUBLIC_PROFILE_COLS).eq('slug',proSlug).maybeSingle()
   if(!data)return false
   preloadedPro=data
   proId=data.id
@@ -459,7 +464,7 @@ async function init(){
     document.getElementById('nav-avatar').textContent=name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase()
   }
   const{data:pro,error}=preloadedPro?{data:preloadedPro,error:null}
-    :await db.from('profiles').select('*').eq('id',proId).single()
+    :await db.from('profiles').select(PUBLIC_PROFILE_COLS).eq('id',proId).single()
   if(error||!pro){document.getElementById('profile-header').innerHTML='<p style="color:red;padding:20px">Profissional não encontrado.</p>';return}
   proData=pro
   document.title=`${pro.name} – Proliga`

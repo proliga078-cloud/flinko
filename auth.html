@@ -394,9 +394,12 @@ account_type: accountType || 'professional'
 async function applyReferral(newUserId) {
 if (!refCode) return
 try {
-const { data: referrer } = await db.from('profiles').select('id').eq('referral_code', refCode).maybeSingle()
-if (!referrer || referrer.id === newUserId) return
-await db.from('signup_referrals').insert({ referrer_id: referrer.id, referred_id: newUserId })
+// referral_code nao e uma coluna legivel diretamente (so o proprio dono a
+// consegue ler) — usa-se uma funcao dedicada que so devolve o id de quem
+// convidou, sem expor mais nenhum dado do perfil dele.
+const { data: referrerId } = await db.rpc('resolve_referral_code', { code: refCode })
+if (!referrerId || referrerId === newUserId) return
+await db.from('signup_referrals').insert({ referrer_id: referrerId, referred_id: newUserId })
 } catch (e) {}
 }
 
