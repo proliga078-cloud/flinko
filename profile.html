@@ -421,6 +421,9 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
 const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
+
+function escapeHtml(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
+function escAttrJs(s){return escapeHtml(String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"))}
 const params=new URLSearchParams(location.search)
 // O perfil abre por id (?id=uuid) ou pelo link proprio do plano Pro,
 // que o Netlify reescreve de /o-nome-dele para ?u=o-nome-dele
@@ -508,7 +511,7 @@ function renderSpecialties(pro){
 function renderCertifications(pro){
   if(!pro.certifications||!pro.certifications.length)return ''
   const svgCert='<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5L17 22l-5-3-5 3 1.5-8.5"/></svg>'
-  return `<div class="cert-strip">${pro.certifications.map(c=>`<div class="cert-item">${svgCert}<div><div class="cert-name">${c.name||''}</div>${c.year?`<div class="cert-year">${c.year}</div>`:''}</div></div>`).join('')}</div>`
+  return `<div class="cert-strip">${pro.certifications.map(c=>`<div class="cert-item">${svgCert}<div><div class="cert-name">${escapeHtml(c.name||'')}</div>${c.year?`<div class="cert-year">${c.year}</div>`:''}</div></div>`).join('')}</div>`
 }
 function isUnavailable(pro){
   if(!pro.unavailable_until)return false
@@ -516,7 +519,8 @@ function isUnavailable(pro){
 }
 function renderHeader(pro){
   const initials=pro.name.split(' ').map(n=>n[0]).slice(0,2).join('')
-  const avatar=pro.photo_url?`<img src="${pro.photo_url}" alt="${pro.name}"/>`:`${initials}`
+  const safeName=escapeHtml(pro.name)
+  const avatar=pro.photo_url?`<img src="${escapeHtml(pro.photo_url)}" alt="${safeName}"/>`:`${initials}`
   if(pro.cover_url){document.getElementById('cover').style.backgroundImage=`url('${pro.cover_url}')`;document.body.classList.add('has-cover')}
   const planBadge=pro.plan==='premium'?`<span class="plan-badge-wrap badge-premium"><svg class="ic" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="width:12px;height:12px"><path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10z"/></svg> Premium</span>`:pro.plan==='pro'?`<span class="plan-badge-wrap badge-pro"><svg class="ic" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg> Pro</span>`:''
   const verif=pro.verified?'<span class="verif-badge"><svg class="ic" viewBox="0 0 24 24" style="width:12px;height:12px;color:#fff"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg> Verificado</span>':''
@@ -526,22 +530,22 @@ function renderHeader(pro){
   document.getElementById('profile-header').innerHTML=`
     <div class="avatar-wrap"><div class="avatar">${avatar}</div>${planBadge}</div>
     <div class="profile-info">
-      <div class="profile-name">${pro.name} ${verif}${fastResp}</div>
+      <div class="profile-name">${safeName} ${verif}${fastResp}</div>
       <div class="profile-cat">
-        <span class="cat-pill">${pro.category||'Profissional'}</span>
-        <span class="loc-text"><svg class="ic" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${pro.location||'Portugal'}</span>
+        <span class="cat-pill">${escapeHtml(pro.category||'Profissional')}</span>
+        <span class="loc-text"><svg class="ic" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${escapeHtml(pro.location||'Portugal')}</span>
         ${pro.experience_years?`<span class="exp-chip"><svg class="ic" viewBox="0 0 24 24" style="width:11px;height:11px;color:#fff"><path d="M12 20v-6M6 20V10M18 20V4"/></svg> ${pro.experience_years} anos de experiência</span>`:''}
       </div>
       ${isUnavailable(pro)?`<div style="background:#FEF3E2;border:1px solid #FBCB9B;color:#96590C;font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:8px;margin-bottom:10px;display:inline-flex;align-items:center;gap:6px"><svg class="ic" viewBox="0 0 24 24" style="width:14px;height:14px"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Indisponível até ${new Date(pro.unavailable_until+'T00:00:00').toLocaleDateString('pt-PT')}${pro.unavailable_message?' — '+pro.unavailable_message:''}</div>`:''}
       <div class="rating-row" id="rating-row">
         <div class="spinner" style="width:20px;height:20px;border-width:2px;margin:0"></div>
       </div>
-      ${pro.bio?`<div class="profile-bio">${pro.bio}</div>`:''}
+      ${pro.bio?`<div class="profile-bio">${escapeHtml(pro.bio)}</div>`:''}
       ${renderSpecialties(pro)}
       ${renderCertifications(pro)}
     </div>
     <div class="profile-actions">
-      ${pro.website?`<a href="${pro.website}" target="_blank" class="btn btn-outline"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Website</a>`:''}
+      ${pro.website?`<a href="${escapeHtml(pro.website)}" target="_blank" class="btn btn-outline"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Website</a>`:''}
       <button class="btn btn-ghost" style="font-size:13px" onclick="showTab('avaliacoes');document.querySelector('#tab-avaliacoes').scrollIntoView({behavior:'smooth'})"><svg class="ic" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg> Avaliar</button>
     </div>`
 }
@@ -605,10 +609,10 @@ async function loadReviews(){
     return`<div class="review-item">
       <div class="review-header">
         <div class="review-avatar">${initials}</div>
-        <div style="flex:1"><div class="review-name">${r.reviewer_name}</div><div class="review-meta">${date}</div></div>
+        <div style="flex:1"><div class="review-name">${escapeHtml(r.reviewer_name)}</div><div class="review-meta">${date}</div></div>
         <div class="review-stars">${stars}</div>
       </div>
-      ${r.comment?`<div class="review-text">${r.comment}</div>`:''}
+      ${r.comment?`<div class="review-text">${escapeHtml(r.comment)}</div>`:''}
     </div>`
   }).join('')}</div>`
 }
@@ -621,7 +625,7 @@ async function loadServices(){
   }
   document.getElementById('services-list').innerHTML=data.map(s=>{
     const price=s.price_from?`<div class="service-price">A partir de €${s.price_from}${s.price_to?` – €${s.price_to}`:''} / ${s.price_unit||'hora'}</div>`:''
-    return`<div class="service-item"><div class="service-name">${s.title}</div>${s.description?`<div class="service-desc">${s.description}</div>`:''}${price}</div>`
+    return`<div class="service-item"><div class="service-name">${escapeHtml(s.title)}</div>${s.description?`<div class="service-desc">${escapeHtml(s.description)}</div>`:''}${price}</div>`
   }).join('')
 
   // Build packages from services
@@ -632,23 +636,23 @@ async function loadServices(){
       <div class="package-card">
         <h4>Básico</h4>
         <div class="package-price">€${basic.price_from||'—'}<span>/hora</span></div>
-        <div class="package-desc">${basic.description||basic.title}</div>
-        <ul class="package-features"><li>${basic.title}</li></ul>
+        <div class="package-desc">${escapeHtml(basic.description||basic.title)}</div>
+        <ul class="package-features"><li>${escapeHtml(basic.title)}</li></ul>
         <button class="btn btn-outline" style="width:100%" onclick="document.querySelector('.contact-card').scrollIntoView({behavior:'smooth'})">Contratar</button>
       </div>
       <div class="package-card recommended">
         <div class="rec-badge"><svg class="ic" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="width:12px;height:12px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Mais Popular</div>
         <h4>Standard</h4>
         <div class="package-price">€${standard.price_from||'—'}<span>/hora</span></div>
-        <div class="package-desc">${standard.description||standard.title}</div>
-        <ul class="package-features"><li>${basic.title}</li><li>${standard.title}</li></ul>
+        <div class="package-desc">${escapeHtml(standard.description||standard.title)}</div>
+        <ul class="package-features"><li>${escapeHtml(basic.title)}</li><li>${escapeHtml(standard.title)}</li></ul>
         <button class="btn btn-solid" style="width:100%" onclick="document.querySelector('.contact-card').scrollIntoView({behavior:'smooth'})">Contratar</button>
       </div>
       <div class="package-card">
         <h4>Premium</h4>
         <div class="package-price">€${premium.price_from||'—'}<span>/hora</span></div>
-        <div class="package-desc">${premium.description||premium.title}</div>
-        <ul class="package-features"><li>${basic.title}</li><li>${standard.title}</li><li>${premium.title}</li></ul>
+        <div class="package-desc">${escapeHtml(premium.description||premium.title)}</div>
+        <ul class="package-features"><li>${escapeHtml(basic.title)}</li><li>${escapeHtml(standard.title)}</li><li>${escapeHtml(premium.title)}</li></ul>
         <button class="btn btn-gold" style="width:100%" onclick="document.querySelector('.contact-card').scrollIntoView({behavior:'smooth'})">Contratar</button>
       </div>`
   }
@@ -662,17 +666,18 @@ async function loadPortfolio(){
   const data=all.filter(i=>!i.title)
   if(cases.length){
     const casesHtml=cases.map(c=>{
+      const safeTitle=escapeHtml(c.title)
       const imgs=c.before_photo_url
-        ? `<div class="case-imgs"><div class="cimg-wrap"><img src="${c.before_photo_url}" alt="Antes"/><span>Antes</span></div><div class="cimg-wrap"><img src="${c.photo_url}" alt="Depois"/><span>Depois</span></div></div>`
-        : `<div class="case-imgs"><img src="${c.photo_url}" alt="${c.title}" style="grid-column:span 2"/></div>`
-      return `<div class="case-card" onclick="openLightbox('${c.photo_url}','${(c.title||'').replace(/'/g,'&apos;')}')">${imgs}<div class="case-body"><div class="case-title">${c.title}</div>${c.description?`<div class="case-desc">${c.description}</div>`:''}${c.duration_label?`<span class="case-duration"><svg class="ic" viewBox="0 0 24 24" style="width:12px;height:12px"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> ${c.duration_label}</span>`:''}</div></div>`
+        ? `<div class="case-imgs"><div class="cimg-wrap"><img src="${escapeHtml(c.before_photo_url)}" alt="Antes"/><span>Antes</span></div><div class="cimg-wrap"><img src="${escapeHtml(c.photo_url)}" alt="Depois"/><span>Depois</span></div></div>`
+        : `<div class="case-imgs"><img src="${escapeHtml(c.photo_url)}" alt="${safeTitle}" style="grid-column:span 2"/></div>`
+      return `<div class="case-card" onclick="openLightbox('${escAttrJs(c.photo_url)}','${escAttrJs(c.title)}')">${imgs}<div class="case-body"><div class="case-title">${safeTitle}</div>${c.description?`<div class="case-desc">${escapeHtml(c.description)}</div>`:''}${c.duration_label?`<span class="case-duration"><svg class="ic" viewBox="0 0 24 24" style="width:12px;height:12px"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> ${escapeHtml(c.duration_label)}</span>`:''}</div></div>`
     }).join('')
     grid.insertAdjacentHTML('beforebegin',`<div id="case-studies">${casesHtml}</div>`)
   }
   if(!data.length){grid.innerHTML='';return}
-  const item=i=>`<div class="portfolio-img" onclick="openLightbox('${i.photo_url}','${(i.caption||'').replace(/'/g,'&apos;')}')">
-      <img src="${i.photo_url}" alt="${i.caption||'Trabalho'}" loading="lazy"/>
-      <div class="cap">${i.caption||''}</div>
+  const item=i=>`<div class="portfolio-img" onclick="openLightbox('${escAttrJs(i.photo_url)}','${escAttrJs(i.caption)}')">
+      <img src="${escapeHtml(i.photo_url)}" alt="${escapeHtml(i.caption||'Trabalho')}" loading="lazy"/>
+      <div class="cap">${escapeHtml(i.caption||'')}</div>
     </div>`
   if(data.length>=5){
     grid.className='portfolio-mosaic'
@@ -689,8 +694,8 @@ function renderSidebar(pro){
   const svgLoc='<svg class="ic" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>'
   const svgWeb='<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>'
   const svgCal='<svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>'
-  if(pro.location)items.push(`<div class="info-row"><span class="info-icon">${svgLoc}</span>${pro.location}</div>`)
-  if(pro.website)items.push(`<div class="info-row"><span class="info-icon">${svgWeb}</span><a href="${pro.website}" target="_blank" style="color:var(--blue)">Website</a></div>`)
+  if(pro.location)items.push(`<div class="info-row"><span class="info-icon">${svgLoc}</span>${escapeHtml(pro.location)}</div>`)
+  if(pro.website)items.push(`<div class="info-row"><span class="info-icon">${svgWeb}</span><a href="${escapeHtml(pro.website)}" target="_blank" style="color:var(--blue)">Website</a></div>`)
   const joined=new Date(pro.created_at).toLocaleDateString('pt-PT',{month:'long',year:'numeric'})
   items.push(`<div class="info-row"><span class="info-icon">${svgCal}</span>Membro desde ${joined}</div>`)
   document.getElementById('info-items').innerHTML=items.join('')
@@ -793,7 +798,7 @@ async function loadFaqs(){
   const{data}=await db.from('professional_faqs').select('*').eq('professional_id',proId).order('order_index')
   const el=document.getElementById('faq-list')
   if(!data||!data.length){el.innerHTML=`<p style="color:var(--muted);font-size:14px;text-align:center;padding:20px">Ainda sem perguntas frequentes.</p>`;return}
-  el.innerHTML=data.map((f,i)=>`<div class="faq-item" id="faq-${i}"><div class="faq-q" onclick="toggleFaq(${i})">${f.question}<svg class="ic chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="faq-a">${f.answer}</div></div>`).join('')
+  el.innerHTML=data.map((f,i)=>`<div class="faq-item" id="faq-${i}"><div class="faq-q" onclick="toggleFaq(${i})">${escapeHtml(f.question)}<svg class="ic chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="faq-a">${escapeHtml(f.answer)}</div></div>`).join('')
 }
 function toggleFaq(i){document.getElementById('faq-'+i).classList.toggle('open')}
 

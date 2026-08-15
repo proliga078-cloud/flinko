@@ -408,6 +408,8 @@ const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
 const ADMIN_EMAIL='davidscampos10@gmail.com'
 const PRO_MONTHLY_PRICE=12.99
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
+function escapeHtml(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
+function escAttrJs(s){return escapeHtml(String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"))}
 let allPros=[]
 let editingProId=null
 let editingServiceId=null
@@ -471,12 +473,12 @@ document.getElementById('s-revs').textContent=rc||0
 document.getElementById('s-srvs').textContent=sc||0
 const{data:pros}=await db.from('profiles').select('name,category,plan,is_demo').order('created_at',{ascending:false}).limit(5)
 document.getElementById('recent-pros').innerHTML=(pros||[]).map(p=>`
-<tr><td><div class="td-name">${p.name||'—'}${demoBadge(p)}</div></td>
-<td>${p.category||'—'}</td>
+<tr><td><div class="td-name">${escapeHtml(p.name||'—')}${demoBadge(p)}</div></td>
+<td>${escapeHtml(p.category||'—')}</td>
 <td><span class="badge badge-${p.plan||'free'}">${p.plan||'free'}</span></td></tr>`).join('')||'<tr class="empty-row"><td colspan="3">Sem registos</td></tr>'
 const{data:convs}=await db.from('conversations').select('last_message,last_message_at').order('last_message_at',{ascending:false}).limit(5)
 document.getElementById('recent-conv-tbl').innerHTML=(convs||[]).map(c=>`
-<tr><td class="msg-preview">${c.last_message||'(sem mensagens)'}</td>
+<tr><td class="msg-preview">${escapeHtml(c.last_message||'(sem mensagens)')}</td>
 <td>${c.last_message_at?new Date(c.last_message_at).toLocaleDateString('pt-PT'):'—'}</td></tr>`).join('')||'<tr class="empty-row"><td colspan="2">Sem conversas</td></tr>'
 }
 
@@ -500,12 +502,12 @@ const tbody=document.getElementById('pros-tbody')
 if(!pros.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Nenhum profissional encontrado</td></tr>';return}
 tbody.innerHTML=pros.map(p=>{
 const approved=p.approved!==false
-const av=p.photo_url?`<img src="${p.photo_url}" alt=""/>`:((p.name||'?').split(' ').map(n=>n[0]).slice(0,2).join(''))
+const av=p.photo_url?`<img src="${escapeHtml(p.photo_url)}" alt=""/>`:((p.name||'?').split(' ').map(n=>n[0]).slice(0,2).join(''))
 return`<tr>
 <td><div class="td-flex"><div class="pro-avatar">${av}</div>
-<div><div class="td-name">${p.name||'—'}${demoBadge(p)}</div><div class="td-sub">${p.phone||''}</div></div></div></td>
-<td>${p.category||'—'}</td>
-<td>${p.location||'—'}</td>
+<div><div class="td-name">${escapeHtml(p.name||'—')}${demoBadge(p)}</div><div class="td-sub">${escapeHtml(p.phone||'')}</div></div></div></td>
+<td>${escapeHtml(p.category||'—')}</td>
+<td>${escapeHtml(p.location||'—')}</td>
 <td><span class="badge badge-${p.plan||'free'}">${p.plan||'free'}</span></td>
 <td><span class="badge ${approved?'badge-approved':'badge-pending'}">${approved?'Ativo':'Pendente'}</span></td>
 <td><div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -516,7 +518,7 @@ ${approved
 ?`<button class="btn btn-unapprove" onclick="toggleApprove('${p.id}',false)">⏸ Suspender</button>`
 :`<button class="btn btn-approve" onclick="toggleApprove('${p.id}',true)">✅ Aprovar</button>`}
 ${p.verified?`<button class="btn btn-unapprove" onclick="toggleVerified('${p.id}',false)">✔️ Verificado</button>`:`<button class="btn btn-approve" onclick="toggleVerified('${p.id}',true)">☆ Verificar</button>`}
-<button class="btn btn-delete" onclick="deletePro('${p.id}','${(p.name||'').replace(/'/g,"\\'")}')">🗑</button>
+<button class="btn btn-delete" onclick="deletePro('${p.id}','${escAttrJs(p.name||'')}')">🗑</button>
 </div></td></tr>`
 }).join('')
 }
@@ -618,7 +620,7 @@ if(!subs.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Nenhuma 
 tbody.innerHTML=subs.map(s=>{
 const info=subStatusInfo(s)
 return`<tr>
-<td class="td-name">${s.name||'—'}</td>
+<td class="td-name">${escapeHtml(s.name||'—')}</td>
 <td><span class="badge badge-${info.plan}">${info.plan}</span></td>
 <td style="${info.expStyle}">${info.expLabel}</td>
 <td>${info.origin}</td>
@@ -699,10 +701,10 @@ const proIds=[...new Set(convs.map(c=>c.professional_id).filter(Boolean))]
 const{data:pros}=await db.from('profiles').select('id,name').in('id',proIds.length?proIds:['00000000-0000-0000-0000-000000000000'])
 const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
 list.innerHTML=convs.map(c=>{
-const proName=pm[c.professional_id]||'Profissional'
+const proName=escapeHtml(pm[c.professional_id]||'Profissional')
 return`<div class="conv-card" id="conv-${c.id}" onclick="toggleThread('${c.id}','${c.professional_id}')">
 <div class="conv-top"><div class="conv-title">${proName} ↔ cliente</div><div class="conv-date">${c.last_message_at?new Date(c.last_message_at).toLocaleString('pt-PT'):''}</div></div>
-<div class="conv-last">${(c.last_message||'(sem mensagens)').replace(/</g,'&lt;')}</div>
+<div class="conv-last">${escapeHtml(c.last_message||'(sem mensagens)')}</div>
 <div class="conv-thread" id="thread-${c.id}"></div>
 </div>`
 }).join('')
@@ -725,7 +727,7 @@ thread.innerHTML=msgs.map(m=>{
 const isPro=m.sender_id===proId
 return`<div class="msg-bubble ${isPro?'msg-pro':'msg-client'}">
 <div class="msg-meta">${isPro?'Profissional':'Cliente'} · ${m.created_at?new Date(m.created_at).toLocaleString('pt-PT'):''}</div>
-${(m.content||'').replace(/</g,'&lt;')}
+${escapeHtml(m.content||'')}
 </div>`
 }).join('')
 }
@@ -741,10 +743,10 @@ const tbody=document.getElementById('msgs-tbody')
 if(!msgs||!msgs.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Sem mensagens</td></tr>';return}
 tbody.innerHTML=msgs.map(m=>`
 <tr>
-<td><div class="td-name">${m.sender_name}</div><div class="td-sub">${m.sender_email}</div></td>
-<td>${pm[m.professional_id]||'—'}</td>
-<td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.subject}</td>
-<td class="msg-preview">${m.content}</td>
+<td><div class="td-name">${escapeHtml(m.sender_name)}</div><div class="td-sub">${escapeHtml(m.sender_email)}</div></td>
+<td>${escapeHtml(pm[m.professional_id]||'—')}</td>
+<td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(m.subject)}</td>
+<td class="msg-preview">${escapeHtml(m.content)}</td>
 <td>${new Date(m.created_at).toLocaleDateString('pt-PT')}</td>
 <td>${m.read?'✅':'<span class="unread-dot"></span>Não lida'}</td></tr>`).join('')
 }
@@ -760,10 +762,10 @@ const tbody=document.getElementById('revs-tbody')
 if(!revs||!revs.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Sem avaliações</td></tr>';return}
 tbody.innerHTML=revs.map(r=>`
 <tr>
-<td><div class="td-name">${r.reviewer_name}</div><div class="td-sub">${r.reviewer_email}</div></td>
-<td>${pm[r.professional_id]||'—'}</td>
+<td><div class="td-name">${escapeHtml(r.reviewer_name)}</div><div class="td-sub">${escapeHtml(r.reviewer_email)}</div></td>
+<td>${escapeHtml(pm[r.professional_id]||'—')}</td>
 <td><span style="color:var(--gold)">${'★'.repeat(r.rating)+'☆'.repeat(5-r.rating)}</span></td>
-<td class="msg-preview">${r.comment||'(sem comentário)'}</td>
+<td class="msg-preview">${escapeHtml(r.comment||'(sem comentário)')}</td>
 <td>${new Date(r.created_at).toLocaleDateString('pt-PT')}</td>
 <td><button class="btn btn-delete" onclick="deleteReview('${r.id}')">🗑</button></td></tr>`).join('')
 }
@@ -786,8 +788,8 @@ const tbody=document.getElementById('srvs-tbody')
 if(!srvs||!srvs.length){tbody.innerHTML='<tr class="empty-row"><td colspan="5">Sem serviços</td></tr>';return}
 tbody.innerHTML=srvs.map(s=>`
 <tr>
-<td><div class="td-name">${s.title}</div><div class="td-sub msg-preview">${s.description||''}</div></td>
-<td>${pm[s.professional_id]||'—'}</td>
+<td><div class="td-name">${escapeHtml(s.title)}</div><div class="td-sub msg-preview">${escapeHtml(s.description||'')}</div></td>
+<td>${escapeHtml(pm[s.professional_id]||'—')}</td>
 <td>${s.price_from?`€${s.price_from}${s.price_to?'–€'+s.price_to:''} / ${s.price_unit||'hora'}`:'—'}</td>
 <td>${new Date(s.created_at).toLocaleDateString('pt-PT')}</td>
 <td><div style="display:flex;gap:6px">
@@ -836,9 +838,9 @@ const tbody=document.getElementById('port-tbody')
 if(!items||!items.length){tbody.innerHTML='<tr class="empty-row"><td colspan="5">Sem itens de portfólio</td></tr>';return}
 tbody.innerHTML=items.map(it=>`
 <tr>
-<td><img src="${it.photo_url}" alt="" style="width:52px;height:52px;object-fit:cover;border-radius:8px"/></td>
-<td class="msg-preview">${it.caption||'—'}</td>
-<td>${pm[it.professional_id]||'—'}</td>
+<td><img src="${escapeHtml(it.photo_url)}" alt="" style="width:52px;height:52px;object-fit:cover;border-radius:8px"/></td>
+<td class="msg-preview">${escapeHtml(it.caption||'—')}</td>
+<td>${escapeHtml(pm[it.professional_id]||'—')}</td>
 <td>${it.created_at?new Date(it.created_at).toLocaleDateString('pt-PT'):'—'}</td>
 <td><button class="btn btn-delete" onclick="deletePortfolioItem('${it.id}')">🗑</button></td></tr>`).join('')
 }

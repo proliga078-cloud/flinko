@@ -1652,7 +1652,7 @@ function renderCertList(){
   const el=document.getElementById('cert-list')
   if(!el)return
   if(!certState.length){el.innerHTML='<div style="font-size:12.5px;color:var(--muted)">Nenhuma certificação adicionada.</div>';return}
-  el.innerHTML=certState.map((c,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:8px;padding:8px 12px"><span style="font-size:13px;font-weight:600">${c.name}${c.year?' · '+c.year:''}</span><button type="button" class="btn btn-danger btn-sm" onclick="removeCertification(${i})">✕</button></div>`).join('')
+  el.innerHTML=certState.map((c,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:8px;padding:8px 12px"><span style="font-size:13px;font-weight:600">${escapeHtml(c.name)}${c.year?' · '+escapeHtml(String(c.year)):''}</span><button type="button" class="btn btn-danger btn-sm" onclick="removeCertification(${i})">✕</button></div>`).join('')
 }
 function addCertification(){
   const name=document.getElementById('cert-name').value.trim()
@@ -2190,7 +2190,7 @@ function renderMiniAgenda(){
     const timeStr=d.toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})
     return `<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px">
       <div style="width:30px;height:30px;border-radius:9px;background:var(--blue-light);color:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg class="ic" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg></div>
-      <div style="min-width:0"><div style="font-size:12.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${j.title}</div><div style="font-size:11px;color:var(--muted)">${dateStr}, ${timeStr}</div></div>
+      <div style="min-width:0"><div style="font-size:12.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(j.title)}</div><div style="font-size:11px;color:var(--muted)">${dateStr}, ${timeStr}</div></div>
     </div>`
   }).join('')
 }
@@ -2228,8 +2228,8 @@ async function loadRecentReviews(){
     const stars='★'.repeat(r.rating)+'☆'.repeat(5-r.rating)
     return`<div class="list-item">
       <div class="list-item-body">
-        <div class="list-item-title">${r.reviewer_name} <span style="color:var(--gold)">${stars}</span></div>
-        <div class="list-item-sub">${r.comment||'(sem comentário)'}</div>
+        <div class="list-item-title">${escapeHtml(r.reviewer_name)} <span style="color:var(--gold)">${stars}</span></div>
+        <div class="list-item-sub">${escapeHtml(r.comment||'(sem comentário)')}</div>
       </div>
     </div>`
   }).join('')
@@ -2263,7 +2263,7 @@ async function loadServices(){
   el.innerHTML=data.map(s=>`
     <div class="list-item">
       <div class="list-item-body">
-        <div class="list-item-title">${s.title}</div>
+        <div class="list-item-title">${escapeHtml(s.title)}</div>
         <div class="list-item-sub">${s.description||''} ${s.price_from?`· €${s.price_from}${s.price_to?'–€'+s.price_to:''} / ${s.price_unit||'hora'}`:''}
         </div>
       </div>
@@ -2373,7 +2373,7 @@ async function loadDiaryDash(){
   el.innerHTML=data.map(u=>`
     <div class="list-item">
       <div class="list-item-body">
-        <div class="list-item-title">${u.content}</div>
+        <div class="list-item-title">${escapeHtml(u.content)}</div>
         <div class="list-item-sub">${u.location_label?u.location_label+' · ':''}${new Date(u.created_at).toLocaleDateString('pt-PT')}</div>
       </div>
       <div><button class="btn btn-danger btn-sm" onclick="deleteDiaryUpdate('${u.id}')">✕</button></div>
@@ -2431,8 +2431,8 @@ async function loadFaqsDash(){
   el.innerHTML=data.map(f=>`
     <div class="list-item">
       <div class="list-item-body">
-        <div class="list-item-title">${f.question}</div>
-        <div class="list-item-sub">${f.answer}</div>
+        <div class="list-item-title">${escapeHtml(f.question)}</div>
+        <div class="list-item-sub">${escapeHtml(f.answer)}</div>
       </div>
       <div><button class="btn btn-danger btn-sm" onclick="deleteFaqDash('${f.id}')">✕</button></div>
     </div>`).join('')
@@ -2473,14 +2473,14 @@ async function loadMessages(){
   el.innerHTML=data.map(m=>`
     <div class="msg-item ${!m.read?'unread':''}">
       <div class="msg-header">
-        <div><div class="msg-from">${m.sender_name}</div><div style="font-size:12px;color:var(--muted)">${m.sender_email}${m.sender_phone?' · '+m.sender_phone:''}</div></div>
+        <div><div class="msg-from">${escapeHtml(m.sender_name)}</div><div style="font-size:12px;color:var(--muted)">${escapeHtml(m.sender_email)}${m.sender_phone?' · '+escapeHtml(m.sender_phone):''}</div></div>
         <div class="msg-date">${new Date(m.created_at).toLocaleDateString('pt-PT')}</div>
       </div>
-      <div class="msg-subject">${m.subject}</div>
-      <div style="font-size:14px;color:#475569;margin-top:6px;line-height:1.6">${m.content}</div>
+      <div class="msg-subject">${escapeHtml(m.subject)}</div>
+      <div style="font-size:14px;color:#475569;margin-top:6px;line-height:1.6">${escapeHtml(m.content)}</div>
       <div style="margin-top:10px;display:flex;gap:8px">
-        <a href="mailto:${m.sender_email}?subject=Re: ${encodeURIComponent(m.subject)}" class="btn btn-outline btn-sm">Responder por email</a>
-        ${m.sender_phone?`<a href="tel:${m.sender_phone}" class="btn btn-gold btn-sm">Ligar</a>`:''}
+        <a href="mailto:${escapeHtml(m.sender_email)}?subject=Re: ${encodeURIComponent(m.subject)}" class="btn btn-outline btn-sm">Responder por email</a>
+        ${m.sender_phone?`<a href="tel:${escapeHtml(m.sender_phone)}" class="btn btn-gold btn-sm">Ligar</a>`:''}
       </div>
     </div>`).join('')
 }
@@ -2498,8 +2498,8 @@ async function loadReviews(){
   </div>`+data.map(r=>`
     <div class="list-item">
       <div class="list-item-body">
-        <div class="list-item-title">${r.reviewer_name} <span style="color:var(--gold)">${'★'.repeat(r.rating)+'☆'.repeat(5-r.rating)}</span> <span style="font-size:12px;color:var(--muted);font-weight:400">${new Date(r.created_at).toLocaleDateString('pt-PT')}</span></div>
-        <div class="list-item-sub">${r.comment||'(sem comentário)'}</div>
+        <div class="list-item-title">${escapeHtml(r.reviewer_name)} <span style="color:var(--gold)">${'★'.repeat(r.rating)+'☆'.repeat(5-r.rating)}</span> <span style="font-size:12px;color:var(--muted);font-weight:400">${new Date(r.created_at).toLocaleDateString('pt-PT')}</span></div>
+        <div class="list-item-sub">${escapeHtml(r.comment||'(sem comentário)')}</div>
       </div>
     </div>`).join('')
 }
@@ -2563,7 +2563,7 @@ function toLocalDT(iso){
 function jobCardHtml(j){
   const statusOpts=Object.keys(JOB_STATUS_LABELS).map(k=>`<option value="${k}" ${k===j.status?'selected':''}>${JOB_STATUS_LABELS[k]}</option>`).join('')
   return `<div class="job-card" data-id="${j.id}">
-    <div class="jc-title">${j.title}</div>
+    <div class="jc-title">${escapeHtml(j.title)}</div>
     <div class="jc-client">${j.client_name||'Cliente'}</div>
     <input type="number" min="0" placeholder="Valor (€)" value="${j.quote_amount??''}" style="width:100%;margin-bottom:6px" onchange="updateJobField('${j.id}','quote_amount',this.value?parseFloat(this.value):null)"/>
     <div class="jc-margin">
@@ -2954,15 +2954,15 @@ async function loadMyRequests(){
     const offersHtml=myOffers.length
       ?`<div class="offers-box"><div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px">${myOffers.length} proposta${myOffers.length>1?'s':''} recebida${myOffers.length>1?'s':''}</div>${myOffers.map(o=>{
         const preco=o.price_from?('€'+o.price_from+(o.price_to?' – €'+o.price_to:'')):'Sem preço'
-        const nome=(o.profiles&&o.profiles.name)||'Profissional'
-        const msg=(o.message||'').replace(/</g,'&lt;')
+        const nome=escapeHtml((o.profiles&&o.profiles.name)||'Profissional')
+        const msg=escapeHtml(o.message||'')
         return `<div class="offer-row"><div><div class="offer-row-name">${nome}</div><div class="offer-row-msg">${msg}</div></div><div style="display:flex;align-items:center;gap:8px"><div class="offer-row-price">${preco}</div><button class="btn btn-outline btn-sm" onclick="location.href='messages.html?with=${o.professional_id}'">💬</button></div></div>`
       }).join('')}</div>`
       :''
     return `<div class="list-item" style="flex-direction:column;align-items:stretch">
       <div class="list-item-body">
-        <div class="list-item-title">${r.title}<span class="status-pill ${resolved?'status-resolved':'status-open'}">${resolved?'Resolvido':'Aberto'}</span></div>
-        <div class="list-item-sub">${r.category} · ${r.location} · ${budget}</div>
+        <div class="list-item-title">${escapeHtml(r.title)}<span class="status-pill ${resolved?'status-resolved':'status-open'}">${resolved?'Resolvido':'Aberto'}</span></div>
+        <div class="list-item-sub">${escapeHtml(r.category)} · ${escapeHtml(r.location)} · ${budget}</div>
       </div>
       ${photos}
       ${offersHtml}
@@ -3125,10 +3125,10 @@ function tryDetectAction(question){
     }
     const job=matches[0]
     return{
-      label:`Vou marcar "${job.title}" como pago. Confirmas?`,
+      label:`Vou marcar "${escapeHtml(job.title)}" como pago. Confirmas?`,
       run:async()=>{
         await updateJobStatus(job.id,'pago')
-        return `Feito — "${job.title}" está marcado como pago.`
+        return `Feito — "${escapeHtml(job.title)}" está marcado como pago.`
       }
     }
   }
@@ -3274,7 +3274,7 @@ function answerLocally(question){
     const now=new Date();const weekEnd=new Date(now);weekEnd.setDate(weekEnd.getDate()+7)
     const thisWeek=allJobs.filter(j=>j.scheduled_at&&j.status!=='cancelado'&&new Date(j.scheduled_at)>=now&&new Date(j.scheduled_at)<=weekEnd).sort((a,b)=>new Date(a.scheduled_at)-new Date(b.scheduled_at))
     if(!thisWeek.length)return 'Não tens trabalhos agendados para os próximos 7 dias. Define uma data num trabalho do Pipeline para aparecer na Agenda.'
-    const list=thisWeek.slice(0,5).map(j=>`• ${j.title} — ${new Date(j.scheduled_at).toLocaleDateString('pt-PT',{weekday:'short',day:'2-digit',month:'short'})}`).join('\n')
+    const list=thisWeek.slice(0,5).map(j=>`• ${escapeHtml(j.title)} — ${new Date(j.scheduled_at).toLocaleDateString('pt-PT',{weekday:'short',day:'2-digit',month:'short'})}`).join('\n')
     return `Tens ${thisWeek.length} trabalho${thisWeek.length>1?'s':''} agendado${thisWeek.length>1?'s':''} para os próximos 7 dias:\n${list}`
   }
 
