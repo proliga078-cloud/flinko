@@ -1531,7 +1531,10 @@ async function init(){
     // O proprio perfil (com campos sensiveis como creditos/plano/stripe)
     // ja nao se le diretamente da tabela — usa-se get_my_profile(), que so
     // devolve dados de quem esta autenticado a pedir.
-    const{data:pro}=await db.rpc('get_my_profile')
+    // get_my_profile() devolve SETOF (0 ou 1 linhas) em vez de sempre 1
+    // "linha", para nunca haver ambiguidade quando o perfil ainda não existe.
+    const{data:proRows}=await db.rpc('get_my_profile')
+    const pro=proRows&&proRows[0]
     if(pro){profileData=pro;profileId=pro.id;await loadPrivatePhone();fillProfileForm(profileData)}
     else await createProfile()
     updateSidebar()
@@ -1570,7 +1573,8 @@ async function createProfile(){
   if(error){
     console.error('createProfile upsert error:',error)
   }
-  const{data:existing}=await db.rpc('get_my_profile')
+  const{data:existingRows}=await db.rpc('get_my_profile')
+  const existing=existingRows&&existingRows[0]
   if(existing){profileData=existing;profileId=existing.id;await loadPrivatePhone();fillProfileForm(profileData)}
 }
 
@@ -4058,7 +4062,7 @@ async function loadInvites(){
     let code=profileData?.referral_code
     if(!code){
       const{data}=await db.rpc('get_my_profile')
-      code=data?.referral_code
+      code=data&&data[0]?.referral_code
       if(code)profileData={...profileData,referral_code:code}
     }
     if(code){
@@ -4087,7 +4091,7 @@ async function loadInvites(){
 
 async function refreshCreditsBalance(){
   const{data}=await db.rpc('get_my_profile')
-  const credits=data?.credits||0
+  const credits=(data&&data[0]?.credits)||0
   profileData={...profileData,credits}
   const el=document.getElementById('credits-balance')
   if(el)el.textContent=Number(credits).toLocaleString('pt-PT',{maximumFractionDigits:1})
