@@ -858,7 +858,7 @@ async function startConversation(){
 const btn=document.getElementById('msg-btn')
 const{data:{session}}=await db.auth.getSession()
 if(!session){
-location.href='auth.html?tab=login&redirect='+encodeURIComponent('messages.html?with='+proId)
+location.href='auth.html?tab=login&redirect='+encodeURIComponent('messages.html?with='+proId)+'&intent=client'
 return
 }
 if(session.user.id===proId){
