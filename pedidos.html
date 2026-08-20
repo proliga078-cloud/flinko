@@ -145,10 +145,11 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 </nav>
 
 <div class="hero">
-<h1>📢 O Que Os Clientes Precisam</h1>
-<p>Vê pedidos reais de pessoas à procura de profissionais no Porto e em Braga — responde com uma proposta e sê o primeiro a falar com elas.</p>
+<h1>📢 Precisas de um profissional?</h1>
+<p>Publica o que precisas em menos de um minuto e recebe propostas diretas — grátis, sem compromisso. Profissionais: os pedidos abertos estão aqui em baixo, respondam diretamente.</p>
 <div class="hero-actions">
 <button class="btn btn-gold" onclick="openModal()">➕ Publicar um Pedido</button>
+<a href="#grid" class="btn btn-ghost" style="color:#fff;border:1.5px solid rgba(255,255,255,.35)">Ver pedidos abertos</a>
 </div>
 </div>
 
@@ -419,7 +420,7 @@ loadPriceSuggestion(reqId)
 }
 
 function toggleOfferPanel(reqId){
-if(!session){location.href='auth.html?tab=login&redirect=pedidos.html';return}
+if(!session){location.href='auth.html?tab=login&redirect=pedidos.html&intent=professional';return}
 const panel=document.getElementById('offer-panel-'+reqId)
 panel.classList.toggle('open')
 if(panel.classList.contains('open'))loadPriceSuggestion(reqId)
@@ -443,13 +444,13 @@ renderList()
 function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 
 function contactClient(clientId){
-if(!session){location.href='auth.html?tab=login&redirect='+encodeURIComponent('messages.html?with='+clientId);return}
+if(!session){location.href='auth.html?tab=login&redirect='+encodeURIComponent('messages.html?with='+clientId)+'&intent=professional';return}
 if(session.user.id===clientId){alert('Este é o teu próprio pedido.');return}
 location.href='messages.html?with='+clientId
 }
 
 function openModal(){
-if(!session){location.href='auth.html?tab=login&redirect=pedidos.html';return}
+if(!session){location.href='auth.html?tab=login&redirect=pedidos.html&intent=client';return}
 pendingPhotos=[]
 renderPhotoStrip()
 document.getElementById('modal-overlay').classList.add('open')
