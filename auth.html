@@ -108,6 +108,10 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <main>
 <div class="card">
 
+<div id="back-link" style="display:none;padding:14px 32px 0">
+<a href="#" onclick="history.back();return false" style="font-size:13px;color:#64748b;text-decoration:none;display:inline-flex;align-items:center;gap:5px">← Voltar</a>
+</div>
+
 <div id="tabs-wrap">
 <div class="tabs">
 <button class="tab active" onclick="showTab('login')" id="tab-login">Entrar</button>
@@ -237,6 +241,15 @@ regAccountType = t
 document.getElementById('intent-client').classList.toggle('on', t === 'client')
 document.getElementById('intent-professional').classList.toggle('on', t === 'professional')
 }
+// Se viemos de uma ação concreta do site (ex: mandar mensagem a um
+// profissional, ou publicar um pedido) já sabemos se é cliente ou
+// profissional — não faz sentido obrigar a escolher outra vez.
+const intentParam = params.get('intent')
+if (intentParam === 'client' || intentParam === 'professional') selectAccountType(intentParam)
+
+// Se viemos de outra página (temos ?redirect=), mostra um link para voltar
+// em vez de deixar a pessoa "presa" no ecrã de login.
+if (params.get('redirect')) document.getElementById('back-link').style.display = 'block'
 function postAuthDestination(accountType) {
 const r = safeRedirect(params.get('redirect'))
 if (r) return r
