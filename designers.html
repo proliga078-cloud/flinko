@@ -22,7 +22,7 @@
 <meta name="theme-color" content="#0F1A33"/>
 <script src="/assets/pwa.js" defer></script>
  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
- <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "O que está incluído num projeto de identidade visual?", "acceptedAnswer": {"@type": "Answer", "text": "Normalmente logótipo, paleta de cores, tipografia e um pequeno manual de marca — mas varia por profissional, confirma no orçamento."}}, {"@type": "Question", "name": "Quanto tempo demora a criação de um logótipo?", "acceptedAnswer": {"@type": "Answer", "text": "Costuma variar entre alguns dias a duas semanas, dependendo do número de propostas e revisões incluídas."}}]}</script>
+ <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"O que está incluído num projeto de identidade visual?","acceptedAnswer":{"@type":"Answer","text":"Normalmente logótipo, paleta de cores, tipografia e um pequeno manual de marca — mas varia por profissional, confirma no orçamento."}},{"@type":"Question","name":"Quanto tempo demora a criação de um logótipo?","acceptedAnswer":{"@type":"Answer","text":"Costuma variar entre alguns dias a duas semanas, dependendo do número de propostas e revisões incluídas."}}]}</script>
  <style>
 .ic{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;vertical-align:-3px}
 .cat-chip{display:inline-flex;align-items:center;gap:6px}
@@ -48,7 +48,6 @@
 
  .page-header{background:var(--white);padding:14px 5% 0;border-bottom:none}
  .page-header h1{font-size:clamp(17px,2.2vw,21px);font-weight:800;letter-spacing:-.03em;margin:0;display:flex;align-items:center;gap:10px;line-height:1.2;color:var(--ink)}
- .cat-icon-badge{width:30px;height:30px;border-radius:9px;background:#EDE8F4;color:#6B4FA0;display:flex;align-items:center;justify-content:center;flex-shrink:0}
  .cat-icon-badge .ic{width:17px;height:17px}
  .page-header .intro{display:none}
  .breadcrumb{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted-2);margin-bottom:8px}
@@ -151,9 +150,7 @@
  .faq-section{max-width:1400px;margin:0 auto;padding:8px 5% 60px}
  .faq-section h2{font-size:20px;font-weight:800;margin-bottom:16px}
  .faq-item{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:4px 18px;margin-bottom:12px;transition:border-color .2s}
- .faq-item.open{border-color:#7c3aed}
  .faq-q{all:unset;box-sizing:border-box;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14.5px;font-weight:700;padding:14px 0;cursor:pointer;font-family:inherit;color:var(--text)}
- .faq-chevron{transition:transform .2s;color:#7c3aed;font-size:18px;flex-shrink:0}
  .faq-item.open .faq-chevron{transform:rotate(90deg)}
  .faq-a{font-size:13.5px;color:var(--muted);line-height:1.6;max-height:0;overflow:hidden;transition:max-height .25s ease,padding .25s ease;padding-bottom:0}
  .faq-item.open .faq-a{max-height:240px;padding-bottom:16px}
@@ -162,15 +159,11 @@
  .mini-how h2{font-size:18px;font-weight:800;margin-bottom:14px}
  .mini-how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
  .mini-how-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px;transition:all .2s}
- .mini-how-card:hover{border-color:#7c3aed;box-shadow:0 6px 18px rgba(0,0,0,.06)}
- .mini-how-num{width:26px;height:26px;border-radius:50%;background:#7c3aed;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
  .mini-how-card h3{font-size:13.5px;font-weight:700;margin-bottom:4px}
  .mini-how-card p{font-size:12.5px;color:var(--muted);line-height:1.5}
 
- .sidebar-cta{background:linear-gradient(135deg,#7c3aed,#c084fc);border-radius:16px;padding:20px;margin-bottom:16px;color:#fff}
  .sidebar-cta h3{font-size:14.5px;font-weight:800;margin-bottom:6px}
  .sidebar-cta p{font-size:12.5px;color:rgba(255,255,255,.85);line-height:1.5;margin-bottom:12px}
- .sidebar-cta a{display:block;text-align:center;background:rgba(255,255,255,.95);color:#7c3aed;font-weight:700;font-size:13px;padding:9px;border-radius:8px;transition:background .2s}
  .sidebar-cta a:hover{background:#fff}
 
  footer{background:var(--text);color:rgba(255,255,255,.6);padding:40px 5% 24px;font-size:13px}
@@ -420,7 +413,6 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 
 <section class="faq-section">
  <h2>Perguntas frequentes sobre designers</h2>
- 
  <div class="faq-item open">
  <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">O que está incluído num projeto de identidade visual?<span class="faq-chevron">›</span></button>
  <div class="faq-a">Normalmente logótipo, paleta de cores, tipografia e um pequeno manual de marca — mas varia por profissional, confirma no orçamento.</div>
