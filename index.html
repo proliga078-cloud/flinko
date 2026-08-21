@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Proliga – Marketplace de Profissionais no Norte de Portugal</title>
-<meta name="description" content="Encontra e contrata profissionais verificados em todo o Norte de Portugal. Eletricistas, canalizadores, pintores, jardineiros, designers e muito mais. Grátis para começar."/>
+<title>Proliga – Marketplace de Profissionais em Portugal</title>
+<meta name="description" content="Encontra e contrata profissionais verificados em todo o país. Eletricistas, canalizadores, pintores, jardineiros, designers e muito mais. Grátis para começar."/>
 <meta name="keywords" content="profissionais portugal, eletricista, canalizador, pintor, marketplace serviços portugal, contratar profissional"/>
 <meta name="robots" content="index, follow"/>
 <link rel="canonical" href="https://proliga.pt"/>
-<meta property="og:title" content="Proliga – Marketplace de Profissionais no Norte de Portugal"/>
-<meta property="og:description" content="O marketplace de profissionais verificados manualmente em todo o Norte de Portugal. Sem comissões, contacto direto pela plataforma."/>
+<meta property="og:title" content="Proliga – Marketplace de Profissionais em Portugal"/>
+<meta property="og:description" content="O marketplace de profissionais verificados manualmente em todo o país. Sem comissões, contacto direto pela plataforma."/>
 <meta property="og:type" content="website"/>
 <meta property="og:url" content="https://proliga.pt"/>
 <meta property="og:locale" content="pt_PT"/>
@@ -17,8 +17,8 @@
 <meta property="og:image:width" content="1200"/>
 <meta property="og:image:height" content="630"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="Proliga – Profissionais no Norte de Portugal"/>
-<meta name="twitter:description" content="Contrata profissionais verificados perto de ti, em todo o Norte de Portugal."/>
+<meta name="twitter:title" content="Proliga – Profissionais em Portugal"/>
+<meta name="twitter:description" content="Contrata profissionais verificados perto de ti, em todo o país."/>
 <meta name="twitter:image" content="https://proliga.pt/assets/og-image.png"/>
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
@@ -341,12 +341,8 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
   "@type": "Organization",
   "name": "Proliga",
   "url": "https://proliga.pt",
-  "description": "Marketplace que liga clientes a profissionais verificados em todo o Norte de Portugal.",
-  "areaServed": [
-    {"@type": "AdministrativeArea", "name": "Norte de Portugal"},
-    {"@type": "City", "name": "Porto"},
-    {"@type": "City", "name": "Braga"}
-  ],
+  "description": "Marketplace que liga clientes a profissionais verificados em Portugal.",
+  "areaServed": {"@type": "Country", "name": "Portugal"},
   "sameAs": []
 }
 </script>
@@ -382,8 +378,8 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <div class="hero-glow"></div>
 <div class="hero-inner">
 <div>
-<div class="hero-badge"><span class="pulse"></span>Norte de Portugal · Perfis verificados</div>
-<h1>Encontra um profissional de confiança em todo o <em>Norte de Portugal</em></h1>
+<div class="hero-badge"><span class="pulse"></span>Portugal · Perfis verificados</div>
+<h1>Encontra um profissional de confiança em todo o <em>país</em></h1>
 <p>Eletricistas, canalizadores, pintores e mais. Pede orçamento, compara e decide — sem compromisso.</p>
 <div class="hero-search">
 <div class="hs-field"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" id="hs-q" placeholder="O que precisas? Ex: eletricista" onkeydown="if(event.key==='Enter')heroSearch()"/></div>
@@ -496,7 +492,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <section id="map-section" style="background:#0F1A33">
 <div class="section-header">
 <span class="eyebrow">Cobertura</span>
-<h2>A crescer por todo o Norte de Portugal</h2>
+<h2>A crescer por todo o país</h2>
 <p>Cada marcador é uma zona com profissionais ativos na Proliga — a cobertura cresce todas as semanas. Toca para veres quem está lá.</p>
 </div>
 <div id="pro-map" style="max-width:900px;margin:0 auto;height:360px;border-radius:16px;overflow:hidden;background:#152444"></div>
@@ -637,7 +633,7 @@ As primeiras aparecem aqui assim que os clientes as escreverem.
 <div class="footer-top">
 <div class="footer-brand">
 <a href="index.html" class="logo">Pro<em>liga</em></a>
-<p>O marketplace de serviços profissionais no Norte de Portugal. Conectamos clientes a profissionais de confiança.</p>
+<p>O marketplace de serviços profissionais em Portugal. Conectamos clientes a profissionais de confiança.</p>
 </div>
 <div class="footer-links">
 <div class="footer-col">
@@ -901,7 +897,7 @@ wrap.innerHTML=
 '<div class="cat">'+escapeHtml(top.category||'Profissional')+' · '+escapeHtml(top.location||'Portugal')+'</div>'+
 '<div class="name">'+escapeHtml(top.name)+'</div>'+
 '<div class="rating">'+(top.count?(stars(top.avg)+' <strong>'+top.avg.toFixed(1)+'</strong> ('+top.count+(top.count===1?' avaliação':' avaliações')+')'):'<strong style="color:var(--muted)">Ainda sem avaliações</strong>')+'</div>'+
-'<p class="quote">'+(top.bio?escapeHtml(top.bio):'Profissional na área do Porto e Braga, disponível para contacto direto na Proliga.')+'</p>'+
+'<p class="quote">'+(top.bio?escapeHtml(top.bio):('Profissional disponível para contacto direto na Proliga'+(top.location?(' · '+escapeHtml(top.location)):'')+'.'))+'</p>'+
 '<a href="'+perfilHref(top)+'" class="btn btn-blue" style="align-self:flex-start">Ver perfil</a>'+
 '</div></div>'+
 '<div class="other-pros">'+

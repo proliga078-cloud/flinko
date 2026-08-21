@@ -20,12 +20,27 @@ async function withFakeSupabase(page, config) {
 
 test.describe('porque-escolher.html — prova social honesta', () => {
   test('sem avaliações reais: mostra o estado vazio, nunca os cartões', async ({ page }) => {
-    await withFakeSupabase(page, { tableData: { profiles: { count: 11 }, reviews: { data: [] } } });
+    await withFakeSupabase(page, {
+      tableData: {
+        profiles: {
+          count: 11,
+          data: [
+            { location: 'Porto – Penafiel' },
+            { location: 'Braga – Braga' },
+            { location: 'Braga – Guimarães' },
+            { location: 'Aveiro – Aveiro' },
+          ],
+        },
+        reviews: { data: [] },
+      },
+    });
     await page.goto('/porque-escolher.html');
     await expect(page.locator('#sem-testemunhos-pw')).toBeVisible();
     await expect(page.locator('#sem-testemunhos-pw')).toContainText('preferimos não inventar');
     await expect(page.locator('#testimonials-grid')).toBeHidden();
     await expect(page.locator('#verify-pros')).toHaveText('11');
+    // 4 perfis mas só 3 distritos distintos (Porto, Braga, Aveiro) — a contagem não pode ser "por perfil".
+    await expect(page.locator('#verify-districts')).toHaveText('3');
   });
 
   test('com avaliações reais: mostra os cartões e esconde o estado vazio', async ({ page }) => {
@@ -54,12 +69,16 @@ test.describe('porque-escolher.html — prova social honesta', () => {
     await expect(page.locator('#sem-testemunhos-pw')).toBeHidden();
   });
 
-  test('não afirma cobertura nacional nem estatísticas de avaliação inventadas', async ({ page }) => {
-    await withFakeSupabase(page, { tableData: { profiles: { count: 11 }, reviews: { data: [] } } });
+  test('não afirma estatísticas de avaliação inventadas nem cobertura geográfica total', async ({ page }) => {
+    await withFakeSupabase(page, { tableData: { profiles: { count: 11, data: [] }, reviews: { data: [] } } });
     await page.goto('/porque-escolher.html');
     const bodyText = await page.locator('body').innerText();
     expect(bodyText).not.toContain('4.8');
     expect(bodyText).not.toContain('Avaliação média');
-    expect(bodyText).not.toContain('Cobertura nacional');
+    // A linha "Cobertura geográfica" da tabela comparativa tem de mostrar o
+    // símbolo parcial (~) para a Proliga, nunca o "✓" cheio (a densidade
+    // fora do Porto/Braga ainda é baixa — ver rodapé da tabela).
+    const row = page.locator('table tr', { hasText: 'Cobertura geográfica' });
+    await expect(row.locator('td.hl')).toHaveText('~');
   });
 });

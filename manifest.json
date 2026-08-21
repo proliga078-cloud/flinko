@@ -1,7 +1,7 @@
 {
   "name": "Proliga — Serviços e Profissionais",
   "short_name": "Proliga",
-  "description": "Encontra profissionais de confiança no Porto e em Braga, ou gere o teu negócio se és profissional.",
+  "description": "Encontra profissionais de confiança em Portugal, ou gere o teu negócio se és profissional.",
   "start_url": "/?pwa=1",
   "scope": "/",
   "display": "standalone",

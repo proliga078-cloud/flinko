@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Profissionais – Proliga | Norte de Portugal</title>
-  <meta name="description" content="Encontra profissionais verificados em todo o Norte de Portugal. Filtra por categoria, distrito e avaliação. Contacto direto, sem intermediários."/>
+  <title>Profissionais – Proliga | Portugal</title>
+  <meta name="description" content="Encontra profissionais verificados em todo o país. Filtra por categoria, distrito e avaliação. Contacto direto, sem intermediários."/>
   <meta name="robots" content="index, follow"/>
-  <meta property="og:title" content="Profissionais no Norte de Portugal – Proliga"/>
-  <meta property="og:description" content="16 categorias de profissionais verificados em todo o Norte de Portugal. Eletricistas, pintores, jardineiros e muito mais."/>
+  <meta property="og:title" content="Profissionais em Portugal – Proliga"/>
+  <meta property="og:description" content="16 categorias de profissionais verificados em todo o país. Eletricistas, pintores, jardineiros e muito mais."/>
   <meta property="og:type" content="website"/>
 
   <meta property="og:image" content="https://proliga.pt/assets/og-image.png"/>
@@ -178,7 +178,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
     <span id="breadcrumb-cat">Todos os Profissionais</span>
   </div>
   <h1 id="page-title">Profissionais</h1>
-  <p id="page-desc">Norte de Portugal · Todos verificados manualmente</p>
+  <p id="page-desc">Portugal · Todos verificados manualmente</p>
   <div class="cat-chips" id="cat-chips">
     <span class="cat-chip" data-cat="" onclick="setCat('')">Todos</span>
     <span class="cat-chip" data-cat="Eletricistas" onclick="setCat('Eletricistas')">⚡ Eletricistas</span>
@@ -304,7 +304,7 @@ function updateHeader(){
   document.getElementById('page-title').textContent=title
   document.getElementById('breadcrumb-cat').textContent=title
   document.title=`${title} – Proliga`
-  let desc='Norte de Portugal · Todos verificados manualmente'
+  let desc='Portugal · Todos verificados manualmente'
   if(loc)desc=`${loc} · Todos verificados manualmente`
   document.getElementById('page-desc').innerHTML=desc
 }
