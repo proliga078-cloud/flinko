@@ -188,13 +188,13 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 </div>
 <div class="why-grid">
 <div class="why-card"><div class="why-icon"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div><div><h3>100% Português</h3><p>Profissionais verificados no Porto e em Braga. Gente da tua zona, que conhece a tua zona.</p></div></div>
-<div class="why-card"><div class="why-icon"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div><h3>Todos verificados</h3><p>Cada perfil é revisto manualmente pela nossa equipa antes de ser publicado. Zero perfis falsos, abandonados ou desatualizados.</p></div></div>
+<div class="why-card"><div class="why-icon"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div><h3>Selo Verificado</h3><p>A nossa equipa revê manualmente a bio, categoria e localização de cada profissional antes de atribuir o selo Verificado — não é um carimbo automático.</p></div></div>
 <div class="why-card"><div class="why-icon"><svg class="ic" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4H12l-4.8 2.1 1-4a8.4 8.4 0 1 1 12.8-6.5z"/></svg></div><div><h3>Contacto direto</h3><p>Falas diretamente com o profissional, no chat da plataforma. Sem formulários intermináveis, sem call centers, sem intermediários a levar comissão.</p></div></div>
 <div class="why-card"><div class="why-icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg></div><div><h3>Pedidos à medida</h3><p>Não queres procurar? Publica o que precisas e deixa os profissionais interessados virem até ti.</p></div></div>
 <div class="why-card"><div class="why-icon"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg></div><div><h3>Avaliações reais</h3><p>Só clientes que efetivamente contactaram um profissional pela plataforma podem avaliá-lo. Nada de reviews compradas.</p></div></div>
 <div class="why-card"><div class="why-icon"><svg class="ic" viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></div><div><h3>Grátis para começar</h3><p>Profissional ou cliente, criar conta e usar as funcionalidades essenciais nunca custa nada.</p></div></div>
 <div class="why-card"><div class="why-icon"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div><h3>Dados protegidos</h3><p>Cumprimos o RGPD à risca. Os teus dados são teus — nunca vendemos informação a terceiros.</p></div></div>
-<div class="why-card"><div class="why-icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><div><h3>Resposta rápida</h3><p>A maioria dos profissionais responde em menos de 24 horas. Sem esperas indefinidas.</p></div></div>
+<div class="why-card"><div class="why-icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><div><h3>Sem esperas indefinidas</h3><p>Falas diretamente com o profissional no chat, sem passar por central de atendimento nem formulários que ninguém responde.</p></div></div>
 </div>
 </section>
 
@@ -213,9 +213,8 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 </div>
 <div class="verify-card">
 <div class="badge-big"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Processo de verificação</div>
-<div class="verify-stat"><span>Tempo médio de verificação</span><strong>&lt; 24h</strong></div>
 <div class="verify-stat"><span>Perfis com selo Verificado</span><strong>100%</strong></div>
-<div class="verify-stat"><span>Avaliações vinculadas a contacto real</span><strong>100%</strong></div>
+<div class="verify-stat"><span>Profissionais registados</span><strong id="verify-pros">—</strong></div>
 <div class="verify-stat"><span>Cidades cobertas</span><strong>Porto &amp; Braga</strong></div>
 </div>
 </div>
@@ -233,7 +232,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <div style="overflow-x:auto"><table>
 <thead><tr><th>Funcionalidade</th><th class="hl">Proliga</th><th>OLX</th><th>Fixando</th></tr></thead>
 <tbody>
-<tr><td>Cobertura nacional</td><td class="hl"><span class="chk yes">✓</span></td><td><span class="chk yes">✓</span></td><td><span class="chk yes">✓</span></td></tr>
+<tr><td>Cobertura geográfica</td><td class="hl"><span class="chk partial">~</span></td><td><span class="chk yes">✓</span></td><td><span class="chk yes">✓</span></td></tr>
 <tr><td>Perfis verificados manualmente</td><td class="hl"><span class="chk yes">✓</span></td><td><span class="chk no">✗</span></td><td><span class="chk partial">~</span></td></tr>
 <tr><td>Pedidos de clientes</td><td class="hl"><span class="chk yes">✓</span></td><td><span class="chk yes">✓</span></td><td><span class="chk no">✗</span></td></tr>
 <tr><td>Avaliações vinculadas a contacto real</td><td class="hl"><span class="chk yes">✓</span></td><td><span class="chk no">✗</span></td><td><span class="chk yes">✓</span></td></tr>
@@ -242,6 +241,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <tr><td>Plano 100% gratuito</td><td class="hl"><span class="chk yes">✓</span></td><td><span class="chk yes">✓</span></td><td><span class="chk no">✗</span></td></tr>
 </tbody>
 </table></div>
+<p style="font-size:12px;color:var(--muted,#5B6270);padding:10px 20px 0;margin:0">~ na Proliga = cobrimos apenas o Porto e Braga por agora, ao contrário das restantes plataformas, que operam a nível nacional.</p>
 </div>
 </section>
 
@@ -249,20 +249,18 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <div class="section-header">
 <span class="eyebrow">Testemunhos</span>
 <h2>O que dizem de nós</h2>
-<p>Profissionais e clientes que já confiam na Proliga</p>
+<p>Avaliações reais de quem já usou a plataforma — nunca inventamos nenhuma</p>
 </div>
-<div class="testimonials-grid">
-<div class="t-card"><div class="t-stars">★★★★★</div><p class="t-text">Em menos de 2 horas tinha 3 orçamentos de eletricistas da minha zona. Contratei o João e ficou um trabalho impecável.</p><div class="t-author"><div class="t-avatar">AF</div><div><div class="t-name">Ana Ferreira</div><div class="t-role">Cliente · Porto</div></div></div></div>
-<div class="t-card"><div class="t-stars">★★★★★</div><p class="t-text">Sou eletricista há 12 anos e nunca tive tanta visibilidade. A Proliga deu-me clientes novos logo no primeiro mês.</p><div class="t-author"><div class="t-avatar">JS</div><div><div class="t-name">João Silva</div><div class="t-role">Eletricista · Maia</div></div></div></div>
-<div class="t-card"><div class="t-stars">★★★★★</div><p class="t-text">O perfil é gratuito, o contacto é direto. É o que os profissionais no Porto e em Braga precisavam.</p><div class="t-author"><div class="t-avatar">MC</div><div><div class="t-name">Miguel Cardoso</div><div class="t-role">Canalizador · Porto</div></div></div></div>
-</div>
+<div class="testimonials-grid" id="testimonials-grid" style="display:none"></div>
+<p id="sem-testemunhos-pw" style="text-align:center;font-size:13.5px;color:var(--muted);line-height:1.7;max-width:560px;margin:0 auto">
+Ainda não temos avaliações publicadas — a plataforma é recente e preferimos não inventar nenhuma.
+As primeiras aparecem aqui assim que os clientes as escreverem.
+</p>
 </section>
 
 <section class="trust-section">
 <div class="trust-grid">
 <div class="trust-item"><strong>100%</strong><p>Perfis verificados</p></div>
-<div class="trust-item"><strong>4.8</strong><p>Avaliação média</p></div>
-<div class="trust-item"><strong>24h</strong><p>Resposta média</p></div>
 <div class="trust-item"><strong>2</strong><p>Cidades ativas</p></div>
 <div class="trust-item"><strong>RGPD</strong><p>Dados seguros</p></div>
 </div>
@@ -313,6 +311,46 @@ if(p)p.classList.toggle('open')
 window.addEventListener('resize',()=>{
 if(window.innerWidth>=900){const p=document.getElementById('mobile-nav-panel');if(p)p.classList.remove('open')}
 })
+function escapeHtml(s){return(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function loadVerifyStats(){
+try{
+const{count}=await db.from('profiles').select('id',{count:'exact',head:true}).eq('is_demo',false).not('category','is',null)
+const el=document.getElementById('verify-pros')
+if(el&&count!=null)el.textContent=count
+}catch(e){}
+}
+// Mostra ate 3 avaliacoes reais, se existirem. Enquanto nao existirem,
+// a pagina diz isso mesmo em vez de mostrar testemunhos inventados.
+async function loadTestemunhosReais(){
+const grid=document.getElementById('testimonials-grid')
+const vazio=document.getElementById('sem-testemunhos-pw')
+if(!grid||!vazio)return
+try{
+const{data}=await db.from('reviews')
+  .select('rating,comment,client_id,professional_id')
+  .gte('rating',4).not('comment','is',null)
+  .order('created_at',{ascending:false}).limit(3)
+if(!data||!data.length)return
+const validas=data.filter(r=>r.comment&&r.comment.trim())
+if(!validas.length)return
+const ids=[...new Set(validas.flatMap(r=>[r.client_id,r.professional_id]))]
+const{data:pessoas}=await db.from('profiles').select('id,name,category,location').in('id',ids)
+const porId={}
+;(pessoas||[]).forEach(p=>{porId[p.id]=p})
+grid.innerHTML=validas.map(r=>{
+const cliente=porId[r.client_id]
+const pro=porId[r.professional_id]
+const nome=(cliente&&cliente.name)||'Cliente'
+const iniciais=nome.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase()
+const papel='Cliente'+(cliente&&cliente.location?(' · '+escapeHtml(cliente.location)):'')
+return '<div class="t-card"><div class="t-stars">'+('★'.repeat(Math.round(r.rating))+'☆'.repeat(5-Math.round(r.rating)))+'</div><p class="t-text">"'+escapeHtml(r.comment.trim())+'"</p><div class="t-author"><div class="t-avatar">'+escapeHtml(iniciais)+'</div><div><div class="t-name">'+escapeHtml(nome)+'</div><div class="t-role">'+papel+(pro?(' · avaliou '+escapeHtml(pro.name)):'')+'</div></div></div></div>'
+}).join('')
+grid.style.display='grid'
+vazio.style.display='none'
+}catch(e){}
+}
+loadVerifyStats()
+loadTestemunhosReais()
 </script>
 </body>
 </html>

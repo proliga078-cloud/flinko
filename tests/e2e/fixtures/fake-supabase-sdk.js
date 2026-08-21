@@ -50,13 +50,40 @@ window.supabase = {
         const results = cfg().rpcResults || {};
         return { data: fnName in results ? results[fnName] : null, error: null };
       },
-      from: (table) => ({
-        insert: async (row) => {
-          window.__insertCalls = window.__insertCalls || [];
-          window.__insertCalls.push({ table, row });
-          return { data: null, error: null };
-        },
-      }),
+      from: (table) => {
+        // Generic chainable query builder: ignores the actual filter values
+        // (eq/not/gte/in/order/limit all just return `this`) and resolves,
+        // when awaited/then-ed, using a canned response configured per table
+        // via window.__testAuthConfig.tableData = { [table]: {data, count} }.
+        // Good enough for pages that just read data to render — not a real
+        // query engine.
+        const builder = {
+          _wantsCount: false,
+          select(_cols, opts) {
+            if (opts && opts.count) this._wantsCount = true;
+            return this;
+          },
+          eq() { return this; },
+          not() { return this; },
+          gte() { return this; },
+          in() { return this; },
+          order() { return this; },
+          limit() { return this; },
+          insert: async (row) => {
+            window.__insertCalls = window.__insertCalls || [];
+            window.__insertCalls.push({ table, row });
+            return { data: null, error: null };
+          },
+          then(resolve, reject) {
+            const scenario = (cfg().tableData || {})[table] || {};
+            const result = this._wantsCount
+              ? { data: null, count: scenario.count != null ? scenario.count : 0, error: null }
+              : { data: scenario.data || [], error: null };
+            return Promise.resolve(result).then(resolve, reject);
+          },
+        };
+        return builder;
+      },
     };
   },
 };
