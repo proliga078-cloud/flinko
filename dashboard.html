@@ -3793,9 +3793,21 @@ async function generateQuotePdf(){
   if(!client){showAlert('quote-error','Indica o nome do cliente.','error');return}
   if(!items.length){showAlert('quote-error','Adiciona pelo menos um item ao orçamento.','error');return}
   const subtotal=items.reduce((s,it)=>s+it.qty*it.price,0)
-  const doc=buildQuotePdf({client,items,subtotal,validDays,notes})
   const{error}=await db.from('quotes').insert({professional_id:profileId,job_id:quoteJobId,client_name:client,items,subtotal,valid_days:validDays,notes:notes||null})
-  if(error)console.error('quote save error:',error)
+  if(error){
+    console.error('quote save error:',error)
+    // O limite de orçamentos/mês também é aplicado no servidor (trigger
+    // enforce_quote_limit), não só aqui no JS — se a verificação acima
+    // ficar desatualizada por qualquer razão, o insert falha aqui em vez
+    // de deixar passar. Mostramos sempre o erro em vez de gerar o PDF como
+    // se tivesse sido guardado.
+    const msg=(error.message&&error.message.includes('Limite de'))
+      ?error.message+'. O plano Pro tem orçamentos ilimitados e com a tua marca.'
+      :'Não foi possível guardar o orçamento: '+(error.message||'erro desconhecido')
+    showAlert('quote-error',msg,'error')
+    return
+  }
+  const doc=buildQuotePdf({client,items,subtotal,validDays,notes})
   doc.save('Orcamento-'+client.replace(/[^a-zA-Z0-9]+/g,'-')+'.pdf')
   closeQuoteModal()
   showAlert('job-success','Orçamento gerado e descarregado!')
