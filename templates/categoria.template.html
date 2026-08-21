@@ -270,7 +270,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
  <div class="stats-row" id="cat-stats-row" style="display:none">
  <div class="stat-item"><strong id="stat-count">–</strong><span>Profissionais</span></div>
  <div class="stat-item"><strong id="stat-rating">–</strong><span>Avaliação média</span></div>
- <div class="stat-item"><strong>24h</strong><span>Resposta habitual</span></div>
+ <div class="stat-item" id="stat-response-item" style="display:none"><strong id="stat-response">–</strong><span>Resposta média</span></div>
  </div>
  </div>
 
@@ -435,9 +435,15 @@ async function init(){
  loadCatStats()
 }
 
+function formatResponseMinutes(mins){
+ if(mins<60)return Math.round(mins)+' min'
+ if(mins<1440)return Math.round(mins/60)+' h'
+ return Math.round(mins/1440)+' d'
+}
+
 async function loadCatStats(){
  try{
- const{data:pros,count}=await db.from('profiles').select('id',{count:'exact'}).eq('is_demo',false).ilike('category',`%${filters.cat}%`)
+ const{data:pros,count}=await db.from('profiles').select('id,avg_response_minutes,response_sample_count',{count:'exact'}).eq('is_demo',false).ilike('category',`%${filters.cat}%`)
  if(!pros)return
  const row=document.getElementById('cat-stats-row')
  document.getElementById('stat-count').textContent=(count||pros.length)
@@ -449,6 +455,20 @@ async function loadCatStats(){
  document.getElementById('stat-rating').textContent=avg+' ★'
  } else {
  document.getElementById('stat-rating').textContent='Novo'
+ }
+ // Tempo de resposta: só mostramos com dados reais e amostra suficiente
+ // (nunca um número inventado tipo "24h" fixo) — mesmo critério (n>=3)
+ // usado em get_price_suggestion para sugestões de preço.
+ let totalMin=0,totalN=0
+ pros.forEach(p=>{
+ if(p.response_sample_count>0&&p.avg_response_minutes!=null){
+ totalMin+=p.avg_response_minutes*p.response_sample_count
+ totalN+=p.response_sample_count
+ }
+ })
+ if(totalN>=3){
+ document.getElementById('stat-response').textContent=formatResponseMinutes(totalMin/totalN)
+ document.getElementById('stat-response-item').style.display=''
  }
  }
  row.style.display='flex'

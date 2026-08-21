@@ -59,16 +59,22 @@ window.supabase = {
         // query engine.
         const builder = {
           _wantsCount: false,
+          _headOnly: false,
           select(_cols, opts) {
             if (opts && opts.count) this._wantsCount = true;
+            if (opts && opts.head) this._headOnly = true; // head:true = no rows, just the count
             return this;
           },
           eq() { return this; },
           not() { return this; },
           gte() { return this; },
           in() { return this; },
+          ilike() { return this; },
           order() { return this; },
           limit() { return this; },
+          range() { return this; },
+          maybeSingle() { return this; },
+          single() { return this; },
           insert: async (row) => {
             window.__insertCalls = window.__insertCalls || [];
             window.__insertCalls.push({ table, row });
@@ -76,9 +82,15 @@ window.supabase = {
           },
           then(resolve, reject) {
             const scenario = (cfg().tableData || {})[table] || {};
-            const result = this._wantsCount
-              ? { data: null, count: scenario.count != null ? scenario.count : 0, error: null }
-              : { data: scenario.data || [], error: null };
+            const count = scenario.count != null ? scenario.count : (scenario.data || []).length;
+            let result;
+            if (this._headOnly) {
+              result = { data: null, count, error: null };
+            } else if (this._wantsCount) {
+              result = { data: scenario.data || [], count, error: null };
+            } else {
+              result = { data: scenario.data || [], error: null };
+            }
             return Promise.resolve(result).then(resolve, reject);
           },
         };
