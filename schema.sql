@@ -289,9 +289,15 @@ CREATE TABLE profile_views (
 -- ============================================================
 
 -- ============================================================
--- NOTA DE SEGURANÇA (advisors do Supabase, por corrigir num próximo passo):
--- - Definir search_path fixo nas funções SECURITY DEFINER acima.
--- - Ativar "Leaked Password Protection" nas definições de Auth.
--- - Rever se os buckets "avatars"/"portfolio" precisam mesmo de permitir
---   listagem pública de todos os ficheiros, ou só leitura por URL direta.
+-- NOTA DE SEGURANÇA (atualizado a 21 de agosto de 2026):
+-- - Search_path fixo nas funções SECURITY DEFINER: feito (verificado --
+--   nenhuma função SECURITY DEFINER em public está sem search_path pinado).
+-- - Listagem pública dos buckets avatars/portfolio/proliga-media: feito --
+--   SELECT em storage.objects agora exige sessão (authenticated). A leitura
+--   por URL direto continua a funcionar para toda a gente (buckets são
+--   "public"), só deixou de ser possível listar TODOS os ficheiros sem
+--   conta nenhuma. Ver supabase/migrations/20260821223819_*.
+-- - Ativar "Leaked Password Protection" nas definições de Auth: por fazer.
+--   É um toggle em Authentication -> Providers -> Password no dashboard do
+--   Supabase, não uma migration -- só o dono da conta consegue ativá-lo.
 -- ============================================================
