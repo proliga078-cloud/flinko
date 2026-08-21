@@ -1,0 +1,150 @@
+// Testa netlify/functions/stripe-webhook.js — a função que recebe eventos
+// do Stripe e atualiza profiles.plan / stripe_customer_id / stripe_subscription_id.
+// Cobre: verificação de assinatura, atribuição do plano correto consoante
+// o estado da subscrição, e que uma sessão sem client_reference_id nunca
+// atualiza um perfil ao calhas.
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { makeFakeStripe, makeFakeSupabaseAdmin } = require('./helpers/fakes');
+const { stubModule } = require('./helpers/stub-require');
+
+const scenario = {};
+
+process.env.STRIPE_SECRET_KEY = 'sk_test_fake';
+process.env.STRIPE_WEBHOOK_SECRET = 'whsec_fake';
+process.env.SUPABASE_URL = 'https://fake.supabase.co';
+process.env.SUPABASE_SERVICE_ROLE_KEY = 'fake-service-role-key';
+
+const HANDLER_PATH = require.resolve('../../netlify/functions/stripe-webhook.js');
+stubModule('stripe', makeFakeStripe(scenario), HANDLER_PATH);
+stubModule('@supabase/supabase-js', { createClient: makeFakeSupabaseAdmin(scenario) }, HANDLER_PATH);
+
+const { handler } = require(HANDLER_PATH);
+
+function resetScenario() {
+  scenario.constructEvent = undefined;
+  scenario.subscriptionsRetrieve = undefined;
+  scenario.updateCalls = [];
+}
+
+function baseEvent(overrides = {}) {
+  return {
+    headers: { 'stripe-signature': 'sig_valid' },
+    body: '{}',
+    isBase64Encoded: false,
+    ...overrides,
+  };
+}
+
+test('assinatura inválida -> 400, nenhuma atualização na BD', async () => {
+  resetScenario();
+  scenario.constructEvent = () => { throw new Error('signature mismatch'); };
+  const res = await handler(baseEvent());
+  assert.equal(res.statusCode, 400);
+  assert.match(res.body, /Webhook Error/);
+  assert.equal(scenario.updateCalls.length, 0);
+});
+
+test('checkout.session.completed com subscrição: lê o plano dos metadados da subscrição e atualiza o perfil certo', async () => {
+  resetScenario();
+  scenario.constructEvent = () => ({
+    type: 'checkout.session.completed',
+    data: { object: { client_reference_id: 'user-42', customer: 'cus_42', subscription: 'sub_42' } },
+  });
+  scenario.subscriptionsRetrieve = async (id) => {
+    assert.equal(id, 'sub_42');
+    return { metadata: { plan: 'pro' } };
+  };
+  const res = await handler(baseEvent());
+  assert.equal(res.statusCode, 200);
+  assert.equal(scenario.updateCalls.length, 1);
+  const call = scenario.updateCalls[0];
+  assert.equal(call.table, 'profiles');
+  assert.equal(call.col, 'id');
+  assert.equal(call.val, 'user-42');
+  assert.equal(call.patch.plan, 'pro');
+  assert.equal(call.patch.stripe_customer_id, 'cus_42');
+  assert.equal(call.patch.stripe_subscription_id, 'sub_42');
+});
+
+test('checkout.session.completed sem client_reference_id: não atualiza nenhum perfil', async () => {
+  resetScenario();
+  scenario.constructEvent = () => ({
+    type: 'checkout.session.completed',
+    data: { object: { client_reference_id: null, customer: 'cus_x', subscription: 'sub_x' } },
+  });
+  // A função ainda consulta a subscrição no Stripe mesmo sem
+  // client_reference_id (só decide não escrever na BD mais tarde).
+  scenario.subscriptionsRetrieve = async () => ({ metadata: { plan: 'pro' } });
+  const res = await handler(baseEvent());
+  assert.equal(res.statusCode, 200);
+  assert.equal(scenario.updateCalls.length, 0, 'sem userId não há forma segura de saber a quem atribuir o plano');
+});
+
+test('customer.subscription.updated: active -> mantém/atribui o plano pago', async () => {
+  resetScenario();
+  scenario.constructEvent = () => ({
+    type: 'customer.subscription.updated',
+    data: { object: { id: 'sub_1', status: 'active', metadata: { plan: 'pro' } } },
+  });
+  const res = await handler(baseEvent());
+  assert.equal(res.statusCode, 200);
+  assert.equal(scenario.updateCalls[0].patch.plan, 'pro');
+  assert.equal(scenario.updateCalls[0].col, 'stripe_subscription_id');
+  assert.equal(scenario.updateCalls[0].val, 'sub_1');
+});
+
+test('customer.subscription.updated: trialing -> também conta como pago', async () => {
+  resetScenario();
+  scenario.constructEvent = () => ({
+    type: 'customer.subscription.updated',
+    data: { object: { id: 'sub_2', status: 'trialing', metadata: {} } },
+  });
+  await handler(baseEvent());
+  assert.equal(scenario.updateCalls[0].patch.plan, 'pro', 'sem metadata.plan deve cair no default "pro"');
+});
+
+for (const badStatus of ['past_due', 'unpaid', 'canceled', 'incomplete_expired', 'paused']) {
+  test(`customer.subscription.updated: ${badStatus} -> volta para "free"`, async () => {
+    resetScenario();
+    scenario.constructEvent = () => ({
+      type: 'customer.subscription.updated',
+      data: { object: { id: 'sub_x', status: badStatus, metadata: { plan: 'pro' } } },
+    });
+    await handler(baseEvent());
+    assert.equal(scenario.updateCalls[0].patch.plan, 'free');
+  });
+}
+
+test('customer.subscription.deleted: repõe free e limpa o subscription id', async () => {
+  resetScenario();
+  scenario.constructEvent = () => ({
+    type: 'customer.subscription.deleted',
+    data: { object: { id: 'sub_9' } },
+  });
+  await handler(baseEvent());
+  assert.equal(scenario.updateCalls.length, 1);
+  assert.equal(scenario.updateCalls[0].patch.plan, 'free');
+  assert.equal(scenario.updateCalls[0].patch.stripe_subscription_id, null);
+  assert.equal(scenario.updateCalls[0].col, 'stripe_subscription_id');
+  assert.equal(scenario.updateCalls[0].val, 'sub_9');
+});
+
+test('tipo de evento desconhecido: responde 200 e não mexe na BD', async () => {
+  resetScenario();
+  scenario.constructEvent = () => ({ type: 'invoice.paid', data: { object: {} } });
+  const res = await handler(baseEvent());
+  assert.equal(res.statusCode, 200);
+  assert.equal(scenario.updateCalls.length, 0);
+});
+
+test('erro a processar o evento -> 500', async () => {
+  resetScenario();
+  scenario.constructEvent = () => ({
+    type: 'checkout.session.completed',
+    data: { object: { client_reference_id: 'user-1', subscription: 'sub_1' } },
+  });
+  scenario.subscriptionsRetrieve = async () => { throw new Error('falha a consultar a subscrição'); };
+  const res = await handler(baseEvent());
+  assert.equal(res.statusCode, 500);
+});
