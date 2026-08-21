@@ -1,4 +1,12 @@
 -- PROLIGA - Schema da Base de Dados
+--
+-- ATENCAO: este ficheiro e um RESUMO manual, mantido a olho, e nao a fonte
+-- de verdade. A fonte de verdade real e cronologica da base de dados esta
+-- em supabase/migrations/ (69 migracoes, extraidas a 21 de agosto de 2026
+-- diretamente da tabela supabase_migrations.schema_migrations do Supabase,
+-- que ate essa data nunca tinha sido trazida para o git). Ver
+-- supabase/migrations/README.md para o workflow daqui para a frente.
+--
 -- Snapshot de referência da estrutura REAL em produção (Supabase), a
 -- 27 de julho de 2026. A base de dados evoluiu bastante além do desenho
 -- inicial (chat completo, pedidos, portefólio, telefone privado) e este
@@ -6,7 +14,11 @@
 -- Nota: a BD viva tem algumas políticas RLS duplicadas/redundantes
 -- (mesma regra criada duas vezes com nomes diferentes ao longo do tempo).
 -- Este ficheiro documenta o COMPORTAMENTO pretendido de forma limpa,
--- não um dump literal linha a linha de cada política duplicada.
+-- não um dump literal linha a linha de cada política duplicada. Sabe-se
+-- também que este resumo ainda não cobre todas as tabelas/triggers reais
+-- (ex: credits, ad_slots, request_offers, plan_limits, reserved_slugs,
+-- bucket proliga-media, trigger protect_privileged_profile_columns) —
+-- para a lista completa e exata, consulta supabase/migrations/.
 
 -- ============================================================
 -- PROFILES — um perfil por utilizador (cliente e/ou profissional)

@@ -1,0 +1,17 @@
+-- Em 2026-08-15, um conjunto de migrações de "lockdown" revogou o SELECT
+-- a nivel de tabela em public.profiles para anon/authenticated (para forcar
+-- leituras por RPCs SECURITY DEFINER como get_my_profile()). Isso partiu,
+-- sem se aperceber, 12 politicas RLS pre-existentes noutras tabelas
+-- (messages_legacy_contact_form, storage.objects, portfolio_items,
+-- profile_private, services, site_visits) que fazem um EXISTS/subquery
+-- direto a profiles.id / profiles.user_id / profiles.is_admin. O Postgres
+-- verifica os GRANTs de forma estatica para qualquer tabela referenciada
+-- numa politica RLS, mesmo que a subquery nunca chegue a correr em tempo
+-- de execucao — por isso todas essas politicas comecaram a falhar com
+-- "permission denied for table profiles".
+--
+-- Fix minimo: conceder SELECT apenas nas 3 colunas que essas politicas
+-- realmente usam (id, user_id, is_admin). Nao se toca em nenhuma coluna
+-- sensivel (bio, plan, stripe ids, credits, etc.) que o lockdown de
+-- Aug 15 pretendia proteger.
+GRANT SELECT (id, user_id, is_admin) ON public.profiles TO anon, authenticated;
