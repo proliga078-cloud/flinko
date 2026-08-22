@@ -36,6 +36,20 @@ const RAIN_THRESHOLD=60 // % de probabilidade a partir do qual vale a pena avisa
 // Corre uma vez por dia. Avisa quando um trabalho esta marcado para daqui a
 // exatamente 2 dias e ha grande probabilidade de chuva nesse dia — tempo
 // suficiente para o profissional reagendar com o cliente sem pressa.
+//
+// Bug encontrado em auditoria: a versao anterior fazia um pedido HTTP ao
+// Open-Meteo POR PROFISSIONAL, dentro de um for..await sequencial. Como
+// PT_PLACES so tem ~28 zonas fixas, dezenas de profissionais acabam quase
+// sempre a partilhar a mesma zona (ex: todos os jardineiros do Porto) — o
+// que significava o MESMO pedido, com a MESMA resposta, repetido uma vez
+// por profissional, um a seguir ao outro. Numa zona com muitos
+// profissionais isto multiplicava o tempo de execucao (arriscando o limite
+// de tempo da function e deixando profissionais mais tarde na lista sem
+// aviso nenhum) e o numero de pedidos ao Open-Meteo, sem nenhum beneficio.
+// Agora: os profissionais sao agrupados por zona, os trabalhos do dia
+// sao lidos numa unica consulta a BD (em vez de uma por profissional), e o
+// Open-Meteo so e consultado uma vez por zona que tenha mesmo alguem com
+// trabalho agendado nesse dia.
 exports.handler=async()=>{
   try{
     const{data:pros}=await admin.from('profiles').select('id,name,category,location')
@@ -47,16 +61,30 @@ exports.handler=async()=>{
     const dayStart=targetStr+'T00:00:00Z'
     const dayEnd=targetStr+'T23:59:59Z'
 
-    let alerted=0
+    const placeByProId={}
+    const prosByPlace={}
     for(const pro of pros){
       const place=matchPlace(pro.location)
       if(!place)continue
+      placeByProId[pro.id]=place
+      ;(prosByPlace[place]=prosByPlace[place]||[]).push(pro)
+    }
+    const relevantProIds=Object.keys(placeByProId)
+    if(!relevantProIds.length)return{statusCode:200,body:JSON.stringify({checked:pros.length,alerted:0})}
 
-      const{data:jobs}=await admin.from('jobs').select('id,title')
-        .eq('professional_id',pro.id)
-        .gte('scheduled_at',dayStart).lte('scheduled_at',dayEnd)
-        .in('status',['novo','negociacao','orcamento_enviado','aceite','agendado'])
-      if(!jobs||!jobs.length)continue
+    const{data:allJobs}=await admin.from('jobs').select('id,title,professional_id')
+      .in('professional_id',relevantProIds)
+      .gte('scheduled_at',dayStart).lte('scheduled_at',dayEnd)
+      .in('status',['novo','negociacao','orcamento_enviado','aceite','agendado'])
+    const jobsByProId={}
+    ;(allJobs||[]).forEach(j=>{(jobsByProId[j.professional_id]=jobsByProId[j.professional_id]||[]).push(j)})
+
+    const dateLabel=targetDate.toLocaleDateString('pt-PT',{weekday:'long',day:'numeric',month:'long'})
+    let alerted=0
+
+    for(const place of Object.keys(prosByPlace)){
+      const prosComTrabalho=prosByPlace[place].filter(p=>jobsByProId[p.id]&&jobsByProId[p.id].length)
+      if(!prosComTrabalho.length)continue // ninguem desta zona tem trabalho nesse dia — poupa o pedido ao Open-Meteo
 
       const[lat,lon]=PT_PLACES[place]
       let rainProb=null
@@ -69,8 +97,10 @@ exports.handler=async()=>{
         }
       }catch(e){console.error('weather fetch error:',e)}
 
-      if(rainProb!=null&&rainProb>=RAIN_THRESHOLD){
-        const dateLabel=targetDate.toLocaleDateString('pt-PT',{weekday:'long',day:'numeric',month:'long'})
+      if(rainProb==null||rainProb<RAIN_THRESHOLD)continue
+
+      for(const pro of prosComTrabalho){
+        const jobs=jobsByProId[pro.id]
         await sendPush(pro.id,{
           title:'Previsão de chuva',
           body:`${rainProb}% de chuva em ${place} para ${dateLabel} — tens ${jobs.length} trabalho${jobs.length>1?'s':''} agendado${jobs.length>1?'s':''} nesse dia.`,
