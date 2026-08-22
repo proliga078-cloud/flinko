@@ -6,3 +6,4 @@ Disallow: /messages.html
 Disallow: /auth.html
 
 Sitemap: https://proliga.pt/sitemap.xml
+Sitemap: https://proliga.pt/sitemap-profiles.xml

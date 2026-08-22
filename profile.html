@@ -3,11 +3,23 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Perfil Profissional – Proliga</title>
-  <meta name="description" content="Vê o perfil, serviços, portfólio e avaliações deste profissional em Portugal. Contacta diretamente pela Proliga."/>
-  <meta name="robots" content="index, follow"/>
+  <title id="meta-title">Perfil Profissional – Proliga</title>
+  <meta id="meta-description" name="description" content="Vê o perfil, serviços, portfólio e avaliações deste profissional em Portugal. Contacta diretamente pela Proliga."/>
+  <meta id="meta-robots" name="robots" content="index, follow"/>
+  <link id="meta-canonical" rel="canonical" href="https://proliga.pt/profile.html"/>
+  <meta id="meta-og-title" property="og:title" content="Perfil Profissional – Proliga"/>
+  <meta id="meta-og-description" property="og:description" content="Vê o perfil, serviços, portfólio e avaliações deste profissional em Portugal. Contacta diretamente pela Proliga."/>
   <meta property="og:type" content="profile"/>
   <meta property="og:site_name" content="Proliga"/>
+  <meta property="og:locale" content="pt_PT"/>
+  <meta id="meta-og-url" property="og:url" content="https://proliga.pt/profile.html"/>
+  <meta id="meta-og-image" property="og:image" content="https://proliga.pt/assets/og-image.png"/>
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta id="meta-twitter-title" name="twitter:title" content="Perfil Profissional – Proliga"/>
+  <meta id="meta-twitter-description" name="twitter:description" content="Vê o perfil, serviços, portfólio e avaliações deste profissional em Portugal. Contacta diretamente pela Proliga."/>
+  <meta id="meta-twitter-image" name="twitter:image" content="https://proliga.pt/assets/og-image.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
@@ -455,6 +467,30 @@ async function resolveSlug(){
   return true
 }
 
+// Preenche title/description/canonical/Open Graph/Twitter com os dados
+// reais do profissional, assim que chegam do Supabase. Até aqui a página
+// só tinha os valores genéricos do <head> (bons como reserva para quem
+// ainda não correu JavaScript, mas sem isto o Google via sempre o mesmo
+// título/descrição em todos os perfis, e a partilha no WhatsApp/redes
+// sociais nunca mostrava o nome nem a foto do profissional certo).
+function updateSeoTags(pro){
+  const titulo=`${pro.name} – Proliga`
+  const descricao=pro.bio
+    ?pro.bio.replace(/\s+/g,' ').trim().slice(0,155)
+    :`Perfil de ${pro.category||'profissional'} em ${pro.location||'Portugal'}. Contacta diretamente pela Proliga.`
+  const url=pro.slug?`https://proliga.pt/${encodeURIComponent(pro.slug)}`:`https://proliga.pt/profile.html?id=${pro.id}`
+  const imagem=pro.photo_url||'https://proliga.pt/assets/og-image.png'
+  document.getElementById('meta-description').setAttribute('content',descricao)
+  document.getElementById('meta-canonical').setAttribute('href',url)
+  document.getElementById('meta-og-title').setAttribute('content',titulo)
+  document.getElementById('meta-og-description').setAttribute('content',descricao)
+  document.getElementById('meta-og-url').setAttribute('content',url)
+  document.getElementById('meta-og-image').setAttribute('content',imagem)
+  document.getElementById('meta-twitter-title').setAttribute('content',titulo)
+  document.getElementById('meta-twitter-description').setAttribute('content',descricao)
+  document.getElementById('meta-twitter-image').setAttribute('content',imagem)
+}
+
 async function init(){
   if(!await resolveSlug()){location.href='index.html';return}
   const{data:{session}}=await db.auth.getSession()
@@ -466,9 +502,15 @@ async function init(){
   }
   const{data:pro,error}=preloadedPro?{data:preloadedPro,error:null}
     :await db.from('profiles').select(PUBLIC_PROFILE_COLS).eq('id',proId).single()
-  if(error||!pro){document.getElementById('profile-header').innerHTML='<p style="color:red;padding:20px">Profissional não encontrado.</p>';return}
+  if(error||!pro){
+    document.getElementById('profile-header').innerHTML='<p style="color:red;padding:20px">Profissional não encontrado.</p>'
+    // Página sem conteúdo real: não faz sentido o Google indexar isto.
+    document.getElementById('meta-robots').setAttribute('content','noindex, nofollow')
+    return
+  }
   proData=pro
   document.title=`${pro.name} – Proliga`
+  updateSeoTags(pro)
   renderHeader(pro)
   document.getElementById('content-grid').style.display='grid'
   loadServices()
