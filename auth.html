@@ -27,7 +27,7 @@ overflow: hidden;
 .tab {
 flex: 1; padding: 18px; text-align: center;
 font-weight: 600; font-size: 15px;
-cursor: pointer; color: #94a3b8;
+cursor: pointer; color: #5B6270;
 border: none; background: none;
 font-family: inherit; transition: all .2s;
 }
@@ -59,13 +59,13 @@ transition: background .2s; margin-top: 8px;
 .msg.success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; display: block; }
 .msg.hidden { display: none; }
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.hint { font-size: 12px; color: #94a3b8; margin-top: 6px }
+.hint { font-size: 12px; color: #5B6270; margin-top: 6px }
 .card-title { font-size: 17px; font-weight: 800; margin-bottom: 6px }
 .card-sub { font-size: 13px; color: #64748b; margin-bottom: 22px; line-height: 1.5 }
 
 .pw-wrap{position:relative;display:block}
 .pw-wrap input{width:100%;padding-right:44px}
-.pw-toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;padding:6px;border-radius:7px;display:flex;align-items:center}
+.pw-toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#5B6270;padding:6px;border-radius:7px;display:flex;align-items:center}
 .pw-toggle:hover{color:#E8720A;background:#f1f5f9}
 .pw-toggle.on{color:#E8720A}
 .ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -100,6 +100,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#0F1A33"/>
 <script src="/assets/pwa.js" defer></script>
+<script src="/assets/a11y-clickable.js" defer></script>
 </head>
 <body>
 <nav>
@@ -122,11 +123,11 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <div id="form-login" class="form-body">
 <div class="msg hidden" id="login-msg"></div>
 <div class="form-group">
-<label>Email</label>
+<label for="login-email">Email</label>
 <input type="email" id="login-email" placeholder="o-teu@email.com" autocomplete="email" />
 </div>
 <div class="form-group">
-<label>Password</label>
+<label for="login-password">Password</label>
 <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
 </div>
 <button class="btn-submit" id="login-btn" onclick="doLogin()">Entrar na conta</button>
@@ -139,14 +140,14 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <div id="form-register" class="form-body" style="display:none">
 <div class="msg hidden" id="reg-msg"></div>
 <div class="form-group">
-<label>O que procuras?</label>
-<div class="intent-grid">
-<div class="intent-card" id="intent-client" onclick="selectAccountType('client')">
+<label id="intent-label">O que procuras?</label>
+<div class="intent-grid" role="group" aria-labelledby="intent-label">
+<div class="intent-card" id="intent-client" onclick="selectAccountType('client')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectAccountType('client')}" role="button" tabindex="0" aria-pressed="false">
 <svg class="ic" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
 <div class="it">Contratar</div>
 <div class="is">Procuro um profissional</div>
 </div>
-<div class="intent-card" id="intent-professional" onclick="selectAccountType('professional')">
+<div class="intent-card" id="intent-professional" onclick="selectAccountType('professional')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectAccountType('professional')}" role="button" tabindex="0" aria-pressed="false">
 <svg class="ic" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
 <div class="it">Oferecer serviços</div>
 <div class="is">Sou profissional</div>
@@ -154,15 +155,15 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 </div>
 </div>
 <div class="form-group">
-<label>Nome completo</label>
+<label for="reg-name">Nome completo</label>
 <input type="text" id="reg-name" placeholder="João Silva" autocomplete="name" />
 </div>
 <div class="form-group">
-<label>Email</label>
+<label for="reg-email">Email</label>
 <input type="email" id="reg-email" placeholder="o-teu@email.com" autocomplete="email" />
 </div>
 <div class="form-group">
-<label>Password</label>
+<label for="reg-password">Password</label>
 <div class="pw-wrap">
 <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres" autocomplete="new-password" />
 <button type="button" class="pw-toggle" id="reg-pw-toggle" onclick="togglePw('reg-password','reg-pw-toggle')" aria-label="Mostrar password">
@@ -181,11 +182,11 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <div class="card-sub">Vieste do link de recuperação enviado por email. Escolhe a tua nova password abaixo.</div>
 <div class="msg hidden" id="recovery-msg"></div>
 <div class="form-group">
-<label>Nova password</label>
+<label for="recovery-password">Nova password</label>
 <input type="password" id="recovery-password" placeholder="Mínimo 6 caracteres" autocomplete="new-password" />
 </div>
 <div class="form-group">
-<label>Confirmar nova password</label>
+<label for="recovery-password2">Confirmar nova password</label>
 <input type="password" id="recovery-password2" placeholder="Repete a password" autocomplete="new-password" />
 <div class="hint" id="recovery-match-hint"></div>
 </div>
@@ -240,6 +241,8 @@ function selectAccountType(t) {
 regAccountType = t
 document.getElementById('intent-client').classList.toggle('on', t === 'client')
 document.getElementById('intent-professional').classList.toggle('on', t === 'professional')
+document.getElementById('intent-client').setAttribute('aria-pressed', t === 'client')
+document.getElementById('intent-professional').setAttribute('aria-pressed', t === 'professional')
 }
 // Se viemos de uma ação concreta do site (ex: mandar mensagem a um
 // profissional, ou publicar um pedido) já sabemos se é cliente ou

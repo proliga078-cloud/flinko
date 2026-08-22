@@ -13,6 +13,7 @@
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#0F1A33"/>
 <script src="/assets/pwa.js" defer></script>
+<script src="/assets/a11y-clickable.js" defer></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/assets/dashboard.css"/>
 </head>
@@ -117,7 +118,7 @@ function toggleMobileMenu(open){
         <div class="hd-top">
           <div>
             <div class="hd-date" id="hd-date"></div>
-            <div class="hd-title" id="greet-title">Olá!</div>
+            <h1 class="hd-title" id="greet-title">Olá!</h1>
           </div>
           <button class="hd-cta" onclick="showPage('trabalhos');setTimeout(()=>document.getElementById('job-title')?.focus(),150)">
             <svg class="ic" viewBox="0 0 24 24" style="width:15px;height:15px"><path d="M12 5v14M5 12h14"/></svg>Novo trabalho
@@ -204,7 +205,7 @@ function toggleMobileMenu(open){
 
   <!-- TRABALHOS -->
   <div id="page-trabalhos" class="page-section">
-    <div class="page-title">Trabalhos</div>
+    <h1 class="page-title">Trabalhos</h1>
     <p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:560px">Organiza os teus trabalhos desde o primeiro contacto até seres pago — orçamentos e faturação num só sítio. Para agendar datas, usa a página <a href="#" onclick="showPage('agenda');return false" style="color:var(--blue);font-weight:600">Agenda</a>.</p>
     <div class="alert success" id="job-success"></div>
     <div class="alert error" id="job-error"></div>
@@ -233,7 +234,7 @@ function toggleMobileMenu(open){
 
   <!-- CLIENTES -->
   <div id="page-clientes" class="page-section">
-    <div class="page-title">Clientes</div>
+    <h1 class="page-title">Clientes</h1>
     <p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:560px">Histórico de trabalhos por cliente, para veres quem volta mais vezes e quanto já faturaste com cada um.</p>
     <div class="form-section">
       <input id="client-search" type="text" placeholder="Pesquisar cliente..." oninput="renderClientHistory()" style="margin-bottom:0"/>
@@ -243,7 +244,7 @@ function toggleMobileMenu(open){
 
   <!-- AGENDA -->
   <div id="page-agenda" class="page-section">
-    <div class="page-title">Agenda</div>
+    <h1 class="page-title">Agenda</h1>
     <p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:560px">O teu calendário de trabalhos. Clica num dia para veres o que tens marcado ou para adicionares algo diretamente — não precisas de passar pelo Pipeline.</p>
     <div class="alert success" id="qa-success"></div>
     <div class="alert error" id="qa-error"></div>
@@ -288,7 +289,7 @@ function toggleMobileMenu(open){
 
   <!-- PROFILE -->
   <div id="page-profile" class="page-section">
-    <div class="page-title">O meu perfil</div>
+    <h1 class="page-title">O meu perfil</h1>
     <div class="ptabs">
       <button class="ptab" data-ptab="profile" onclick="showPage('profile')">Dados</button>
       <button class="ptab" data-ptab="services" onclick="showPage('services')">Serviços</button>
@@ -482,7 +483,7 @@ function toggleMobileMenu(open){
 
   <!-- SERVICES -->
   <div id="page-services" class="page-section">
-    <div class="page-title">O meu perfil</div>
+    <h1 class="page-title">O meu perfil</h1>
     <div class="ptabs">
       <button class="ptab" data-ptab="profile" onclick="showPage('profile')">Dados</button>
       <button class="ptab" data-ptab="services" onclick="showPage('services')">Serviços</button>
@@ -515,7 +516,7 @@ function toggleMobileMenu(open){
 
   <!-- PORTFOLIO -->
   <div id="page-portfolio" class="page-section">
-    <div class="page-title">O meu perfil</div>
+    <h1 class="page-title">O meu perfil</h1>
     <div class="ptabs">
       <button class="ptab" data-ptab="profile" onclick="showPage('profile')">Dados</button>
       <button class="ptab" data-ptab="services" onclick="showPage('services')">Serviços</button>
@@ -570,7 +571,7 @@ function toggleMobileMenu(open){
 
   <!-- DIARIO -->
   <div id="page-diario" class="page-section">
-    <div class="page-title">O meu perfil</div>
+    <h1 class="page-title">O meu perfil</h1>
     <div class="ptabs">
       <button class="ptab" data-ptab="profile" onclick="showPage('profile')">Dados</button>
       <button class="ptab" data-ptab="services" onclick="showPage('services')">Serviços</button>
@@ -604,7 +605,7 @@ function toggleMobileMenu(open){
 
   <!-- FAQ -->
   <div id="page-faq" class="page-section">
-    <div class="page-title">O meu perfil</div>
+    <h1 class="page-title">O meu perfil</h1>
     <div class="ptabs">
       <button class="ptab" data-ptab="profile" onclick="showPage('profile')">Dados</button>
       <button class="ptab" data-ptab="services" onclick="showPage('services')">Serviços</button>
@@ -629,7 +630,7 @@ function toggleMobileMenu(open){
 
   <!-- MEUS PEDIDOS -->
   <div id="page-myrequests" class="page-section">
-    <div class="page-title">Pedidos</div>
+    <h1 class="page-title">Pedidos</h1>
     <p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:520px">Publica o que precisas (ex: "preciso de um eletricista") e qualquer profissional em Portugal pode ver e contactar-te. Aparece em <a href="pedidos.html" style="color:var(--blue);font-weight:600">pedidos.html</a> para todos verem.</p>
     <div class="alert success" id="req-success"></div>
     <div class="alert error" id="req-error"></div>
@@ -691,13 +692,13 @@ function toggleMobileMenu(open){
 
   <!-- MESSAGES -->
   <div id="page-messages" class="page-section">
-    <div class="page-title">Mensagens</div>
+    <h1 class="page-title">Mensagens</h1>
     <div id="messages-list"></div>
   </div>
 
   <!-- REVIEWS -->
   <div id="page-reviews" class="page-section">
-    <div class="page-title">Avaliações</div>
+    <h1 class="page-title">Avaliações</h1>
     <div id="reviews-list"></div>
   </div>
 
@@ -710,7 +711,7 @@ function toggleMobileMenu(open){
         <div class="hd-top">
           <div>
             <div class="hd-date" id="fin-period"></div>
-            <div class="hd-title">Finanças</div>
+            <h1 class="hd-title">Finanças</h1>
           </div>
           <button class="hd-cta" style="background:rgba(255,255,255,.12);color:#fff" onclick="exportFinanceCsv()">
             <svg class="ic" viewBox="0 0 24 24" style="width:15px;height:15px"><path d="M12 4v12M7 11l5 5 5-5"/><path d="M4 20h16"/></svg>Exportar CSV
@@ -818,7 +819,7 @@ function toggleMobileMenu(open){
         <div class="hd-top">
           <div>
             <div class="hd-date" id="mkt-cat-label">&nbsp;</div>
-            <div class="hd-title">Painel de Mercado</div>
+            <h1 class="hd-title">Painel de Mercado</h1>
           </div>
         </div>
         <div class="hd-stats">
@@ -869,7 +870,7 @@ function toggleMobileMenu(open){
 
   <!-- REFERRALS -->
   <div id="page-referrals" class="page-section">
-    <div class="page-title">Referências</div>
+    <h1 class="page-title">Referências</h1>
     <p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:560px">Quando não podes aceitar um trabalho, recomenda outro profissional da Proliga em vez de perderes o cliente. Cria confiança e todos ganham.</p>
     <div class="form-section">
       <div class="form-title">Recomendações Recebidas</div>
@@ -886,7 +887,7 @@ function toggleMobileMenu(open){
 
   <!-- CREDITOS -->
   <div id="page-convidar" class="page-section">
-    <div class="page-title">Créditos</div>
+    <h1 class="page-title">Créditos</h1>
     <p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:560px">Ganha créditos e troca-os por um mês do plano Pro ou por destaque no site. Convida um amigo (10 créditos) e recebe boas avaliações em trabalhos reais (5 a 10 créditos por avaliação).</p>
 
     <div class="form-section" style="background:var(--bg);border:none;text-align:center;padding:24px">
@@ -945,7 +946,7 @@ function toggleMobileMenu(open){
 
   <!-- PRIVACIDADE E RGPD -->
   <div id="page-privacidade" class="page-section">
-    <div class="page-title">Privacidade e RGPD</div>
+    <h1 class="page-title">Privacidade e RGPD</h1>
     <p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:560px">
       Podes pedir uma cópia dos teus dados ou a eliminação da tua conta diretamente aqui. Confirmamos o pedido e temos até 30 dias para o tratar (prazo do RGPD), como explicado na <a href="rgpd.html" target="_blank" style="color:var(--blue)">página de Privacidade</a>.
     </p>

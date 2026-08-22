@@ -12,6 +12,7 @@
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#0F1A33"/>
 <script src="/assets/pwa.js" defer></script>
+<script src="/assets/a11y-clickable.js" defer></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -230,7 +231,7 @@ return
 }
 el.innerHTML=conversations.map(c=>{
 const unread=c._unread
-const avatar=c.other.photo_url?'<img src="'+escapeHtml(c.other.photo_url)+'" alt="">':escapeHtml(initialsOf(c.other.name))
+const avatar=c.other.photo_url?'<img src="'+escapeHtml(c.other.photo_url)+'" alt="'+escapeHtml(c.other.name||'')+'">':escapeHtml(initialsOf(c.other.name))
 const time=c.last_message_at?timeAgo(c.last_message_at):''
 return '<div class="conv-item'+(c.id===activeConvId?' active':'')+(unread?' unread':'')+'" onclick="openConversation(\''+c.id+'\')">'+
 '<div class="conv-avatar">'+avatar+'</div>'+
@@ -271,7 +272,7 @@ activeOther=conv.other
 document.getElementById('chat-empty').style.display='none'
 document.getElementById('chat-active').style.display='flex'
 document.getElementById('conv-panel').classList.add('hide-mobile')
-document.getElementById('ch-avatar').innerHTML=conv.other.photo_url?'<img src="'+escapeHtml(conv.other.photo_url)+'">':escapeHtml(initialsOf(conv.other.name))
+document.getElementById('ch-avatar').innerHTML=conv.other.photo_url?'<img src="'+escapeHtml(conv.other.photo_url)+'" alt="'+escapeHtml(conv.other.name||'')+'">':escapeHtml(initialsOf(conv.other.name))
 document.getElementById('ch-name').textContent=conv.other.name
 document.getElementById('ch-cat').textContent=conv.other.category||''
 const lnk=document.getElementById('ch-profile-link')
@@ -414,7 +415,7 @@ function renderCtxHeader(){
   if(window.innerWidth>1020)p.style.display='block'
   const av=document.getElementById('ctx-avatar')
   av.innerHTML=activeOther.photo_url
-    ?'<img src="'+escapeHtml(activeOther.photo_url)+'" alt=""/>'
+    ?'<img src="'+escapeHtml(activeOther.photo_url)+'" alt="'+escapeHtml(activeOther.name||'')+'"/>'
     :escapeHtml(initialsOf(activeOther.name))
   document.getElementById('ctx-name').textContent=activeOther.name||'—'
   document.getElementById('ctx-sub').textContent=activeOther.category||''

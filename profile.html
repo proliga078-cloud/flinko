@@ -51,7 +51,7 @@
     .badge-premium{background:var(--gold);color:#fff}
     .badge-pro{background:#7c3aed;color:#fff}
     .profile-info{flex:1;min-width:220px}
-    .profile-name{font-size:24px;font-weight:700;letter-spacing:-0.3px;margin-bottom:8px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+    .profile-name{font-size:24px;font-weight:700;letter-spacing:-0.3px;margin:0 0 8px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
     .verif-badge{display:inline-flex;align-items:center;gap:4px;background:var(--blue);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;box-shadow:0 3px 8px rgba(232,114,10,.25)}
     .profile-cat{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
     .cat-pill{background:linear-gradient(135deg,var(--blue),#3D6BEF);color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:99px}
@@ -324,12 +324,12 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
         <div id="rev-form-fields">
         <div class="form-group">
           <label>Classificação *</label>
-          <div class="star-select">
-            <button class="star-btn" data-v="1" onclick="setStar(1)">★</button>
-            <button class="star-btn" data-v="2" onclick="setStar(2)">★</button>
-            <button class="star-btn" data-v="3" onclick="setStar(3)">★</button>
-            <button class="star-btn" data-v="4" onclick="setStar(4)">★</button>
-            <button class="star-btn" data-v="5" onclick="setStar(5)">★</button>
+          <div class="star-select" role="radiogroup" aria-label="Classificação de 1 a 5 estrelas">
+            <button class="star-btn" data-v="1" onclick="setStar(1)" aria-label="1 estrela" role="radio" aria-checked="false">★</button>
+            <button class="star-btn" data-v="2" onclick="setStar(2)" aria-label="2 estrelas" role="radio" aria-checked="false">★</button>
+            <button class="star-btn" data-v="3" onclick="setStar(3)" aria-label="3 estrelas" role="radio" aria-checked="false">★</button>
+            <button class="star-btn" data-v="4" onclick="setStar(4)" aria-label="4 estrelas" role="radio" aria-checked="false">★</button>
+            <button class="star-btn" data-v="5" onclick="setStar(5)" aria-label="5 estrelas" role="radio" aria-checked="false">★</button>
           </div>
         </div>
         <div class="form-group"><label>Comentário</label><textarea id="rev-comment" placeholder="Como correu o serviço?"></textarea></div>
@@ -417,6 +417,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/escape-html.js"></script>
+<script src="/assets/a11y-clickable.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script>
 const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
@@ -535,7 +536,7 @@ function renderHeader(pro){
   document.getElementById('profile-header').innerHTML=`
     <div class="avatar-wrap"><div class="avatar">${avatar}</div>${planBadge}</div>
     <div class="profile-info">
-      <div class="profile-name">${safeName} ${verif}${fastResp}</div>
+      <h1 class="profile-name">${safeName} ${verif}${fastResp}</h1>
       <div class="profile-cat">
         <span class="cat-pill">${escapeHtml(pro.category||'Profissional')}</span>
         <span class="loc-text"><svg class="ic" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${escapeHtml(pro.location||'Portugal')}</span>
@@ -794,7 +795,7 @@ async function loadDiary(){
   if(!data||!data.length){el.innerHTML=`<p style="color:var(--muted);font-size:14px;text-align:center;padding:20px">Ainda sem publicações no diário de trabalhos.</p>`;return}
   el.innerHTML=`<div class="diary-track">${data.map(u=>{
     const date=new Date(u.created_at).toLocaleDateString('pt-PT',{day:'numeric',month:'short'})
-    const photo=u.photo_url?`<img class="diary-photo" src="${escapeHtml(u.photo_url)}" alt=""/>`:`<div class="diary-photo-empty"><svg class="ic" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>`
+    const photo=u.photo_url?`<img class="diary-photo" src="${escapeHtml(u.photo_url)}" alt="${escapeHtml(u.content||'Foto do trabalho')}"/>`:`<div class="diary-photo-empty"><svg class="ic" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>`
     return `<div class="diary-item"><div class="diary-dot"></div><div class="diary-card">${photo}<div><div class="diary-text">${escapeHtml(u.content)}</div><div class="diary-meta">${u.location_label?escapeHtml(u.location_label)+' · ':''}${date}</div></div></div></div>`
   }).join('')}</div>`
 }
@@ -821,7 +822,11 @@ function showTab(name){
 
 function setStar(v){
   currentRating=v
-  document.querySelectorAll('.star-btn').forEach(b=>b.classList.toggle('on',parseInt(b.dataset.v)<=v))
+  document.querySelectorAll('.star-btn').forEach(b=>{
+    const bv=parseInt(b.dataset.v)
+    b.classList.toggle('on',bv<=v)
+    b.setAttribute('aria-checked',bv===v?'true':'false')
+  })
 }
 
 async function submitReview(){
@@ -876,6 +881,7 @@ function showMsg(id,txt,type='error'){
 
 function openLightbox(src,cap){
   document.getElementById('lb-img').src=src
+  document.getElementById('lb-img').alt=cap||''
   document.getElementById('lb-cap').textContent=cap
   document.getElementById('lightbox').classList.add('open')
   document.body.style.overflow='hidden'

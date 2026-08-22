@@ -21,6 +21,7 @@
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#0F1A33"/>
 <script src="/assets/pwa.js" defer></script>
+<script src="/assets/a11y-clickable.js" defer></script>
  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Quanto custa criar um site com um programador da Proliga?","acceptedAnswer":{"@type":"Answer","text":"Depende do tipo de projeto (site institucional, loja online, aplicação à medida). Pede orçamento descrevendo o que precisas."}},{"@type":"Question","name":"Os programadores também fazem manutenção depois de entregar o projeto?","acceptedAnswer":{"@type":"Answer","text":"Muitos oferecem planos de manutenção e suporte contínuo — pergunta diretamente sobre isso antes de fechar negócio."}}]}</script>
  <style>
@@ -125,9 +126,9 @@
  .badge-premium{background:linear-gradient(135deg,#D9A441,#AF620A);color:#fff;box-shadow:0 2px 6px rgba(175,98,10,.35)}
  .badge-pro{background:linear-gradient(135deg,#F2A55C,#E8720A);color:#fff;box-shadow:0 2px 6px rgba(232,114,10,.35)}
  .pro-card-cat{display:flex;align-items:center;gap:6px;font-size:13.5px;color:#5B6270;margin-bottom:4px}
- .pro-rating{font-size:12.5px;color:#94a3b8}
+ .pro-rating{font-size:12.5px;color:var(--muted)}
  .pro-rating .stars{color:var(--gold)}
- .pro-bio{font-size:12.5px;color:#94a3b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .pro-bio{font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
  .pro-card-side{text-align:right;flex-shrink:0}
  .pro-price{font-size:13.5px;color:#5B6270;margin-bottom:8px}
  .pro-price strong,.pro-price.free{color:var(--blue);font-size:14px;font-weight:700}
@@ -606,7 +607,7 @@ const initials=pro.name.split(' ').map(n=>n[0]).slice(0,2).join('')
  <div class="pro-card-name">${safeName}</div>
  ${planPill}
  </div>
- <div class="pro-card-cat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${escapeHtml(pro.category||'Profissional')} · ${escapeHtml(pro.location||'Portugal')}${verifiedLabel}</div>
+ <div class="pro-card-cat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5B6270" stroke-width="2"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${escapeHtml(pro.category||'Profissional')} · ${escapeHtml(pro.location||'Portugal')}${verifiedLabel}</div>
  ${subline}
  </div>
  <div class="pro-card-side">

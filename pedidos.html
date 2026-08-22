@@ -254,6 +254,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/escape-html.js"></script>
+<script src="/assets/a11y-clickable.js" defer></script>
 <script src="/assets/resize-image.js"></script>
 <script>
 const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
@@ -475,7 +476,7 @@ function closeModal(){document.getElementById('modal-overlay').classList.remove(
 
 function renderPhotoStrip(){
 const strip=document.getElementById('m-photo-strip')
-const thumbs=pendingPhotos.map((url,i)=>`<div class="photo-thumb"><img src="${escapeHtml(url)}"/><div class="rm" onclick="removePhoto(${i})">✕</div></div>`).join('')
+const thumbs=pendingPhotos.map((url,i)=>`<div class="photo-thumb"><img src="${escapeHtml(url)}" alt="Pré-visualização da foto ${i+1} anexada ao pedido"/><div class="rm" onclick="removePhoto(${i})">✕</div></div>`).join('')
 const addBtn=pendingPhotos.length<4?'<div class="photo-add" onclick="document.getElementById(&quot;m-photo-file&quot;).click()">➕</div>':''
 strip.innerHTML=thumbs+addBtn
 }
