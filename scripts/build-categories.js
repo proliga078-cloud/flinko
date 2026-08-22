@@ -70,6 +70,7 @@ for (const cat of categories) {
     '{{OG_DESCRIPTION}}': cat.ogDescription,
     '{{FAQ_JSONLD}}': buildFaqJsonLd(cat.faq),
     '{{SERVICE_TYPE}}': cat.serviceType,
+    '{{SERVICE_TYPE_URL}}': encodeURIComponent(cat.serviceType),
     '{{H1_ICON}}': cat.h1Icon,
     '{{H1_TEXT}}': cat.h1Text,
     '{{INTRO}}': cat.intro,
