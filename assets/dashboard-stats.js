@@ -316,8 +316,8 @@ async function loadRecentMsgs(){
   clients&&clients.forEach(c=>nameMap[c.id]=c.name)
   el.innerHTML=data.map(m=>`
     <div class="msg-item" onclick="location.href='messages.html'">
-      <div class="msg-header"><div class="msg-from">${nameMap[m.client_id]||'Cliente'}</div><div class="msg-date">${new Date(m.last_message_at).toLocaleDateString('pt-PT')}</div></div>
-      <div class="msg-preview">${(m.last_message||'').slice(0,120)}</div>
+      <div class="msg-header"><div class="msg-from">${escapeHtml(nameMap[m.client_id]||'Cliente')}</div><div class="msg-date">${new Date(m.last_message_at).toLocaleDateString('pt-PT')}</div></div>
+      <div class="msg-preview">${escapeHtml((m.last_message||'').slice(0,120))}</div>
     </div>`).join('')
 }
 
@@ -336,23 +336,11 @@ async function loadRecentReviews(){
   }).join('')
 }
 
-function checkUpgrade(){
-  const plan=profileData?.plan||'free'
-  const banner=document.getElementById('upgrade-banner-wrap')
-  if(plan==='free'){
-    banner.innerHTML=`<div class="upgrade-banner">
-      <div><h3>Aumenta a visibilidade do teu perfil</h3><p>Plano Pro: portfólio, badge verificado, destaque nas pesquisas. A partir de €9/mês.</p></div>
-      <button class="btn btn-gold" onclick="location.href='pricing.html'">Atualizar plano →</button>
-    </div>`
-  } else if(plan==='pro'){
-    banner.innerHTML=`<div class="upgrade-banner" style="background:linear-gradient(135deg,#C25A06,#E8720A)">
-      <div><h3>Estás no plano Pro</h3><p>Portefólio, selo verificado e destaque nas pesquisas — tudo ativo.</p></div>
-      <button class="btn btn-outline" style="background:#fff" onclick="manageBilling()">Gerir subscrição</button>
-    </div>`
-  }
-  // Portfolio disponivel para todos
-  loadPortfolio()
-  loadDiaryDash()
-  loadFaqsDash()
-}
+// NOTA: checkUpgrade() é definido em assets/billing.js (carregado depois
+// deste ficheiro em dashboard.html), que é a versão que fica ativa em
+// runtime — cobre também o plano "premium" e é a única definição desde
+// que este duplicado foi removido (auditoria total, ago/2026). Manter
+// apenas uma definição evita divergência silenciosa entre as duas versões
+// (a duplicada aqui já tinha ficado sem chamar loadDiaryDash()/loadFaqsDash(),
+// deixando as tabs "Diário" e "FAQ" vazias até o utilizador escrever algo).
 

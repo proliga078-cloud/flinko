@@ -44,6 +44,8 @@ banner.innerHTML='<div class="upgrade-banner" style="background:linear-gradient(
 }
 }
 if(typeof loadPortfolio==='function')loadPortfolio()
+if(typeof loadDiaryDash==='function')loadDiaryDash()
+if(typeof loadFaqsDash==='function')loadFaqsDash()
 }
 
 document.addEventListener('DOMContentLoaded',function(){
