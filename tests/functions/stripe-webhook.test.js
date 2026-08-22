@@ -24,6 +24,7 @@ const { handler } = require(HANDLER_PATH);
 function resetScenario() {
   scenario.constructEvent = undefined;
   scenario.subscriptionsRetrieve = undefined;
+  scenario.chargesRetrieve = undefined;
   scenario.updateCalls = [];
 }
 
@@ -128,6 +129,54 @@ test('customer.subscription.deleted: repõe free e limpa o subscription id', asy
   assert.equal(scenario.updateCalls[0].patch.stripe_subscription_id, null);
   assert.equal(scenario.updateCalls[0].col, 'stripe_subscription_id');
   assert.equal(scenario.updateCalls[0].val, 'sub_9');
+});
+
+test('charge.dispute.created: suspende o perfil do cliente associado ao charge disputado', async () => {
+  resetScenario();
+  scenario.constructEvent = () => ({
+    type: 'charge.dispute.created',
+    data: { object: { id: 'dp_1', charge: 'ch_1' } },
+  });
+  scenario.chargesRetrieve = async (id) => {
+    assert.equal(id, 'ch_1');
+    return { customer: 'cus_disputado' };
+  };
+  const res = await handler(baseEvent());
+  assert.equal(res.statusCode, 200);
+  assert.equal(scenario.updateCalls.length, 1);
+  assert.equal(scenario.updateCalls[0].table, 'profiles');
+  assert.equal(scenario.updateCalls[0].col, 'stripe_customer_id');
+  assert.equal(scenario.updateCalls[0].val, 'cus_disputado');
+  assert.equal(scenario.updateCalls[0].patch.suspended, true);
+  // Não deve mexer no plano nem na subscrição — ver comentário no handler
+  // sobre porque isso ficaria vulnerável ao mesmo ciclo de reconciliação
+  // corrigido em admin-set-plan.js.
+  assert.equal('plan' in scenario.updateCalls[0].patch, false);
+  assert.equal('stripe_subscription_id' in scenario.updateCalls[0].patch, false);
+});
+
+test('charge.dispute.created: charge sem customer -> não atualiza nenhum perfil (não rebenta)', async () => {
+  resetScenario();
+  scenario.constructEvent = () => ({
+    type: 'charge.dispute.created',
+    data: { object: { id: 'dp_2', charge: 'ch_2' } },
+  });
+  scenario.chargesRetrieve = async () => ({ customer: null });
+  const res = await handler(baseEvent());
+  assert.equal(res.statusCode, 200);
+  assert.equal(scenario.updateCalls.length, 0);
+});
+
+test('charge.dispute.created: dispute sem charge -> não chama o Stripe nem a BD', async () => {
+  resetScenario();
+  scenario.constructEvent = () => ({
+    type: 'charge.dispute.created',
+    data: { object: { id: 'dp_3', charge: null } },
+  });
+  scenario.chargesRetrieve = async () => { throw new Error('não devia ser chamado sem charge'); };
+  const res = await handler(baseEvent());
+  assert.equal(res.statusCode, 200);
+  assert.equal(scenario.updateCalls.length, 0);
 });
 
 test('tipo de evento desconhecido: responde 200 e não mexe na BD', async () => {

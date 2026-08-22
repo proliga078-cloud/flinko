@@ -542,7 +542,7 @@ return`<tr>
 <td>${escapeHtml(p.category||'—')}</td>
 <td>${escapeHtml(p.location||'—')}</td>
 <td><span class="badge badge-${p.plan||'free'}">${p.plan||'free'}</span></td>
-<td><span class="badge ${approved?'badge-approved':'badge-pending'}">${approved?'Ativo':'Pendente'}</span></td>
+<td><span class="badge ${approved?'badge-approved':'badge-pending'}">${approved?'Ativo':'Pendente'}</span>${p.suspended?' <span class="badge badge-demo" title="Marcado automaticamente pelo webhook do Stripe quando há uma contestação de pagamento (chargeback) em aberto para este perfil">🚩 Disputado</span>':''}</td>
 <td><div style="display:flex;gap:6px;flex-wrap:wrap">
 <button class="btn btn-edit" onclick="openEditModal('${p.id}')">✏️ Editar</button>
 <button class="btn btn-approve" onclick="toggleAdmin('${p.id}',!p.is_admin)" title="${p.is_admin?'Remover admin':'Tornar admin'}">${p.is_admin?'👑':'⬆️'}</button>
@@ -550,6 +550,7 @@ return`<tr>
 ${approved
 ?`<button class="btn btn-unapprove" onclick="toggleApprove('${p.id}',false)">⏸ Suspender</button>`
 :`<button class="btn btn-approve" onclick="toggleApprove('${p.id}',true)">✅ Aprovar</button>`}
+${p.suspended?`<button class="btn btn-approve" onclick="toggleSuspended('${p.id}',false)" title="Marcar a contestação como resolvida">🚩 Resolver disputa</button>`:''}
 ${p.verified?`<button class="btn btn-unapprove" onclick="toggleVerified('${p.id}',false)">✔️ Verificado</button>`:`<button class="btn btn-approve" onclick="toggleVerified('${p.id}',true)">☆ Verificar</button>`}
 <button class="btn btn-delete" onclick="deletePro('${p.id}','${escAttrJs(p.name||'')}')">🗑</button>
 </div></td></tr>`
@@ -572,6 +573,16 @@ await db.from('profiles').update({approved}).eq('id',id);loadProfiles()
 
 async function toggleVerified(id,verified){
 await db.from('profiles').update({verified}).eq('id',id);loadProfiles()
+}
+
+// 'suspended' fica true automaticamente quando stripe-webhook.js recebe
+// charge.dispute.created para este perfil (ver esse ficheiro). Isto limpa a
+// marca depois de a equipa rever o caso — não confundir com o botão
+// "Suspender" acima, que mexe em 'approved' (moderação normal), não nesta
+// flag.
+async function toggleSuspended(id,suspended){
+if(suspended===false&&!confirm('Marcar esta contestação de pagamento como resolvida e voltar a mostrar o perfil?'))return
+await db.from('profiles').update({suspended}).eq('id',id);loadProfiles()
 }
 
 async function deletePro(id,name){

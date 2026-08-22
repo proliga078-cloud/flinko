@@ -34,6 +34,12 @@ function makeFakeStripe(scenario) {
           return scenario.subscriptionsCancel(id);
         },
       },
+      charges: {
+        retrieve: async (id) => {
+          if (!scenario.chargesRetrieve) throw new Error('charges.retrieve não configurado neste teste');
+          return scenario.chargesRetrieve(id);
+        },
+      },
       webhooks: {
         constructEvent: (payload, sig, secret) => {
           if (!scenario.constructEvent) throw new Error('webhooks.constructEvent não configurado neste teste');

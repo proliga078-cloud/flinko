@@ -36,6 +36,29 @@ console.log('subscription.updated',sub.id,sub.status,'->',plano)
 }else if(stripeEvent.type==='customer.subscription.deleted'){
 const sub=stripeEvent.data.object
 await supabase.from('profiles').update({plan:'free',stripe_subscription_id:null}).eq('stripe_subscription_id',sub.id)
+}else if(stripeEvent.type==='charge.dispute.created'){
+// Uma contestação de pagamento (chargeback) é um sinal de risco/fraude —
+// suspendemos de imediato a visibilidade pública do perfil (a mesma flag
+// 'suspended' que a moderação manual usa) até alguém da equipa rever o
+// caso. Deliberadamente NÃO mexemos em plan/stripe_subscription_id aqui:
+// a subscrição pode continuar ativa e a disputa pode ainda resolver-se a
+// favor da Proliga — mudar o plano de forma preventiva arriscava cair no
+// mesmo ciclo de "o próximo webhook da subscrição repõe o plano sozinho"
+// que foi corrigido no admin (ver admin-set-plan.js). Um humano decide o
+// resto a partir do separador Profissionais/RGPD do admin.
+const dispute=stripeEvent.data.object
+if(dispute.charge){
+const charge=await stripe.charges.retrieve(dispute.charge)
+const customerId=typeof charge.customer==='string'?charge.customer:(charge.customer&&charge.customer.id)
+if(customerId){
+await supabase.from('profiles').update({suspended:true}).eq('stripe_customer_id',customerId)
+console.warn('charge.dispute.created: perfil suspenso automaticamente por contestação de pagamento. dispute=',dispute.id,'customer=',customerId)
+}else{
+console.warn('charge.dispute.created: charge sem customer associado, nada para suspender. dispute=',dispute.id)
+}
+}else{
+console.warn('charge.dispute.created: evento sem charge associado. dispute=',dispute.id)
+}
 }
 return{statusCode:200,body:JSON.stringify({received:true})}
 }catch(err){
