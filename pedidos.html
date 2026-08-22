@@ -148,9 +148,10 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <h1>📢 Precisas de um profissional?</h1>
 <p>Publica o que precisas em menos de um minuto e recebe propostas diretas — grátis, sem compromisso. Profissionais: os pedidos abertos estão aqui em baixo, respondam diretamente.</p>
 <div class="hero-actions">
-<button class="btn btn-gold" onclick="openModal()">➕ Publicar um Pedido</button>
+<button class="btn btn-gold" onclick="openModal(prefillCat)">➕ Publicar um Pedido</button>
 <a href="#grid" class="btn btn-ghost" style="color:#fff;border:1.5px solid rgba(255,255,255,.35)">Ver pedidos abertos</a>
 </div>
+<div id="cat-context-note" style="display:none;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:10px;padding:12px 16px;margin-top:16px;font-size:13.5px;color:#fff;line-height:1.6;max-width:560px"></div>
 </div>
 
 <div class="wrap">
@@ -264,9 +265,22 @@ let pendingPhotos=[]
 const CATEGORIES=['Eletricistas','Canalizadores','Pintores','Jardineiros','Limpeza','Mudanças','Pedreiros','Carpinteiros','Serralheiros','Decoradores','Programadores','Designers','Reparações Tech','Personal Trainers','Cabeleireiros','Esteticistas','Outro']
 const CAT_ICONS={'Eletricistas':'⚡','Canalizadores':'🔧','Pintores':'🎨','Jardineiros':'🌿','Limpeza':'🧹','Mudanças':'📦','Pedreiros':'🧱','Carpinteiros':'🪚','Serralheiros':'🔩','Decoradores':'🖼️','Programadores':'💻','Designers':'✏️','Reparações Tech':'🔌','Personal Trainers':'🏋️','Cabeleireiros':'💇','Esteticistas':'💅','Outro':'🛠️'}
 
+// Quem chega aqui vindo de uma categoria/pesquisa sem profissionais (ver
+// categoria.html e as paginas de categoria) traz ?cat=X na URL. Pre-filtra
+// a lista por essa categoria e oferece logo o atalho para publicar o pedido
+// já com a categoria escolhida.
+const prefillCat=new URLSearchParams(location.search).get('cat')||''
+
 async function init(){
 const catSel=document.getElementById('f-cat')
 CATEGORIES.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;catSel.appendChild(o)})
+
+if(prefillCat&&CATEGORIES.includes(prefillCat)){
+catSel.value=prefillCat
+const note=document.getElementById('cat-context-note')
+note.innerHTML=`Não encontraste profissionais de <strong>${prefillCat}</strong>? Publica um pedido nesta categoria e os profissionais candidatam-se a ti. <a href="#" onclick="openModal('${prefillCat.replace(/'/g,"\\'")}');return false" style="color:#fff;text-decoration:underline;font-weight:700">Publicar pedido em ${prefillCat} →</a>`
+note.style.display='block'
+}
 
 const{data:{session:s}}=await db.auth.getSession()
 session=s
@@ -450,11 +464,12 @@ if(session.user.id===clientId){alert('Este é o teu próprio pedido.');return}
 location.href='messages.html?with='+clientId
 }
 
-function openModal(){
-if(!session){location.href='auth.html?tab=login&redirect=pedidos.html&intent=client';return}
+function openModal(cat){
+if(!session){location.href='auth.html?tab=login&redirect='+encodeURIComponent('pedidos.html'+location.search)+'&intent=client';return}
 pendingPhotos=[]
 renderPhotoStrip()
 document.getElementById('modal-overlay').classList.add('open')
+if(cat&&CATEGORIES.includes(cat))document.getElementById('m-cat').value=cat
 }
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open')}
 

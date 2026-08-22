@@ -68,6 +68,11 @@
 
     /* SIDEBAR */
     .sidebar{position:sticky;top:88px;align-self:start}
+    .sidebar-cta{border-radius:16px;padding:18px;margin-bottom:16px;background:linear-gradient(135deg,#E8720A,#F2924A)}
+    .sidebar-cta h3{font-size:14.5px;font-weight:800;margin-bottom:6px;color:#fff}
+    .sidebar-cta p{font-size:12.5px;color:rgba(255,255,255,.85);line-height:1.5;margin-bottom:12px}
+    .sidebar-cta a{display:inline-block;background:#fff;color:#E8720A;font-weight:700;padding:9px 18px;border-radius:8px;text-decoration:none;font-size:13px}
+    .sidebar-cta a:hover{opacity:.9}
     .filter-card{background:var(--white);border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid var(--border)}
     .filter-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px}
     .filter-group{margin-bottom:8px}
@@ -88,6 +93,8 @@
     .main-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
     .results-count{font-size:14px;color:var(--muted)}
     .results-count strong{color:var(--text);font-weight:700}
+    .tverif{font-size:11px;color:#146B3A;font-weight:700;background:#EAF5EE;padding:3px 10px;border-radius:99px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+    .tverif .ic{width:12px;height:12px}
     .sort-select{padding:8px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;outline:none;background:var(--white);cursor:pointer}
     .sort-select:focus{border-color:var(--blue)}
 
@@ -216,6 +223,11 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
       <span style="font-weight:700;font-size:16px">Filtros</span>
       <button onclick="closeSidebar()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted)">×</button>
     </div>
+    <div class="sidebar-cta">
+      <h3>Não encontraste quem procuras?</h3>
+      <p id="sidebar-cta-text">Publica um pedido grátis e deixa os profissionais virem até ti.</p>
+      <a href="pedidos.html" id="sidebar-cta-link">Publicar pedido</a>
+    </div>
     <div class="filter-card"><div class="filter-title">Distrito</div><div class="filter-group"><select class="range-input" id="f-loc-select" style="width:100%" onchange="filters.loc=this.value;loadPros()"><option value="">Todo o país</option><option value="Aveiro">Aveiro</option><option value="Beja">Beja</option><option value="Braga">Braga</option><option value="Bragança">Bragança</option><option value="Castelo Branco">Castelo Branco</option><option value="Coimbra">Coimbra</option><option value="Évora">Évora</option><option value="Faro">Faro</option><option value="Guarda">Guarda</option><option value="Leiria">Leiria</option><option value="Lisboa">Lisboa</option><option value="Portalegre">Portalegre</option><option value="Porto">Porto</option><option value="Santarém">Santarém</option><option value="Setúbal">Setúbal</option><option value="Viana do Castelo">Viana do Castelo</option><option value="Vila Real">Vila Real</option><option value="Viseu">Viseu</option><option value="Açores">Açores</option><option value="Madeira">Madeira</option></select></div></div><div class="filter-card">
       <div class="filter-title">Plano / Destaque</div>
       <label class="filter-label"><input type="checkbox" id="f-premium" onchange="loadPros()"> <span>👑 Premium</span></label>
@@ -245,7 +257,10 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
   <!-- MAIN CONTENT -->
   <main>
     <div class="main-top">
-      <div class="results-count" id="results-count">A carregar...</div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div class="results-count" id="results-count">A carregar...</div>
+        <span class="tverif"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>Verificados à mão</span>
+      </div>
       <select class="sort-select" id="sort-select" onchange="loadPros()">
         <option value="plan">Destaque primeiro</option>
         <option value="rating">Melhor avaliação</option>
@@ -307,6 +322,10 @@ function updateHeader(){
   let desc='Portugal · Todos verificados manualmente'
   if(loc)desc=`${loc} · Todos verificados manualmente`
   document.getElementById('page-desc').innerHTML=desc
+  document.getElementById('sidebar-cta-text').textContent=cat
+    ?`Publica um pedido em ${cat} e deixa os profissionais virem até ti.`
+    :'Publica um pedido grátis e deixa os profissionais virem até ti.'
+  document.getElementById('sidebar-cta-link').href='pedidos.html'+(cat?`?cat=${encodeURIComponent(cat)}`:'')
 }
 
 function setCat(cat){
@@ -346,7 +365,8 @@ async function loadPros(){
   if(error){container.innerHTML=`<p style="color:red;padding:20px">Erro: ${error.message}</p>`;return}
 
   if(!data||!data.length){
-    container.innerHTML=`<div class="pros-list"><div class="empty-state"><h3>Nenhum profissional encontrado</h3><p>Tenta ajustar os filtros ou procura noutra categoria.</p><a href="categoria.html" class="btn btn-outline">Ver todos os profissionais</a></div></div>`
+    const reqUrl='pedidos.html'+(filters.cat?`?cat=${encodeURIComponent(filters.cat)}`:'')
+    container.innerHTML=`<div class="pros-list"><div class="empty-state"><h3>Nenhum profissional encontrado</h3><p>Ainda não há profissionais${filters.cat?` em ${escapeHtml(filters.cat)}`:''} com estes filtros. Publica um pedido grátis e os profissionais candidatam-se a ti, ou ajusta os filtros.</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><a href="${reqUrl}" class="btn btn-solid">Publicar pedido grátis</a><a href="categoria.html" class="btn btn-outline">Ver todos os profissionais</a></div></div></div>`
     document.getElementById('results-count').textContent='0 resultados'
     document.getElementById('pagination').innerHTML=''
     return
@@ -411,7 +431,8 @@ const initials=pro.name.split(' ').map(n=>n[0]).slice(0,2).join('')
     const avatar=pro.photo_url?`<img src="${escapeHtml(pro.photo_url)}" alt="${safeName}"/>`:`${initials}`
     const cardClass=pro.plan==='pro'||pro.plan==='premium'?'is-pro':''
     const planPill=pro.plan==='premium'?'<span class="badge-pill badge-premium">★ Premium</span>':pro.plan==='pro'?'<span class="badge-pill badge-pro">★ Pro</span>':''
-    const verifiedBadge=pro.verified?'<span class="pro-verified-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><path d="M20 6 9 17l-5-5"/></svg></span>':''
+    const verifiedBadge=pro.verified?'<span class="pro-verified-badge" title="Perfil verificado manualmente pela equipa Proliga" aria-label="Perfil verificado manualmente pela equipa Proliga"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><path d="M20 6 9 17l-5-5"/></svg></span>':''
+    const verifiedLabel=pro.verified?'<span class="tverif" style="margin-left:8px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>Verificado</span>':''
     const price=pMap[pro.id]?`A partir de <strong>€${pMap[pro.id]}</strong>`:'<span class="free">Orçamento grátis</span>'
     const subline=r?`<span class="pro-rating"><span class="stars">${stars}</span>&nbsp;<strong>${avg}</strong>&nbsp;(${r.c})</span>`:(pro.bio?`<div class="pro-bio">${escapeHtml(pro.bio)}</div>`:'<span class="pro-rating">✨ Perfil novo</span>')
     return`<a class="pro-card ${cardClass}" href="profile.html?id=${pro.id}">
@@ -424,7 +445,7 @@ const initials=pro.name.split(' ').map(n=>n[0]).slice(0,2).join('')
           <div class="pro-card-name">${safeName}</div>
           ${planPill}
         </div>
-        <div class="pro-card-cat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${escapeHtml(pro.category||'Profissional')} · ${escapeHtml(pro.location||'Portugal')}</div>
+        <div class="pro-card-cat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${escapeHtml(pro.category||'Profissional')} · ${escapeHtml(pro.location||'Portugal')}${verifiedLabel}</div>
         ${subline}
       </div>
       <div class="pro-card-side">

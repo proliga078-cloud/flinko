@@ -87,6 +87,8 @@
  }
 
  .sidebar{position:sticky;top:88px;align-self:start}
+ .sidebar-cta{border-radius:16px;padding:18px;margin-bottom:16px}
+ .sidebar-cta a{display:inline-block;background:#fff;font-weight:700;padding:9px 18px;border-radius:8px;text-decoration:none;margin-top:2px}
  .filter-card{background:var(--white);border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid var(--border)}
  .filter-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px}
  .filter-group{margin-bottom:8px}
@@ -162,9 +164,9 @@
  .mini-how-card h3{font-size:13.5px;font-weight:700;margin-bottom:4px}
  .mini-how-card p{font-size:12.5px;color:var(--muted);line-height:1.5}
 
- .sidebar-cta h3{font-size:14.5px;font-weight:800;margin-bottom:6px}
+ .sidebar-cta h3{font-size:14.5px;font-weight:800;margin-bottom:6px;color:#fff}
  .sidebar-cta p{font-size:12.5px;color:rgba(255,255,255,.85);line-height:1.5;margin-bottom:12px}
- .sidebar-cta a:hover{background:#fff}
+ .sidebar-cta a:hover{opacity:.9}
 
  footer{background:var(--text);color:rgba(255,255,255,.6);padding:40px 5% 24px;font-size:13px}
  footer a{color:rgba(255,255,255,.6)}
@@ -177,11 +179,6 @@
  .toolbar .tspacer{margin-left:auto}
  .tfilters{background:var(--bg);border:1.5px solid var(--border);color:var(--ink);font-family:inherit;font-size:12px;font-weight:600;padding:6px 13px;border-radius:9px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
  .tfilters:hover{border-color:var(--blue);color:var(--blue)}
- .page-body{grid-template-columns:1fr!important}
- .sidebar{display:none!important;position:fixed!important;top:0;left:0;width:min(330px,100vw);height:100vh;background:var(--white);z-index:500;overflow-y:auto;padding:20px;box-shadow:0 0 40px rgba(0,0,0,.2)}
- .sidebar.open{display:block!important}
- .sidebar-close-row{display:flex!important}
- .mobile-filter-btn{display:none!important}
  .sidebar-cta{background:linear-gradient(135deg,#C25A06,#E8720A)!important}
  .sidebar-cta a{color:#E8720A!important}
  .pro-card-cover{background:linear-gradient(135deg,#FDECDD,#DCE6FA)!important}
@@ -298,7 +295,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
  <div class="sidebar-cta">
  <h3>Não encontraste quem procuras?</h3>
  <p>Publica um pedido em eletricistas e deixa os profissionais virem até ti.</p>
- <a href="pedidos.html">Publicar pedido</a>
+ <a href="pedidos.html?cat=Eletricistas">Publicar pedido</a>
  </div>
  <div class="filter-card">
 <div class="filter-title">Distrito</div>
@@ -368,6 +365,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
  <div id="pros-container"></div>
  <div class="pagination" id="pagination"></div>
  </main>
+</div>
 <div class="catfoot">
  <div class="box">
   <h2>Eletricistas em Portugal</h2>
@@ -392,8 +390,6 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
  <a href="esteticistas.html" class="cat-chip"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4z"/></svg> Esteticistas</a>
  </div>
  </div>
-</div>
-
 </div>
 
 <section class="mini-how">
@@ -426,11 +422,11 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/assets/escape-html.js"></script>
 <script>
 const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
 const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
+function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 
 
 const params=new URLSearchParams(location.search)
@@ -525,7 +521,7 @@ async function loadPros(){
  if(error){container.innerHTML=`<p style="color:red;padding:20px">Erro: ${error.message}</p>`;return}
 
  if(!data||!data.length){
- container.innerHTML=`<div class="pros-list"><div class="empty-state"><h3>Nenhum profissional encontrado ainda</h3><p>Ainda não há eletricistas nesta zona. Experimenta outro distrito ou vê todas as categorias.</p><a href="categoria.html" class="btn btn-outline">Ver todos os profissionais</a></div></div>`
+ container.innerHTML=`<div class="pros-list"><div class="empty-state"><h3>Nenhum profissional encontrado ainda</h3><p>Ainda não há eletricistas nesta zona. Publica um pedido grátis e os profissionais desta categoria candidatam-se a ti, ou experimenta outro distrito.</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><a href="pedidos.html?cat=Eletricistas" class="btn btn-solid">Publicar pedido grátis</a><a href="categoria.html" class="btn btn-outline">Ver todos os profissionais</a></div></div></div>`
  document.getElementById('results-count').textContent='0 resultados'
  const tb0=document.getElementById('tb-count'); if(tb0)tb0.textContent='0 profissionais'
  document.getElementById('pagination').innerHTML=''
@@ -594,7 +590,8 @@ const initials=pro.name.split(' ').map(n=>n[0]).slice(0,2).join('')
  const avatar=pro.photo_url?`<img src="${escapeHtml(pro.photo_url)}" alt="${safeName}"/>`:`${initials}`
  const cardClass=pro.plan==='pro'||pro.plan==='premium'?'is-pro':''
  const planPill=pro.plan==='premium'?'<span class="badge-pill badge-premium">★ Premium</span>':pro.plan==='pro'?'<span class="badge-pill badge-pro">★ Pro</span>':''
- const verifiedBadge=pro.verified?'<span class="pro-verified-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><path d="M20 6 9 17l-5-5"/></svg></span>':''
+ const verifiedBadge=pro.verified?'<span class="pro-verified-badge" title="Perfil verificado manualmente pela equipa Proliga" aria-label="Perfil verificado manualmente pela equipa Proliga"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><path d="M20 6 9 17l-5-5"/></svg></span>':''
+ const verifiedLabel=pro.verified?'<span class="tverif" style="margin-left:8px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>Verificado</span>':''
  const price=pMap[pro.id]?`A partir de <strong>€${pMap[pro.id]}</strong>`:'<span class="free">Orçamento grátis</span>'
  const subline=r?`<span class="pro-rating"><span class="stars">${stars}</span>&nbsp;<strong>${avg}</strong>&nbsp;(${r.c})</span>`:(pro.bio?`<div class="pro-bio">${escapeHtml(pro.bio)}</div>`:'<span class="pro-rating">✨ Perfil novo</span>')
  return`<a class="pro-card ${cardClass}" href="${pro.slug?("/"+pro.slug):("profile.html?id="+pro.id)}">
@@ -607,7 +604,7 @@ const initials=pro.name.split(' ').map(n=>n[0]).slice(0,2).join('')
  <div class="pro-card-name">${safeName}</div>
  ${planPill}
  </div>
- <div class="pro-card-cat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${escapeHtml(pro.category||'Profissional')} · ${escapeHtml(pro.location||'Portugal')}</div>
+ <div class="pro-card-cat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${escapeHtml(pro.category||'Profissional')} · ${escapeHtml(pro.location||'Portugal')}${verifiedLabel}</div>
  ${subline}
  </div>
  <div class="pro-card-side">

@@ -155,6 +155,8 @@ section{padding:72px 5%}
 .cat-banner .ic{width:19px;height:19px}
 .cat-name{font-size:14.5px;font-weight:700;margin:0 0 2px}
 .cat-sub{font-size:12px;color:var(--muted)}
+.cat-card.cat-empty{border:1.5px dashed var(--border)}
+.cat-empty-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--blue);margin-top:2px}
 .cat-more{text-align:center;margin-top:30px}
 .btn-cats{background:#fff;border:1.5px solid var(--border);color:var(--ink);padding:12px 26px;border-radius:10px;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px}
 .btn-cats:hover{border-color:var(--blue);color:var(--blue)}
@@ -456,22 +458,22 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <p>Encontra o especialista certo para cada trabalho</p>
 </div>
 <div class="cat-grid">
-<a href="eletricistas.html" class="cat-card"><div class="cat-banner" style="background:var(--amber-light);color:var(--amber)"><svg class="ic" viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></div><div class="cat-name">Eletricistas</div><div class="cat-sub">Instalações e reparações</div></a>
-<a href="canalizadores.html" class="cat-card"><div class="cat-banner" style="background:var(--blue-light);color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2C9 6 6 9.5 6 13a6 6 0 0 0 12 0c0-3.5-3-7-6-11z"/></svg></div><div class="cat-name">Canalizadores</div><div class="cat-sub">Água e saneamento</div></a>
-<a href="limpeza.html" class="cat-card"><div class="cat-banner" style="background:var(--blue-light);color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><path d="M15 4 5 14l3 3 10-10z"/><path d="M18 7l2 2M9 18H4v-3"/></svg></div><div class="cat-name">Limpeza</div><div class="cat-sub">Casa e escritórios</div></a>
-<a href="pintores.html" class="cat-card"><div class="cat-banner" style="background:var(--purple-light);color:var(--purple)"><svg class="ic" viewBox="0 0 24 24"><path d="M18 3a2 2 0 0 1 2 2c0 2-3 3-3 6h-4c0-3-3-4-3-6a2 2 0 0 1 2-2z"/><path d="M13 11v4a2 2 0 0 1-2 2H9l-2 5"/></svg></div><div class="cat-name">Pintores</div><div class="cat-sub">Interior e exterior</div></a>
-<a href="jardineiros.html" class="cat-card"><div class="cat-banner" style="background:var(--green-light);color:var(--green)"><svg class="ic" viewBox="0 0 24 24"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg></div><div class="cat-name">Jardineiros</div><div class="cat-sub">Jardins e exteriores</div></a>
-<a href="mudancas.html" class="cat-card"><div class="cat-banner" style="background:#F1EFE8;color:#5F5E5A"><svg class="ic" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><line x1="12" y1="22" x2="12" y2="12"/></svg></div><div class="cat-name">Mudanças</div><div class="cat-sub">Transporte e mudanças</div></a>
-<a href="pedreiros.html" class="cat-card"><div class="cat-banner" style="background:var(--amber-light);color:var(--amber)"><svg class="ic" viewBox="0 0 24 24"><path d="M14 6l6 6-8 8-6-6z"/><path d="M3 21l4-4"/></svg></div><div class="cat-name">Pedreiros</div><div class="cat-sub">Alvenaria e construção</div></a>
-<a href="carpinteiros.html" class="cat-card"><div class="cat-banner" style="background:var(--blue-light);color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 17l7-12 7 12z"/></svg></div><div class="cat-name">Carpinteiros</div><div class="cat-sub">Móveis e madeira</div></a>
-<a href="serralheiros.html" class="cat-card"><div class="cat-banner" style="background:var(--green-light);color:var(--green)"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div><div class="cat-name">Serralheiros</div><div class="cat-sub">Ferro, inox e portões</div></a>
-<a href="decoradores.html" class="cat-card"><div class="cat-banner" style="background:var(--red-light);color:var(--red)"><svg class="ic" viewBox="0 0 24 24"><path d="M3 18v-6a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v6"/><path d="M2 18h20v3H2z"/><path d="M6 8V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/></svg></div><div class="cat-name">Decoradores</div><div class="cat-sub">Interiores e design de espaços</div></a>
-<a href="programadores.html" class="cat-card"><div class="cat-banner" style="background:var(--purple-light);color:var(--purple)"><svg class="ic" viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg></div><div class="cat-name">Programadores</div><div class="cat-sub">Sites, apps e sistemas</div></a>
-<a href="designers.html" class="cat-card"><div class="cat-banner" style="background:#F1EFE8;color:#5F5E5A"><svg class="ic" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 0 0 0 20c1 0 1.5-.7 1.5-1.5 0-1.5-1-1.5-1-3 0-1 .8-1.5 2-1.5H17a5 5 0 0 0 5-5c0-5-4.5-9-10-9z"/></svg></div><div class="cat-name">Designers</div><div class="cat-sub">Design gráfico e visual</div></a>
-<a href="reparacoes-tech.html" class="cat-card"><div class="cat-banner" style="background:var(--amber-light);color:var(--amber)"><svg class="ic" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><div class="cat-name">Reparações Tech</div><div class="cat-sub">Computadores e eletrónica</div></a>
-<a href="personal-trainers.html" class="cat-card"><div class="cat-banner" style="background:var(--blue-light);color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><path d="M6.5 6.5h11v11h-11z"/><path d="M4 9v6M20 9v6M2 11v2M22 11v2"/></svg></div><div class="cat-name">Personal Trainers</div><div class="cat-sub">Treino e acompanhamento</div></a>
-<a href="cabeleireiros.html" class="cat-card"><div class="cat-banner" style="background:var(--green-light);color:var(--green)"><svg class="ic" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"/></svg></div><div class="cat-name">Cabeleireiros</div><div class="cat-sub">Cortes e coloração</div></a>
-<a href="esteticistas.html" class="cat-card"><div class="cat-banner" style="background:var(--red-light);color:var(--red)"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4z"/></svg></div><div class="cat-name">Esteticistas</div><div class="cat-sub">Tratamentos de beleza</div></a>
+<a href="eletricistas.html" class="cat-card" data-cat="Eletricistas"><div class="cat-banner" style="background:var(--amber-light);color:var(--amber)"><svg class="ic" viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></div><div class="cat-name">Eletricistas</div><div class="cat-sub">Instalações e reparações</div></a>
+<a href="canalizadores.html" class="cat-card" data-cat="Canalizadores"><div class="cat-banner" style="background:var(--blue-light);color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2C9 6 6 9.5 6 13a6 6 0 0 0 12 0c0-3.5-3-7-6-11z"/></svg></div><div class="cat-name">Canalizadores</div><div class="cat-sub">Água e saneamento</div></a>
+<a href="limpeza.html" class="cat-card" data-cat="Limpeza"><div class="cat-banner" style="background:var(--blue-light);color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><path d="M15 4 5 14l3 3 10-10z"/><path d="M18 7l2 2M9 18H4v-3"/></svg></div><div class="cat-name">Limpeza</div><div class="cat-sub">Casa e escritórios</div></a>
+<a href="pintores.html" class="cat-card" data-cat="Pintores"><div class="cat-banner" style="background:var(--purple-light);color:var(--purple)"><svg class="ic" viewBox="0 0 24 24"><path d="M18 3a2 2 0 0 1 2 2c0 2-3 3-3 6h-4c0-3-3-4-3-6a2 2 0 0 1 2-2z"/><path d="M13 11v4a2 2 0 0 1-2 2H9l-2 5"/></svg></div><div class="cat-name">Pintores</div><div class="cat-sub">Interior e exterior</div></a>
+<a href="jardineiros.html" class="cat-card" data-cat="Jardineiros"><div class="cat-banner" style="background:var(--green-light);color:var(--green)"><svg class="ic" viewBox="0 0 24 24"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg></div><div class="cat-name">Jardineiros</div><div class="cat-sub">Jardins e exteriores</div></a>
+<a href="mudancas.html" class="cat-card" data-cat="Mudanças"><div class="cat-banner" style="background:#F1EFE8;color:#5F5E5A"><svg class="ic" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><line x1="12" y1="22" x2="12" y2="12"/></svg></div><div class="cat-name">Mudanças</div><div class="cat-sub">Transporte e mudanças</div></a>
+<a href="pedreiros.html" class="cat-card" data-cat="Pedreiros"><div class="cat-banner" style="background:var(--amber-light);color:var(--amber)"><svg class="ic" viewBox="0 0 24 24"><path d="M14 6l6 6-8 8-6-6z"/><path d="M3 21l4-4"/></svg></div><div class="cat-name">Pedreiros</div><div class="cat-sub">Alvenaria e construção</div></a>
+<a href="carpinteiros.html" class="cat-card" data-cat="Carpinteiros"><div class="cat-banner" style="background:var(--blue-light);color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 17l7-12 7 12z"/></svg></div><div class="cat-name">Carpinteiros</div><div class="cat-sub">Móveis e madeira</div></a>
+<a href="serralheiros.html" class="cat-card" data-cat="Serralheiros"><div class="cat-banner" style="background:var(--green-light);color:var(--green)"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div><div class="cat-name">Serralheiros</div><div class="cat-sub">Ferro, inox e portões</div></a>
+<a href="decoradores.html" class="cat-card" data-cat="Decoradores"><div class="cat-banner" style="background:var(--red-light);color:var(--red)"><svg class="ic" viewBox="0 0 24 24"><path d="M3 18v-6a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v6"/><path d="M2 18h20v3H2z"/><path d="M6 8V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/></svg></div><div class="cat-name">Decoradores</div><div class="cat-sub">Interiores e design de espaços</div></a>
+<a href="programadores.html" class="cat-card" data-cat="Programadores"><div class="cat-banner" style="background:var(--purple-light);color:var(--purple)"><svg class="ic" viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg></div><div class="cat-name">Programadores</div><div class="cat-sub">Sites, apps e sistemas</div></a>
+<a href="designers.html" class="cat-card" data-cat="Designers"><div class="cat-banner" style="background:#F1EFE8;color:#5F5E5A"><svg class="ic" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 0 0 0 20c1 0 1.5-.7 1.5-1.5 0-1.5-1-1.5-1-3 0-1 .8-1.5 2-1.5H17a5 5 0 0 0 5-5c0-5-4.5-9-10-9z"/></svg></div><div class="cat-name">Designers</div><div class="cat-sub">Design gráfico e visual</div></a>
+<a href="reparacoes-tech.html" class="cat-card" data-cat="Reparações Tech"><div class="cat-banner" style="background:var(--amber-light);color:var(--amber)"><svg class="ic" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><div class="cat-name">Reparações Tech</div><div class="cat-sub">Computadores e eletrónica</div></a>
+<a href="personal-trainers.html" class="cat-card" data-cat="Personal Trainers"><div class="cat-banner" style="background:var(--blue-light);color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><path d="M6.5 6.5h11v11h-11z"/><path d="M4 9v6M20 9v6M2 11v2M22 11v2"/></svg></div><div class="cat-name">Personal Trainers</div><div class="cat-sub">Treino e acompanhamento</div></a>
+<a href="cabeleireiros.html" class="cat-card" data-cat="Cabeleireiros"><div class="cat-banner" style="background:var(--green-light);color:var(--green)"><svg class="ic" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"/></svg></div><div class="cat-name">Cabeleireiros</div><div class="cat-sub">Cortes e coloração</div></a>
+<a href="esteticistas.html" class="cat-card" data-cat="Esteticistas"><div class="cat-banner" style="background:var(--red-light);color:var(--red)"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4z"/></svg></div><div class="cat-name">Esteticistas</div><div class="cat-sub">Tratamentos de beleza</div></a>
 </div>
 <div class="cat-more"><a href="categoria.html" class="btn-cats">Ver todas as categorias<svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
 </section>
@@ -680,6 +682,31 @@ loadTestemunho()
 loadHeroRequests()
 renderPromoAd()
 loadProMap()
+markEmptyCategories()
+}
+
+// A Proliga é uma plataforma nova: nem todas as 16 categorias têm já
+// profissionais associados (confirmado por query direta: só 6 de 16 têm
+// pelo menos um). Levar alguém a uma categoria.html vazia, sem alternativa,
+// é um beco sem saída. Em vez disso, marcamos aqui as categorias ainda sem
+// oferta e mandamos o clique para pedidos.html (já com a categoria
+// pré-preenchida) — a pessoa consegue sempre avançar.
+async function markEmptyCategories(){
+try{
+const cards=[...document.querySelectorAll('.cat-card[data-cat]')]
+if(!cards.length)return
+const{data,error}=await db.from('profiles').select('category').eq('is_demo',false).eq('account_type','professional').not('category','is',null).neq('category','')
+if(error)return
+const withSupply=new Set((data||[]).map(p=>p.category))
+cards.forEach(card=>{
+const cat=card.dataset.cat
+if(withSupply.has(cat))return
+card.classList.add('cat-empty')
+card.href='pedidos.html?cat='+encodeURIComponent(cat)
+const sub=card.querySelector('.cat-sub')
+if(sub)sub.innerHTML='<span class="cat-empty-tag">📢 Publica um pedido</span>'
+})
+}catch(e){/* silencioso: se falhar, a grelha fica como estava (link normal para a categoria) */}
 }
 
 const PROMO_HEADLINES={

@@ -544,7 +544,7 @@ const av=p.photo_url?`<img src="${escapeHtml(p.photo_url)}" alt=""/>`:((p.name||
 return`<tr>
 <td><div class="td-flex"><div class="pro-avatar">${av}</div>
 <div><div class="td-name">${escapeHtml(p.name||'—')}${demoBadge(p)}</div><div class="td-sub">${escapeHtml(p.phone||'')}</div></div></div></td>
-<td>${escapeHtml(p.category||'—')}</td>
+<td>${p.category?escapeHtml(p.category):'<span class="badge badge-pending" title="Sem categoria: não aparece em nenhuma pesquisa por categoria nem na grelha da homepage">⚠️ Sem categoria</span>'}</td>
 <td>${escapeHtml(p.location||'—')}</td>
 <td><span class="badge badge-${p.plan||'free'}">${p.plan||'free'}</span></td>
 <td><span class="badge ${approved?'badge-approved':'badge-pending'}">${approved?'Ativo':'Pendente'}</span>${p.suspended?' <span class="badge badge-demo" title="Marcado automaticamente pelo webhook do Stripe quando há uma contestação de pagamento (chargeback) em aberto para este perfil">🚩 Disputado</span>':''}</td>
