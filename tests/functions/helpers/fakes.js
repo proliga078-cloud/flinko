@@ -39,6 +39,16 @@ function makeFakeStripe(scenario) {
           if (!scenario.chargesRetrieve) throw new Error('charges.retrieve não configurado neste teste');
           return scenario.chargesRetrieve(id);
         },
+        list: async (params) => {
+          if (!scenario.chargesList) throw new Error('charges.list não configurado neste teste');
+          return scenario.chargesList(params);
+        },
+      },
+      refunds: {
+        create: async (params) => {
+          if (!scenario.refundsCreate) throw new Error('refunds.create não configurado neste teste');
+          return scenario.refundsCreate(params);
+        },
       },
       webhooks: {
         constructEvent: (payload, sig, secret) => {

@@ -418,6 +418,11 @@ tr:hover td{background:#f8f9fc}
 <label>Origem</label>
 <div class="sub-origin-box" id="sub-origin"></div>
 </div>
+<div class="form-group">
+<label>💰 Pagamentos Stripe</label>
+<div id="sub-charges-list" style="display:flex;flex-direction:column;gap:8px"></div>
+<div style="font-size:11.5px;color:var(--muted);margin-top:5px">Reembolsar não cancela a subscrição — se também quiseres parar de cobrar, muda o plano para Free acima ou usa "Reverter para Free agora".</div>
+</div>
 <div class="modal-actions">
 <button class="btn-cancel" onclick="closeSubModal()">Cancelar</button>
 <button class="btn-save" onclick="saveSubEdit()">Guardar alterações</button>
@@ -726,8 +731,82 @@ document.getElementById('sub-expires').value=s.plan_expires_at?s.plan_expires_at
 document.getElementById('sub-credits').value=s.credits||0
 document.getElementById('sub-origin').textContent=s.stripe_subscription_id?`Pago via Stripe (subscrição: ${s.stripe_subscription_id})`:'Atribuído manualmente pela administração'
 document.getElementById('edit-sub-modal').classList.add('active')
+loadSubCharges(id)
 }
 function closeSubModal(){document.getElementById('edit-sub-modal').classList.remove('active');editingSubId=null}
+
+// Lista os últimos pagamentos Stripe do cliente associado a este perfil,
+// com um botão de reembolso por cada um que ainda não foi totalmente
+// reembolsado. Ver netlify/functions/admin-refund.js — é lá que a chave
+// secreta do Stripe é usada; aqui só se pede/mostra o resultado.
+async function loadSubCharges(profileId){
+const box=document.getElementById('sub-charges-list')
+box.innerHTML='<div style="color:var(--muted);font-size:12.5px">A carregar pagamentos...</div>'
+const{data:{session}}=await db.auth.getSession()
+try{
+const res=await fetch('/.netlify/functions/admin-refund',{
+method:'POST',
+headers:{'Content-Type':'application/json',Authorization:'Bearer '+(session&&session.access_token)},
+body:JSON.stringify({action:'list',targetProfileId:profileId})
+})
+const json=await res.json()
+if(editingSubId!==profileId)return // modal já foi fechado/trocado entretanto
+if(!res.ok){box.innerHTML=`<div style="color:var(--red);font-size:12.5px">Erro a carregar pagamentos: ${escapeHtml(json.error||'falhou')}</div>`;return}
+const charges=json.charges||[]
+if(!charges.length){box.innerHTML='<div style="color:var(--muted);font-size:12.5px">Sem pagamentos Stripe para este perfil.</div>';return}
+box.innerHTML=charges.map(c=>{
+const amountLabel=formatCents(c.amount,c.currency)
+const dateLabel=new Date(c.created*1000).toLocaleDateString('pt-PT')
+const remaining=c.amount-c.amount_refunded
+const desc=c.description?` — ${escapeHtml(c.description)}`:''
+if(!c.paid||remaining<=0){
+const label=c.refunded?'Reembolsado':(c.paid?'—':'Não pago')
+return`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px"><span>${dateLabel} — ${amountLabel}${desc}</span><span class="badge ${c.refunded?'badge-approved':'badge-free'}">${label}</span></div>`
+}
+const remainingLabel=formatCents(remaining,c.currency)
+const partialNote=c.amount_refunded?` (já reembolsado: ${formatCents(c.amount_refunded,c.currency)})`:''
+return`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px">
+<span>${dateLabel} — ${amountLabel}${desc}${partialNote}</span>
+<span style="display:flex;gap:6px;align-items:center">
+<input id="refund-amt-${c.id}" type="number" step="0.01" min="0.01" max="${(remaining/100).toFixed(2)}" value="${(remaining/100).toFixed(2)}" style="width:72px;padding:4px 6px;border:1px solid var(--border);border-radius:6px"/>
+<button class="btn btn-delete" onclick="refundCharge('${profileId}','${c.id}',${remaining},'${c.currency}')" title="Máximo: ${remainingLabel}">💰 Reembolsar</button>
+</span>
+</div>`
+}).join('')
+}catch(e){
+if(editingSubId!==profileId)return
+box.innerHTML=`<div style="color:var(--red);font-size:12.5px">Erro a carregar pagamentos: ${escapeHtml(e.message)}</div>`
+}
+}
+
+function formatCents(cents,currency){
+// A Proliga só cobra em EUR (create-checkout-session.js só cria sessões
+// em EUR) — sinaliza-se a moeda só para o caso raro de aparecer outra.
+const symbol=(currency||'eur').toLowerCase()==='eur'?'€':(currency||'').toUpperCase()+' '
+return symbol+((cents||0)/100).toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})
+}
+
+async function refundCharge(profileId,chargeId,maxCents,currency){
+const input=document.getElementById('refund-amt-'+chargeId)
+const euros=Number(input&&input.value)
+if(!euros||euros<=0){alert('Indica um valor de reembolso válido.');return}
+const cents=Math.round(euros*100)
+if(cents>maxCents){alert('Esse valor é superior ao que ainda pode ser reembolsado neste pagamento.');return}
+const isPartial=cents<maxCents
+const confirmMsg=`Reembolsar ${formatCents(cents,currency)}${isPartial?' (reembolso parcial)':''}? Esta ação devolve mesmo o dinheiro ao cliente através do Stripe e não pode ser desfeita.`
+if(!confirm(confirmMsg))return
+const{data:{session}}=await db.auth.getSession()
+try{
+const res=await fetch('/.netlify/functions/admin-refund',{
+method:'POST',
+headers:{'Content-Type':'application/json',Authorization:'Bearer '+(session&&session.access_token)},
+body:JSON.stringify({action:'refund',targetProfileId:profileId,chargeId,amount:cents})
+})
+const json=await res.json()
+if(!res.ok){alert('Erro ao reembolsar: '+(json.error||'falhou'));return}
+loadSubCharges(profileId)
+}catch(e){alert('Erro ao reembolsar: '+e.message)}
+}
 
 function extendSub(days){
 const el=document.getElementById('sub-expires')
