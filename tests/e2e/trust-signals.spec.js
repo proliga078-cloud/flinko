@@ -8,7 +8,12 @@
 // Cobre: (1) a pill "Verificados à mão" que já existia nas páginas de
 // categoria individuais (ex: eletricistas.html) mas faltava em
 // categoria.html; (2) o texto "Verificado" visível em cada card de
-// profissional verificado, além do ícone no avatar.
+// profissional verificado, além do ícone no avatar; (3) os sinais
+// "RGPD garantido" e "0% comissões" — o relatório pedia para reforçar
+// verificação manual + 0% comissões + RGPD junto dos resultados, não só
+// na secção "Porquê confiar" do fundo da homepage. A verificação manual
+// já estava coberta pela pill "Verificados à mão"; RGPD e comissões
+// faltavam por completo junto dos resultados.
 const { test, expect } = require('@playwright/test');
 const path = require('path');
 
@@ -33,11 +38,15 @@ const PROS = {
 };
 
 test.describe('categoria.html — sinais de confiança junto dos resultados', () => {
-  test('mostra a pill "Verificados à mão" junto da contagem de resultados', async ({ page }) => {
+  test('mostra as pills "Verificados à mão", "RGPD garantido" e "0% comissões" junto da contagem de resultados', async ({ page }) => {
     await withFakeSupabase(page, { tableData: { profiles: PROS } });
     await page.goto('/categoria.html');
     await page.waitForFunction(() => document.getElementById('results-count').textContent.includes('profiss'));
-    await expect(page.locator('.main-top .tverif')).toContainText('Verificados à mão');
+    const pills = page.locator('.main-top .tverif');
+    await expect(pills).toHaveCount(3);
+    await expect(pills.nth(0)).toContainText('Verificados à mão');
+    await expect(pills.nth(1)).toContainText('RGPD garantido');
+    await expect(pills.nth(2)).toContainText('0% comissões');
   });
 
   test('profissional verificado mostra o texto "Verificado" no card; não verificado não mostra', async ({ page }) => {
@@ -54,11 +63,15 @@ test.describe('categoria.html — sinais de confiança junto dos resultados', ()
 });
 
 test.describe('jardineiros.html — sinais de confiança já existentes continuam a funcionar', () => {
-  test('mostra a pill "Verificados à mão" e o texto "Verificado" no card do profissional verificado', async ({ page }) => {
+  test('mostra as pills de confiança da toolbar e o texto "Verificado" no card do profissional verificado', async ({ page }) => {
     await withFakeSupabase(page, { tableData: { profiles: PROS } });
     await page.goto('/jardineiros.html');
     await page.waitForSelector('.pro-card');
-    await expect(page.locator('.toolbar .tverif')).toContainText('Verificados à mão');
+    const pills = page.locator('.toolbar .tverif');
+    await expect(pills).toHaveCount(3);
+    await expect(pills.nth(0)).toContainText('Verificados à mão');
+    await expect(pills.nth(1)).toContainText('RGPD garantido');
+    await expect(pills.nth(2)).toContainText('0% comissões');
     const anaCard = page.locator('.pro-card', { hasText: 'Ana Verificada' });
     await expect(anaCard.locator('.pro-card-cat .tverif')).toContainText('Verificado');
   });
