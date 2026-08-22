@@ -44,6 +44,18 @@ window.supabase = {
         },
         signOut: async () => ({ error: null }),
       },
+      // Mínimo necessário para páginas que chamam db.channel(...).on(...).subscribe()
+      // (Realtime) sem que isso rebente o resto do init() da página — não
+      // simula eventos reais, só evita "db.channel is not a function".
+      channel: (_name) => {
+        const chan = {
+          on() { return chan; },
+          subscribe() { return chan; },
+          unsubscribe() { return chan; },
+        };
+        return chan;
+      },
+      removeChannel: () => {},
       rpc: async (fnName, args) => {
         window.__rpcCalls = window.__rpcCalls || [];
         window.__rpcCalls.push({ fnName, args });
@@ -66,8 +78,13 @@ window.supabase = {
             return this;
           },
           eq() { return this; },
+          neq() { return this; },
           not() { return this; },
+          or() { return this; },
           gte() { return this; },
+          gt() { return this; },
+          lte() { return this; },
+          lt() { return this; },
           in() { return this; },
           ilike() { return this; },
           order() { return this; },
@@ -79,6 +96,14 @@ window.supabase = {
             window.__insertCalls = window.__insertCalls || [];
             window.__insertCalls.push({ table, row });
             return { data: null, error: null };
+          },
+          update(patch) {
+            // Não muta de facto `tableData` (seria uma query engine real) —
+            // só regista a chamada para os testes verificarem o payload, e
+            // continua a cadeia (.eq(...).then(...)) como as outras queries.
+            window.__updateCalls = window.__updateCalls || [];
+            window.__updateCalls.push({ table, patch });
+            return this;
           },
           then(resolve, reject) {
             const scenario = (cfg().tableData || {})[table] || {};

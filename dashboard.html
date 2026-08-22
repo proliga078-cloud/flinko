@@ -461,6 +461,9 @@
     <div class="nav-item" data-page="reviews" onclick="showPage('reviews')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg></span> Avaliações</div>
     <div class="nav-item" data-page="referrals" onclick="showPage('referrals')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Referências</div>
     <div class="nav-item" data-page="convidar" onclick="showPage('convidar')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></span> Créditos</div>
+
+    <div class="nav-label">Conta</div>
+    <div class="nav-item" data-page="privacidade" onclick="showPage('privacidade')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span> Privacidade e RGPD</div>
     <div class="nav-divider"></div>
     <div class="nav-item" onclick="viewPublicProfile()"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></span> Ver Perfil Público</div>
   </nav>
@@ -492,6 +495,7 @@
     <div class="nav-item" onclick="showPage('reviews');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg></span> Avaliações</div>
     <div class="nav-item" onclick="showPage('referrals');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Referências</div>
     <div class="nav-item" onclick="showPage('convidar');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></span> Créditos</div>
+    <div class="nav-item" onclick="showPage('privacidade');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span> Privacidade e RGPD</div>
     <div class="nav-divider"></div>
     <button class="btn-signout" onclick="signOut()">Sair da conta</button>
   </div>
@@ -1351,6 +1355,36 @@ function toggleMobileMenu(open){
     <div class="form-section">
       <div class="tc-head"><span>Pessoas convidadas</span></div>
       <div id="invited-list"></div>
+    </div>
+  </div>
+
+  <!-- PRIVACIDADE E RGPD -->
+  <div id="page-privacidade" class="page-section">
+    <div class="page-title">Privacidade e RGPD</div>
+    <p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:560px">
+      Podes pedir uma cópia dos teus dados ou a eliminação da tua conta diretamente aqui. Confirmamos o pedido e temos até 30 dias para o tratar (prazo do RGPD), como explicado na <a href="rgpd.html" target="_blank" style="color:var(--blue)">página de Privacidade</a>.
+    </p>
+
+    <div class="alert success" id="gdpr-success"></div>
+    <div class="alert error" id="gdpr-error"></div>
+
+    <div class="two-cards">
+      <div class="form-section">
+        <div class="tc-head"><span>📦 Exportar os meus dados</span></div>
+        <p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px;line-height:1.6">Direito de acesso (Art. 15º RGPD). Enviamos-te, por email, uma cópia dos dados que temos sobre ti — perfil, serviços, trabalhos, mensagens e avaliações.</p>
+        <button class="btn btn-outline" onclick="requestGdprAction('export')">Pedir exportação dos dados</button>
+      </div>
+      <div class="form-section">
+        <div class="tc-head"><span>🗑️ Eliminar a minha conta</span></div>
+        <p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px;line-height:1.6">Direito ao apagamento (Art. 17º RGPD). O teu perfil deixa de estar visível e os teus dados são apagados dentro do prazo legal. Esta ação não pode ser desfeita depois de confirmada pela nossa equipa.</p>
+        <button class="btn" style="background:#fef2f2;color:#b91c1c;border:1px solid #fecaca" onclick="requestGdprAction('delete')">Pedir eliminação da conta</button>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="tc-head"><span>Os teus pedidos</span></div>
+      <p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px">Histórico dos pedidos que fizeste. Um pedido pendente pode ser cancelado se mudares de ideias.</p>
+      <div id="gdpr-list" class="item-list"></div>
     </div>
   </div>
 
@@ -2534,6 +2568,7 @@ function showPage(name){
   if(name==='convidar')loadInvites()
   if(name==='financas'){renderFinance();loadExpenses();populateReportYears();renderAnnualReport()}
   if(name==='mercado'&&planLimits.finances)loadMarketInsights()
+  if(name==='privacidade')loadGdprRequests()
 }
 
 // TRABALHOS (PIPELINE + AGENDA)
@@ -4188,6 +4223,47 @@ async function saveNotifyPref(){
   if(error){showAlert('notif-error','Não foi possível guardar: '+error.message,'error');return}
   profileData={...profileData,notify_email:on}
   showAlert('notif-success', on?'Vais receber email quando um cliente te escrever.':'Deixaste de receber avisos por email.')
+}
+
+// PRIVACIDADE E RGPD
+const GDPR_STATUS_LABELS={pending:'Pendente',in_progress:'Em tratamento',completed:'Concluído',cancelled:'Cancelado'}
+const GDPR_TYPE_LABELS={export:'Exportação de dados',delete:'Eliminação da conta'}
+
+async function requestGdprAction(type){
+  const isDelete=type==='delete'
+  const confirmMsg=isDelete
+    ?'Tens a certeza que queres pedir a eliminação da tua conta? A tua equipa vai confirmar e tratar o pedido dentro de 30 dias, conforme o RGPD. Esta ação não pode ser desfeita depois de processada.'
+    :'Confirmas o pedido de exportação dos teus dados? Vais receber uma cópia por email dentro de 30 dias.'
+  if(!confirm(confirmMsg))return
+  const{error}=await db.from('gdpr_requests').insert({profile_id:profileId,request_type:type})
+  if(error){console.error('gdpr request error:',error);showAlert('gdpr-error','Não foi possível registar o pedido: '+(error.message||'erro desconhecido'),'error');return}
+  showAlert('gdpr-success',isDelete?'Pedido de eliminação registado. Vamos confirmar por email e tratar dentro de 30 dias.':'Pedido de exportação registado. Vais receber os teus dados por email dentro de 30 dias.','success')
+  loadGdprRequests()
+}
+
+async function cancelGdprRequest(id){
+  if(!confirm('Cancelar este pedido?'))return
+  const{error}=await db.from('gdpr_requests').update({status:'cancelled'}).eq('id',id)
+  if(error){console.error('gdpr cancel error:',error);showAlert('gdpr-error','Não foi possível cancelar o pedido.','error');return}
+  loadGdprRequests()
+}
+
+async function loadGdprRequests(){
+  const el=document.getElementById('gdpr-list')
+  if(!el)return
+  const{data,error}=await db.from('gdpr_requests').select('*').eq('profile_id',profileId).order('created_at',{ascending:false})
+  if(error){console.error('gdpr list error:',error);el.innerHTML='<div class="empty">Não foi possível carregar os teus pedidos.</div>';return}
+  if(!data||!data.length){el.innerHTML='<div class="empty">Ainda não fizeste nenhum pedido.</div>';return}
+  el.innerHTML=data.map(r=>{
+    const statusLabel=GDPR_STATUS_LABELS[r.status]||r.status
+    const typeLabel=GDPR_TYPE_LABELS[r.request_type]||r.request_type
+    const date=r.created_at?new Date(r.created_at).toLocaleDateString('pt-PT'):'—'
+    const cancelBtn=r.status==='pending'?`<button class="btn btn-outline" style="padding:5px 12px;font-size:11.5px" onclick="cancelGdprRequest('${r.id}')">Cancelar</button>`:''
+    return `<div class="list-row" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)">
+      <div><div style="font-weight:600;font-size:13.5px">${escapeHtml(typeLabel)}</div><div style="font-size:12px;color:var(--muted)">Pedido em ${date} · ${escapeHtml(statusLabel)}</div></div>
+      ${cancelBtn}
+    </div>`
+  }).join('')
 }
 
 function showAlert(id,msg,type='success'){

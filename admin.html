@@ -179,6 +179,7 @@ tr:hover td{background:#f8f9fc}
 <div class="atab" onclick="showAdminPage('services')">🛠️ Serviços</div>
 <div class="atab" onclick="showAdminPage('portfolio')">🖼️ Portfólio</div>
 <div class="atab" onclick="showAdminPage('stats')">📈 Estatísticas</div>
+<div class="atab" onclick="showAdminPage('gdpr')">🔒 RGPD</div>
 </div>
 <div class="admin-body">
 
@@ -321,6 +322,30 @@ tr:hover td{background:#f8f9fc}
 <table><thead><tr><th>Dia</th><th>Visitas</th><th>Únicos</th></tr></thead>
 <tbody id="visits-tbody"></tbody></table>
 </div>
+</div>
+</div>
+
+<!-- GDPR -->
+<div id="page-gdpr" class="page-section">
+<div class="stats-grid">
+<div class="stat-card accent-red"><div class="stat-icon">⏳</div><div><div class="stat-val" id="gdpr-pending-count">—</div><div class="stat-lbl">Pendentes</div></div></div>
+<div class="stat-card accent-gold"><div class="stat-icon">⚠️</div><div><div class="stat-val" id="gdpr-urgent-count">—</div><div class="stat-lbl">A aproximar-se dos 30 dias</div></div></div>
+</div>
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">🔒 Pedidos RGPD (acesso / eliminação) <span id="gdpr-count" style="font-weight:400;color:var(--muted);font-size:13px"></span></div>
+<select class="search-box" id="gdpr-filter" style="width:190px" onchange="renderGdprTable()">
+<option value="open">Pendentes + em tratamento</option>
+<option value="">Todos os estados</option>
+<option value="pending">Pendente</option>
+<option value="in_progress">Em tratamento</option>
+<option value="completed">Concluído</option>
+<option value="cancelled">Cancelado</option>
+</select>
+</div>
+<table>
+<thead><tr><th>Conta</th><th>Tipo</th><th>Pedido em</th><th>Dias em aberto</th><th>Estado</th><th>Ações</th></tr></thead>
+<tbody id="gdpr-tbody"></tbody>
+</table>
 </div>
 </div>
 
@@ -888,11 +913,71 @@ document.getElementById('visits-tbody').innerHTML=last30Visits.slice().reverse()
 <tr><td>${new Date(d.dia).toLocaleDateString('pt-PT')}</td><td>${d.visitas}</td><td>${d.visitantes_unicos}</td></tr>`).join('')||'<tr class="empty-row"><td colspan="3">Sem visitas registadas ainda</td></tr>'
 }
 
+// GDPR
+// Pedidos de exportação/eliminação criados pelos utilizadores em
+// dashboard.html (tabela gdpr_requests). Prazo legal (RGPD Art. 12.º/3) é de
+// 30 dias — por isso mostramos os dias em aberto e um alerta a partir dos 25.
+const GDPR_STATUS_LABELS={pending:'Pendente',in_progress:'Em tratamento',completed:'Concluído',cancelled:'Cancelado'}
+const GDPR_TYPE_LABELS={export:'Exportação de dados',delete:'Eliminação da conta'}
+let allGdprRequests=[]
+
+function gdprDaysOpen(r){
+return Math.floor((Date.now()-new Date(r.created_at).getTime())/86400000)
+}
+
+async function loadGdprAdmin(){
+const[{data:reqs,error},{data:pros}]=await Promise.all([
+db.from('gdpr_requests').select('*').order('created_at',{ascending:false}),
+db.from('profiles').select('id,name')
+])
+if(error)console.error('gdpr_requests:',error)
+const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
+allGdprRequests=(reqs||[]).map(r=>({...r,accountName:pm[r.profile_id]||'—'}))
+const openOnes=allGdprRequests.filter(r=>r.status==='pending'||r.status==='in_progress')
+document.getElementById('gdpr-pending-count').textContent=allGdprRequests.filter(r=>r.status==='pending').length
+document.getElementById('gdpr-urgent-count').textContent=openOnes.filter(r=>gdprDaysOpen(r)>=25).length
+renderGdprTable()
+}
+
+function renderGdprTable(){
+const filter=document.getElementById('gdpr-filter').value
+let rows=allGdprRequests
+if(filter==='open')rows=rows.filter(r=>r.status==='pending'||r.status==='in_progress')
+else if(filter)rows=rows.filter(r=>r.status===filter)
+document.getElementById('gdpr-count').textContent=rows.length?`(${rows.length})`:''
+const tbody=document.getElementById('gdpr-tbody')
+if(!rows.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Sem pedidos</td></tr>';return}
+tbody.innerHTML=rows.map(r=>{
+const days=gdprDaysOpen(r)
+const isOpen=r.status==='pending'||r.status==='in_progress'
+const urgent=isOpen&&days>=25
+const daysLabel=`${days} ${days===1?'dia':'dias'}${urgent?' ⚠️':''}`
+const statusOpts=Object.keys(GDPR_STATUS_LABELS).map(k=>`<option value="${k}" ${k===r.status?'selected':''}>${GDPR_STATUS_LABELS[k]}</option>`).join('')
+return `<tr>
+<td><div class="td-name">${escapeHtml(r.accountName)}</div></td>
+<td>${escapeHtml(GDPR_TYPE_LABELS[r.request_type]||r.request_type)}</td>
+<td>${new Date(r.created_at).toLocaleDateString('pt-PT')}</td>
+<td style="${urgent?'color:var(--red);font-weight:700':''}">${daysLabel}</td>
+<td><span class="badge ${isOpen?'badge-pending':'badge-approved'}">${escapeHtml(GDPR_STATUS_LABELS[r.status]||r.status)}</span></td>
+<td><select class="search-box" style="width:150px;padding:5px 8px;font-size:12px" onchange="updateGdprStatus('${r.id}',this.value)">${statusOpts}</select></td>
+</tr>`
+}).join('')
+}
+
+async function updateGdprStatus(id,status){
+const patch={status}
+if(status==='completed'||status==='cancelled')patch.resolved_at=new Date().toISOString()
+else patch.resolved_at=null
+const{error}=await db.from('gdpr_requests').update(patch).eq('id',id)
+if(error){console.error('gdpr update error:',error);alert('Não foi possível atualizar o pedido: '+(error.message||'erro desconhecido'));return}
+loadGdprAdmin()
+}
+
 // NAVIGATION
 function showAdminPage(name){
 document.querySelectorAll('.page-section').forEach(p=>p.classList.remove('active'))
 document.getElementById(`page-${name}`).classList.add('active')
-const names=['overview','profiles','subscricoes','conversations','messages','reviews','services','portfolio','stats']
+const names=['overview','profiles','subscricoes','conversations','messages','reviews','services','portfolio','stats','gdpr']
 document.querySelectorAll('.atab').forEach((t,i)=>t.classList.toggle('active',names[i]===name))
 if(name==='subscricoes')loadSubscriptions()
 if(name==='conversations')loadConversations()
@@ -901,6 +986,7 @@ if(name==='reviews')loadReviews()
 if(name==='services')loadServices()
 if(name==='portfolio')loadPortfolio()
 if(name==='stats')loadSiteStats()
+if(name==='gdpr')loadGdprAdmin()
 }
 
 init()
