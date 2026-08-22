@@ -1391,7 +1391,7 @@ function toggleMobileMenu(open){
 </div>
 
 <!-- AI ASSISTANT -->
-<button id="ai-chat-fab" onclick="toggleAiChat()" title="Assistente Proliga IA">
+<button id="ai-chat-fab" onclick="toggleAiChat()" title="Assistente Proliga">
   <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 0-5 5v3a5 5 0 0 0 10 0V7a5 5 0 0 0-5-5z"/><path d="M8 13v1a4 4 0 0 0 8 0v-1M12 18v3M9 21h6"/></svg>
 </button>
 <div id="ai-chat-panel">
@@ -3102,7 +3102,7 @@ async function sendAiChat(){
   const action=tryDetectAction(q)
   if(action){
     if(!planLimits||!planLimits.ai_actions){
-      body.insertAdjacentHTML('beforeend',`<div class="ai-msg bot">Fazer isto por ti (não só responder) é uma funcionalidade dos planos Pro e Premium. Atualiza o teu plano em Definições para o assistente poder executar ações como esta.</div>`)
+      body.insertAdjacentHTML('beforeend',`<div class="ai-msg bot">Fazer isto por ti (não só responder) é uma funcionalidade dos planos Pro e Premium. Atualiza o teu plano no botão "Atualizar plano" no Resumo (ou em Preços) para o assistente poder executar ações como esta.</div>`)
     } else {
       proposeAiAction(action.label,action.run)
     }
@@ -3243,7 +3243,7 @@ const AI_FAQ=[
 {k:['stripe','pagamento pela plataforma','receber pagamento online','pagamento por cartao'],a:'Podes ativar pagamentos online opcionais via Stripe Connect, para receberes diretamente por cartão através da Proliga.'},
 {k:['avaliacoes externas','importar avaliacoes','trabalhos feitos fora da proliga'],a:'Podes adicionar avaliações e trabalhos feitos fora da Proliga (portefólio externo) para reforçares a tua reputação desde o primeiro dia.'},
 {k:['nova cidade','a minha cidade nao esta','lista de espera'],a:'Se a Proliga ainda não está ativa na tua zona, os clientes podem entrar numa lista de espera — assim que houver profissionais suficientes, ativamos a zona.'},
-{k:['rgpd','protecao de dados','apagar a minha conta','eliminar conta'],a:'Podes consultar os teus direitos RGPD e como pedir a eliminação da conta na página RGPD do site, em Definições.'},
+{k:['rgpd','protecao de dados','apagar a minha conta','eliminar conta'],a:'Podes pedir a exportação dos teus dados ou a eliminação da conta diretamente aqui no painel, em "Privacidade e RGPD" — o pedido fica registado e a equipa trata-o em até 30 dias. Também podes consultar todos os teus direitos RGPD na página RGPD do site.'},
 {k:['como sou encontrado','aparecer nas pesquisas','porque nao apareço'],a:'Apareces nas pesquisas com base na tua categoria, zona, perfil completo e avaliações. Perfis com foto, bio e serviços publicados aparecem primeiro.'},
 {k:['diferenca entre cliente e profissional','tipos de conta'],a:'Há dois tipos de conta: Cliente (contrata profissionais) e Profissional (oferece serviços) — escolheste isto no registo.'},
 {k:['contactar suporte','falar com a proliga','preciso de ajuda humana'],a:'Podes contactar o suporte da Proliga na página de Contacto do site.'},
