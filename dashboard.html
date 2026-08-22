@@ -1456,6 +1456,7 @@ function toggleMobileMenu(open){
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/escape-html.js"></script>
+<script src="/assets/resize-image.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1509,9 +1510,10 @@ const preview = document.getElementById('p-photo-preview');
 preview.innerHTML = '<div style="font-size:13px;color:var(--muted)">⏳ A carregar...</div>';
 preview.style.display = 'block';
 try {
-const ext = file.name.split('.').pop();
+const uploadFile = await resizeImageFile(file);
+const ext = uploadFile.name.split('.').pop();
 const path = `profiles/${user.id}/avatar.${ext}`;
-const { data, error } = await db.storage.from('proliga-media').upload(path, file, { upsert: true, contentType: file.type });
+const { data, error } = await db.storage.from('proliga-media').upload(path, uploadFile, { upsert: true, contentType: uploadFile.type });
 if(error) throw error;
 const { data: urlData } = db.storage.from('proliga-media').getPublicUrl(path);
 const url = urlData.publicUrl;
@@ -1542,9 +1544,10 @@ const preview = document.getElementById('port-upload-preview');
 preview.innerHTML = '<div style="font-size:13px;color:var(--muted)">⏳ A carregar...</div>';
 preview.style.display = 'block';
 try {
-const ext = file.name.split('.').pop();
+const uploadFile = await resizeImageFile(file);
+const ext = uploadFile.name.split('.').pop();
 const path = `portfolio/${profileId}/${Date.now()}.${ext}`;
-const { data, error } = await db.storage.from('proliga-media').upload(path, file, { contentType: file.type });
+const { data, error } = await db.storage.from('proliga-media').upload(path, uploadFile, { contentType: uploadFile.type });
 if(error) throw error;
 const { data: urlData } = db.storage.from('proliga-media').getPublicUrl(path);
 const url = urlData.publicUrl;
@@ -2367,9 +2370,10 @@ async function uploadPortfolioBeforePhoto(input){
   preview.innerHTML='<div style="font-size:13px;color:var(--muted)">A carregar...</div>'
   preview.style.display='block'
   try{
-    const ext=file.name.split('.').pop()
+    const uploadFile=await resizeImageFile(file)
+    const ext=uploadFile.name.split('.').pop()
     const path=`portfolio/${profileId}/before-${Date.now()}.${ext}`
-    const{error}=await db.storage.from('proliga-media').upload(path,file,{contentType:file.type})
+    const{error}=await db.storage.from('proliga-media').upload(path,uploadFile,{contentType:uploadFile.type})
     if(error)throw error
     const{data:urlData}=db.storage.from('proliga-media').getPublicUrl(path)
     document.getElementById('port-before-url').value=urlData.publicUrl
@@ -2447,9 +2451,10 @@ async function uploadDiaryPhoto(input){
   preview.innerHTML='<div style="font-size:13px;color:var(--muted)">A carregar...</div>'
   preview.style.display='block'
   try{
-    const ext=file.name.split('.').pop()
+    const uploadFile=await resizeImageFile(file)
+    const ext=uploadFile.name.split('.').pop()
     const path=`diary/${profileId}/${Date.now()}.${ext}`
-    const{error}=await db.storage.from('proliga-media').upload(path,file,{contentType:file.type})
+    const{error}=await db.storage.from('proliga-media').upload(path,uploadFile,{contentType:uploadFile.type})
     if(error)throw error
     const{data:urlData}=db.storage.from('proliga-media').getPublicUrl(path)
     document.getElementById('diary-photo-url').value=urlData.publicUrl
@@ -2969,9 +2974,10 @@ async function handleReqPhotoSelect(input){
   for(const file of files){
     if(file.size>5*1024*1024)continue
     try{
-      const ext=file.name.split('.').pop()
+      const uploadFile=await resizeImageFile(file)
+      const ext=uploadFile.name.split('.').pop()
       const path=`requests/${profileId}/${Date.now()}-${Math.random().toString(36).slice(2,7)}.${ext}`
-      const{error}=await db.storage.from('proliga-media').upload(path,file,{contentType:file.type})
+      const{error}=await db.storage.from('proliga-media').upload(path,uploadFile,{contentType:uploadFile.type})
       if(error){console.error(error);continue}
       const{data:urlData}=db.storage.from('proliga-media').getPublicUrl(path)
       pendingReqPhotos.push(urlData.publicUrl)
@@ -4160,9 +4166,12 @@ async function uploadAdMedia(input){
   const preview=document.getElementById('ad-media-preview')
   preview.innerHTML='<div style="font-size:13px;color:var(--muted)">⏳ A carregar...</div>'
   try{
-    const ext=file.name.split('.').pop()
+    // resizeImageFile ignora ficheiros que não sejam imagem (ex: vídeo do
+    // anúncio), por isso é seguro chamar sempre, mesmo aqui.
+    const uploadFile=await resizeImageFile(file)
+    const ext=uploadFile.name.split('.').pop()
     const path=`ads/${profileId}/${Date.now()}.${ext}`
-    const{error}=await db.storage.from('proliga-media').upload(path,file,{upsert:true,contentType:file.type})
+    const{error}=await db.storage.from('proliga-media').upload(path,uploadFile,{upsert:true,contentType:uploadFile.type})
     if(error)throw error
     const{data:urlData}=db.storage.from('proliga-media').getPublicUrl(path)
     pendingAdMedia={url:urlData.publicUrl,type:isVideo?'video':'photo'}

@@ -253,6 +253,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/escape-html.js"></script>
+<script src="/assets/resize-image.js"></script>
 <script>
 const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
 const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
@@ -471,9 +472,10 @@ input.value=''
 for(const file of files){
 if(file.size>5*1024*1024)continue
 try{
-const ext=file.name.split('.').pop()
+const uploadFile=await resizeImageFile(file)
+const ext=uploadFile.name.split('.').pop()
 const path=`requests/${session.user.id}/${Date.now()}-${Math.random().toString(36).slice(2,7)}.${ext}`
-const{error}=await db.storage.from('proliga-media').upload(path,file,{contentType:file.type})
+const{error}=await db.storage.from('proliga-media').upload(path,uploadFile,{contentType:uploadFile.type})
 if(error){console.error(error);continue}
 const{data:urlData}=db.storage.from('proliga-media').getPublicUrl(path)
 pendingPhotos.push(urlData.publicUrl)

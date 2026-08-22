@@ -56,6 +56,28 @@ window.supabase = {
         return chan;
       },
       removeChannel: () => {},
+      // Mínimo necessário para páginas que fazem upload de ficheiros
+      // (Storage) — não guarda bytes nenhuns, só regista o upload (nome,
+      // tipo e tamanho do ficheiro realmente enviado) em
+      // window.__uploadCalls, para os testes poderem confirmar, por
+      // exemplo, que uma foto grande foi redimensionada/comprimida ANTES
+      // de chegar aqui (assets/resize-image.js corre no browser real do
+      // Playwright, não é mockado).
+      storage: {
+        from: (bucket) => ({
+          upload: async (path, file, opts) => {
+            window.__uploadCalls = window.__uploadCalls || [];
+            window.__uploadCalls.push({
+              bucket, path, opts,
+              file: { name: file.name, type: file.type, size: file.size },
+            });
+            return { data: { path }, error: null };
+          },
+          getPublicUrl: (path) => ({
+            data: { publicUrl: 'https://fake.supabase.co/storage/v1/object/public/' + path },
+          }),
+        }),
+      },
       rpc: async (fnName, args) => {
         window.__rpcCalls = window.__rpcCalls || [];
         window.__rpcCalls.push({ fnName, args });
