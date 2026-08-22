@@ -46,6 +46,13 @@ async function loadStats(){
   }
   renderInsights()
   renderFollowupReminders()
+  // updateSidebar() (que chama renderSetup()) corre logo no init(), ANTES
+  // desta função ter resolvido — nesse primeiro render, servicesCount ainda
+  // está a 0 por omissão, por isso o passo "Publica o primeiro serviço"
+  // podia aparecer como pendente mesmo quando o profissional já tem
+  // serviços publicados. Agora que servicesCount está atualizado, voltamos
+  // a desenhar o cartão para refletir o estado real.
+  renderSetup()
 }
 
 function renderViewsChart(views){
@@ -115,7 +122,12 @@ function renderSetup(){
   if(profileData.account_type==='client'){card.style.display='none';return}
   const passos=[
     {t:'Criar conta',s:'',ok:true},
-    {t:'Escolher categoria e zona',s:'Para apareceres nas pesquisas certas',ok:!!(profileData.category&&profileData.location),go:()=>showPage('profile')},
+    // Categoria e zona separadas (em vez de um único passo combinado): sem
+    // categoria o perfil não aparece em NENHUMA pesquisa por categoria nem
+    // na grelha de categorias da homepage — é o passo mais crítico de
+    // todos, por isso tem de ficar claro qual dos dois falta exatamente.
+    {t:'Escolher categoria',s:'Sem categoria não apareces em nenhuma pesquisa nem na homepage',ok:!!profileData.category,go:()=>showPage('profile')},
+    {t:'Escolher zona',s:'Para apareceres nas pesquisas da tua zona',ok:!!profileData.location,go:()=>showPage('profile')},
     {t:'Acrescenta foto e descrição',s:'Perfis com foto recebem mais contactos',ok:!!(profileData.photo_url&&profileData.bio),go:()=>showPage('profile')},
     {t:'Publica o primeiro serviço',s:'Sem serviços não apareces nas pesquisas',ok:servicesCount>0,go:()=>showPage('services')}
   ]

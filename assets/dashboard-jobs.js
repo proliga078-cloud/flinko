@@ -358,6 +358,23 @@ async function requestReviewForJob(jobId){
     const content='Obrigado! O trabalho foi concluído e pago. Se puderes, deixa a tua avaliação aqui: '+link
     await db.from('messages').insert({conversation_id:job.conversation_id,sender_id:profileId,content})
     await db.from('conversations').update({last_message:content,last_message_at:new Date().toISOString()}).eq('id',job.conversation_id)
+    notifyReviewRequest(job.conversation_id,content)
+  }catch(e){}
+}
+
+// Sem isto, o pedido de avaliação fica só dentro do chat e o cliente só o
+// vê se voltar a abrir a Proliga por iniciativa própria — a mesma Netlify
+// Function que avisa por email/push em mensagens normais (messages.html)
+// tem de ser chamada aqui também, senão o pedido automático fica mudo.
+async function notifyReviewRequest(conversationId,content){
+  try{
+    const{data:{session}}=await db.auth.getSession()
+    if(!session)return
+    await fetch('/.netlify/functions/notify-message',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+      body:JSON.stringify({conversationId,preview:content})
+    })
   }catch(e){}
 }
 
