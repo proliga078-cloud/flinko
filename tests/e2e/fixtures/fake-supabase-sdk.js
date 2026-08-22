@@ -94,6 +94,7 @@ window.supabase = {
         const builder = {
           _wantsCount: false,
           _headOnly: false,
+          _singleMode: null, // null | 'maybe' | 'strict' — set by .maybeSingle()/.single()
           select(_cols, opts) {
             if (opts && opts.count) this._wantsCount = true;
             if (opts && opts.head) this._headOnly = true; // head:true = no rows, just the count
@@ -112,8 +113,14 @@ window.supabase = {
           order() { return this; },
           limit() { return this; },
           range() { return this; },
-          maybeSingle() { return this; },
-          single() { return this; },
+          // Como o SDK real: devolvem UMA linha (ou null), não o array
+          // completo. Sem isto, código como
+          // `const{data}=await db.from(x).select(...).maybeSingle(); if(data)...`
+          // recebia sempre um array (mesmo vazio, que é truthy em JS) em vez
+          // de null quando não há resultado — mascarando bugs reais e
+          // testes que passavam sem exercer o caminho "não encontrado".
+          maybeSingle() { this._singleMode = 'maybe'; return this; },
+          single() { this._singleMode = 'strict'; return this; },
           insert: async (row) => {
             window.__insertCalls = window.__insertCalls || [];
             window.__insertCalls.push({ table, row });
@@ -129,14 +136,21 @@ window.supabase = {
           },
           then(resolve, reject) {
             const scenario = (cfg().tableData || {})[table] || {};
-            const count = scenario.count != null ? scenario.count : (scenario.data || []).length;
+            const rows = scenario.data || [];
+            const count = scenario.count != null ? scenario.count : rows.length;
             let result;
             if (this._headOnly) {
               result = { data: null, count, error: null };
             } else if (this._wantsCount) {
-              result = { data: scenario.data || [], count, error: null };
+              result = { data: rows, count, error: null };
+            } else if (this._singleMode === 'maybe') {
+              result = { data: rows[0] || null, error: null };
+            } else if (this._singleMode === 'strict') {
+              result = rows.length === 1
+                ? { data: rows[0], error: null }
+                : { data: null, error: { message: rows.length === 0 ? 'No rows found' : 'Multiple rows found' } };
             } else {
-              result = { data: scenario.data || [], error: null };
+              result = { data: rows, error: null };
             }
             return Promise.resolve(result).then(resolve, reject);
           },
