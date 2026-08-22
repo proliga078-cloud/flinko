@@ -432,13 +432,13 @@ tr:hover td{background:#f8f9fc}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/escape-html.js"></script>
 <script>
 const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
 const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
 const ADMIN_EMAIL='davidscampos10@gmail.com'
 const PRO_MONTHLY_PRICE=12.99
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
-function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 function escAttrJs(s){return escapeHtml(String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"))}
 let allPros=[]
 let editingProId=null

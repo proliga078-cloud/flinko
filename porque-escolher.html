@@ -294,6 +294,7 @@ As primeiras aparecem aqui assim que os clientes as escreverem.
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/escape-html.js"></script>
 <script>
 const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
 const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
@@ -311,7 +312,6 @@ if(p)p.classList.toggle('open')
 window.addEventListener('resize',()=>{
 if(window.innerWidth>=900){const p=document.getElementById('mobile-nav-panel');if(p)p.classList.remove('open')}
 })
-function escapeHtml(s){return(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function loadVerifyStats(){
 try{
 const{count}=await db.from('profiles').select('id',{count:'exact',head:true}).eq('is_demo',false).not('category','is',null)

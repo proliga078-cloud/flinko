@@ -416,13 +416,13 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <div id="toast" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 20px;border-radius:99px;font-size:14px;font-weight:600;display:none;z-index:9999"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/escape-html.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script>
 const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
 const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
 
-function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 function escAttrJs(s){return escapeHtml(String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"))}
 const params=new URLSearchParams(location.search)
 // O perfil abre por id (?id=uuid) ou pelo link proprio do plano Pro,
