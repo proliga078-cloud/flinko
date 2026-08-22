@@ -323,7 +323,7 @@ function updateHeader(){
   document.title=`${title} – Proliga`
   let desc='Portugal · Todos verificados manualmente'
   if(loc)desc=`${loc} · Todos verificados manualmente`
-  document.getElementById('page-desc').innerHTML=desc
+  document.getElementById('page-desc').textContent=desc
   document.getElementById('sidebar-cta-text').textContent=cat
     ?`Publica um pedido em ${cat} e deixa os profissionais virem até ti.`
     :'Publica um pedido grátis e deixa os profissionais virem até ti.'
