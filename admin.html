@@ -593,14 +593,43 @@ document.getElementById('ed-bio').value=p.bio||''
 document.getElementById('edit-modal').classList.add('active')
 }
 function closeEditModal(){document.getElementById('edit-modal').classList.remove('active');editingProId=null}
+// Muda o plano de um perfil a partir do admin de forma segura para quem já
+// tem uma subscrição Stripe real: em vez de escrever profiles.plan
+// diretamente do browser (o que deixava o cliente a ser cobrado por um
+// plano que já não tinha, e o próximo webhook do Stripe repunha sozinho o
+// plano antigo — bug real encontrado em auditoria), passa sempre por
+// admin-set-plan.js, que cancela a subscrição no Stripe primeiro quando
+// existe uma.
+async function adminChangePlanViaServer(profileId,plan){
+const{data:{session}}=await db.auth.getSession()
+try{
+const res=await fetch('/.netlify/functions/admin-set-plan',{
+method:'POST',
+headers:{'Content-Type':'application/json',Authorization:'Bearer '+(session&&session.access_token)},
+body:JSON.stringify({targetProfileId:profileId,plan})
+})
+const out=await res.json().catch(()=>({}))
+if(!res.ok){alert('Erro ao mudar o plano: '+(out.error||'erro desconhecido'));return false}
+return true
+}catch(e){console.error('adminChangePlanViaServer:',e);alert('Erro de rede ao mudar o plano.');return false}
+}
+
 async function saveProfileEdit(){
 if(!editingProId)return
+const p=allPros.find(x=>x.id===editingProId)
+const newPlan=document.getElementById('ed-plan').value
 const updates={
 name:document.getElementById('ed-name').value.trim(),
 category:document.getElementById('ed-category').value.trim(),
 location:document.getElementById('ed-location').value.trim(),
-plan:document.getElementById('ed-plan').value,
 bio:document.getElementById('ed-bio').value.trim()
+}
+const planChanged=p&&newPlan!==(p.plan||'free')
+if(planChanged&&p&&p.stripe_subscription_id){
+const ok=await adminChangePlanViaServer(editingProId,newPlan)
+if(!ok)return
+}else{
+updates.plan=newPlan
 }
 const{error}=await db.from('profiles').update(updates).eq('id',editingProId)
 if(error){alert('Erro ao guardar: '+error.message);return}
@@ -704,22 +733,42 @@ el.value=Math.max(0,(Number(el.value)||0)+n)
 
 async function saveSubEdit(){
 if(!editingSubId)return
+const s=allSubs.find(x=>x.id===editingSubId)
+const newPlan=document.getElementById('sub-plan').value
 const expiresVal=document.getElementById('sub-expires').value
-const updates={
-plan:document.getElementById('sub-plan').value,
+const rest={
 plan_expires_at:expiresVal?new Date(expiresVal+'T23:59:59').toISOString():null,
 credits:Number(document.getElementById('sub-credits').value)||0
 }
-const{error}=await db.from('profiles').update(updates).eq('id',editingSubId)
+const planChanged=s&&newPlan!==(s.plan||'free')
+if(planChanged&&s&&s.stripe_subscription_id){
+const ok=await adminChangePlanViaServer(editingSubId,newPlan)
+if(!ok)return
+}else{
+rest.plan=newPlan
+}
+const{error}=await db.from('profiles').update(rest).eq('id',editingSubId)
 if(error){alert('Erro ao guardar: '+error.message);return}
 closeSubModal();loadSubscriptions();loadProfiles()
 }
 
 async function revertToFreePlan(){
 if(!editingSubId)return
-if(!confirm('Reverter esta subscrição para Free imediatamente?'))return
+const s=allSubs.find(x=>x.id===editingSubId)
+const hasStripe=!!(s&&s.stripe_subscription_id)
+const confirmMsg=hasStripe
+?'Reverter esta subscrição para Free imediatamente? A subscrição no Stripe também vai ser cancelada agora — o cliente deixa de ser cobrado.'
+:'Reverter esta subscrição para Free imediatamente?'
+if(!confirm(confirmMsg))return
+if(hasStripe){
+const ok=await adminChangePlanViaServer(editingSubId,'free')
+if(!ok)return
+const{error}=await db.from('profiles').update({plan_expires_at:null}).eq('id',editingSubId)
+if(error){alert('Erro: '+error.message);return}
+}else{
 const{error}=await db.from('profiles').update({plan:'free',plan_expires_at:null}).eq('id',editingSubId)
 if(error){alert('Erro: '+error.message);return}
+}
 closeSubModal();loadSubscriptions();loadProfiles()
 }
 

@@ -29,6 +29,10 @@ function makeFakeStripe(scenario) {
           if (!scenario.subscriptionsRetrieve) throw new Error('subscriptions.retrieve não configurado neste teste');
           return scenario.subscriptionsRetrieve(id);
         },
+        cancel: async (id) => {
+          if (!scenario.subscriptionsCancel) throw new Error('subscriptions.cancel não configurado neste teste');
+          return scenario.subscriptionsCancel(id);
+        },
       },
       webhooks: {
         constructEvent: (payload, sig, secret) => {
