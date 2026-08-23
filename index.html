@@ -252,7 +252,7 @@ section{padding:72px 5%}
 .dual-cta{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:680px;margin:0 auto}
 @media(max-width:560px){.dual-cta{grid-template-columns:1fr}}
 .dual-cta-card{border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
-.dual-cta-banner{height:74px}
+.dual-cta-banner{height:74px;display:flex;align-items:center;justify-content:center;font-size:32px}
 .dual-cta-body{padding:20px;text-align:center;background:#fff}
 .dual-cta-body.dark{background:var(--ink)}
 .dual-cta-body p{font-size:14px;font-weight:700;margin-bottom:14px}
@@ -616,14 +616,14 @@ As primeiras aparecem aqui assim que os clientes as escreverem.
 </div>
 <div class="dual-cta">
 <div class="dual-cta-card">
-<div class="dual-cta-banner" style="background:var(--blue-light);color:var(--blue)"></div>
+<div class="dual-cta-banner" style="background:var(--blue-light);color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></div>
 <div class="dual-cta-body">
 <p>Precisas de ajuda?</p>
 <a href="pedidos.html" class="btn btn-blue">Publicar pedido</a>
 </div>
 </div>
 <div class="dual-cta-card">
-<div class="dual-cta-banner" style="background:var(--amber-light);color:var(--amber)"></div>
+<div class="dual-cta-banner" style="background:var(--amber-light);color:var(--amber)"><svg class="ic" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
 <div class="dual-cta-body dark">
 <p>És profissional?</p>
 <a href="auth.html?tab=register" class="btn" style="background:#fff;color:var(--ink)">Criar perfil grátis</a>

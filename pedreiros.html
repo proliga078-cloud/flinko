@@ -145,6 +145,11 @@
  .empty-state h3{font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px}
  .empty-state p{font-size:14px;margin-bottom:20px}
 
+ .sparse-nudge{display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:space-between;background:var(--blue-light);border:1.5px dashed var(--blue);border-radius:16px;padding:22px 24px}
+ .sparse-nudge-text h3{font-size:15.5px;font-weight:700;color:var(--text);margin-bottom:4px}
+ .sparse-nudge-text p{font-size:13px;color:var(--muted);max-width:440px}
+ .sparse-nudge .btn{flex-shrink:0}
+
  .pagination{display:flex;justify-content:center;gap:8px;margin-top:32px;flex-wrap:wrap}
  .page-btn{width:36px;height:36px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;transition:all .2s}
  .page-btn:hover{border-color:var(--blue);color:var(--blue)}
@@ -585,6 +590,12 @@ async function loadPros(){
  document.getElementById('results-count').innerHTML=`<strong>${total}</strong> ${total!==1?'profissionais encontrados':'profissional encontrado'}`
  const tb=document.getElementById('tb-count'); if(tb)tb.textContent=total+(total!==1?' profissionais':' profissional')
 
+ // Poucos resultados (1-2) deixavam uma área vazia enorme ao lado do
+ // filtro lateral, mais alto. Em vez de um espaço em branco, mostramos
+ // aqui um cartão a convidar a publicar um pedido — reaproveita o
+ // padding-gap normal da .pros-list por ser mais um item da mesma lista.
+ const sparseNudge=total>0&&total<=2?`<div class="sparse-nudge"><div class="sparse-nudge-text"><h3>${total===1?'Só há 1 profissional':'Só há '+total+' profissionais'} nesta categoria por agora</h3><p>Publica um pedido grátis e sê dos primeiros a ser contactado assim que mais profissionais desta categoria se juntarem à Proliga.</p></div><a href="pedidos.html?cat=Pedreiros" class="btn btn-solid">Publicar pedido grátis</a></div>`:''
+
  container.innerHTML=`<div class="pros-list">${filtered.map(pro=>{
  const r=rMap[pro.id];const avg=r?(r.s/r.c).toFixed(1):null;const n=r?Math.round(r.s/r.c):0
  const stars=r?('★'.repeat(n)+'☆'.repeat(5-n)):'☆☆☆☆☆'
@@ -615,7 +626,7 @@ const initials=pro.name.split(' ').map(n=>n[0]).slice(0,2).join('')
  <span class="pro-cta-btn">Ver perfil<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
  </div>
  </a>`
- }).join('')}</div>`
+ }).join('')}${sparseNudge}</div>`
 
  const totalPages=Math.ceil(total/filters.perPage)
  if(totalPages>1){

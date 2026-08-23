@@ -39,7 +39,8 @@
     .plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
     @media(max-width:860px){.plans-grid{grid-template-columns:1fr}}
 
-    .plan-card{background:#fff;border-radius:20px;border:2px solid var(--border);padding:36px;position:relative;transition:all .2s}
+    .plan-card{background:#fff;border-radius:20px;border:2px solid var(--border);padding:36px;position:relative;transition:all .2s;display:flex;flex-direction:column}
+    .plan-footnote{margin-top:auto;padding-top:20px;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.5}
     .plan-card.popular{border-color:var(--blue);box-shadow:0 8px 40px rgba(29,78,216,.18);transform:scale(1.045);z-index:2}
     @media(max-width:860px){.plan-card.popular{transform:none}}
     .popular-tag{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;font-size:12px;font-weight:700;padding:4px 16px;border-radius:99px;white-space:nowrap}
@@ -91,7 +92,8 @@
     footer p{margin-top:8px}
     footer strong{color:var(--gold)}
 
-    #user-nav{display:none}
+    .nav-user{display:none;align-items:center;gap:10px}
+    .nav-avatar{width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer}
   
 .plans-grid.two{grid-template-columns:1fr 1.15fr;max-width:820px;margin:0 auto}
 @media(max-width:820px){.plans-grid.two{grid-template-columns:1fr}}
@@ -116,6 +118,8 @@ nav .btn-ghost{color:#fff}
 nav .btn-ghost:hover{background:rgba(255,255,255,.1)}
 nav .btn-line{color:#fff;border-color:rgba(255,255,255,.3)}
 nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
+nav .btn-outline{color:#fff;border-color:rgba(255,255,255,.3)}
+nav .btn-outline:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.6)}
 .btn-ink{background:#E8720A;color:#fff}
 .btn-ink:hover{background:#C25A06}
 </style>
@@ -149,13 +153,13 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
     <a href="pedidos.html">Pedidos</a>
   </div>
   <div class="nav-actions">
-    <div id="guest-nav">
+    <div id="nav-guest">
       <a href="auth.html" class="btn btn-outline">Entrar</a>
       <a href="auth.html?tab=register" class="btn btn-solid">Registar grátis</a>
     </div>
-    <div id="user-nav">
+    <div class="nav-user" id="nav-user">
       <a href="dashboard.html" class="btn btn-outline">Dashboard</a>
-      <button class="btn btn-solid" onclick="signOut()">Sair</button>
+      <div class="nav-avatar" id="nav-avatar" onclick="location.href='dashboard.html'">?</div>
     </div>
   </div>
 </nav>
@@ -190,6 +194,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
         <li class="dim"><span class="feat-no">✕</span> Contas, margens e CSV</li>
         <li class="dim"><span class="feat-no">✕</span> Marca própria nos documentos</li>
       </ul>
+      <div class="plan-footnote">Sem fidelização. Passa para Pro quando quiseres, sem perder nada.</div>
     </div>
 
     <div class="plan-card popular">
@@ -317,8 +322,10 @@ let isYearly=false
 async function init(){
   const{data:{session}}=await db.auth.getSession()
   if(session){
-    document.getElementById('guest-nav').style.display='none'
-    document.getElementById('user-nav').style.display='flex'
+    document.getElementById('nav-guest').style.display='none'
+    document.getElementById('nav-user').style.display='flex'
+    const name=session.user.user_metadata?.name||session.user.email||'U'
+    document.getElementById('nav-avatar').textContent=name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase()
   }
 }
 
@@ -356,7 +363,6 @@ document.getElementById('upgrade-modal').addEventListener('click',e=>{if(e.targe
 
 function toggleFaq(el){el.parentElement.classList.toggle('open')}
 
-async function signOut(){await db.auth.signOut();location.href='index.html'}
 init()
 </script>
 </body>
