@@ -434,7 +434,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <div class="stat"><div class="ici" style="background:var(--blue-light);color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><strong>100%</strong><span>Perfis verificados</span></div>
 <div class="stat"><div class="ici" style="background:var(--amber-light);color:var(--amber)"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v12M15.5 9.5a2.5 2.5 0 0 0-2.5-2H11a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2.5 2.5 0 0 1-2.5-2"/></svg></div><strong>0%</strong><span>De comissão</span></div>
 <div class="stat"><div class="ici" style="background:var(--green-light);color:var(--green)"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><strong>24h</strong><span>Objetivo de resposta</span></div>
-<div class="stat"><div class="ici" style="background:var(--purple-light);color:var(--purple)"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div><strong>Portugal</strong><span>Cobertura nacional</span></div>
+<div class="stat"><div class="ici" style="background:var(--purple-light);color:var(--purple)"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div><strong id="stat-zonas">Portugal</strong><span id="stat-zonas-label">Cobertura nacional</span></div>
 </div>
 
 <section class="how-section">
@@ -498,7 +498,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <section id="map-section" style="background:#0F1A33">
 <div class="section-header">
 <span class="eyebrow">Cobertura</span>
-<h2>A crescer por todo o país</h2>
+<h2 id="map-heading">A crescer por todo o país</h2>
 <p>Cada marcador é uma zona com profissionais ativos na Proliga — a cobertura cresce todas as semanas. Toca para veres quem está lá.</p>
 </div>
 <div id="pro-map" style="max-width:900px;margin:0 auto;height:360px;border-radius:16px;overflow:hidden;background:#152444"></div>
@@ -692,10 +692,21 @@ markEmptyCategories()
 
 // A Proliga é uma plataforma nova: nem todas as 16 categorias têm já
 // profissionais associados (confirmado por query direta: só 6 de 16 têm
-// pelo menos um). Levar alguém a uma categoria.html vazia, sem alternativa,
-// é um beco sem saída. Em vez disso, marcamos aqui as categorias ainda sem
-// oferta e mandamos o clique para pedidos.html (já com a categoria
-// pré-preenchida) — a pessoa consegue sempre avançar.
+// pelo menos um). Mostrar as 16 lado a lado na homepage - a maioria vazia -
+// prometia mais amplitude do que a que existe hoje, o que classicamente faz
+// uma marketplace nova parecer mais vazia, não mais impressionante (ver
+// "atomic network": mostrar densidade real em vez de amplitude fina).
+// Por isso a grelha da homepage passa a mostrar só as categorias com
+// profissionais reais - cresce sozinha à medida que mais categorias
+// ganham o primeiro profissional, sem precisar de mexer aqui outra vez.
+// Quem quiser ver as 16 continua a poder, pelo link "Ver todas as
+// categorias" (que leva a categoria.html, onde uma categoria vazia já tem
+// o seu próprio empty-state com CTA - não é um beco sem saída lá).
+//
+// Excepção: se NENHUMA categoria tiver ainda profissionais (fase inicial
+// mesmo antes da primeira), esconder a grelha toda ficaria pior do que
+// mostrá-la - aí mantemos o comportamento antigo de mostrar as 16 como
+// convite a publicar um pedido.
 async function markEmptyCategories(){
 try{
 const cards=[...document.querySelectorAll('.cat-card[data-cat]')]
@@ -703,13 +714,18 @@ if(!cards.length)return
 const{data,error}=await db.from('profiles').select('category').eq('is_demo',false).eq('account_type','professional').not('category','is',null).neq('category','')
 if(error)return
 const withSupply=new Set((data||[]).map(p=>p.category))
+if(!withSupply.size){
 cards.forEach(card=>{
-const cat=card.dataset.cat
-if(withSupply.has(cat))return
 card.classList.add('cat-empty')
-card.href='pedidos.html?cat='+encodeURIComponent(cat)
+card.href='pedidos.html?cat='+encodeURIComponent(card.dataset.cat)
 const sub=card.querySelector('.cat-sub')
 if(sub)sub.innerHTML='<span class="cat-empty-tag">📢 Publica um pedido</span>'
+})
+return
+}
+cards.forEach(card=>{
+if(withSupply.has(card.dataset.cat))return
+card.style.display='none'
 })
 }catch(e){/* silencioso: se falhar, a grelha fica como estava (link normal para a categoria) */}
 }
@@ -830,7 +846,7 @@ function matchPlace(location){
 }
 async function loadProMap(){
   const mapEl=document.getElementById('pro-map')
-  if(!mapEl||typeof L==='undefined')return
+  if(!mapEl)return
   try{
     const{data}=await db.from('profiles').select('location,category').eq('is_demo',false)
     const counts={}
@@ -839,11 +855,25 @@ async function loadProMap(){
       if(place)counts[place]=(counts[place]||0)+1
     })
     const places=Object.keys(counts)
+    // O stat "Cobertura nacional" e o titulo desta seccao eram texto fixo
+    // a prometer mais amplitude do que a que existe - uma plataforma nova
+    // ganha mais confianca a mostrar bem o que ja tem do que a parecer
+    // maior do que e. Passam a refletir o numero real de zonas com
+    // profissionais, a partir dos mesmos dados usados no mapa. Isto corre
+    // ANTES de precisar do Leaflet: se o CDN do mapa falhar ou demorar,
+    // o stat e o titulo continuam corretos mesmo sem o mapa desenhar.
+    const zonasEl=document.getElementById('stat-zonas')
+    const zonasLabelEl=document.getElementById('stat-zonas-label')
+    const mapHeading=document.getElementById('map-heading')
+    if(zonasEl)zonasEl.textContent=places.length?String(places.length):'0'
+    if(zonasLabelEl)zonasLabelEl.textContent=places.length===1?'Zona com profissionais':'Zonas com profissionais'
+    if(mapHeading)mapHeading.textContent=places.length===1?('Já em '+places[0]):places.length?('Já em '+places.length+' zonas de Portugal'):'Ainda estamos a começar'
     if(!places.length){
       mapEl.style.display='none'
       document.getElementById('pro-map-empty').style.display='block'
       return
     }
+    if(typeof L==='undefined')return
     const map=L.map('pro-map',{scrollWheelZoom:false}).setView(PT_PLACES[places[0]],7)
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
       attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
