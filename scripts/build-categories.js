@@ -73,6 +73,8 @@ for (const cat of categories) {
     '{{SERVICE_TYPE_URL}}': encodeURIComponent(cat.serviceType),
     '{{H1_ICON}}': cat.h1Icon,
     '{{H1_TEXT}}': cat.h1Text,
+    '{{ICON_BG}}': cat.iconBg,
+    '{{ICON_COLOR}}': cat.iconColor,
     '{{INTRO}}': cat.intro,
     '{{REQUEST_CTA}}': cat.requestCta,
     '{{NAV_CHIPS}}': buildNavChips(cat.slug),

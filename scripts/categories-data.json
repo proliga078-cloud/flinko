@@ -25,7 +25,9 @@
     "requestCta": "Publica um pedido em eletricistas e deixa os profissionais virem até ti.",
     "emptyStateSentence": "eletricistas",
     "catJsVar": "Eletricistas",
-    "h2CategoriaSecao": "Eletricistas em Portugal"
+    "h2CategoriaSecao": "Eletricistas em Portugal",
+    "iconBg": "var(--amber-light)",
+    "iconColor": "var(--amber)"
   },
   {
     "slug": "canalizadores",
@@ -53,7 +55,9 @@
     "requestCta": "Publica um pedido em canalizadores e deixa os profissionais virem até ti.",
     "emptyStateSentence": "canalizadores",
     "catJsVar": "Canalizadores",
-    "h2CategoriaSecao": "Canalizadores em Portugal"
+    "h2CategoriaSecao": "Canalizadores em Portugal",
+    "iconBg": "var(--blue-light)",
+    "iconColor": "var(--blue)"
   },
   {
     "slug": "pintores",
@@ -81,7 +85,9 @@
     "requestCta": "Publica um pedido em pintores e deixa os profissionais virem até ti.",
     "emptyStateSentence": "pintores",
     "catJsVar": "Pintores",
-    "h2CategoriaSecao": "Pintores em Portugal"
+    "h2CategoriaSecao": "Pintores em Portugal",
+    "iconBg": "var(--purple-light)",
+    "iconColor": "var(--purple)"
   },
   {
     "slug": "pedreiros",
@@ -109,7 +115,9 @@
     "requestCta": "Publica um pedido em pedreiros e deixa os profissionais virem até ti.",
     "emptyStateSentence": "pedreiros",
     "catJsVar": "Pedreiros",
-    "h2CategoriaSecao": "Pedreiros em Portugal"
+    "h2CategoriaSecao": "Pedreiros em Portugal",
+    "iconBg": "var(--amber-light)",
+    "iconColor": "var(--amber)"
   },
   {
     "slug": "carpinteiros",
@@ -137,7 +145,9 @@
     "requestCta": "Publica um pedido em carpinteiros e deixa os profissionais virem até ti.",
     "emptyStateSentence": "carpinteiros",
     "catJsVar": "Carpinteiros",
-    "h2CategoriaSecao": "Carpinteiros em Portugal"
+    "h2CategoriaSecao": "Carpinteiros em Portugal",
+    "iconBg": "var(--blue-light)",
+    "iconColor": "var(--blue)"
   },
   {
     "slug": "serralheiros",
@@ -165,7 +175,9 @@
     "requestCta": "Publica um pedido em serralheiros e deixa os profissionais virem até ti.",
     "emptyStateSentence": "serralheiros",
     "catJsVar": "Serralheiros",
-    "h2CategoriaSecao": "Serralheiros em Portugal"
+    "h2CategoriaSecao": "Serralheiros em Portugal",
+    "iconBg": "var(--green-light)",
+    "iconColor": "var(--green)"
   },
   {
     "slug": "jardineiros",
@@ -193,7 +205,9 @@
     "requestCta": "Publica um pedido em jardineiros e deixa os profissionais virem até ti.",
     "emptyStateSentence": "jardineiros",
     "catJsVar": "Jardineiros",
-    "h2CategoriaSecao": "Jardineiros em Portugal"
+    "h2CategoriaSecao": "Jardineiros em Portugal",
+    "iconBg": "var(--green-light)",
+    "iconColor": "var(--green)"
   },
   {
     "slug": "limpeza",
@@ -221,7 +235,9 @@
     "requestCta": "Publica um pedido em limpeza e deixa os profissionais virem até ti.",
     "emptyStateSentence": "limpeza",
     "catJsVar": "Limpeza",
-    "h2CategoriaSecao": "Limpeza em Portugal"
+    "h2CategoriaSecao": "Limpeza em Portugal",
+    "iconBg": "var(--blue-light)",
+    "iconColor": "var(--blue)"
   },
   {
     "slug": "mudancas",
@@ -249,7 +265,9 @@
     "requestCta": "Publica um pedido em mudanças e deixa os profissionais virem até ti.",
     "emptyStateSentence": "mudanças",
     "catJsVar": "Mudanças",
-    "h2CategoriaSecao": "Mudanças em Portugal"
+    "h2CategoriaSecao": "Mudanças em Portugal",
+    "iconBg": "#F1EFE8",
+    "iconColor": "#5F5E5A"
   },
   {
     "slug": "decoradores",
@@ -277,7 +295,9 @@
     "requestCta": "Publica um pedido em decoradores e deixa os profissionais virem até ti.",
     "emptyStateSentence": "decoradores",
     "catJsVar": "Decoradores",
-    "h2CategoriaSecao": "Decoradores em Portugal"
+    "h2CategoriaSecao": "Decoradores em Portugal",
+    "iconBg": "var(--red-light)",
+    "iconColor": "var(--red)"
   },
   {
     "slug": "programadores",
@@ -305,7 +325,9 @@
     "requestCta": "Publica um pedido em programadores e deixa os profissionais virem até ti.",
     "emptyStateSentence": "programadores",
     "catJsVar": "Programadores",
-    "h2CategoriaSecao": "Programadores em Portugal"
+    "h2CategoriaSecao": "Programadores em Portugal",
+    "iconBg": "var(--purple-light)",
+    "iconColor": "var(--purple)"
   },
   {
     "slug": "designers",
@@ -333,7 +355,9 @@
     "requestCta": "Publica um pedido em designers e deixa os profissionais virem até ti.",
     "emptyStateSentence": "designers",
     "catJsVar": "Designers",
-    "h2CategoriaSecao": "Designers em Portugal"
+    "h2CategoriaSecao": "Designers em Portugal",
+    "iconBg": "#F1EFE8",
+    "iconColor": "#5F5E5A"
   },
   {
     "slug": "reparacoes-tech",
@@ -361,7 +385,9 @@
     "requestCta": "Publica um pedido em reparações tech e deixa os profissionais virem até ti.",
     "emptyStateSentence": "reparações tech",
     "catJsVar": "Reparações",
-    "h2CategoriaSecao": "Reparações Tech em Portugal"
+    "h2CategoriaSecao": "Reparações Tech em Portugal",
+    "iconBg": "var(--amber-light)",
+    "iconColor": "var(--amber)"
   },
   {
     "slug": "personal-trainers",
@@ -389,7 +415,9 @@
     "requestCta": "Publica um pedido em personal trainers e deixa os profissionais virem até ti.",
     "emptyStateSentence": "personal trainers",
     "catJsVar": "Personal Trainers",
-    "h2CategoriaSecao": "Personal Trainers em Portugal"
+    "h2CategoriaSecao": "Personal Trainers em Portugal",
+    "iconBg": "var(--blue-light)",
+    "iconColor": "var(--blue)"
   },
   {
     "slug": "cabeleireiros",
@@ -417,7 +445,9 @@
     "requestCta": "Publica um pedido em cabeleireiros e deixa os profissionais virem até ti.",
     "emptyStateSentence": "cabeleireiros",
     "catJsVar": "Cabeleireiros",
-    "h2CategoriaSecao": "Cabeleireiros em Portugal"
+    "h2CategoriaSecao": "Cabeleireiros em Portugal",
+    "iconBg": "var(--green-light)",
+    "iconColor": "var(--green)"
   },
   {
     "slug": "esteticistas",
@@ -445,6 +475,8 @@
     "requestCta": "Publica um pedido em esteticistas e deixa os profissionais virem até ti.",
     "emptyStateSentence": "esteticistas",
     "catJsVar": "Esteticistas",
-    "h2CategoriaSecao": "Esteticistas em Portugal"
+    "h2CategoriaSecao": "Esteticistas em Portugal",
+    "iconBg": "var(--red-light)",
+    "iconColor": "var(--red)"
   }
 ]
