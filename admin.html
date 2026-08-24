@@ -496,7 +496,9 @@ document.getElementById('login-screen').style.display='none'
 const p=document.getElementById('admin-panel')
 p.style.display='flex';p.style.flexDirection='column'
 document.getElementById('topbar-email').textContent=user.email
-loadOverview();loadProfiles()
+// loadProfiles() primeiro (é a fonte privilegiada dos dados que loadOverview
+// também precisa) para não disparar a mesma busca duas vezes em paralelo.
+loadProfiles().then(loadOverview)
 }
 
 async function adminSignOut(){await db.auth.signOut();location.reload()}
@@ -505,21 +507,30 @@ function demoBadge(p){return p&&p.is_demo?'<span class="badge badge-demo">🧪 D
 
 // OVERVIEW
 async function loadOverview(){
-const[{count:pc},{count:clc},{count:cc},{count:rc},{count:sc}]=await Promise.all([
-db.from('profiles').select('id',{count:'exact',head:true}).eq('account_type','professional'),
-db.from('profiles').select('id',{count:'exact',head:true}).eq('account_type','client'),
+// account_type é uma coluna revogada a "authenticated" (migration
+// 20260815171632, para impedir ler o account_type de OUTROS perfis) — o
+// mesmo bug que partiu a homepage partia também aqui: uma query direta à
+// tabela filtrada por account_type falha sempre em silêncio para qualquer
+// admin com sessão, e os cartões "Profissionais"/"Clientes" ficavam sempre
+// a "0" (confirmado ao vivo em proliga.pt/admin.html). Corrigido usando os
+// dados já privilegiados de admin_list_profiles() (via loadProfiles/allPros)
+// em vez de uma segunda query direta à tabela.
+const[{count:cc},{count:rc},{count:sc}]=await Promise.all([
 db.from('conversations').select('*',{count:'exact',head:true}),
 db.from('reviews').select('*',{count:'exact',head:true}),
 db.from('services').select('*',{count:'exact',head:true})
 ])
-document.getElementById('s-pros').textContent=pc||0
-document.getElementById('s-clients').textContent=clc||0
 document.getElementById('s-conv').textContent=cc||0
 document.getElementById('s-revs').textContent=rc||0
 document.getElementById('s-srvs').textContent=sc||0
+if(!allPros.length)await loadProfiles()
+const pc=allPros.filter(p=>p.account_type!=='client').length
+const clc=allPros.filter(p=>p.account_type==='client').length
+document.getElementById('s-pros').textContent=pc||0
+document.getElementById('s-clients').textContent=clc||0
 // Só profissionais aqui — é o que o título "Últimos Profissionais" promete.
 // Contas cliente (sem categoria por natureza, não por lapso) ficam de fora.
-const{data:pros}=await db.from('profiles').select('name,category,plan,is_demo').eq('account_type','professional').order('created_at',{ascending:false}).limit(5)
+const pros=allPros.filter(p=>p.account_type!=='client').sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,5)
 document.getElementById('recent-pros').innerHTML=(pros||[]).map(p=>`
 <tr><td><div class="td-name">${escapeHtml(p.name||'—')}${demoBadge(p)}</div></td>
 <td>${escapeHtml(p.category||'—')}</td>
