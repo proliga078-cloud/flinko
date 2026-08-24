@@ -725,9 +725,14 @@ async function markEmptyCategories(){
 try{
 const cards=[...document.querySelectorAll('.cat-card[data-cat]')]
 if(!cards.length)return
-const{data,error}=await db.from('profiles').select('category').eq('is_demo',false).eq('account_type','professional').not('category','is',null).neq('category','')
+// RPC dedicada em vez de query direta à tabela: para visitantes com sessão
+// iniciada (role authenticated), o Postgres nega a leitura de account_type
+// de OUTROS perfis (correto, é assim que deve ser) — o que fazia esta
+// query falhar sempre que havia alguém com sessão, e as 16 categorias
+// ficavam todas visíveis em vez de só as 6 com oferta real.
+const{data,error}=await db.rpc('categories_with_supply')
 if(error)return
-const withSupply=new Set((data||[]).map(p=>p.category))
+const withSupply=new Set(data||[])
 if(!withSupply.size){
 cards.forEach(card=>{
 card.classList.add('cat-empty')
