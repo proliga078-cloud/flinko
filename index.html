@@ -370,7 +370,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <a href="auth.html?tab=register" class="btn btn-ink">Registar</a>
 </div>
 <div class="nav-user" id="nav-user">
-<a href="dashboard.html" class="btn btn-line">Dashboard</a>
+<a href="dashboard.html" class="btn btn-line" id="nav-dashboard-link">Dashboard</a>
 <div class="nav-avatar" id="nav-avatar" onclick="location.href='dashboard.html'">?</div>
 </div>
 </div><button class="hamburger-btn" aria-label="Abrir menu" onclick="toggleMobileNav()"><svg class="ic" viewBox="0 0 24 24" style="width:20px;height:20px"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
@@ -680,6 +680,7 @@ const u=document.getElementById('nav-user')
 u.style.display='flex'
 const name=session.user.user_metadata?.name||session.user.email||'U'
 document.getElementById('nav-avatar').textContent=name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase()
+applyAccountNav()
 }
 loadStats()
 loadFeatured()
@@ -689,6 +690,27 @@ renderPromoAd()
 loadProMap()
 markEmptyCategories()
 applyCatAccents()
+}
+
+// CTA da nav para quem tem sessão iniciada: "Dashboard" faz sentido para um
+// profissional (é o painel de negócio), mas uma conta cliente que entra em
+// dashboard.html é logo redirecionada para "Os Meus Pedidos" (ver
+// assets/dashboard-core.js) — por isso o botão já devia dizer isso, em vez
+// de prometer um "Dashboard" genérico que o cliente nunca vê. Usa-se
+// get_my_profile() (RPC privilegiada) em vez de ler account_type
+// diretamente da tabela: essa coluna está corretamente vedada a
+// "authenticated" nas grants (só o próprio dono a lê, via esta função) —
+// foi exatamente essa proteção que partiu markEmptyCategories() antes desta
+// mesma correção ter sido aplicada aqui.
+async function applyAccountNav(){
+try{
+const{data:rows}=await db.rpc('get_my_profile')
+const me=rows&&rows[0]
+if(me&&me.account_type==='client'){
+const link=document.getElementById('nav-dashboard-link')
+if(link)link.textContent='Os Meus Pedidos'
+}
+}catch(e){console.error('applyAccountNav:',e)}
 }
 
 // Cada categoria já tinha uma cor própria só no ícone (var(--amber),
