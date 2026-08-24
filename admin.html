@@ -90,6 +90,8 @@ tr:hover td{background:#f8f9fc}
 .badge-pro{background:var(--purple);color:#fff}
 .badge-free{background:var(--border);color:var(--muted)}
 .badge-demo{background:#fee2e2;color:#991b1b;margin-left:6px}
+.badge-acc-pro{background:#dbeafe;color:#1e40af}
+.badge-acc-client{background:#ede9fe;color:#5b21b6}
 .pro-avatar{width:34px;height:34px;border-radius:50%;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--blue);overflow:hidden;flex-shrink:0}
 .pro-avatar img{width:100%;height:100%;object-fit:cover}
 .td-flex{display:flex;align-items:center;gap:10px}
@@ -188,6 +190,7 @@ tr:hover td{background:#f8f9fc}
 <div id="page-overview" class="page-section active">
 <div class="stats-grid">
 <div class="stat-card accent-blue"><div class="stat-icon">👤</div><div><div class="stat-val" id="s-pros">—</div><div class="stat-lbl">Profissionais</div></div></div>
+<div class="stat-card accent-purple"><div class="stat-icon">🙋</div><div><div class="stat-val" id="s-clients">—</div><div class="stat-lbl">Clientes</div></div></div>
 <div class="stat-card accent-purple"><div class="stat-icon">🗨️</div><div><div class="stat-val" id="s-conv">—</div><div class="stat-lbl">Conversas</div></div></div>
 <div class="stat-card accent-gold"><div class="stat-icon">⭐</div><div><div class="stat-val" id="s-revs">—</div><div class="stat-lbl">Avaliações</div></div></div>
 <div class="stat-card accent-green"><div class="stat-icon">🛠️</div><div><div class="stat-val" id="s-srvs">—</div><div class="stat-lbl">Serviços</div></div></div>
@@ -210,11 +213,18 @@ tr:hover td{background:#f8f9fc}
 <div id="page-profiles" class="page-section">
 <div class="table-wrap">
 <div class="table-head">
-<div class="table-title">👤 Todos os Profissionais <span id="pros-count" style="font-weight:400;color:var(--muted);font-size:13px"></span></div>
-<input class="search-box" type="search" placeholder="🔍 Pesquisar nome, categoria..." oninput="filterPros(this.value)"/>
+<div class="table-title">👤 Todas as Contas <span id="pros-count" style="font-weight:400;color:var(--muted);font-size:13px"></span></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<select class="search-box" id="pros-type-filter" style="width:170px" onchange="filterPros(document.getElementById('pros-search').value)">
+<option value="">Todos (profissionais + clientes)</option>
+<option value="professional" selected>Só profissionais</option>
+<option value="client">Só clientes</option>
+</select>
+<input class="search-box" id="pros-search" type="search" placeholder="🔍 Pesquisar nome, categoria..." oninput="filterPros(this.value)"/>
+</div>
 </div>
 <table>
-<thead><tr><th>Profissional</th><th>Categoria</th><th>Localização</th><th>Plano</th><th>Estado</th><th>Ações</th></tr></thead>
+<thead><tr><th>Conta</th><th>Tipo</th><th>Categoria</th><th>Localização</th><th>Plano</th><th>Estado</th><th>Ações</th></tr></thead>
 <tbody id="pros-tbody"></tbody>
 </table>
 </div>
@@ -495,17 +505,21 @@ function demoBadge(p){return p&&p.is_demo?'<span class="badge badge-demo">🧪 D
 
 // OVERVIEW
 async function loadOverview(){
-const[{count:pc},{count:cc},{count:rc},{count:sc}]=await Promise.all([
-db.from('profiles').select('id',{count:'exact',head:true}),
+const[{count:pc},{count:clc},{count:cc},{count:rc},{count:sc}]=await Promise.all([
+db.from('profiles').select('id',{count:'exact',head:true}).eq('account_type','professional'),
+db.from('profiles').select('id',{count:'exact',head:true}).eq('account_type','client'),
 db.from('conversations').select('*',{count:'exact',head:true}),
 db.from('reviews').select('*',{count:'exact',head:true}),
 db.from('services').select('*',{count:'exact',head:true})
 ])
 document.getElementById('s-pros').textContent=pc||0
+document.getElementById('s-clients').textContent=clc||0
 document.getElementById('s-conv').textContent=cc||0
 document.getElementById('s-revs').textContent=rc||0
 document.getElementById('s-srvs').textContent=sc||0
-const{data:pros}=await db.from('profiles').select('name,category,plan,is_demo').order('created_at',{ascending:false}).limit(5)
+// Só profissionais aqui — é o que o título "Últimos Profissionais" promete.
+// Contas cliente (sem categoria por natureza, não por lapso) ficam de fora.
+const{data:pros}=await db.from('profiles').select('name,category,plan,is_demo').eq('account_type','professional').order('created_at',{ascending:false}).limit(5)
 document.getElementById('recent-pros').innerHTML=(pros||[]).map(p=>`
 <tr><td><div class="td-name">${escapeHtml(p.name||'—')}${demoBadge(p)}</div></td>
 <td>${escapeHtml(p.category||'—')}</td>
@@ -532,20 +546,27 @@ const phoneMap={}
 ;(priv||[]).forEach(r=>phoneMap[r.profile_id]=r.phone)
 allPros.forEach(p=>p.phone=phoneMap[p.id]||'')
 }
-renderPros(allPros)
+filterPros(document.getElementById('pros-search').value)
 }
 
 function renderPros(pros){
 document.getElementById('pros-count').textContent=`(${pros.length})`
 const tbody=document.getElementById('pros-tbody')
-if(!pros.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Nenhum profissional encontrado</td></tr>';return}
+if(!pros.length){tbody.innerHTML='<tr class="empty-row"><td colspan="7">Nenhuma conta encontrada</td></tr>';return}
 tbody.innerHTML=pros.map(p=>{
 const approved=p.approved!==false
+const isPro=p.account_type!=='client' // registos antigos sem account_type contam como profissional (era o default)
 const av=p.photo_url?`<img src="${escapeHtml(p.photo_url)}" alt="${escapeHtml(p.name||'')}"/>`:((p.name||'?').split(' ').map(n=>n[0]).slice(0,2).join(''))
+// "Sem categoria" só é um problema real para quem É profissional (não aparece
+// nas pesquisas). Numa conta cliente é o estado normal e esperado — não é aviso.
+const catCell=isPro
+?(p.category?escapeHtml(p.category):'<span class="badge badge-pending" title="Sem categoria: não aparece em nenhuma pesquisa por categoria nem na grelha da homepage">⚠️ Sem categoria</span>')
+:'<span style="color:var(--muted)">—</span>'
 return`<tr>
 <td><div class="td-flex"><div class="pro-avatar">${av}</div>
 <div><div class="td-name">${escapeHtml(p.name||'—')}${demoBadge(p)}</div><div class="td-sub">${escapeHtml(p.phone||'')}</div></div></div></td>
-<td>${p.category?escapeHtml(p.category):'<span class="badge badge-pending" title="Sem categoria: não aparece em nenhuma pesquisa por categoria nem na grelha da homepage">⚠️ Sem categoria</span>'}</td>
+<td><span class="badge ${isPro?'badge-acc-pro':'badge-acc-client'}">${isPro?'Profissional':'Cliente'}</span></td>
+<td>${catCell}</td>
 <td>${escapeHtml(p.location||'—')}</td>
 <td><span class="badge badge-${p.plan||'free'}">${p.plan||'free'}</span></td>
 <td><span class="badge ${approved?'badge-approved':'badge-pending'}">${approved?'Ativo':'Pendente'}</span>${p.suspended?' <span class="badge badge-demo" title="Marcado automaticamente pelo webhook do Stripe quando há uma contestação de pagamento (chargeback) em aberto para este perfil">🚩 Disputado</span>':''}</td>
@@ -565,7 +586,10 @@ ${p.verified?`<button class="btn btn-unapprove" onclick="toggleVerified('${p.id}
 
 function filterPros(q){
 const lq=q.toLowerCase()
-renderPros(allPros.filter(p=>(p.name||'').toLowerCase().includes(lq)||(p.category||'').toLowerCase().includes(lq)||(p.location||'').toLowerCase().includes(lq)))
+const typeFilter=document.getElementById('pros-type-filter').value
+renderPros(allPros
+.filter(p=>!typeFilter||(typeFilter==='client'?p.account_type==='client':p.account_type!=='client'))
+.filter(p=>(p.name||'').toLowerCase().includes(lq)||(p.category||'').toLowerCase().includes(lq)||(p.location||'').toLowerCase().includes(lq)))
 }
 
 async function toggleAdmin(id,isAdmin){
@@ -594,7 +618,7 @@ await db.from('profiles').update({suspended}).eq('id',id);loadProfiles()
 async function deletePro(id,name){
 if(!confirm(`Eliminar "${name}"? Esta acção é irreversível.`))return
 await db.from('profiles').delete().eq('id',id)
-allPros=allPros.filter(p=>p.id!==id);renderPros(allPros);loadOverview()
+allPros=allPros.filter(p=>p.id!==id);filterPros(document.getElementById('pros-search').value);loadOverview()
 }
 
 // EDIT PROFILE MODAL
