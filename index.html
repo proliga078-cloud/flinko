@@ -307,34 +307,50 @@ section{padding:72px 5%}
 .door-client .door-btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--blue)}
 .door-pro .door-btn{background:var(--blue);color:#fff;box-shadow:4px 4px 0 rgba(255,255,255,.35)}
 .door-pro .door-btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 rgba(255,255,255,.35)}
-.dual-cta{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:680px;margin:0 auto}
-@media(max-width:560px){.dual-cta{grid-template-columns:1fr}}
-.dual-cta-card{border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
-.dual-cta-banner{height:74px;display:flex;align-items:center;justify-content:center;font-size:32px}
-.dual-cta-body{padding:20px;text-align:center;background:#fff}
-.dual-cta-body.dark{background:var(--ink)}
-.dual-cta-body p{font-size:14px;font-weight:700;margin-bottom:14px}
-.dual-cta-body.dark p{color:#fff}
-
-.faq-wrap{max-width:640px;margin:0 auto}
-.faq-item{border-bottom:1px solid var(--border)}
-.faq-item .faq-q{width:100%;text-align:left;background:none;border:none;padding:18px 4px;font-size:14.5px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:inherit;color:var(--ink)}
-.faq-chevron{transition:transform .2s;color:var(--blue);font-size:20px;flex-shrink:0;margin-left:12px}
-.faq-item.open .faq-chevron{transform:rotate(90deg)}
+/* ---- FAQ ---- */
+.faq-wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.faq-item{border:1.5px solid var(--border);border-radius:12px;background:#fff;overflow:hidden;transition:border-color .15s ease}
+.faq-item.open{border-color:var(--ink)}
+.faq-q{width:100%;text-align:left;background:none;border:none;padding:24px 26px;font-size:16.5px;font-weight:700;letter-spacing:-.01em;cursor:pointer;display:flex;align-items:center;gap:20px;font-family:inherit;color:var(--ink)}
+.faq-q .faq-idx{font-size:12.5px;font-weight:700;color:var(--muted-2);font-variant-numeric:tabular-nums;flex-shrink:0}
+.faq-q .faq-txt{flex:1}
+.faq-chevron{width:28px;height:28px;border-radius:50%;background:var(--bg);color:var(--ink);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:17px;font-weight:700;transition:transform .2s,background .2s,color .2s}
+.faq-item.open .faq-chevron{transform:rotate(90deg);background:var(--ink);color:#fff}
 .faq-a{max-height:0;overflow:hidden;transition:max-height .25s ease}
-.faq-item.open .faq-a{max-height:200px}
-.faq-a p{font-size:13.5px;color:var(--muted);line-height:1.6;padding:0 4px 18px}
+.faq-item.open .faq-a{max-height:220px}
+.faq-a p{font-size:14px;color:var(--muted);line-height:1.65;padding:0 26px 24px 66px;max-width:560px}
 
-footer{background:var(--ink);color:rgba(255,255,255,.6);padding:44px 5% 24px}
-.footer-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:24px;margin-bottom:24px}
-.footer-brand .logo{color:#fff}
-.footer-brand p{font-size:13px;line-height:1.7;max-width:260px;margin-top:10px;color:rgba(255,255,255,.5)}
-.footer-links{display:flex;gap:40px;flex-wrap:wrap}
-.footer-col{display:flex;flex-direction:column;gap:10px}
-.footer-col a{font-size:13px;color:rgba(255,255,255,.5)}
+/* ---- CTA final ---- */
+.final-cta{position:relative;overflow:hidden;max-width:940px;margin:0 auto;background:linear-gradient(150deg,#0B1428,#132348 60%,#0F1A33);border-radius:22px;padding:72px 6%;text-align:center}
+.final-cta::before{content:"";position:absolute;top:-45%;right:-12%;width:60%;height:170%;background:radial-gradient(circle,rgba(232,114,10,.16),transparent 65%);pointer-events:none}
+.final-cta::after{content:"";position:absolute;bottom:-50%;left:-10%;width:50%;height:160%;background:radial-gradient(circle,rgba(107,79,160,.14),transparent 65%);pointer-events:none}
+.final-cta-inner{position:relative}
+.final-cta .eyebrow{color:#F2A360}
+.final-cta h2{color:#fff;font-size:clamp(24px,3vw,32px);font-weight:800;letter-spacing:-.02em;margin-bottom:12px}
+.final-cta p{color:rgba(255,255,255,.6);font-size:15px;max-width:440px;margin:0 auto 34px;line-height:1.6}
+.final-cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.final-cta-btns .btn{width:auto;justify-content:center;padding:17px 30px;border-radius:11px;font-size:15px;font-weight:800;letter-spacing:-.005em;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;border:none;box-shadow:none;transition:background .15s ease}
+.final-cta-btns .btn-blue{background:var(--blue);color:#fff}
+.final-cta-btns .btn-blue:hover{background:#C25A06}
+.final-cta-btns .btn-white{background:#fff;color:var(--ink)}
+.final-cta-btns .btn-white:hover{background:#EFEFEF}
+@media(max-width:520px){.final-cta-btns{flex-direction:column;align-items:stretch}.final-cta-btns .btn{width:100%}}
+
+/* ---- Footer ---- */
+footer{background:var(--ink);color:rgba(255,255,255,.6)}
+.footer-stripe{height:3px;background:var(--blue)}
+.footer-inner{padding:56px 5% 28px;max-width:1120px;margin:0 auto}
+.footer-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:36px;margin-bottom:36px}
+.footer-brand .logo{color:#fff;font-weight:800;font-size:20px;letter-spacing:-.01em}
+.footer-brand .logo em{font-style:normal;color:var(--blue)}
+.footer-brand p{font-size:13px;line-height:1.7;max-width:270px;margin-top:12px;color:rgba(255,255,255,.5)}
+.footer-links{display:flex;gap:56px;flex-wrap:wrap}
+.footer-col-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.35);margin-bottom:16px}
+.footer-col{display:flex;flex-direction:column;gap:12px}
+.footer-col a{font-size:13.5px;color:rgba(255,255,255,.6);font-weight:500;transition:color .15s}
 .footer-col a:hover{color:#fff}
-.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-size:12px;color:rgba(255,255,255,.5)}
-.footer-bottom a{color:rgba(255,255,255,.5)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-size:12px;color:rgba(255,255,255,.45)}
+.footer-bottom a{color:rgba(255,255,255,.45);transition:color .15s}
 .footer-bottom a:hover{color:#fff}
 
 .spinner{width:26px;height:26px;border:2.5px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
@@ -359,7 +375,6 @@ section{padding:52px 4%}
 .footer-links{flex-direction:column;gap:16px}
 .cta-row{flex-direction:column}
 .cta-row .btn{width:100%;justify-content:center}
-.dual-cta{grid-template-columns:1fr}
 }
 
 /* === tema navy+laranja: nav === */
@@ -660,57 +675,50 @@ As primeiras aparecem aqui assim que os clientes as escreverem.
 </div>
 <div class="faq-wrap">
 <div class="faq-item open">
-<button class="faq-q" onclick="this.parentElement.classList.toggle('open')">A Proliga cobra alguma comissão?<span class="faq-chevron">›</span></button>
+<button class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span class="faq-idx">01</span><span class="faq-txt">A Proliga cobra alguma comissão?</span><span class="faq-chevron">›</span></button>
 <div class="faq-a"><p>Não sobre trabalhos fechados. Os profissionais têm um plano gratuito para sempre; os planos pagos existem só para quem quer mais visibilidade.</p></div>
 </div>
 <div class="faq-item">
-<button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Como são verificados os profissionais?<span class="faq-chevron">›</span></button>
+<button class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span class="faq-idx">02</span><span class="faq-txt">Como são verificados os profissionais?</span><span class="faq-chevron">›</span></button>
 <div class="faq-a"><p>A nossa equipa revê manualmente cada perfil novo antes de o marcar como Verificado. Perfis suspeitos ou incompletos não são aprovados.</p></div>
 </div>
 <div class="faq-item">
-<button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Preciso de pagar para contactar um profissional?<span class="faq-chevron">›</span></button>
+<button class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span class="faq-idx">03</span><span class="faq-txt">Preciso de pagar para contactar um profissional?</span><span class="faq-chevron">›</span></button>
 <div class="faq-a"><p>Não. Criar conta, procurar profissionais e enviar mensagens é sempre gratuito para clientes.</p></div>
 </div>
 </div>
 </section>
 
 <section style="background:var(--bg)">
-<div class="section-header">
+<div class="final-cta">
+<div class="final-cta-inner">
 <span class="eyebrow">Começa agora</span>
 <h2>O que precisas hoje?</h2>
-</div>
-<div class="dual-cta">
-<div class="dual-cta-card">
-<div class="dual-cta-banner" style="background:var(--blue-light);color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></div>
-<div class="dual-cta-body">
-<p>Precisas de ajuda?</p>
-<a href="pedidos.html" class="btn btn-blue">Publicar pedido</a>
-</div>
-</div>
-<div class="dual-cta-card">
-<div class="dual-cta-banner" style="background:var(--amber-light);color:var(--amber)"><svg class="ic" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
-<div class="dual-cta-body dark">
-<p>És profissional?</p>
-<a href="auth.html?tab=register" class="btn" style="background:#fff;color:var(--ink)">Criar perfil grátis</a>
+<p>Quer precises de um profissional, quer sejas tu o profissional, começa em menos de um minuto.</p>
+<div class="final-cta-btns">
+<a href="pedidos.html" class="btn btn-blue">Publicar pedido<svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+<a href="auth.html?tab=register" class="btn btn-white">Criar perfil grátis<svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
 </div>
 </div>
 </div>
 </section>
 <footer>
+<div class="footer-stripe"></div>
+<div class="footer-inner">
 <div class="footer-top">
 <div class="footer-brand">
 <a href="index.html" class="logo">Pro<em>liga</em></a>
 <p>O marketplace de serviços profissionais em Portugal. Conectamos clientes a profissionais de confiança.</p>
 </div>
 <div class="footer-links">
-<div class="footer-col">
+<div class="footer-col"><div class="footer-col-label">Proliga</div>
 <a href="como-funciona.html">Como funciona</a>
 <a href="porque-escolher.html">Porquê a Proliga</a>
 <a href="pricing.html">Preços</a>
 <a href="blog.html">Blog</a>
 <a href="contacto.html">Contacto</a>
 </div>
-<div class="footer-col">
+<div class="footer-col"><div class="footer-col-label">Profissionais</div>
 <a href="categoria.html">Todas as categorias</a>
 <a href="profissionais.html">Para profissionais</a>
 <a href="auth.html?tab=register">Registar profissional</a>
@@ -721,6 +729,7 @@ As primeiras aparecem aqui assim que os clientes as escreverem.
 <div class="footer-bottom">
 <span>© 2026 Proliga · Portugal</span>
 <span><a href="termos.html">Termos</a> · <a href="privacidade.html">Privacidade</a> · <a href="cookies.html">Cookies</a> · <a href="rgpd.html">RGPD</a></span>
+</div>
 </div>
 </footer>
 
