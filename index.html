@@ -200,19 +200,36 @@ section{padding:72px 5%}
 .door,.door-btn,.door-chip{transition:none!important}
 }
 
-.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;max-width:640px;margin:0 auto 28px}
-.why-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center;transition:all .15s}
-.why-card:hover{border-color:var(--blue);box-shadow:var(--shadow)}
-.why-icon{width:36px;height:36px;border-radius:10px;background:var(--green-light);color:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
-.why-icon .ic{width:17px;height:17px}
-.why-card h3{font-size:13.5px;font-weight:700}
+/* ---- Porquê confiar: faixa escura + cartões ---- */
+.trust-band{position:relative;overflow:hidden;background:linear-gradient(150deg,#0B1428,#132348 55%,#0F1A33);padding:80px 5% 90px}
+.trust-inner{position:relative;max-width:1040px;margin:0 auto}
+.trust-eyebrow{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#F2A360;margin-bottom:14px;display:block}
+.trust-h2{font-size:clamp(26px,3.2vw,36px);font-weight:800;letter-spacing:-.02em;color:#fff;line-height:1.2;margin-bottom:48px;max-width:600px}
 
-.testimonial-mini{max-width:420px;margin:0 auto 18px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;gap:14px;align-items:flex-start}
-.testimonial-mini .t-avatar{width:38px;height:38px;border-radius:50%;background:var(--blue-light);color:var(--blue);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.testimonial-mini .stars{color:var(--amber);letter-spacing:2px;font-size:12px;margin-bottom:6px}
-.testimonial-mini p{font-size:13.5px;color:var(--ink);line-height:1.6;margin-bottom:6px}
-.testimonial-mini .role{font-size:11.5px;color:var(--muted-2)}
-.confianca-link{display:block;text-align:center;font-size:13.5px;font-weight:700;color:var(--blue)}
+.principle-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:52px}
+.principle-card{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.14);border-top:3px solid var(--acc);border-radius:10px;padding:30px 26px 28px;transition:transform .16s ease,background .16s ease}
+.principle-card:hover{transform:translateY(-4px);background:rgba(255,255,255,.075)}
+.principle-card:nth-child(1){--acc:#5FCB92}
+.principle-card:nth-child(2){--acc:#F2A360}
+.principle-card:nth-child(3){--acc:#B9A2E8}
+.principle-num{font-size:15px;font-weight:800;color:var(--acc);font-variant-numeric:tabular-nums;letter-spacing:.04em;margin-bottom:22px}
+.principle-card h3{font-size:17.5px;font-weight:800;color:#fff;letter-spacing:-.01em;margin-bottom:9px;line-height:1.3}
+.principle-card p{font-size:13.5px;color:rgba(255,255,255,.55);line-height:1.6}
+
+.quote-wrap{border-top:1px solid rgba(255,255,255,.16);padding-top:44px}
+.quote-block{display:flex;gap:16px;align-items:flex-start}
+.quote-block .t-avatar{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.quote-block .stars{color:#F2A360;letter-spacing:4px;font-size:15px;margin-bottom:16px}
+.quote-block p{font-size:clamp(19px,2.4vw,25px);font-weight:600;color:#fff;line-height:1.45;letter-spacing:-.01em;margin-bottom:12px;max-width:720px}
+.quote-block .role{font-size:13px;color:rgba(255,255,255,.55);font-weight:600}
+.trust-empty{text-align:center;font-size:13.5px;color:rgba(255,255,255,.5);line-height:1.7;max-width:560px;margin:0 auto}
+
+.trust-foot{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px;margin-top:46px;padding-top:32px;border-top:1px solid rgba(255,255,255,.16)}
+.trust-stats{display:flex;gap:48px}
+.trust-stats .stat strong{display:block;font-size:clamp(28px,3.4vw,36px);font-weight:800;color:#fff;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1}
+.trust-stats .stat span{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:.03em;text-transform:uppercase}
+.confianca-link{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:700;color:rgba(255,255,255,.75);border-bottom:1px solid rgba(255,255,255,.3);padding-bottom:2px;transition:color .15s,border-color .15s}
+.confianca-link:hover{color:#fff;border-color:#fff}
 
 .spotlight-card{max-width:680px;margin:0 auto;border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);display:grid;grid-template-columns:1fr 1.3fr}
 @media(max-width:640px){.spotlight-card{grid-template-columns:1fr}}
@@ -267,9 +284,6 @@ section{padding:72px 5%}
 .loc-zone{background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);font-size:11.5px;padding:4px 10px;border-radius:99px}
 
 .trust-section{background:var(--bg);padding:48px 5%}
-.trust-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:18px;max-width:900px;margin:0 auto;text-align:center}
-.trust-item strong{display:block;font-size:24px;font-weight:800;margin-bottom:4px}
-.trust-item p{font-size:12.5px;color:var(--muted-2);font-weight:500}
 
 .doors-wrap{padding:40px 5% 4px}
 .doors{max-width:980px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:18px}
@@ -333,7 +347,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.6);padding:44px 5% 24px}
 .stat:nth-child(2n)::after{display:none}
 }
 @media(max-width:768px){
-.why-grid{grid-template-columns:1fr}
+.principle-grid{grid-template-columns:1fr}
 section{padding:52px 4%}
 .steps-grid{grid-template-columns:1fr}
 .footer-top{flex-direction:column}
@@ -341,7 +355,6 @@ section{padding:52px 4%}
 }
 @media(max-width:480px){
 .cat-grid{grid-template-columns:repeat(2,1fr);gap:10px}
-.trust-grid{grid-template-columns:repeat(2,1fr)}
 .loc-grid{grid-template-columns:1fr}
 .footer-links{flex-direction:column;gap:16px}
 .cta-row{flex-direction:column}
@@ -546,22 +559,19 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <div id="pro-map" style="max-width:900px;margin:0 auto;height:360px;border-radius:16px;overflow:hidden;background:#152444"></div>
 <p id="pro-map-empty" style="display:none;text-align:center;color:rgba(255,255,255,.6);font-size:14px;margin-top:16px">Ainda não há profissionais com zona definida para mostrar no mapa.</p>
 </section>
-<section>
-<div class="section-header">
-<span class="eyebrow">Confiança</span>
-<h2>Porquê confiar na Proliga</h2>
-<p>Três princípios simples guiam tudo o que fazemos</p>
+<section class="trust-band">
+<div class="trust-inner">
+<span class="trust-eyebrow">Confiança</span>
+<h2 class="trust-h2">Três princípios simples guiam tudo o que fazemos na Proliga.</h2>
+
+<div class="principle-grid">
+<div class="principle-card"><div class="principle-num">01</div><h3>Verificação manual de cada perfil</h3><p>A nossa equipa confirma identidade e histórico antes de qualquer perfil ficar visível.</p></div>
+<div class="principle-card"><div class="principle-num">02</div><h3>Sempre grátis para clientes</h3><p>Procurar, comparar e enviar mensagens não custa nada, hoje ou no futuro.</p></div>
+<div class="principle-card"><div class="principle-num">03</div><h3>Sem comissões por trabalho fechado</h3><p>O que combinares com o profissional fica entre vocês os dois.</p></div>
 </div>
-<div class="why-grid">
-<div class="why-card"><div class="why-icon"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><h3>Verificação manual de cada perfil</h3></div>
-<div class="why-card"><div class="why-icon"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg></div><h3>Sempre grátis para clientes</h3></div>
-<div class="why-card"><div class="why-icon"><svg class="ic" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4H12l-4.8 2.1 1-4a8.4 8.4 0 1 1 12.8-6.5z"/></svg></div><h3>Sem comissões por trabalho fechado</h3></div>
-</div>
-<div class="trust-grid" style="margin-top:28px">
-<div class="trust-item"><strong id="t-pros">—</strong><p>Profissionais registados</p></div>
-<div class="trust-item"><strong>RGPD</strong><p>Dados seguros</p></div>
-</div>
-<div class="testimonial-mini" id="testemunho" style="display:none">
+
+<div class="quote-wrap">
+<div class="quote-block" id="testemunho" style="display:none">
 <div class="t-avatar" id="t-avatar">—</div>
 <div>
 <div class="stars" id="t-stars"></div>
@@ -569,11 +579,20 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <div class="role" id="t-autor"></div>
 </div>
 </div>
-<p id="sem-testemunhos" style="text-align:center;font-size:13.5px;color:var(--muted);line-height:1.7;max-width:560px;margin:0 auto">
+<p id="sem-testemunhos" class="trust-empty">
 Ainda não temos avaliações publicadas — a plataforma é recente e preferimos não inventar nenhuma.
 As primeiras aparecem aqui assim que os clientes as escreverem.
 </p>
+</div>
+
+<div class="trust-foot">
+<div class="trust-stats">
+<div class="stat"><strong id="t-pros">—</strong><span>Profissionais registados</span></div>
+<div class="stat"><strong>RGPD</strong><span>Dados seguros</span></div>
+</div>
 <a href="porque-escolher.html" class="confianca-link">Ver comparação completa com OLX e Fixando →</a>
+</div>
+</div>
 </section>
 <section id="pwa-promo-section" style="display:none;background:#0F1A33;padding:72px 4%">
 <div style="max-width:980px;margin:0 auto;display:flex;align-items:center;gap:48px;flex-wrap:wrap">
