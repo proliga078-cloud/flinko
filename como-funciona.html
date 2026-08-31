@@ -3,293 +3,421 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Como Funciona – Proliga</title>
-<meta name="description" content="Descobre como funciona a Proliga, para clientes e para profissionais. Passo a passo, perguntas frequentes e tudo o que precisas saber."/>
+<title>Como Funciona – Aproliga</title>
+<meta name="description" content="Descobre como funciona a Aproliga, para clientes e para profissionais. Passo a passo, perguntas frequentes e tudo o que precisas saber."/>
 <meta name="robots" content="index, follow"/>
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
 <link rel="shortcut icon" href="/favicon.ico"/>
 <link rel="manifest" href="/manifest.json"/>
-<meta name="theme-color" content="#0F1A33"/>
+<meta name="theme-color" content="#132420"/>
 <script src="/assets/pwa.js" defer></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--blue:#E8720A;--blue-dark:#C25A06;--blue-light:#FDECDD;--gold:#AF620A;--gold-light:#FFF3E4;--green:#1A8649;--green-light:#EAF7EE;--text:#14181F;--muted:#5B6270;--border:#ECECE9;--bg:#F7F8FA;--white:#fff}
-body{font-family:'Inter',sans-serif;color:var(--text);background:var(--white);line-height:1.6}
+:root{
+  --ink:#132420;
+  --ink-soft:#4E5C57;
+  --ink-mute:#84918C;
+  --paper:#FFFFFF;
+  --surface:#F3FBF6;
+  --line:#E1EEE6;
+  --line-2:#CFE4D9;
+  --accent:#E8720A;
+  --accent-deep:#B85608;
+  --accent-soft:#FFE7CE;
+  --fresh:#0F8B5F;
+  --fresh-soft:#D7F5E4;
+  --fresh-light:#6FE3B4;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;color:var(--ink);background:var(--paper);overflow-x:hidden}
 a{text-decoration:none;color:inherit}
 .ic{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:inline-block;vertical-align:-.15em}
-nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:0 5%;height:68px;display:flex;align-items:center}
-.logo{font-weight:800;font-size:20px;color:var(--text);letter-spacing:-.01em}
-.logo em{font-style:normal;color:var(--blue)}
-.navlinks{display:none;gap:26px;margin-left:44px;font-size:14px;font-weight:500;color:var(--muted)}
-.navlinks a:hover{color:var(--text)}
+:focus-visible{outline:2px solid var(--fresh);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+@keyframes pulse{0%{opacity:.8;transform:scale(.6)}100%{opacity:0;transform:scale(2.2)}}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(-14px,10px)}}
+@keyframes glow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes iconpulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(15,139,95,0)}50%{transform:scale(1.08);box-shadow:0 0 0 8px rgba(15,139,95,.12)}}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal.r1{transition-delay:.04s}.reveal.r2{transition-delay:.1s}.reveal.r3{transition-delay:.16s}.reveal.r4{transition-delay:.22s}
+.reveal.r5{transition-delay:.28s}.reveal.r6{transition-delay:.34s}
+
+.blob-field{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.blob{position:absolute;border-radius:50%;filter:blur(60px);animation:drift 13s ease-in-out infinite}
+section{position:relative;padding:92px 5%}
+section>.wrap{position:relative;z-index:1}
+.wrap{max-width:1180px;margin:0 auto}
+
+.btn{padding:15px 26px;border-radius:999px;font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;border:1.5px solid transparent;transition:background .15s,border-color .15s,color .15s,transform .15s}
+.btn-accent{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 10px 22px rgba(232,114,10,.25)}
+.btn-accent:hover{background:var(--accent-deep);border-color:var(--accent-deep);transform:translateY(-1px)}
+.btn-ink{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn-ink:hover{background:#000}
+.btn-ghost{background:transparent;color:var(--ink-soft);border-color:transparent}
+.btn-ghost:hover{color:var(--ink);background:var(--fresh-soft)}
+.btn-fresh{background:linear-gradient(100deg,var(--accent),var(--fresh));color:#fff;border-color:transparent;box-shadow:0 8px 18px rgba(15,139,95,.22)}
+.btn-fresh:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(15,139,95,.3)}
+
+.eyebrow{display:inline-flex;align-items:center;gap:7px;background:var(--accent-soft);color:var(--accent-deep);font-size:12px;font-weight:700;letter-spacing:.01em;padding:6px 14px;border-radius:999px}
+.eyebrow.on-dark{background:rgba(255,255,255,.12);color:#fff}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:40px;flex-wrap:wrap}
+.section-head h2{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(26px,3.2vw,36px);font-weight:800;letter-spacing:-.025em;line-height:1.1}
+.section-head p{font-size:14.5px;color:var(--ink-soft);max-width:400px;line-height:1.6}
+
+/* ================= NAV ================= */
+nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);box-shadow:0 6px 24px rgba(19,36,32,.05);padding:0 5%;height:68px;display:flex;align-items:center;gap:20px}
+.logo{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:21px;letter-spacing:-.02em;color:var(--ink);white-space:nowrap;flex-shrink:0}
+.logo em{font-style:normal;color:var(--fresh)}
+.navlinks{display:none;align-items:center;gap:4px;margin-left:12px}
+.navlinks a{position:relative;display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;color:var(--ink-soft);padding:9px 14px;border-radius:999px;transition:background .18s,color .18s}
+.navlinks a:hover{color:var(--ink);background:var(--fresh-soft)}
+.navlinks a.current{color:var(--ink);background:var(--fresh-soft)}
+.navlinks a .ic{display:none}
 @media(min-width:900px){.navlinks{display:flex}}
-.hamburger-btn{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:8px;border:1.5px solid var(--border);background:#fff;cursor:pointer;margin-left:10px;flex-shrink:0}
+.hamburger-btn{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;border:1.5px solid var(--line-2);background:#fff;color:var(--ink);cursor:pointer;margin-left:auto;flex-shrink:0}
 @media(min-width:900px){.hamburger-btn{display:none}}
-.mobile-nav-panel{display:none;position:fixed;top:68px;left:0;right:0;background:#fff;border-bottom:1px solid var(--border);padding:10px 5% 18px;flex-direction:column;gap:2px;z-index:199;box-shadow:0 12px 28px rgba(0,0,0,.10);max-height:calc(100vh - 68px);overflow-y:auto}
+.mobile-nav-panel{display:none;position:fixed;top:68px;left:0;right:0;background:#fff;border-bottom:1px solid var(--line);padding:10px 5% 18px;flex-direction:column;gap:2px;z-index:199;box-shadow:0 12px 28px rgba(19,36,32,.1);max-height:calc(100vh - 68px);overflow-y:auto}
 .mobile-nav-panel.open{display:flex}
-.mobile-nav-panel a{display:flex;align-items:center;gap:10px;padding:13px 10px;border-radius:9px;font-size:15px;font-weight:600;color:var(--ink);text-decoration:none}
-.mobile-nav-panel a:active{background:var(--bg)}
+.mobile-nav-panel a{display:flex;align-items:center;gap:10px;padding:13px 10px;border-radius:9px;font-size:15px;font-weight:600;color:var(--ink)}
+.mobile-nav-panel a:active{background:var(--surface)}
 @media(min-width:900px){.mobile-nav-panel{display:none!important}}
-
 .navcta{margin-left:auto;display:flex;gap:10px;align-items:center}
-.btn{padding:9px 18px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid transparent;transition:all .15s;font-family:inherit;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
-.btn-ghost{background:transparent;color:var(--text)}.btn-ghost:hover{background:var(--bg)}
-.btn-line{background:transparent;color:var(--text);border-color:var(--border)}.btn-line:hover{border-color:#B8BCC4}
-.btn-ink{background:var(--text);color:#fff}.btn-ink:hover{background:#000}
-.btn-blue{background:var(--blue);color:#fff;box-shadow:0 6px 16px rgba(232,114,10,.22)}.btn-blue:hover{background:var(--blue-dark)}
+@media(max-width:899px){.navcta{margin-left:0}}
+.nav-live{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--ink-soft);background:var(--surface);border:1px solid var(--line-2);padding:7px 13px 7px 10px;border-radius:999px;flex-shrink:0;margin-left:auto}
+.nav-live .live-dot{position:relative;width:7px;height:7px;border-radius:50%;background:var(--fresh);flex-shrink:0}
+.nav-live .live-dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1.5px solid var(--fresh);animation:pulse 1.8s ease-out infinite}
+.nav-live b{color:var(--ink);font-weight:800}
+@media(max-width:1150px){.nav-live{display:none}}
+.nav-user{display:none;align-items:center;gap:10px}
+.nav-avatar{width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer}
 
-.hero{padding:64px 5% 56px;text-align:center;background:var(--bg);border-bottom:1px solid var(--border)}
-.hero h1{font-size:clamp(28px,4vw,42px);font-weight:800;letter-spacing:-.02em;margin-bottom:14px}
-.hero p{font-size:16px;color:var(--muted);max-width:520px;margin:0 auto}
+/* ================= PAGE HERO ================= */
+.page-hero{padding:64px 5% 0;background:var(--surface);overflow:hidden;position:relative}
+.hero-deco{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.hero-deco svg{position:absolute;stroke:var(--fresh);fill:none;stroke-width:1.4;opacity:.16;animation:drift 15s ease-in-out infinite}
+.page-hero-grid{position:relative;z-index:1;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
+@media(max-width:960px){.page-hero-grid{grid-template-columns:1fr;gap:36px}}
+.page-hero-inner{max-width:620px}
+.page-hero .eyebrow{margin-bottom:18px}
+.page-hero h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(32px,4.4vw,52px);font-weight:800;letter-spacing:-.03em;line-height:1.08;margin-bottom:18px;color:var(--ink)}
+.page-hero h1 span{background:linear-gradient(90deg,var(--fresh) 0%,var(--accent) 50%,var(--fresh) 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:glow 3.2s ease-in-out infinite}
+.page-hero p.lead{font-size:16px;color:var(--ink-soft);line-height:1.6;max-width:520px;margin-bottom:28px}
+.audience-jump{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:600px}
+@media(max-width:640px){.audience-jump{grid-template-columns:1fr}}
+.audience-card{position:relative;display:flex;align-items:center;gap:14px;background:#fff;border:1.5px solid var(--line-2);border-radius:18px;padding:17px 19px;transition:transform .18s,box-shadow .18s,border-color .18s}
+.audience-card:hover{transform:translateY(-3px);box-shadow:0 16px 30px rgba(19,36,32,.1);border-color:var(--fresh)}
+.audience-card .aic{width:40px;height:40px;border-radius:12px;background:var(--accent-soft);color:var(--accent-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.audience-card:nth-child(2) .aic{background:var(--fresh-soft);color:var(--fresh)}
+.audience-card .aic svg{width:18px;height:18px}
+.audience-card strong{display:block;font-size:13.5px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
+.audience-card span{font-size:11.5px;color:var(--ink-mute)}
+.audience-card .arrow{margin-left:auto;color:var(--ink-mute);transition:transform .18s;flex-shrink:0}
+.audience-card:hover .arrow{transform:translateX(4px);color:var(--ink)}
+.page-hero-badges{position:relative;z-index:1;display:flex;gap:26px;flex-wrap:wrap;margin-top:28px}
+.pb{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--ink-soft)}
+.pb svg{width:15px;height:15px;color:var(--fresh);flex-shrink:0}
 
-section{padding:64px 5%}
-.section-header{text-align:center;margin-bottom:40px}
-.section-header h2{font-size:clamp(22px,2.8vw,30px);font-weight:800;letter-spacing:-.02em;margin-bottom:10px}
-.section-header p{font-size:15px;color:var(--muted);max-width:480px;margin:0 auto}
-.eyebrow{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);margin-bottom:10px;display:block}
+.page-hero-photo{position:relative}
+.php-card{position:relative;border-radius:26px;overflow:hidden;box-shadow:0 30px 60px rgba(19,36,32,.18);aspect-ratio:4/5}
+.php-card img{width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block}
+.php-card::after{content:"";position:absolute;inset:0;background:linear-gradient(190deg,transparent 60%,rgba(19,36,32,.35) 100%)}
+.php-sticker{position:absolute;top:20px;right:-8px;z-index:2;background:var(--fresh);color:#fff;font-size:12.5px;font-weight:800;padding:9px 16px;border-radius:999px;box-shadow:0 10px 20px rgba(15,139,95,.35);transform:rotate(4deg)}
+.php-badge{position:absolute;bottom:18px;left:18px;z-index:2;background:#fff;border-radius:14px;padding:11px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 14px 30px rgba(0,0,0,.18)}
+.php-badge span{font-size:12px;font-weight:700;color:var(--ink)}
+@media(max-width:960px){.page-hero-photo{max-width:380px;margin:0 auto}.php-card{aspect-ratio:16/11}}
 
-.audience-tabs{display:flex;justify-content:center;gap:10px;margin-bottom:44px;flex-wrap:wrap}
-.audience-tab{display:flex;align-items:center;gap:8px;background:var(--bg);border:1.5px solid var(--border);padding:10px 20px;border-radius:99px;font-size:14px;font-weight:700;color:var(--muted)}
-.audience-tab.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.page-hero-bottom{position:relative;z-index:1;margin-top:40px}
+.ticker-strip{position:relative;background:var(--ink);overflow:hidden;padding:12px 0}
+.ticker-track{display:flex;width:max-content;animation:marquee 26s linear infinite}
+.ticker-strip:hover .ticker-track{animation-play-state:paused}
+.tick-item{display:flex;align-items:center;gap:9px;padding:0 30px;font-size:12px;font-weight:600;color:rgba(255,255,255,.7);white-space:nowrap;border-right:1px solid rgba(255,255,255,.14)}
+.tick-item .dot{width:6px;height:6px;border-radius:50%;background:#F2A360;flex-shrink:0}
+.tick-item strong{color:#fff;font-weight:700}
 
-.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;max-width:1040px;margin:0 auto 64px}
-.step-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:26px 22px;position:relative}
-.step-card .step-icon{width:40px;height:40px;border-radius:10px;background:var(--blue-light);color:var(--blue);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
-.step-num{font-size:12px;font-weight:700;color:var(--blue);margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:.04em}
-.step-card h3{font-size:16px;font-weight:700;margin-bottom:8px}
-.step-card p{font-size:13.5px;color:var(--muted);line-height:1.6}
+/* ================= FLOW (numbered process) ================= */
+.flow-wrap{position:relative;padding:6px 0 0}
+.flow-line{position:absolute;top:47px;left:70px;right:70px;height:3px;background:var(--line-2);border-radius:3px;overflow:hidden;z-index:0}
+.flow-line-fill{position:absolute;inset:0;background:linear-gradient(90deg,var(--accent),var(--fresh));border-radius:3px}
+.flow-line-run{position:absolute;top:0;left:-30%;width:26%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),transparent);animation:flowrun 3.2s linear infinite}
+@keyframes flowrun{0%{left:-30%}100%{left:104%}}
+@media(max-width:980px){.flow-line{display:none}}
+.flow-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,1fr);gap:26px}
+@media(max-width:980px){.flow-grid{grid-template-columns:repeat(2,1fr);gap:36px 24px}}
+@media(max-width:560px){.flow-grid{grid-template-columns:1fr}}
+.flow-node{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.flow-ghost{position:absolute;top:-10px;right:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:56px;font-weight:800;color:var(--fresh-soft);z-index:0;line-height:1;user-select:none;pointer-events:none}
+.flow-circle{position:relative;z-index:1;width:88px;height:88px;border-radius:50%;background:#fff;border:3px solid var(--fresh-soft);display:flex;align-items:center;justify-content:center;box-shadow:0 14px 30px rgba(19,36,32,.1);animation:iconpulse 3s ease-in-out infinite;margin-bottom:8px}
+.flow-circle svg{width:32px;height:32px;color:var(--fresh)}
+.flow-node:nth-child(1) .flow-circle{animation-delay:0s}
+.flow-node:nth-child(2) .flow-circle{animation-delay:.75s}
+.flow-node:nth-child(3) .flow-circle{animation-delay:1.5s}
+.flow-node:nth-child(4) .flow-circle{animation-delay:2.25s}
+.flow-node h3{position:relative;z-index:1;font-size:16.5px;font-weight:800;letter-spacing:-.01em;margin-top:4px}
+.flow-node p{position:relative;z-index:1;font-size:13.5px;color:var(--ink-soft);line-height:1.6}
+.flow.alt .flow-line-fill{background:linear-gradient(90deg,var(--fresh),var(--accent))}
+.flow.alt .flow-circle{border-color:var(--accent-soft)}
+.flow.alt .flow-circle svg{color:var(--accent-deep)}
+.flow.alt .flow-ghost{color:var(--accent-soft)}
 
-.pro-steps .step-card .step-icon{background:var(--gold-light);color:var(--gold)}
-.pro-steps .step-num{color:var(--gold)}
+.altpath{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--fresh-soft) 0%,var(--accent-soft) 100%);border-radius:28px;padding:42px;margin-top:28px}
+.altpath::before{content:"";position:absolute;width:240px;height:240px;filter:blur(55px);background:rgba(255,255,255,.4);top:-70px;right:-30px;border-radius:50%;animation:drift 12s ease-in-out infinite}
+.altpath-head{position:relative;display:flex;gap:18px;align-items:flex-start;margin-bottom:24px}
+.altpath-ic{position:relative;width:50px;height:50px;border-radius:15px;background:#fff;color:var(--fresh);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 10px 22px rgba(19,36,32,.08)}
+.altpath-ic svg{width:22px;height:22px}
+.altpath h3{font-family:'Plus Jakarta Sans',sans-serif;font-size:18.5px;font-weight:800;letter-spacing:-.015em;margin-bottom:6px;color:var(--ink)}
+.altpath-head p{font-size:14px;color:var(--ink-soft);line-height:1.6;max-width:520px}
+.altpath-grid{position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.altpath-item{display:flex;gap:12px;background:#fff;border-radius:16px;padding:18px 20px;box-shadow:0 8px 20px rgba(19,36,32,.06)}
+.altpath-item .adot{width:8px;height:8px;border-radius:50%;background:var(--fresh);flex-shrink:0;margin-top:7px}
+.altpath-item strong{display:block;font-size:14.5px;font-weight:700;margin-bottom:3px;color:var(--ink)}
+.altpath-item span{font-size:13px;color:var(--ink-soft);line-height:1.55}
+@media(max-width:640px){.altpath{padding:26px 22px}.altpath-head{flex-direction:column}}
 
-.detail-box{max-width:900px;margin:0 auto 64px;background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:32px}
-.detail-box h3{font-size:18px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:10px}
-.detail-box h3 .ic{color:var(--blue)}
-.detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
-.detail-item{display:flex;gap:12px}
-.detail-item .dot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:7px}
-.detail-item strong{display:block;font-size:14px;margin-bottom:3px}
-.detail-item span{font-size:13px;color:var(--muted);line-height:1.55}
-
-.faq-wrap{max-width:760px;margin:0 auto}
-.faq-item{border-bottom:1px solid var(--border);padding:20px 0}
-.faq-item summary{font-size:15.5px;font-weight:700;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px}
+/* ================= FAQ (native details/summary) ================= */
+.faq-wrap{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.faq-item{border:1.5px solid var(--line-2);border-radius:16px;background:#fff;overflow:hidden;transition:border-color .15s ease}
+.faq-item[open]{border-color:var(--fresh)}
+.faq-item summary{list-style:none;padding:22px 24px;font-size:15.5px;font-weight:700;letter-spacing:-.01em;cursor:pointer;display:flex;align-items:center;gap:16px;color:var(--ink)}
 .faq-item summary::-webkit-details-marker{display:none}
-.faq-item summary .plus{color:var(--blue);font-size:20px;font-weight:400;flex-shrink:0;transition:transform .2s}
-.faq-item[open] summary .plus{transform:rotate(45deg)}
-.faq-item p{font-size:14px;color:var(--muted);margin-top:12px;line-height:1.65;max-width:640px}
+.faq-item summary::after{content:"›";margin-left:auto;width:26px;height:26px;border-radius:50%;background:var(--surface);color:var(--ink);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;font-weight:700;transition:transform .2s,background .2s,color .2s}
+.faq-item[open] summary::after{transform:rotate(90deg);background:var(--ink);color:#fff}
+.faq-item p{font-size:14px;color:var(--ink-soft);line-height:1.65;padding:0 24px 22px 24px;max-width:620px}
 
-.cta-section{background:var(--text);padding:64px 5%;text-align:center}
-.cta-section h2{font-size:clamp(24px,3vw,32px);font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:12px}
-.cta-section p{font-size:15px;color:rgba(255,255,255,.6);margin-bottom:28px}
-.cta-section .btn-blue{padding:13px 26px;font-size:15px}
-.cta-section .link{color:rgba(255,255,255,.7);font-size:13.5px;margin-top:16px;display:inline-block}
+/* ================= CTA / FOOTER ================= */
+.cta-section{position:relative;overflow:hidden;background:var(--ink);border-radius:24px;max-width:1180px;margin:0 auto;padding:72px 6%;text-align:center}
+.cta-section::before{content:"";position:absolute;top:-40%;right:-8%;width:50%;height:160%;background:radial-gradient(circle,rgba(232,114,10,.22),transparent 65%);pointer-events:none}
+.cta-section::after{content:"";position:absolute;bottom:-45%;left:-10%;width:44%;height:150%;background:radial-gradient(circle,rgba(15,139,95,.2),transparent 65%);pointer-events:none}
+.cta-section .eyebrow{position:relative;margin-bottom:14px}
+.cta-section h2{position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:#fff;font-size:clamp(24px,3vw,32px);font-weight:800;letter-spacing:-.02em;margin-bottom:10px}
+.cta-section p{position:relative;color:rgba(255,255,255,.55);font-size:14.5px;margin-bottom:28px}
+.cta-section .btn-accent{position:relative;background:linear-gradient(100deg,var(--accent),var(--fresh));border-color:transparent}
+.cta-section .link{position:relative;color:rgba(255,255,255,.6);font-size:13.5px;font-weight:600;margin-top:16px;display:inline-block;transition:color .15s}
 .cta-section .link:hover{color:#fff}
 
-footer{background:var(--text);color:rgba(255,255,255,.6);padding:44px 5% 26px}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:22px;margin-bottom:36px}
-@media(max-width:768px){.footer-grid{grid-template-columns:1fr 1fr 1fr}}
-.footer-brand .logo{color:#fff}
-.footer-brand p{font-size:13px;line-height:1.7;max-width:260px;margin-top:12px;color:rgba(255,255,255,.5)}
-.footer-col h4{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:14px;text-transform:uppercase;letter-spacing:.05em}
-.footer-col a{display:block;font-size:13px;margin-bottom:9px;color:rgba(255,255,255,.5)}
-.footer-col a:hover{color:#fff}
-.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:12px;color:rgba(255,255,255,.5)}
-@media(max-width:480px){.footer-grid{grid-template-columns:1fr}}
-
-/* === tema navy+laranja: nav === */
-nav{background:#0F1A33}
-nav a.logo{color:#fff}
-nav a.logo em,nav a.logo span{color:#F2A55C}
-.navlinks{color:#9AA6C3}
-.navlinks a:hover{color:#fff}
-.hamburger-btn{background:transparent;border-color:rgba(255,255,255,.25);color:#fff}
-.mobile-nav-panel{background:#fff}
-nav .btn-ghost{color:#fff}
-nav .btn-ghost:hover{background:rgba(255,255,255,.1)}
-nav .btn-line{color:#fff;border-color:rgba(255,255,255,.3)}
-nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
-.btn-ink{background:#E8720A;color:#fff}
-.btn-ink:hover{background:#C25A06}
+footer{background:var(--surface);border-top:1px solid var(--line)}
+.footer-inner{padding:56px 5% 28px;max-width:1180px;margin:0 auto}
+.footer-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:36px;margin-bottom:36px}
+.footer-brand .logo{color:var(--ink)}
+.footer-brand p{font-size:13px;line-height:1.7;max-width:270px;margin-top:12px;color:var(--ink-soft)}
+.footer-links{display:flex;gap:56px;flex-wrap:wrap}
+.footer-col-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-mute);margin-bottom:16px;display:block}
+.footer-col{display:flex;flex-direction:column;gap:11px}
+.footer-col a{font-size:13.5px;color:var(--ink-soft);font-weight:500;transition:color .15s}
+.footer-col a:hover{color:var(--ink)}
+.footer-bottom{border-top:1px solid var(--line);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--ink-mute)}
+.footer-bottom a{color:var(--ink-mute);transition:color .15s}
+.footer-bottom a:hover{color:var(--ink)}
+@media(max-width:640px){.footer-top{flex-direction:column}.footer-links{gap:32px}.footer-bottom{flex-direction:column;align-items:flex-start}}
 </style>
-<meta property="og:title" content="Como Funciona – Proliga"/>
-<meta property="og:description" content="Como funciona o Proliga: pede orçamento, compara profissionais verificados e contrata com confiança."/>
+<meta property="og:title" content="Como Funciona – Aproliga"/>
+<meta property="og:description" content="Como funciona a Aproliga: pede orçamento, compara profissionais verificados e contrata com confiança."/>
 <meta property="og:type" content="website"/>
-<meta property="og:url" content="https://proliga.pt/como-funciona.html"/>
-<meta property="og:image" content="https://proliga.pt/assets/og-image.png"/>
+<meta property="og:url" content="https://aproliga.pt/como-funciona.html"/>
+<meta property="og:image" content="https://aproliga.pt/assets/og-image.png"/>
 <meta property="og:locale" content="pt_PT"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="Como Funciona – Proliga"/>
-<meta name="twitter:description" content="Como funciona o Proliga: pede orçamento, compara profissionais verificados e contrata com confiança."/>
-<meta name="twitter:image" content="https://proliga.pt/assets/og-image.png"/>
+<meta name="twitter:title" content="Como Funciona – Aproliga"/>
+<meta name="twitter:description" content="Como funciona a Aproliga: pede orçamento, compara profissionais verificados e contrata com confiança."/>
+<meta name="twitter:image" content="https://aproliga.pt/assets/og-image.png"/>
 </head>
 <body>
 
 <nav>
-<a href="index.html" class="logo">Pro<em>liga</em></a>
+<a href="index.html" class="logo">Apro<em>liga</em></a>
 <div class="navlinks">
-<a href="categoria.html"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> Encontrar profissional</a>
-<a href="como-funciona.html" style="color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> Como Funciona</a>
-<a href="porque-escolher.html"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg> Porquê a Proliga</a>
-<a href="pricing.html"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Preços</a>
-<a href="pedidos.html"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg> Pedidos</a>
+<a href="categoria.html"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Encontrar profissional</a>
+<a href="como-funciona.html" class="current"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Como funciona</a>
+<a href="porque-escolher.html"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg>Porquê a Aproliga</a>
+<a href="pricing.html"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Preços</a>
+<a href="pedidos.html"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg>Pedidos</a>
 </div>
+<div class="nav-live"><span class="live-dot"></span> <b>22+</b> profissionais ativos agora</div>
 <div class="navcta">
 <div id="nav-guest" style="display:flex;gap:8px">
 <a href="auth.html?tab=login" class="btn btn-ghost">Entrar</a>
-<a href="auth.html?tab=register" class="btn btn-ink">Registar</a>
+<a href="auth.html?tab=register" class="btn btn-fresh">Registar</a>
 </div>
-<div id="nav-user" style="display:none;align-items:center;gap:8px">
-<a href="dashboard.html" class="btn btn-ghost">Dashboard</a>
+<div class="nav-user" id="nav-user">
+<a href="dashboard.html" class="btn btn-ghost" id="nav-dashboard-link">Dashboard</a>
 </div>
 </div><button class="hamburger-btn" aria-label="Abrir menu" onclick="toggleMobileNav()"><svg class="ic" viewBox="0 0 24 24" style="width:20px;height:20px"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
 </nav>
 <div class="mobile-nav-panel" id="mobile-nav-panel"><a href="categoria.html"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> Encontrar profissional</a>
-<a href="como-funciona.html" style="color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> Como Funciona</a>
-<a href="porque-escolher.html"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg> Porquê a Proliga</a>
+<a href="como-funciona.html" class="current"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> Como funciona</a>
+<a href="porque-escolher.html"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg> Porquê a Aproliga</a>
 <a href="pricing.html"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Preços</a>
 <a href="pedidos.html"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg> Pedidos</a></div>
 
-<div class="hero">
-<h1>Como funciona a Proliga</h1>
-<p>Simples para quem procura um profissional, simples para quem presta o serviço. Sem letras pequenas.</p>
+<div class="page-hero">
+<div class="blob-field"><div class="blob" style="width:340px;height:340px;background:var(--fresh-soft);top:-100px;right:2%;opacity:.7"></div><div class="blob" style="width:240px;height:240px;background:var(--accent-soft);bottom:-60px;left:-4%;opacity:.6;animation-delay:1.5s"></div></div>
+<div class="hero-deco">
+<svg viewBox="0 0 24 24" style="width:170px;height:170px;top:6%;right:6%;transform:rotate(12deg)"><path d="m14.7 6.3 3 3L21 6l-3-3zM14.7 6.3 4 17v3h3L17.3 9.3"/></svg>
+<svg viewBox="0 0 24 24" style="width:130px;height:130px;bottom:2%;left:2%;animation-delay:2s;transform:rotate(-8deg)"><path d="M18 6 7 17l-4 4"/><path d="m18 6 3-3"/><path d="M12 12 8.5 8.5"/><path d="M3 21c2-1 3-2 4-4"/></svg>
+<svg viewBox="0 0 24 24" style="width:90px;height:90px;top:38%;right:26%;animation-delay:4s;opacity:.12"><path d="m13 2-9 12h7l-1 8 9-12h-7z"/></svg>
+</div>
+<div class="page-hero-grid">
+<div class="page-hero-inner">
+<span class="eyebrow anim">Como funciona</span>
+<h1>Simples para quem procura.<br>Simples para quem <span>presta o serviço.</span></h1>
+<p class="lead">Sem letras pequenas, sem comissões escondidas. Um caminho para clientes, outro para profissionais — os dois grátis para começar.</p>
+<div class="audience-jump">
+<a href="#clientes" class="audience-card"><div class="aic"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div><div><strong>Sou cliente</strong><span>Quero contratar</span></div><svg class="ic arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+<a href="#profissionais" class="audience-card"><div class="aic"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><div><strong>Sou profissional</strong><span>Quero clientes</span></div><svg class="ic arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+</div>
+<div class="page-hero-badges">
+<div class="pb"><svg class="ic" viewBox="0 0 24 24"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Verificação manual de cada perfil</div>
+<div class="pb"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Sempre grátis para clientes</div>
+<div class="pb"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Sem comissões por trabalho fechado</div>
+</div>
+</div>
+<div class="page-hero-photo">
+<div class="php-sticker">✓ Verificado</div>
+<div class="php-card"><img src="/assets/hero-handshake.jpg" alt="Profissional e cliente a cumprimentarem-se à porta"/></div>
+<div class="php-badge"><span class="live-dot" style="position:relative;width:8px;height:8px;border-radius:50%;background:var(--fresh);flex-shrink:0"></span><span>22+ profissionais ativos agora</span></div>
+</div>
+</div>
+<div class="page-hero-bottom">
+<div class="ticker-strip">
+<div class="ticker-track">
+<div class="tick-item"><span class="dot"></span>Pedido de <strong>eletricista</strong> publicado · Braga · há 4 min</div>
+<div class="tick-item"><span class="dot"></span>Perfil <strong>verificado</strong> · Canalizador · Porto</div>
+<div class="tick-item"><span class="dot"></span>Nova <strong>mensagem</strong> enviada · há 2 min</div>
+<div class="tick-item"><span class="dot"></span>Orçamento de <strong>pintura</strong> pedido · Coimbra</div>
+<div class="tick-item"><span class="dot"></span>Cliente <strong>contratou</strong> · Limpeza · Faro</div>
+<div class="tick-item"><span class="dot"></span>Novo <strong>profissional</strong> registado · Aveiro</div>
+<div class="tick-item"><span class="dot"></span>Pedido de <strong>eletricista</strong> publicado · Braga · há 4 min</div>
+<div class="tick-item"><span class="dot"></span>Perfil <strong>verificado</strong> · Canalizador · Porto</div>
+<div class="tick-item"><span class="dot"></span>Nova <strong>mensagem</strong> enviada · há 2 min</div>
+<div class="tick-item"><span class="dot"></span>Orçamento de <strong>pintura</strong> pedido · Coimbra</div>
+<div class="tick-item"><span class="dot"></span>Cliente <strong>contratou</strong> · Limpeza · Faro</div>
+<div class="tick-item"><span class="dot"></span>Novo <strong>profissional</strong> registado · Aveiro</div>
+</div>
+</div>
+</div>
 </div>
 
-<section>
-<div class="section-header">
-<span class="eyebrow">Para clientes</span>
-<h2>Encontra e contrata em 4 passos</h2>
-<p>Do momento em que percebes que precisas de ajuda até teres o trabalho feito</p>
+<section id="clientes">
+<div class="wrap">
+<div class="section-head reveal">
+<div><span class="eyebrow" style="margin-bottom:12px;display:inline-flex">Para clientes</span><h2>Encontra e contrata em 4 passos</h2></div>
+<p>Do momento em que percebes que precisas de ajuda até teres o trabalho feito.</p>
 </div>
-<div class="steps-grid">
-<div class="step-card">
-<div class="step-icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
-<span class="step-num">Passo 1</span>
-<h3>Pesquisa</h3>
-<p>Procura por categoria ou palavra-chave (ex: "eletricista"), filtra por distrito e vê quem está disponível perto de ti.</p>
-</div>
-<div class="step-card">
-<div class="step-icon"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg></div>
-<span class="step-num">Passo 2</span>
-<h3>Compara</h3>
-<p>Vê perfis completos: fotos de trabalhos anteriores, avaliações reais de outros clientes e preços indicativos.</p>
-</div>
-<div class="step-card">
-<div class="step-icon"><svg class="ic" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4H12l-4.8 2.1 1-4a8.4 8.4 0 1 1 12.8-6.5z"/></svg></div>
-<span class="step-num">Passo 3</span>
-<h3>Contacta</h3>
-<p>Envia uma mensagem diretamente pelo chat da Proliga. Sem custos, sem teres de partilhar o teu número antes de estares confortável.</p>
-</div>
-<div class="step-card">
-<div class="step-icon"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
-<span class="step-num">Passo 4</span>
-<h3>Contrata</h3>
-<p>Combina detalhes, preço e datas diretamente com o profissional. Depois do trabalho feito, deixa a tua avaliação.</p>
+<div class="flow-wrap reveal">
+<div class="flow-line"><div class="flow-line-fill"></div><div class="flow-line-run"></div></div>
+<div class="flow-grid">
+<div class="flow-node"><span class="flow-ghost">01</span><div class="flow-circle"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div><h3>Pesquisa</h3><p>Procura por categoria ou palavra-chave — ex: "eletricista" — filtra por distrito e vê quem está disponível perto de ti.</p></div>
+<div class="flow-node"><span class="flow-ghost">02</span><div class="flow-circle"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg></div><h3>Compara</h3><p>Vê perfis completos: fotos de trabalhos anteriores, avaliações reais de outros clientes e preços indicativos.</p></div>
+<div class="flow-node"><span class="flow-ghost">03</span><div class="flow-circle"><svg class="ic" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4H12l-4.8 2.1 1-4a8.4 8.4 0 1 1 12.8-6.5z"/></svg></div><h3>Contacta</h3><p>Envia uma mensagem diretamente pelo chat da Aproliga — sem custos, sem teres de partilhar o teu número antes de estares confortável.</p></div>
+<div class="flow-node"><span class="flow-ghost">04</span><div class="flow-circle"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><h3>Contrata</h3><p>Combina detalhes, preço e datas diretamente com o profissional. Depois do trabalho feito, deixa a tua avaliação.</p></div>
 </div>
 </div>
 
-<div class="detail-box">
-<h3><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg>Ou publica o que precisas, sem procurar</h3>
-<div class="detail-grid">
-<div class="detail-item"><span class="dot"></span><div><strong>Cria um pedido</strong><span>Descreve o serviço, a zona e o orçamento que tens em mente.</span></div></div>
-<div class="detail-item"><span class="dot"></span><div><strong>Profissionais respondem</strong><span>Quem estiver disponível e interessado contacta-te diretamente.</span></div></div>
-<div class="detail-item"><span class="dot"></span><div><strong>Escolhe com quem falar</strong><span>Compara as respostas e decide com quem avançar.</span></div></div>
+<div class="altpath reveal">
+<div class="altpath-head">
+<div class="altpath-ic"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg></div>
+<div><h3>Ou publica o que precisas, sem procurar</h3><p>Prefere deixar que os profissionais venham até ti? Também dá para fazer ao contrário.</p></div>
 </div>
+<div class="altpath-grid">
+<div class="altpath-item"><span class="adot"></span><div><strong>Cria um pedido</strong><span>Descreve o serviço, a zona e o orçamento que tens em mente.</span></div></div>
+<div class="altpath-item"><span class="adot"></span><div><strong>Profissionais respondem</strong><span>Quem estiver disponível e interessado contacta-te diretamente.</span></div></div>
+<div class="altpath-item"><span class="adot"></span><div><strong>Escolhe com quem falar</strong><span>Compara as respostas e decide com quem avançar.</span></div></div>
 </div>
-
-<div class="section-header">
-<span class="eyebrow">Para profissionais</span>
-<h2>Recebe clientes em 4 passos</h2>
-<p>Cria o teu perfil e começa a aparecer nas pesquisas hoje mesmo</p>
-</div>
-<div class="steps-grid pro-steps">
-<div class="step-card">
-<div class="step-icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>
-<span class="step-num">Passo 1</span>
-<h3>Cria o perfil</h3>
-<p>Regista-te grátis, adiciona a tua bio, especialidades, zona de atuação e fotos de trabalhos anteriores.</p>
-</div>
-<div class="step-card">
-<div class="step-icon"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
-<span class="step-num">Passo 2</span>
-<h3>Verificação</h3>
-<p>A nossa equipa revê manualmente a tua bio, categoria e localização. O selo Verificado dá mais confiança a quem te contacta.</p>
-</div>
-<div class="step-card">
-<div class="step-icon"><svg class="ic" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4H12l-4.8 2.1 1-4a8.4 8.4 0 1 1 12.8-6.5z"/></svg></div>
-<span class="step-num">Passo 3</span>
-<h3>Recebe contactos</h3>
-<p>Clientes encontram-te na pesquisa ou nos pedidos publicados, e enviam-te mensagem direta.</p>
-</div>
-<div class="step-card">
-<div class="step-icon"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg></div>
-<span class="step-num">Passo 4</span>
-<h3>Cresce</h3>
-<p>Fecha negócios, acumula avaliações reais, e considera o plano Pro ou Premium para mais visibilidade.</p>
 </div>
 </div>
 </section>
 
-<section style="background:var(--bg)">
-<div class="section-header">
-<span class="eyebrow">Dúvidas frequentes</span>
-<h2>Perguntas frequentes</h2>
-<p>O que a maioria das pessoas pergunta antes de começar</p>
+<section id="profissionais" style="padding-top:0">
+<div class="wrap">
+<div class="section-head reveal">
+<div><span class="eyebrow" style="margin-bottom:12px;display:inline-flex">Para profissionais</span><h2>Recebe clientes em 4 passos</h2></div>
+<p>Cria o teu perfil e começa a aparecer nas pesquisas hoje mesmo.</p>
+</div>
+<div class="flow-wrap flow alt reveal">
+<div class="flow-line"><div class="flow-line-fill"></div><div class="flow-line-run"></div></div>
+<div class="flow-grid">
+<div class="flow-node"><span class="flow-ghost">01</span><div class="flow-circle"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>Cria o perfil</h3><p>Regista-te grátis, adiciona a tua bio, especialidades, zona de atuação e fotos de trabalhos anteriores.</p></div>
+<div class="flow-node"><span class="flow-ghost">02</span><div class="flow-circle"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><h3>Verificação</h3><p>A nossa equipa revê manualmente a tua bio, categoria e localização. O selo Verificado dá mais confiança a quem te contacta.</p></div>
+<div class="flow-node"><span class="flow-ghost">03</span><div class="flow-circle"><svg class="ic" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4H12l-4.8 2.1 1-4a8.4 8.4 0 1 1 12.8-6.5z"/></svg></div><h3>Recebe contactos</h3><p>Clientes encontram-te na pesquisa ou nos pedidos publicados, e enviam-te mensagem direta.</p></div>
+<div class="flow-node"><span class="flow-ghost">04</span><div class="flow-circle"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg></div><h3>Cresce</h3><p>Fecha negócios, acumula avaliações reais, e considera o plano Pro ou Premium para mais visibilidade.</p></div>
+</div>
+</div>
+</div>
+</section>
+
+<section style="padding-top:0;background:var(--surface)">
+<div class="wrap">
+<div class="section-head reveal">
+<div><span class="eyebrow" style="margin-bottom:12px;display:inline-flex">Dúvidas</span><h2>Perguntas frequentes</h2></div>
+<p>O que a maioria das pessoas pergunta antes de começar.</p>
 </div>
 <div class="faq-wrap">
-<details class="faq-item" open>
-<summary>A Proliga cobra alguma comissão?</summary>
+<details class="faq-item reveal r1" open>
+<summary>A Aproliga cobra alguma comissão?</summary>
 <p>Não sobre trabalhos fechados. Os profissionais têm um plano gratuito para sempre com perfil público e mensagens ilimitadas; planos pagos (Pro/Premium) existem apenas para quem quer mais visibilidade nas pesquisas.</p>
 </details>
-<details class="faq-item">
+<details class="faq-item reveal r2">
 <summary>Como são verificados os profissionais?</summary>
 <p>A nossa equipa revê manualmente cada perfil novo — dados de contacto, categoria de serviço e consistência da informação — antes de o marcar como "Verificado". Perfis suspeitos ou incompletos não são aprovados.</p>
 </details>
-<details class="faq-item">
+<details class="faq-item reveal r3">
 <summary>O que acontece se eu não ficar satisfeito com o serviço?</summary>
-<p>A Proliga é a plataforma de contacto — o acordo do trabalho é entre ti e o profissional. Recomendamos combinar por escrito no chat o que foi acordado, e podes sempre deixar uma avaliação honesta para ajudar outros clientes.</p>
+<p>A Aproliga é a plataforma de contacto — o acordo do trabalho é entre ti e o profissional. Recomendamos combinar por escrito no chat o que foi acordado, e podes sempre deixar uma avaliação honesta para ajudar outros clientes.</p>
 </details>
-<details class="faq-item">
+<details class="faq-item reveal r4">
 <summary>Preciso de pagar para contactar um profissional?</summary>
 <p>Não. Criar conta, procurar profissionais e enviar mensagens é sempre gratuito para clientes.</p>
 </details>
-<details class="faq-item">
+<details class="faq-item reveal r5">
 <summary>Posso publicar um pedido e receber várias propostas?</summary>
-<p>Sim. Ao publicar um pedido em <a href="pedidos.html" style="color:var(--blue);font-weight:600">Pedidos</a>, qualquer profissional interessado pode contactar-te — tu escolhes com quem avançar.</p>
+<p>Sim. Ao publicar um pedido em <a href="pedidos.html" style="color:var(--fresh);font-weight:600">Pedidos</a>, qualquer profissional interessado pode contactar-te — tu escolhes com quem avançar.</p>
 </details>
-<details class="faq-item">
-<summary>A Proliga está disponível em todo o país?</summary>
+<details class="faq-item reveal r6">
+<summary>A Aproliga está disponível em todo o país?</summary>
 <p>Sim. Começámos no Porto e em Braga, mas já aceitamos clientes e profissionais de qualquer distrito de Portugal. Fora dessas duas cidades ainda há menos profissionais registados — estamos a crescer nessas zonas.</p>
 </details>
 </div>
+</div>
 </section>
 
-<section class="cta-section">
-<h2>Ainda tens dúvidas?</h2>
-<p>Explica-nos exatamente o que precisas ou fala connosco diretamente</p>
-<a href="pedidos.html" class="btn btn-blue">Publicar um pedido</a>
+<section style="padding-top:0">
+<div class="wrap">
+<div class="cta-section reveal">
+<span class="eyebrow on-dark">Ainda tens dúvidas?</span>
+<h2>Explica-nos exatamente o que precisas</h2>
+<p>Ou fala connosco diretamente — respondemos rápido, sem respostas automáticas.</p>
+<a href="pedidos.html" class="btn btn-accent">Publicar um pedido<svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
 <br/>
 <a href="contacto.html" class="link">Ou contacta-nos diretamente →</a>
+</div>
+</div>
 </section>
 
 <footer>
-<div class="footer-grid">
+<div class="footer-inner">
+<div class="footer-top">
 <div class="footer-brand">
-<a href="index.html" class="logo">Pro<em>liga</em></a>
+<a href="index.html" class="logo">Apro<em>liga</em></a>
 <p>O marketplace de serviços profissionais em Portugal. Conectamos clientes a profissionais de confiança.</p>
-<p style="margin-top:12px;font-size:12px"><a href="mailto:proliga.pt@gmail.com" style="color:rgba(255,255,255,.5)">proliga.pt@gmail.com</a></p>
+<p style="margin-top:12px;font-size:12px"><a href="mailto:proliga.pt@gmail.com" style="color:var(--ink-mute)">proliga.pt@gmail.com</a></p>
 </div>
-<div class="footer-col"><h4>Categorias</h4><a href="categoria.html?cat=Eletricistas">Eletricistas</a><a href="categoria.html?cat=Canalizadores">Canalizadores</a><a href="categoria.html?cat=Pintores">Pintores</a><a href="categoria.html">Ver todas →</a></div>
-<div class="footer-col"><h4>Empresa</h4><a href="sobre.html">Sobre nós</a><a href="como-funciona.html">Como funciona</a><a href="porque-escolher.html">Porquê a Proliga</a><a href="pricing.html">Planos e Preços</a><a href="profissionais.html">Para profissionais</a>
-<a href="contacto.html">Contacto</a></div>
-<div class="footer-col"><h4>Legal</h4><a href="termos.html">Termos de Serviço</a><a href="privacidade.html">Política de Privacidade</a><a href="cookies.html">Política de Cookies</a><a href="rgpd.html">RGPD</a></div>
+<div class="footer-links">
+<div class="footer-col"><span class="footer-col-label">Categorias</span><a href="categoria.html?cat=Eletricistas">Eletricistas</a><a href="categoria.html?cat=Canalizadores">Canalizadores</a><a href="categoria.html?cat=Pintores">Pintores</a><a href="categoria.html">Ver todas →</a></div>
+<div class="footer-col"><span class="footer-col-label">Empresa</span><a href="sobre.html">Sobre nós</a><a href="como-funciona.html">Como funciona</a><a href="porque-escolher.html">Porquê a Aproliga</a><a href="pricing.html">Planos e Preços</a><a href="profissionais.html">Para profissionais</a><a href="contacto.html">Contacto</a></div>
+<div class="footer-col"><span class="footer-col-label">Legal</span><a href="termos.html">Termos de Serviço</a><a href="privacidade.html">Política de Privacidade</a><a href="cookies.html">Política de Cookies</a><a href="rgpd.html">RGPD</a></div>
+</div>
 </div>
 <div class="footer-bottom">
-<span>© 2026 Proliga · Portugal · Todos os direitos reservados</span>
+<span>© 2026 Aproliga · Portugal · Todos os direitos reservados</span>
 <span>Feito com cuidado para profissionais locais</span>
+</div>
 </div>
 </footer>
 
@@ -301,7 +429,8 @@ const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
 db.auth.getSession().then(({data:{session}})=>{
 if(session){
 document.getElementById('nav-guest').style.display='none'
-document.getElementById('nav-user').style.display='flex'
+const u=document.getElementById('nav-user')
+if(u)u.style.display='flex'
 }
 })
 function toggleMobileNav(){
@@ -311,6 +440,21 @@ if(p)p.classList.toggle('open')
 window.addEventListener('resize',()=>{
 if(window.innerWidth>=900){const p=document.getElementById('mobile-nav-panel');if(p)p.classList.remove('open')}
 })
+</script>
+<script>
+(function(){
+  var els = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); }
+      });
+    },{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+    els.forEach(function(el){ io.observe(el); });
+  } else {
+    els.forEach(function(el){ el.classList.add('visible'); });
+  }
+})();
 </script>
 </body>
 </html>
