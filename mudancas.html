@@ -3,16 +3,16 @@
 <head>
  <meta charset="UTF-8"/>
  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
- <title>Mudanças em Portugal – Encontra e Contrata | Proliga</title>
+ <title>Mudanças em Portugal – Encontra e Contrata | Flinko</title>
  <meta name="description" content="Encontra e contrata mudanças verificados em Portugal. Compara orçamentos, lê avaliações reais e contacta diretamente, sem intermediários."/>
  <meta name="robots" content="index, follow"/>
- <link rel="canonical" href="https://proliga.pt/mudancas.html"/>
- <meta property="og:title" content="Mudanças em Portugal – Proliga"/>
+ <link rel="canonical" href="https://aproliga.pt/mudancas.html"/>
+ <meta property="og:title" content="Mudanças em Portugal – Flinko"/>
  <meta property="og:description" content="Profissionais de mudanças verificados manualmente em Portugal. Contacto direto pela plataforma."/>
  <meta property="og:type" content="website"/>
 
- <meta property="og:image" content="https://proliga.pt/assets/og-image.png"/>
- <meta property="og:url" content="https://proliga.pt/mudancas.html"/>
+ <meta property="og:image" content="https://aproliga.pt/assets/og-image.png"/>
+ <meta property="og:url" content="https://aproliga.pt/mudancas.html"/>
  <meta property="og:locale" content="pt_PT"/>
  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
@@ -222,14 +222,14 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
  "serviceType": "Mudanças",
  "provider": {
  "@type": "Organization",
- "name": "Proliga",
- "url": "https://proliga.pt"
+ "name": "Flinko",
+ "url": "https://aproliga.pt"
  },
  "areaServed": {
  "@type": "Country",
  "name": "Portugal"
  },
- "url": "https://proliga.pt/mudancas.html"
+ "url": "https://aproliga.pt/mudancas.html"
 }
 </script>
 </head>
@@ -257,7 +257,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 
 <div class="page-header">
  <div class="breadcrumb">
- <a href="index.html">Proliga</a>
+ <a href="index.html">Flinko</a>
  <span>›</span>
  <a href="categoria.html">Profissionais</a>
  <span>›</span>
@@ -401,7 +401,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 </div>
 
 <section class="mini-how">
- <h2>Como contratar mudanças na Proliga</h2>
+ <h2>Como contratar mudanças na Flinko</h2>
  <div class="mini-how-grid">
  <div class="mini-how-card"><div class="mini-how-num">1</div><h3>Filtra por zona</h3><p>Escolhe o distrito e o orçamento que fazem sentido para ti.</p></div>
  <div class="mini-how-card"><div class="mini-how-num">2</div><h3>Compara perfis</h3><p>Vê avaliações reais, portfólio e preços antes de decidir.</p></div>
@@ -423,7 +423,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 
 <footer>
  <div style="max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px">
- <span>© 2026 Proliga · Portugal</span>
+ <span>© 2026 Flinko · Portugal</span>
  <span><a href="categoria.html">Ver todas as categorias</a> · <a href="index.html">Página inicial</a> · <a href="profissionais.html">Para profissionais</a>
 <a href="contacto.html">Contacto</a> · <a href="termos.html">Termos</a> · <a href="privacidade.html">Privacidade</a> · <a href="cookies.html">Cookies</a> · <a href="rgpd.html">RGPD</a></span>
  </div>
@@ -594,7 +594,7 @@ async function loadPros(){
  // filtro lateral, mais alto. Em vez de um espaço em branco, mostramos
  // aqui um cartão a convidar a publicar um pedido — reaproveita o
  // padding-gap normal da .pros-list por ser mais um item da mesma lista.
- const sparseNudge=total>0&&total<=2?`<div class="sparse-nudge"><div class="sparse-nudge-text"><h3>${total===1?'Só há 1 profissional':'Só há '+total+' profissionais'} nesta categoria por agora</h3><p>Publica um pedido grátis e sê dos primeiros a ser contactado assim que mais profissionais desta categoria se juntarem à Proliga.</p></div><a href="pedidos.html?cat=Mudan%C3%A7as" class="btn btn-solid">Publicar pedido grátis</a></div>`:''
+ const sparseNudge=total>0&&total<=2?`<div class="sparse-nudge"><div class="sparse-nudge-text"><h3>${total===1?'Só há 1 profissional':'Só há '+total+' profissionais'} nesta categoria por agora</h3><p>Publica um pedido grátis e sê dos primeiros a ser contactado assim que mais profissionais desta categoria se juntarem à Flinko.</p></div><a href="pedidos.html?cat=Mudan%C3%A7as" class="btn btn-solid">Publicar pedido grátis</a></div>`:''
 
  container.innerHTML=`<div class="pros-list">${filtered.map(pro=>{
  const r=rMap[pro.id];const avg=r?(r.s/r.c).toFixed(1):null;const n=r?Math.round(r.s/r.c):0
@@ -604,7 +604,7 @@ const initials=pro.name.split(' ').map(n=>n[0]).slice(0,2).join('')
  const avatar=pro.photo_url?`<img src="${escapeHtml(pro.photo_url)}" alt="${safeName}"/>`:`${initials}`
  const cardClass=pro.plan==='pro'||pro.plan==='premium'?'is-pro':''
  const planPill=pro.plan==='premium'?'<span class="badge-pill badge-premium">★ Premium</span>':pro.plan==='pro'?'<span class="badge-pill badge-pro">★ Pro</span>':''
- const verifiedBadge=pro.verified?'<span class="pro-verified-badge" title="Perfil verificado manualmente pela equipa Proliga" aria-label="Perfil verificado manualmente pela equipa Proliga"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><path d="M20 6 9 17l-5-5"/></svg></span>':''
+ const verifiedBadge=pro.verified?'<span class="pro-verified-badge" title="Perfil verificado manualmente pela equipa Flinko" aria-label="Perfil verificado manualmente pela equipa Flinko"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><path d="M20 6 9 17l-5-5"/></svg></span>':''
  const verifiedLabel=pro.verified?'<span class="tverif" style="margin-left:8px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>Verificado</span>':''
  const price=pMap[pro.id]?`A partir de <strong>€${pMap[pro.id]}</strong>`:'<span class="free">Orçamento grátis</span>'
  const subline=r?`<span class="pro-rating"><span class="stars">${stars}</span>&nbsp;<strong>${avg}</strong>&nbsp;(${r.c})</span>`:(pro.bio?`<div class="pro-bio">${escapeHtml(pro.bio)}</div>`:'<span class="pro-rating">✨ Perfil novo</span>')
