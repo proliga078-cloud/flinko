@@ -2,9 +2,9 @@
   {
     "slug": "eletricistas",
     "file": "eletricistas.html",
-    "title": "Eletricistas em Portugal – Encontra e Contrata | Proliga",
+    "title": "Eletricistas em Portugal – Encontra e Contrata | Flinko",
     "metaDescription": "Encontra e contrata eletricistas verificados em Portugal. Compara orçamentos, lê avaliações reais e contacta diretamente, sem intermediários.",
-    "ogTitle": "Eletricistas em Portugal – Proliga",
+    "ogTitle": "Eletricistas em Portugal – Flinko",
     "ogDescription": "Profissionais de eletricistas verificados manualmente em Portugal. Contacto direto pela plataforma.",
     "faq": [
       {
@@ -12,7 +12,7 @@
         "a": "O preço varia com o distrito e a complexidade do trabalho. Cada eletricista define o seu próprio preço por hora ou por orçamento no perfil — compara vários antes de decidir."
       },
       {
-        "q": "Como sei se um eletricista na Proliga é de confiança?",
+        "q": "Como sei se um eletricista na Flinko é de confiança?",
         "a": "Os perfis com o selo Verificado passam por uma revisão manual da nossa equipa, e podes ler avaliações reais de clientes que já contrataram o profissional."
       }
     ],
@@ -20,7 +20,7 @@
     "h1Icon": "<path d=\"M13 2 4 14h6l-1 8 9-12h-6l1-8z\"/>",
     "h1Text": "Eletricistas em Portugal",
     "intro": "Encontra eletricistas verificados para instalações elétricas, quadros elétricos, avarias domésticas e certificados de conformidade. Compara perfis, avaliações e preços, e contacta diretamente — sem intermediários.",
-    "comoContratarHeading": "Como contratar eletricistas na Proliga",
+    "comoContratarHeading": "Como contratar eletricistas na Flinko",
     "perguntasHeading": "Perguntas frequentes sobre eletricistas",
     "requestCta": "Publica um pedido em eletricistas e deixa os profissionais virem até ti.",
     "emptyStateSentence": "eletricistas",
@@ -32,13 +32,13 @@
   {
     "slug": "canalizadores",
     "file": "canalizadores.html",
-    "title": "Canalizadores em Portugal – Encontra e Contrata | Proliga",
+    "title": "Canalizadores em Portugal – Encontra e Contrata | Flinko",
     "metaDescription": "Encontra e contrata canalizadores verificados em Portugal. Compara orçamentos, lê avaliações reais e contacta diretamente, sem intermediários.",
-    "ogTitle": "Canalizadores em Portugal – Proliga",
+    "ogTitle": "Canalizadores em Portugal – Flinko",
     "ogDescription": "Profissionais de canalizadores verificados manualmente em Portugal. Contacto direto pela plataforma.",
     "faq": [
       {
-        "q": "Um canalizador na Proliga responde a emergências?",
+        "q": "Um canalizador na Flinko responde a emergências?",
         "a": "Muitos profissionais indicam disponibilidade para urgências no seu perfil. Contacta diretamente para confirmar prazos e disponibilidade."
       },
       {
@@ -50,7 +50,7 @@
     "h1Icon": "<path d=\"M12 2.7s6 6 6 10a6 6 0 0 1-12 0c0-4 6-10 6-10z\"/>",
     "h1Text": "Canalizadores em Portugal",
     "intro": "Encontra canalizadores verificados para canalizações, fugas de água, desentupimentos, esgotos e reparação de torneiras. Compara perfis, avaliações e preços, e contacta diretamente — sem intermediários.",
-    "comoContratarHeading": "Como contratar canalizadores na Proliga",
+    "comoContratarHeading": "Como contratar canalizadores na Flinko",
     "perguntasHeading": "Perguntas frequentes sobre canalizadores",
     "requestCta": "Publica um pedido em canalizadores e deixa os profissionais virem até ti.",
     "emptyStateSentence": "canalizadores",
@@ -62,9 +62,9 @@
   {
     "slug": "pintores",
     "file": "pintores.html",
-    "title": "Pintores em Portugal – Encontra e Contrata | Proliga",
+    "title": "Pintores em Portugal – Encontra e Contrata | Flinko",
     "metaDescription": "Encontra e contrata pintores verificados em Portugal. Compara orçamentos, lê avaliações reais e contacta diretamente, sem intermediários.",
-    "ogTitle": "Pintores em Portugal – Proliga",
+    "ogTitle": "Pintores em Portugal – Flinko",
     "ogDescription": "Profissionais de pintores verificados manualmente em Portugal. Contacto direto pela plataforma.",
     "faq": [
       {
@@ -72,7 +72,7 @@
         "a": "Depende da área e do tipo de acabamento. O profissional consegue dar-te uma estimativa concreta depois de ver o espaço ou as fotos."
       },
       {
-        "q": "Os pintores da Proliga fornecem material?",
+        "q": "Os pintores da Flinko fornecem material?",
         "a": "Cada profissional define no orçamento se o material está incluído ou não — confirma sempre este ponto antes de aceitar o serviço."
       }
     ],
@@ -80,7 +80,7 @@
     "h1Icon": "<path d=\"M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z\"/>",
     "h1Text": "Pintores em Portugal",
     "intro": "Encontra pintores verificados para pintura de interiores, exteriores, isolamento térmico e acabamentos decorativos. Compara perfis, avaliações e preços, e contacta diretamente — sem intermediários.",
-    "comoContratarHeading": "Como contratar pintores na Proliga",
+    "comoContratarHeading": "Como contratar pintores na Flinko",
     "perguntasHeading": "Perguntas frequentes sobre pintores",
     "requestCta": "Publica um pedido em pintores e deixa os profissionais virem até ti.",
     "emptyStateSentence": "pintores",
@@ -92,9 +92,9 @@
   {
     "slug": "pedreiros",
     "file": "pedreiros.html",
-    "title": "Pedreiros em Portugal – Encontra e Contrata | Proliga",
+    "title": "Pedreiros em Portugal – Encontra e Contrata | Flinko",
     "metaDescription": "Encontra e contrata pedreiros verificados em Portugal. Compara orçamentos, lê avaliações reais e contacta diretamente, sem intermediários.",
-    "ogTitle": "Pedreiros em Portugal – Proliga",
+    "ogTitle": "Pedreiros em Portugal – Flinko",
     "ogDescription": "Profissionais de pedreiros verificados manualmente em Portugal. Contacto direto pela plataforma.",
     "faq": [
       {
@@ -110,7 +110,7 @@
     "h1Icon": "<path d=\"M14 6l6 6-8 8-6-6z\"/><path d=\"M3 21l4-4\"/>",
     "h1Text": "Pedreiros em Portugal",
     "intro": "Encontra pedreiros verificados para alvenaria, remodelações, construção civil e reparações estruturais. Compara perfis, avaliações e preços, e contacta diretamente — sem intermediários.",
-    "comoContratarHeading": "Como contratar pedreiros na Proliga",
+    "comoContratarHeading": "Como contratar pedreiros na Flinko",
     "perguntasHeading": "Perguntas frequentes sobre pedreiros",
     "requestCta": "Publica um pedido em pedreiros e deixa os profissionais virem até ti.",
     "emptyStateSentence": "pedreiros",
@@ -122,9 +122,9 @@
   {
     "slug": "carpinteiros",
     "file": "carpinteiros.html",
-    "title": "Carpinteiros em Portugal – Encontra e Contrata | Proliga",
+    "title": "Carpinteiros em Portugal – Encontra e Contrata | Flinko",
     "metaDescription": "Encontra e contrata carpinteiros verificados em Portugal. Compara orçamentos, lê avaliações reais e contacta diretamente, sem intermediários.",
-    "ogTitle": "Carpinteiros em Portugal – Proliga",
+    "ogTitle": "Carpinteiros em Portugal – Flinko",
     "ogDescription": "Profissionais de carpinteiros verificados manualmente em Portugal. Contacto direto pela plataforma.",
     "faq": [
       {
@@ -140,7 +140,7 @@
     "h1Icon": "<path d=\"M3 21h18\"/><path d=\"M5 17l7-12 7 12z\"/>",
     "h1Text": "Carpinteiros em Portugal",
     "intro": "Encontra carpinteiros verificados para mobiliário à medida, portas, roupeiros e trabalhos em madeira. Compara perfis, avaliações e preços, e contacta diretamente — sem intermediários.",
-    "comoContratarHeading": "Como contratar carpinteiros na Proliga",
+    "comoContratarHeading": "Como contratar carpinteiros na Flinko",
     "perguntasHeading": "Perguntas frequentes sobre carpinteiros",
     "requestCta": "Publica um pedido em carpinteiros e deixa os profissionais virem até ti.",
     "emptyStateSentence": "carpinteiros",
@@ -152,9 +152,9 @@
   {
     "slug": "serralheiros",
     "file": "serralheiros.html",
-    "title": "Serralheiros em Portugal – Encontra e Contrata | Proliga",
+    "title": "Serralheiros em Portugal – Encontra e Contrata | Flinko",
     "metaDescription": "Encontra e contrata serralheiros verificados em Portugal. Compara orçamentos, lê avaliações reais e contacta diretamente, sem intermediários.",
-    "ogTitle": "Serralheiros em Portugal – Proliga",
+    "ogTitle": "Serralheiros em Portugal – Flinko",
     "ogDescription": "Profissionais de serralheiros verificados manualmente em Portugal. Contacto direto pela plataforma.",
     "faq": [
       {
@@ -163,14 +163,14 @@
       },
       {
         "q": "Fazem trabalhos de estruturas metálicas grandes, como portões?",
-        "a": "Sim, é uma das áreas mais comuns entre os serralheiros na Proliga. Vê o portfólio para exemplos de trabalhos anteriores."
+        "a": "Sim, é uma das áreas mais comuns entre os serralheiros na Flinko. Vê o portfólio para exemplos de trabalhos anteriores."
       }
     ],
     "serviceType": "Serralheiros",
     "h1Icon": "<circle cx=\"12\" cy=\"12\" r=\"3.5\"/><path d=\"M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2\"/>",
     "h1Text": "Serralheiros em Portugal",
     "intro": "Encontra serralheiros verificados para portões, grades, estruturas metálicas e fechaduras. Compara perfis, avaliações e preços, e contacta diretamente — sem intermediários.",
-    "comoContratarHeading": "Como contratar serralheiros na Proliga",
+    "comoContratarHeading": "Como contratar serralheiros na Flinko",
     "perguntasHeading": "Perguntas frequentes sobre serralheiros",
     "requestCta": "Publica um pedido em serralheiros e deixa os profissionais virem até ti.",
     "emptyStateSentence": "serralheiros",
@@ -182,9 +182,9 @@
   {
     "slug": "jardineiros",
     "file": "jardineiros.html",
-    "title": "Jardineiros em Portugal – Encontra e Contrata | Proliga",
+    "title": "Jardineiros em Portugal – Encontra e Contrata | Flinko",
     "metaDescription": "Encontra e contrata jardineiros verificados em Portugal. Compara orçamentos, lê avaliações reais e contacta diretamente, sem intermediários.",
-    "ogTitle": "Jardineiros em Portugal – Proliga",
+    "ogTitle": "Jardineiros em Portugal – Flinko",
     "ogDescription": "Profissionais de jardineiros verificados manualmente em Portugal. Contacto direto pela plataforma.",
     "faq": [
       {
@@ -200,7 +200,7 @@
     "h1Icon": "<path d=\"M12 22V12\"/><path d=\"M12 12C12 7 8 3 3 3c0 5 4 9 9 9z\"/><path d=\"M12 12c0-4 3-7 7-7 0 4-3 7-7 7z\"/>",
     "h1Text": "Jardineiros em Portugal",
     "intro": "Encontra jardineiros verificados para manutenção de jardins, relvados, poda de árvores e paisagismo. Compara perfis, avaliações e preços, e contacta diretamente — sem intermediários.",
-    "comoContratarHeading": "Como contratar jardineiros na Proliga",
+    "comoContratarHeading": "Como contratar jardineiros na Flinko",
     "perguntasHeading": "Perguntas frequentes sobre jardineiros",
     "requestCta": "Publica um pedido em jardineiros e deixa os profissionais virem até ti.",
     "emptyStateSentence": "jardineiros",
@@ -212,9 +212,9 @@
   {
     "slug": "limpeza",
     "file": "limpeza.html",
-    "title": "Limpeza em Portugal – Encontra e Contrata | Proliga",
+    "title": "Limpeza em Portugal – Encontra e Contrata | Flinko",
     "metaDescription": "Encontra e contrata limpeza verificados em Portugal. Compara orçamentos, lê avaliações reais e contacta diretamente, sem intermediários.",
-    "ogTitle": "Limpeza em Portugal – Proliga",
+    "ogTitle": "Limpeza em Portugal – Flinko",
     "ogDescription": "Profissionais de limpeza verificados manualmente em Portugal. Contacto direto pela plataforma.",
     "faq": [
       {
@@ -230,7 +230,7 @@
     "h1Icon": "<rect x=\"3\" y=\"9\" width=\"18\" height=\"12\" rx=\"2\"/><path d=\"M8 9V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4\"/>",
     "h1Text": "Limpeza em Portugal",
     "intro": "Encontra limpeza verificados para limpeza doméstica, escritórios, pós-obra e limpezas profundas. Compara perfis, avaliações e preços, e contacta diretamente — sem intermediários.",
-    "comoContratarHeading": "Como contratar limpeza na Proliga",
+    "comoContratarHeading": "Como contratar limpeza na Flinko",
     "perguntasHeading": "Perguntas frequentes sobre limpeza",
     "requestCta": "Publica um pedido em limpeza e deixa os profissionais virem até ti.",
     "emptyStateSentence": "limpeza",
@@ -242,9 +242,9 @@
   {
     "slug": "mudancas",
     "file": "mudancas.html",
-    "title": "Mudanças em Portugal – Encontra e Contrata | Proliga",
+    "title": "Mudanças em Portugal – Encontra e Contrata | Flinko",
     "metaDescription": "Encontra e contrata mudanças verificados em Portugal. Compara orçamentos, lê avaliações reais e contacta diretamente, sem intermediários.",
-    "ogTitle": "Mudanças em Portugal – Proliga",
+    "ogTitle": "Mudanças em Portugal – Flinko",
     "ogDescription": "Profissionais de mudanças verificados manualmente em Portugal. Contacto direto pela plataforma.",
     "faq": [
       {
@@ -260,7 +260,7 @@
     "h1Icon": "<rect x=\"1\" y=\"6\" width=\"14\" height=\"12\" rx=\"2\"/><path d=\"M15 10h4l3 3v5h-7z\"/><circle cx=\"6\" cy=\"19\" r=\"2\"/><circle cx=\"18\" cy=\"19\" r=\"2\"/>",
     "h1Text": "Mudanças em Portugal",
     "intro": "Encontra mudanças verificados para mudanças residenciais, transporte de móveis e desmontagem/montagem de mobiliário. Compara perfis, avaliações e preços, e contacta diretamente — sem intermediários.",
-    "comoContratarHeading": "Como contratar mudanças na Proliga",
+    "comoContratarHeading": "Como contratar mudanças na Flinko",
     "perguntasHeading": "Perguntas frequentes sobre mudanças",
     "requestCta": "Publica um pedido em mudanças e deixa os profissionais virem até ti.",
     "emptyStateSentence": "mudanças",
@@ -272,9 +272,9 @@
   {
     "slug": "decoradores",
     "file": "decoradores.html",
-    "title": "Decoradores em Portugal – Encontra e Contrata | Proliga",
+    "title": "Decoradores em Portugal – Encontra e Contrata | Flinko",
     "metaDescription": "Encontra e contrata decoradores verificados em Portugal. Compara orçamentos, lê avaliações reais e contacta diretamente, sem intermediários.",
-    "ogTitle": "Decoradores em Portugal – Proliga",
+    "ogTitle": "Decoradores em Portugal – Flinko",
     "ogDescription": "Profissionais de decoradores verificados manualmente em Portugal. Contacto direto pela plataforma.",
     "faq": [
       {
@@ -290,7 +290,7 @@
     "h1Icon": "<path d=\"M3 18v-6a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v6\"/><path d=\"M2 18h20v3H2z\"/><path d=\"M6 8V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2\"/>",
     "h1Text": "Decoradores em Portugal",
     "intro": "Encontra decoradores verificados para decoração de interiores, home staging e consultoria de espaços. Compara perfis, avaliações e preços, e contacta diretamente — sem intermediários.",
-    "comoContratarHeading": "Como contratar decoradores na Proliga",
+    "comoContratarHeading": "Como contratar decoradores na Flinko",
     "perguntasHeading": "Perguntas frequentes sobre decoradores",
     "requestCta": "Publica um pedido em decoradores e deixa os profissionais virem até ti.",
     "emptyStateSentence": "decoradores",
@@ -302,13 +302,13 @@
   {
     "slug": "programadores",
     "file": "programadores.html",
-    "title": "Programadores em Portugal – Encontra e Contrata | Proliga",
+    "title": "Programadores em Portugal – Encontra e Contrata | Flinko",
     "metaDescription": "Encontra e contrata programadores verificados em Portugal. Compara orçamentos, lê avaliações reais e contacta diretamente, sem intermediários.",
-    "ogTitle": "Programadores em Portugal – Proliga",
+    "ogTitle": "Programadores em Portugal – Flinko",
     "ogDescription": "Profissionais de programadores verificados manualmente em Portugal. Contacto direto pela plataforma.",
     "faq": [
       {
-        "q": "Quanto custa criar um site com um programador da Proliga?",
+        "q": "Quanto custa criar um site com um programador da Flinko?",
         "a": "Depende do tipo de projeto (site institucional, loja online, aplicação à medida). Pede orçamento descrevendo o que precisas."
       },
       {
@@ -320,7 +320,7 @@
     "h1Icon": "<path d=\"M16 18l6-6-6-6M8 6l-6 6 6 6\"/>",
     "h1Text": "Programadores em Portugal",
     "intro": "Encontra programadores verificados para criação de sites, aplicações, lojas online e software à medida. Compara perfis, avaliações e preços, e contacta diretamente — sem intermediários.",
-    "comoContratarHeading": "Como contratar programadores na Proliga",
+    "comoContratarHeading": "Como contratar programadores na Flinko",
     "perguntasHeading": "Perguntas frequentes sobre programadores",
     "requestCta": "Publica um pedido em programadores e deixa os profissionais virem até ti.",
     "emptyStateSentence": "programadores",
@@ -332,9 +332,9 @@
   {
     "slug": "designers",
     "file": "designers.html",
-    "title": "Designers em Portugal – Encontra e Contrata | Proliga",
+    "title": "Designers em Portugal – Encontra e Contrata | Flinko",
     "metaDescription": "Encontra e contrata designers verificados em Portugal. Compara orçamentos, lê avaliações reais e contacta diretamente, sem intermediários.",
-    "ogTitle": "Designers em Portugal – Proliga",
+    "ogTitle": "Designers em Portugal – Flinko",
     "ogDescription": "Profissionais de designers verificados manualmente em Portugal. Contacto direto pela plataforma.",
     "faq": [
       {
@@ -350,7 +350,7 @@
     "h1Icon": "<circle cx=\"13.5\" cy=\"6.5\" r=\"1.5\"/><circle cx=\"17.5\" cy=\"10.5\" r=\"1.5\"/><circle cx=\"8.5\" cy=\"7.5\" r=\"1.5\"/><circle cx=\"6.5\" cy=\"12.5\" r=\"1.5\"/><path d=\"M12 2a10 10 0 0 0 0 20c1 0 1.5-.7 1.5-1.5 0-1.5-1-1.5-1-3 0-1 .8-1.5 2-1.5H17a5 5 0 0 0 5-5c0-5-4.5-9-10-9z\"/>",
     "h1Text": "Designers em Portugal",
     "intro": "Encontra designers verificados para design gráfico, identidade visual, logótipos e materiais de marketing. Compara perfis, avaliações e preços, e contacta diretamente — sem intermediários.",
-    "comoContratarHeading": "Como contratar designers na Proliga",
+    "comoContratarHeading": "Como contratar designers na Flinko",
     "perguntasHeading": "Perguntas frequentes sobre designers",
     "requestCta": "Publica um pedido em designers e deixa os profissionais virem até ti.",
     "emptyStateSentence": "designers",
@@ -362,9 +362,9 @@
   {
     "slug": "reparacoes-tech",
     "file": "reparacoes-tech.html",
-    "title": "Reparações Tech em Portugal – Encontra e Contrata | Proliga",
+    "title": "Reparações Tech em Portugal – Encontra e Contrata | Flinko",
     "metaDescription": "Encontra e contrata reparações tech verificados em Portugal. Compara orçamentos, lê avaliações reais e contacta diretamente, sem intermediários.",
-    "ogTitle": "Reparações Tech em Portugal – Proliga",
+    "ogTitle": "Reparações Tech em Portugal – Flinko",
     "ogDescription": "Profissionais de reparações tech verificados manualmente em Portugal. Contacto direto pela plataforma.",
     "faq": [
       {
@@ -380,7 +380,7 @@
     "h1Icon": "<rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\"/><path d=\"M8 21h8M12 17v4\"/>",
     "h1Text": "Reparações Tech em Portugal",
     "intro": "Encontra reparações tech verificados para reparação de computadores, telemóveis e equipamento eletrónico. Compara perfis, avaliações e preços, e contacta diretamente — sem intermediários.",
-    "comoContratarHeading": "Como contratar reparações tech na Proliga",
+    "comoContratarHeading": "Como contratar reparações tech na Flinko",
     "perguntasHeading": "Perguntas frequentes sobre reparações tech",
     "requestCta": "Publica um pedido em reparações tech e deixa os profissionais virem até ti.",
     "emptyStateSentence": "reparações tech",
@@ -392,9 +392,9 @@
   {
     "slug": "personal-trainers",
     "file": "personal-trainers.html",
-    "title": "Personal Trainers em Portugal – Encontra e Contrata | Proliga",
+    "title": "Personal Trainers em Portugal – Encontra e Contrata | Flinko",
     "metaDescription": "Encontra e contrata personal trainers verificados em Portugal. Compara orçamentos, lê avaliações reais e contacta diretamente, sem intermediários.",
-    "ogTitle": "Personal Trainers em Portugal – Proliga",
+    "ogTitle": "Personal Trainers em Portugal – Flinko",
     "ogDescription": "Profissionais de personal trainers verificados manualmente em Portugal. Contacto direto pela plataforma.",
     "faq": [
       {
@@ -410,7 +410,7 @@
     "h1Icon": "<path d=\"M6.5 6.5h11v11h-11z\"/><path d=\"M4 9v6M20 9v6M2 11v2M22 11v2\"/>",
     "h1Text": "Personal Trainers em Portugal",
     "intro": "Encontra personal trainers verificados para treino personalizado, planos de fitness e acompanhamento físico. Compara perfis, avaliações e preços, e contacta diretamente — sem intermediários.",
-    "comoContratarHeading": "Como contratar personal trainers na Proliga",
+    "comoContratarHeading": "Como contratar personal trainers na Flinko",
     "perguntasHeading": "Perguntas frequentes sobre personal trainers",
     "requestCta": "Publica um pedido em personal trainers e deixa os profissionais virem até ti.",
     "emptyStateSentence": "personal trainers",
@@ -422,9 +422,9 @@
   {
     "slug": "cabeleireiros",
     "file": "cabeleireiros.html",
-    "title": "Cabeleireiros em Portugal – Encontra e Contrata | Proliga",
+    "title": "Cabeleireiros em Portugal – Encontra e Contrata | Flinko",
     "metaDescription": "Encontra e contrata cabeleireiros verificados em Portugal. Compara orçamentos, lê avaliações reais e contacta diretamente, sem intermediários.",
-    "ogTitle": "Cabeleireiros em Portugal – Proliga",
+    "ogTitle": "Cabeleireiros em Portugal – Flinko",
     "ogDescription": "Profissionais de cabeleireiros verificados manualmente em Portugal. Contacto direto pela plataforma.",
     "faq": [
       {
@@ -440,7 +440,7 @@
     "h1Icon": "<circle cx=\"6\" cy=\"6\" r=\"3\"/><circle cx=\"6\" cy=\"18\" r=\"3\"/><path d=\"M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12\"/>",
     "h1Text": "Cabeleireiros em Portugal",
     "intro": "Encontra cabeleireiros verificados para cortes, coloração, tratamentos capilares e penteados. Compara perfis, avaliações e preços, e contacta diretamente — sem intermediários.",
-    "comoContratarHeading": "Como contratar cabeleireiros na Proliga",
+    "comoContratarHeading": "Como contratar cabeleireiros na Flinko",
     "perguntasHeading": "Perguntas frequentes sobre cabeleireiros",
     "requestCta": "Publica um pedido em cabeleireiros e deixa os profissionais virem até ti.",
     "emptyStateSentence": "cabeleireiros",
@@ -452,9 +452,9 @@
   {
     "slug": "esteticistas",
     "file": "esteticistas.html",
-    "title": "Esteticistas em Portugal – Encontra e Contrata | Proliga",
+    "title": "Esteticistas em Portugal – Encontra e Contrata | Flinko",
     "metaDescription": "Encontra e contrata esteticistas verificados em Portugal. Compara orçamentos, lê avaliações reais e contacta diretamente, sem intermediários.",
-    "ogTitle": "Esteticistas em Portugal – Proliga",
+    "ogTitle": "Esteticistas em Portugal – Flinko",
     "ogDescription": "Profissionais de esteticistas verificados manualmente em Portugal. Contacto direto pela plataforma.",
     "faq": [
       {
@@ -470,7 +470,7 @@
     "h1Icon": "<path d=\"M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4z\"/>",
     "h1Text": "Esteticistas em Portugal",
     "intro": "Encontra esteticistas verificados para tratamentos de pele, manicure, depilação e bem-estar. Compara perfis, avaliações e preços, e contacta diretamente — sem intermediários.",
-    "comoContratarHeading": "Como contratar esteticistas na Proliga",
+    "comoContratarHeading": "Como contratar esteticistas na Flinko",
     "perguntasHeading": "Perguntas frequentes sobre esteticistas",
     "requestCta": "Publica um pedido em esteticistas e deixa os profissionais virem até ti.",
     "emptyStateSentence": "esteticistas",
