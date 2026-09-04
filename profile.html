@@ -6,20 +6,20 @@
   <title id="meta-title">Perfil Profissional – Proliga</title>
   <meta id="meta-description" name="description" content="Vê o perfil, serviços, portfólio e avaliações deste profissional em Portugal. Contacta diretamente pela Proliga."/>
   <meta id="meta-robots" name="robots" content="index, follow"/>
-  <link id="meta-canonical" rel="canonical" href="https://proliga.pt/profile.html"/>
+  <link id="meta-canonical" rel="canonical" href="https://flinko.pt/profile.html"/>
   <meta id="meta-og-title" property="og:title" content="Perfil Profissional – Proliga"/>
   <meta id="meta-og-description" property="og:description" content="Vê o perfil, serviços, portfólio e avaliações deste profissional em Portugal. Contacta diretamente pela Proliga."/>
   <meta property="og:type" content="profile"/>
   <meta property="og:site_name" content="Proliga"/>
   <meta property="og:locale" content="pt_PT"/>
-  <meta id="meta-og-url" property="og:url" content="https://proliga.pt/profile.html"/>
-  <meta id="meta-og-image" property="og:image" content="https://proliga.pt/assets/og-image.png"/>
+  <meta id="meta-og-url" property="og:url" content="https://flinko.pt/profile.html"/>
+  <meta id="meta-og-image" property="og:image" content="https://flinko.pt/assets/og-image.png"/>
   <meta property="og:image:width" content="1200"/>
   <meta property="og:image:height" content="630"/>
   <meta name="twitter:card" content="summary_large_image"/>
   <meta id="meta-twitter-title" name="twitter:title" content="Perfil Profissional – Proliga"/>
   <meta id="meta-twitter-description" name="twitter:description" content="Vê o perfil, serviços, portfólio e avaliações deste profissional em Portugal. Contacta diretamente pela Proliga."/>
-  <meta id="meta-twitter-image" name="twitter:image" content="https://proliga.pt/assets/og-image.png"/>
+  <meta id="meta-twitter-image" name="twitter:image" content="https://flinko.pt/assets/og-image.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
@@ -478,8 +478,8 @@ function updateSeoTags(pro){
   const descricao=pro.bio
     ?pro.bio.replace(/\s+/g,' ').trim().slice(0,155)
     :`Perfil de ${pro.category||'profissional'} em ${pro.location||'Portugal'}. Contacta diretamente pela Proliga.`
-  const url=pro.slug?`https://proliga.pt/${encodeURIComponent(pro.slug)}`:`https://proliga.pt/profile.html?id=${pro.id}`
-  const imagem=pro.photo_url||'https://proliga.pt/assets/og-image.png'
+  const url=pro.slug?`https://flinko.pt/${encodeURIComponent(pro.slug)}`:`https://flinko.pt/profile.html?id=${pro.id}`
+  const imagem=pro.photo_url||'https://flinko.pt/assets/og-image.png'
   document.getElementById('meta-description').setAttribute('content',descricao)
   document.getElementById('meta-canonical').setAttribute('href',url)
   document.getElementById('meta-og-title').setAttribute('content',titulo)

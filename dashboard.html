@@ -401,7 +401,7 @@ panel.classList.toggle('open', open);
 <div id="slug-locked" style="display:none;background:var(--blue-light);border-radius:10px;padding:16px">
 <div style="font-weight:700;margin-bottom:4px">Disponível no plano Pro</div>
 <div style="font-size:13px;color:var(--muted-2);line-height:1.6;margin-bottom:12px">
-Em vez de um endereço com números, partilhas <strong>aproliga.pt/o-teu-nome</strong>.
+Em vez de um endereço com números, partilhas <strong>flinko.pt/o-teu-nome</strong>.
 Fica bem num cartão de visita, na carrinha ou numa mensagem.
 </div>
 <a href="pricing.html" class="btn btn-primary" style="text-decoration:none">Ver o plano Pro</a>
@@ -411,7 +411,7 @@ Fica bem num cartão de visita, na carrinha ou numa mensagem.
 <div class="form-group">
 <label>Endereço</label>
 <div style="display:flex;align-items:center;gap:6px">
-<span style="font-size:14px;color:var(--muted-2);white-space:nowrap">aproliga.pt/</span>
+<span style="font-size:14px;color:var(--muted-2);white-space:nowrap">flinko.pt/</span>
 <input id="p-slug" type="text" maxlength="30" placeholder="joao-eletricista" style="margin-bottom:0" oninput="onSlugInput()"/>
 </div>
 <div id="slug-hint" style="font-size:12px;color:var(--muted-2);margin-top:6px">
@@ -851,5 +851,209 @@ Letras minúsculas, números e hífenes. Entre 3 e 30 caracteres.
 
 <div id="mkt-body">
 <div class="two-cards">
+        <div class="form-section">
+          <div class="tc-head"><span>A tua atividade</span><span style="font-size:11px;color:var(--muted-2);font-weight:500">últimos 30 dias</span></div>
+          <div id="mkt-activity"></div>
+        </div>
+        <div class="form-section">
+          <div class="tc-head"><span>Tempo de resposta</span><span style="font-size:11px;color:var(--muted-2);font-weight:500">tu vs. média da categoria</span></div>
+          <div id="mkt-response"></div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="tc-head"><span>Como usar isto</span></div>
+        <div id="mkt-tips" style="font-size:13px;color:var(--muted);line-height:1.7"></div>
+      </div>
+    </div>
+    <p style="color:var(--muted);font-size:11.5px;margin-top:-6px">Nota: valores agregados e anónimos, calculados a partir de propostas reais enviadas na Flinko. Não identificam nenhum profissional em concreto.</p>
+  </div>
 
-[output truncated at 50000 of 61746 characters. Pass a larger max_chars (default 50000) to see more, or use read_page with a ref_id to focus on a smaller section.]
+  <!-- REFERRALS -->
+  <div id="page-referrals" class="page-section">
+    <h1 class="page-title">Referências</h1>
+    <p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:560px">Quando não podes aceitar um trabalho, recomenda outro profissional da Flinko em vez de perderes o cliente. Cria confiança e todos ganham.</p>
+    <div class="form-section">
+      <div class="form-title">Recomendações Recebidas</div>
+      <div id="referrals-received" class="item-list"></div>
+    </div>
+    <div class="form-section">
+      <div class="form-title" style="justify-content:space-between">
+        <span>Recomendações Enviadas</span>
+        <button class="btn btn-outline btn-sm" onclick="openReferModal()">+ Recomendar profissional</button>
+      </div>
+      <div id="referrals-sent" class="item-list"></div>
+    </div>
+  </div>
+
+  <!-- CREDITOS -->
+  <div id="page-convidar" class="page-section">
+    <h1 class="page-title">Créditos</h1>
+    <p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:560px">Ganha créditos e troca-os por um mês do plano Pro ou por destaque no site. Convida um amigo (10 créditos) e recebe boas avaliações em trabalhos reais (5 a 10 créditos por avaliação).</p>
+
+    <div class="form-section" style="background:var(--bg);border:none;text-align:center;padding:24px">
+      <div style="font-size:13px;color:var(--muted);font-weight:600">Saldo atual</div>
+      <div style="font-size:40px;font-weight:800;color:var(--blue);margin-top:4px" id="credits-balance">0</div>
+    </div>
+
+    <div class="two-cards">
+      <div class="form-section">
+        <div class="tc-head"><span>Convidar amigos</span></div>
+        <p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px">10 créditos por cada registo através do teu link.</p>
+        <div id="invite-link-box"></div>
+      </div>
+      <div class="form-section">
+        <div class="tc-head"><span>Boas avaliações</span></div>
+        <p style="font-size:12.5px;color:var(--muted);line-height:1.6">Sempre que um cliente com quem tiveste um trabalho pago avalia com 5★ ganhas 10 créditos, com 4★ ganhas 5. Automático, não precisas de fazer nada.</p>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="tc-head"><span>Trocar por Pro</span></div>
+      <p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px">120 créditos = 1 mês grátis de Pro. Escreve-nos para <a href="mailto:suporte@proliga.pt" style="color:var(--blue)">suporte@proliga.pt</a> a indicar quantos créditos queres usar.</p>
+    </div>
+
+    <div class="form-section">
+      <div class="tc-head"><span>Anunciar no site</span></div>
+      <p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px">Usa créditos para o teu perfil aparecer num banner na homepage. Podes usar uma foto ou um vídeo curto próprios do anúncio — se não puseres nada, usamos a tua foto de perfil.</p>
+      <div class="alert error" id="ad-error"></div>
+      <div class="alert success" id="ad-success"></div>
+      <div id="ad-active-box" style="margin-bottom:12px"></div>
+
+      <label style="font-size:12.5px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px">Foto ou vídeo do anúncio (opcional)</label>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+        <label for="ad-media-file" style="background:var(--blue-light);color:var(--blue);border:1.5px dashed var(--blue);border-radius:8px;padding:10px 16px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;margin:0">
+          <svg class="ic" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg> Carregar foto ou vídeo
+          <input type="file" id="ad-media-file" accept="image/*,video/mp4,video/webm" style="display:none" onchange="uploadAdMedia(this)"/>
+        </label>
+        <div id="ad-media-preview"></div>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <select id="ad-days" style="max-width:180px">
+          <option value="3">3 dias · 27 créditos</option>
+          <option value="7" selected>7 dias · 60 créditos</option>
+          <option value="14">14 dias · 120 créditos</option>
+        </select>
+        <button class="btn btn-primary btn-sm" onclick="buyAdSlot()">Anunciar agora</button>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="tc-head"><span>Pessoas convidadas</span></div>
+      <div id="invited-list"></div>
+    </div>
+  </div>
+
+  <!-- PRIVACIDADE E RGPD -->
+  <div id="page-privacidade" class="page-section">
+    <h1 class="page-title">Privacidade e RGPD</h1>
+    <p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:560px">
+      Podes pedir uma cópia dos teus dados ou a eliminação da tua conta diretamente aqui. Confirmamos o pedido e temos até 30 dias para o tratar (prazo do RGPD), como explicado na <a href="rgpd.html" target="_blank" style="color:var(--blue)">página de Privacidade</a>.
+    </p>
+
+    <div class="alert success" id="gdpr-success"></div>
+    <div class="alert error" id="gdpr-error"></div>
+
+    <div class="two-cards">
+      <div class="form-section">
+        <div class="tc-head"><span>📦 Exportar os meus dados</span></div>
+        <p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px;line-height:1.6">Direito de acesso (Art. 15º RGPD). Enviamos-te, por email, uma cópia dos dados que temos sobre ti — perfil, serviços, trabalhos, mensagens e avaliações.</p>
+        <button class="btn btn-outline" onclick="requestGdprAction('export')">Pedir exportação dos dados</button>
+      </div>
+      <div class="form-section">
+        <div class="tc-head"><span>🗑️ Eliminar a minha conta</span></div>
+        <p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px;line-height:1.6">Direito ao apagamento (Art. 17º RGPD). O teu perfil deixa de estar visível e os teus dados são apagados dentro do prazo legal. Esta ação não pode ser desfeita depois de confirmada pela nossa equipa.</p>
+        <button class="btn" style="background:#fef2f2;color:#b91c1c;border:1px solid #fecaca" onclick="requestGdprAction('delete')">Pedir eliminação da conta</button>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="tc-head"><span>Os teus pedidos</span></div>
+      <p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px">Histórico dos pedidos que fizeste. Um pedido pendente pode ser cancelado se mudares de ideias.</p>
+      <div id="gdpr-list" class="item-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- AI ASSISTANT -->
+<button id="ai-chat-fab" onclick="toggleAiChat()" title="Assistente Flinko">
+  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 0-5 5v3a5 5 0 0 0 10 0V7a5 5 0 0 0-5-5z"/><path d="M8 13v1a4 4 0 0 0 8 0v-1M12 18v3M9 21h6"/></svg>
+</button>
+<div id="ai-chat-panel">
+  <div class="ai-chat-head">
+    <div>Assistente Flinko<span class="sub">Pergunta-me sobre o teu negócio</span></div>
+    <button class="ai-chat-close" onclick="toggleAiChat()">✕</button>
+  </div>
+  <div class="ai-chat-body" id="ai-chat-body">
+    <div class="ai-msg bot">Olá! Posso ajudar-te a perceber como vai o teu negócio na Flinko — pergunta-me algo como "como está o meu mês?" ou "o que devo fazer a seguir?".</div>
+  </div>
+  <div class="ai-chat-foot">
+    <input id="ai-chat-input" type="text" placeholder="Escreve a tua pergunta…" onkeydown="if(event.key==='Enter')sendAiChat()"/>
+    <button id="ai-chat-send" onclick="sendAiChat()"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg></button>
+  </div>
+</div>
+
+<!-- QUOTE MODAL -->
+<div class="modal-overlay" id="quote-modal-overlay" onclick="if(event.target===this)closeQuoteModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title"><svg class="ic" viewBox="0 0 24 24" style="width:17px;height:17px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg> Gerar Orçamento</div>
+      <button class="modal-close" onclick="closeQuoteModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Nome do cliente *</label><input id="q-client" type="text" placeholder="Nome do cliente"/></div>
+        <div class="form-group"><label>Validade (dias)</label><input id="q-valid" type="number" min="1" value="30"/></div>
+      </div>
+      <label style="font-size:12.5px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px">Itens</label>
+      <div id="q-items"></div>
+      <button class="btn btn-outline btn-sm" type="button" onclick="addQuoteItemRow()">+ Adicionar item</button>
+      <div class="form-group" style="margin-top:14px"><label>Notas (opcional)</label><textarea id="q-notes" placeholder="Condições de pagamento, observações..."></textarea></div>
+      <div class="quote-total">Total: <strong id="q-total">€0,00</strong></div>
+      <div class="alert error" id="quote-error"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeQuoteModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="generateQuotePdf()">Gerar PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- REFER MODAL -->
+<div class="modal-overlay" id="refer-modal-overlay" onclick="if(event.target===this)closeReferModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title"><svg class="ic" viewBox="0 0 24 24" style="width:17px;height:17px"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> Recomendar Profissional</div>
+      <button class="modal-close" onclick="closeReferModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label>Procurar por nome, categoria ou zona</label><input id="ref-search" type="text" placeholder="Ex: eletricista, Braga..." oninput="searchReferralPros()"/></div>
+      <div id="ref-results"></div>
+      <div class="form-group" style="margin-top:10px"><label>Nota (opcional)</label><textarea id="ref-note" placeholder="Porque estás a recomendar este profissional..."></textarea></div>
+      <div class="alert error" id="ref-error"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeReferModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitReferral()">Enviar recomendação</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/escape-html.js"></script>
+<script src="/assets/resize-image.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="/assets/dashboard-core.js"></script>
+<script src="/assets/dashboard-schedule-link.js"></script>
+<script src="/assets/dashboard-stats.js"></script>
+<script src="/assets/dashboard-listings.js"></script>
+<script src="/assets/dashboard-jobs.js"></script>
+<script src="/assets/dashboard-requests-ai.js"></script>
+<script src="/assets/dashboard-finance.js"></script>
+<script src="/assets/billing.js"></script>
+<script src="/assets/dashboard-growth.js"></script>
+</body>
+</html>

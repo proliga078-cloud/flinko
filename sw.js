@@ -1,4 +1,4 @@
-const CACHE_NAME = 'proliga-v2';
+const CACHE_NAME = 'flinko-v1';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -65,9 +65,9 @@ self.addEventListener('fetch', (event) => {
 // ===== PUSH NOTIFICATIONS =====
 self.addEventListener('push', (event) => {
   let data = {};
-  try { data = event.data ? event.data.json() : {}; } catch (e) { data = { title: 'Proliga', body: event.data ? event.data.text() : '' }; }
+  try { data = event.data ? event.data.json() : {}; } catch (e) { data = { title: 'Flinko', body: event.data ? event.data.text() : '' }; }
 
-  const title = data.title || 'Proliga';
+  const title = data.title || 'Flinko';
   const options = {
     body: data.body || '',
     icon: '/icon-192.png',

@@ -1,12 +1,12 @@
 {
-  "name": "Proliga — Serviços e Profissionais",
-  "short_name": "Proliga",
+  "name": "Flinko — Serviços e Profissionais",
+  "short_name": "Flinko",
   "description": "Encontra profissionais de confiança em Portugal, ou gere o teu negócio se és profissional.",
   "start_url": "/?pwa=1",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#0F1A33",
-  "theme_color": "#0F1A33",
+  "background_color": "#0f231b",
+  "theme_color": "#0f231b",
   "orientation": "portrait-primary",
   "lang": "pt-PT",
   "icons": [

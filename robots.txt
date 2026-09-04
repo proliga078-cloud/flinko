@@ -5,5 +5,5 @@ Disallow: /dashboard.html
 Disallow: /messages.html
 Disallow: /auth.html
 
-Sitemap: https://proliga.pt/sitemap.xml
-Sitemap: https://proliga.pt/sitemap-profiles.xml
+Sitemap: https://flinko.pt/sitemap.xml
+Sitemap: https://flinko.pt/sitemap-profiles.xml

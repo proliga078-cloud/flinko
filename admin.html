@@ -512,7 +512,7 @@ async function loadOverview(){
 // mesmo bug que partiu a homepage partia também aqui: uma query direta à
 // tabela filtrada por account_type falha sempre em silêncio para qualquer
 // admin com sessão, e os cartões "Profissionais"/"Clientes" ficavam sempre
-// a "0" (confirmado ao vivo em proliga.pt/admin.html). Corrigido usando os
+// a "0" (confirmado ao vivo em flinko.pt/admin.html). Corrigido usando os
 // dados já privilegiados de admin_list_profiles() (via loadProfiles/allPros)
 // em vez de uma segunda query direta à tabela.
 const[{count:cc},{count:rc},{count:sc}]=await Promise.all([

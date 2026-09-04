@@ -1,986 +1,560 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<title>Pedidos – Publica o que precisas | Flinko</title>
-<meta name="description" content="Publica o teu pedido e recebe respostas de profissionais verificados perto de ti. Grátis, sem compromisso e sem comissões." />
-<meta name="keywords" content="pedido de orçamento portugal, publicar pedido, encontrar profissional, aproliga pedidos" />
-<meta name="robots" content="index, follow" />
-<link rel="canonical" href="https://aproliga.pt/pedidos" />
-<meta property="og:title" content="Pedidos – Flinko" />
-<meta property="og:description" content="Publica o que precisas e recebe respostas de profissionais verificados. Grátis e sem comissões." />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://aproliga.pt/pedidos" />
-<meta property="og:locale" content="pt_PT" />
-<meta property="og:image" content="https://aproliga.pt/assets/og-image.png" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Pedidos – Flinko" />
-<meta name="twitter:description" content="Publica o que precisas e recebe respostas de profissionais verificados." />
-<meta name="twitter:image" content="https://aproliga.pt/assets/og-image.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-<link rel="shortcut icon" href="/favicon.ico" />
-<link rel="manifest" href="/manifest.json" />
-<meta name="theme-color" content="#0f231b" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Pedidos de Clientes – Flinko</title>
+<meta name="description" content="Vê o que os clientes precisam em Portugal. Publica o teu pedido e deixa os profissionais encontrarem-te."/>
+<meta name="robots" content="index, follow"/>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
+  <link rel="shortcut icon" href="/favicon.ico"/>
+<link rel="manifest" href="/manifest.json"/>
+<meta name="theme-color" content="#0F1A33"/>
+<script src="/assets/pwa.js" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
-:root{
---dark:#0f231b;
---dark-2:#153427;
---dark-3:#1b4433;
---orange:#ee7c1f;
---orange-dark:#d9670f;
---mint:#3fd693;
---mint-dark:#1fae72;
---ink:#11201a;
---muted:#5b6d64;
---line:#e4ece6;
---bg-tint:#eef7f1;
---paper:#ffffff;
---radius-lg:22px;
---radius-md:14px;
---radius-sm:10px;
---shadow:0 20px 45px -25px rgba(15,35,27,.45);
-font-size:16px;
-}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-font-family:'Inter',system-ui,-apple-system,sans-serif;
-color:var(--ink);
-background:var(--paper);
-line-height:1.5;
--webkit-font-smoothing:antialiased;
-}
-h1,h2,h3,h4{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
-img{display:block;max-width:100%}
-a{color:inherit;text-decoration:none}
-button{font:inherit;cursor:pointer;background:none;border:none;color:inherit}
-ul{list-style:none}
-.wrap{max-width:1180px;margin-inline:auto;padding-inline:24px}
-.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.skip-link{position:absolute;left:16px;top:-60px;background:var(--dark);color:#fff;padding:10px 16px;border-radius:8px;z-index:200;transition:top .2s}
-.skip-link:focus{top:16px}
+:root{--blue:#E8720A;--blue-dark:#C25A06;--blue-light:#FDECDD;--gold:#AF620A;--green:#1A8649;--green-light:#EAF6EE;--red:#C0362C;--text:#14181F;--muted:#5B6270;--border:#ECECE9;--bg:#F7F8FA;--white:#fff;--shadow-sm:0 1px 3px rgba(20,24,31,.05);--shadow-md:0 8px 24px rgba(20,24,31,.09)}
+body{font-family:'Inter',sans-serif;color:var(--text);background:var(--bg)}
+a{text-decoration:none;color:inherit}
+nav{position:sticky;top:0;z-index:200;background:var(--white);border-bottom:1px solid var(--border);padding:0 5%;height:68px;display:flex;align-items:center;gap:16px}
+.logo{font-size:22px;font-weight:900;color:var(--blue);letter-spacing:-1px}.logo span{color:var(--gold)}
+.btn{padding:9px 18px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--text)}.btn-ghost:hover{background:var(--bg);transform:none}
+.btn-outline{background:transparent;color:var(--blue);border:1.5px solid var(--blue)}.btn-outline:hover{background:var(--blue-light)}
+.btn-solid{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(232,114,10,.25)}.btn-solid:hover{background:var(--blue-dark)}
+.btn-gold{background:var(--gold);color:#fff;box-shadow:0 2px 8px rgba(175,98,10,.25)}.btn-gold:hover{background:#8f4f08}
+.btn-sm{padding:7px 13px;font-size:12.5px}
+.nav-avatar{width:34px;height:34px;border-radius:50%;background:var(--blue);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer}
 
-/* Buttons */
-.btn{
-display:inline-flex;align-items:center;gap:8px;
-padding:14px 24px;border-radius:999px;
-font-weight:700;font-size:.95rem;
-transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
-white-space:nowrap;
-}
-.btn:active{transform:translateY(1px)}
-.btn-orange{background:var(--orange);color:#fff;box-shadow:0 12px 24px -10px rgba(238,124,31,.65)}
-.btn-orange:hover{background:var(--orange-dark)}
-.btn-dark{background:var(--dark);color:#fff}
-.btn-dark:hover{background:var(--dark-3)}
-.btn-ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
-.btn-ghost:hover{border-color:var(--ink)}
-.btn-ghost-dark{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.35)}
-.btn-ghost-dark:hover{border-color:#fff}
-.btn-sm{padding:10px 18px;font-size:.85rem}
+.hero{background:linear-gradient(135deg,#0f1c3f,var(--blue-dark) 60%,var(--blue));padding:56px 5% 46px;color:#fff;text-align:center}
+.hero h1{font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:10px}
+.hero p{font-size:15px;color:rgba(255,255,255,.82);max-width:560px;margin:0 auto 24px}
+.hero-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 
-/* Eyebrow / kicker */
-.kicker{
-display:inline-block;font-size:.78rem;font-weight:800;letter-spacing:.12em;
-text-transform:uppercase;color:var(--orange-dark);margin-bottom:10px;
-}
+.wrap{max-width:1140px;margin:0 auto;padding:28px 24px 60px}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px;background:var(--white);padding:14px;border-radius:14px;border:1px solid var(--border);box-shadow:var(--shadow-sm)}
+.filters select,.filters input{padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:inherit;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s}
+.filters input{flex:1;min-width:180px}
+.filters select:focus,.filters input:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-light)}
 
-/* Header */
-header{
-position:sticky;top:0;z-index:100;background:rgba(255,255,255,.9);
-backdrop-filter:saturate(180%) blur(14px);
-border-bottom:1px solid var(--line);
-}
-.nav{display:flex;align-items:center;justify-content:space-between;height:76px;gap:24px}
-.logo{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.4rem;color:var(--ink)}
-.logo span{color:var(--orange)}
-.nav-links{display:flex;align-items:center;gap:22px;font-weight:600;font-size:.9rem;color:var(--ink)}
-.nav-links a{opacity:.8;transition:opacity .15s;white-space:nowrap}
-.nav-links a:hover{opacity:1}
-.nav-actions{display:flex;align-items:center;gap:12px}
-.nav-toggle{display:none;width:44px;height:44px;border-radius:10px;align-items:center;justify-content:center;border:1.5px solid var(--line)}
-.nav-toggle span,.nav-toggle span::before,.nav-toggle span::after{
-content:"";display:block;width:20px;height:2px;background:var(--ink);position:relative;transition:.2s;
-}
-.nav-toggle span::before{position:absolute;top:-6px}
-.nav-toggle span::after{position:absolute;top:6px}
-.mobile-panel{display:none;flex-direction:column;gap:4px;padding:16px 24px 24px;border-top:1px solid var(--line);background:#fff}
-.mobile-panel a{padding:12px 4px;font-weight:600;border-bottom:1px solid var(--line)}
-.mobile-panel .btn{margin-top:12px;justify-content:center}
-body.menu-open .mobile-panel{display:flex}
-body.menu-open .nav-toggle span{background:transparent}
-body.menu-open .nav-toggle span::before{transform:rotate(45deg);top:0}
-body.menu-open .nav-toggle span::after{transform:rotate(-45deg);top:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:18px}
+.req-card{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .18s,transform .18s;box-shadow:var(--shadow-sm)}
+.req-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.req-cover{height:130px;background-size:cover;background-position:center;position:relative;display:flex;align-items:flex-end;padding:10px 14px}
+.req-cover.placeholder{background:linear-gradient(135deg,var(--blue-light),#F5F0FF);display:flex;align-items:center;justify-content:center;font-size:38px}
+.req-cover-fade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.55) 100%)}
+.req-cover-cat{position:relative;z-index:1;background:rgba(255,255,255,.92);color:var(--blue);font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:99px}
+.req-body{padding:16px;display:flex;flex-direction:column;gap:9px;flex:1}
+.req-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.req-title{font-size:15.5px;font-weight:700;line-height:1.4}
+.req-time{font-size:11px;color:var(--muted);white-space:nowrap;flex-shrink:0;margin-top:2px}
+.req-loc{font-size:12.5px;color:var(--muted)}
+.req-desc{font-size:13px;color:#475569;line-height:1.6;flex:1}
+.req-meta-row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.req-budget{font-size:13.5px;font-weight:700;color:var(--green)}
+.req-offers-pill{font-size:11.5px;font-weight:700;color:var(--blue);background:var(--blue-light);padding:3px 9px;border-radius:99px}
+.req-footer{display:flex;gap:8px;margin-top:2px}
+.req-footer .btn{flex:1;justify-content:center;font-size:12.5px;padding:9px}
+.offer-panel{display:none;background:var(--bg);border-top:1px solid var(--border);padding:14px 16px;gap:9px;flex-direction:column}
+.offer-panel.open{display:flex}
+.offer-panel textarea{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;resize:vertical;min-height:56px;outline:none}
+.offer-panel textarea:focus{border-color:var(--blue)}
+.price-hint{display:none;background:var(--blue-light);color:var(--blue);font-size:12px;padding:8px 11px;border-radius:8px;line-height:1.5}
+.price-hint.show{display:block}
+.offer-row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.offer-row2 input{padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;outline:none}
+.offer-row2 input:focus{border-color:var(--blue)}
+.offer-mine{background:var(--green-light);border-radius:9px;padding:10px 12px;font-size:12.5px;color:#166534;line-height:1.6}
 
-/* Hero */
-.hero{
-position:relative;overflow:hidden;color:#fff;
-background:linear-gradient(180deg,var(--dark) 0%,var(--dark-2) 100%);
-padding:72px 0 96px;
-}
-.hero::before{
-content:"";position:absolute;inset:0;
-background:url('assets/hero-team.jpg') center 26%/cover no-repeat;
-filter:saturate(.85);
-}
-.hero::after{
-content:"";position:absolute;inset:0;
-background:linear-gradient(100deg,rgba(15,35,27,.97) 26%,rgba(15,35,27,.62) 60%,rgba(15,35,27,.22) 100%);
-}
-.hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1.08fr .92fr;gap:56px;align-items:center}
-.badge-pill{
-display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;
-background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);
-font-size:.82rem;font-weight:700;margin-bottom:22px;
-}
-.badge-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--orange)}
-.hero h1{font-size:clamp(2.6rem,5.6vw,4.6rem);line-height:.98;color:#fff;max-width:14ch;font-weight:900}
-.hero h1 .accent{color:var(--mint)}
-.hero h1 .hw.hi{position:relative;padding:0 12px;margin:0 -6px}
-.hero h1 .hw.hi::before{content:"";position:absolute;inset:6px -2px;background:var(--orange);z-index:0;transform:skewX(-6deg)}
-.hero h1 .hw.hi span{position:relative;z-index:1;color:#fff}
-.hero-ribbon{
-position:absolute;z-index:4;top:38px;right:-84px;width:300px;text-align:center;
-background:var(--mint);color:var(--dark);font-weight:800;font-size:.78rem;letter-spacing:.02em;padding:8px 0;
-transform:rotate(38deg);box-shadow:0 14px 30px -10px rgba(0,0,0,.4);
-}
-@media (max-width:960px){ .hero-ribbon{display:none} }
-.hero p.lead{margin-top:20px;font-size:1.08rem;color:rgba(255,255,255,.78);max-width:46ch;line-height:1.6}
-.search-card{
-margin-top:32px;background:#fff;border-radius:18px;padding:10px;
-display:flex;gap:8px;box-shadow:0 30px 60px -30px rgba(0,0,0,.55);
-}
-.search-field{flex:1;display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px}
-.search-field + .search-field{border-left:1px solid var(--line)}
-.search-field input{border:none;outline:none;font:inherit;width:100%;color:var(--ink);font-size:.95rem}
-.search-field svg{flex-shrink:0;color:var(--muted)}
-.search-card .btn{flex-shrink:0}
-.trust-row{margin-top:20px;display:flex;flex-wrap:wrap;gap:10px}
-.trust-chip{
-display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;
-background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);
-font-size:.82rem;font-weight:600;color:rgba(255,255,255,.9);
-}
-.hero-ctas{margin-top:26px;display:flex;flex-wrap:wrap;gap:12px}
+.empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted)}
+.empty .ico{font-size:44px;margin-bottom:10px}
+.loading{grid-column:1/-1;text-align:center;padding:60px}
+.spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-.hero-side{position:relative}
-.live-card{
-background:#fff;color:var(--ink);border-radius:var(--radius-md);padding:18px;
-box-shadow:0 34px 70px -26px rgba(0,0,0,.55);max-width:340px;margin-left:auto;
-border-top:3px solid var(--mint);
-}
-.live-card .head{display:flex;align-items:center;justify-content:space-between;font-size:.75rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.live-dot{display:inline-flex;align-items:center;gap:6px;color:var(--mint-dark)}
-.live-dot::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px rgba(63,214,147,.25)}
-.live-feed{position:relative;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);min-height:70px}
-.live-req{display:flex;gap:12px;align-items:flex-start;opacity:0;transform:translateY(10px);transition:opacity .45s ease,transform .45s ease;pointer-events:none}
-.live-req.is-active{position:relative;opacity:1;transform:none;pointer-events:auto}
-.live-req:not(.is-active){position:absolute;top:0;left:0;right:0}
-.live-req .ic{width:38px;height:38px;border-radius:10px;background:#fff1e4;color:var(--orange-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.live-req strong{font-size:.95rem}
-.live-req span{display:block;font-size:.8rem;color:var(--muted);margin-top:2px}
-.live-feed-dots{display:flex;gap:5px;margin-top:12px}
-.live-feed-dots span{width:5px;height:5px;border-radius:50%;background:var(--line);transition:.25s}
-.live-feed-dots span.active{background:var(--mint-dark);width:14px;border-radius:3px}
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:999;align-items:center;justify-content:center;padding:20px}
+#modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:18px;max-width:480px;width:100%;max-height:88vh;overflow-y:auto;padding:28px;box-shadow:0 24px 70px rgba(15,23,42,.3)}
+.modal h2{font-size:19px;font-weight:800;margin-bottom:18px}
+.form-group{margin-bottom:14px}
+label{display:block;font-size:13px;font-weight:600;color:#475569;margin-bottom:5px}
+input,select,textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:inherit;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-light)}
+textarea{resize:vertical;min-height:80px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-actions{display:flex;gap:10px;margin-top:18px}
+.modal-actions .btn{flex:1;justify-content:center}
+.msg{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none}
+.msg.error{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;display:block}
+.msg.success{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;display:block}
+.photo-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.photo-thumb{position:relative;width:64px;height:64px;border-radius:9px;overflow:hidden;border:1px solid var(--border)}
+.photo-thumb img{width:100%;height:100%;object-fit:cover}
+.photo-thumb .rm{position:absolute;top:2px;right:2px;background:rgba(15,23,42,.7);color:#fff;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;line-height:1}
+.photo-add{width:64px;height:64px;border-radius:9px;border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--muted);cursor:pointer;flex-shrink:0}
+.photo-add:hover{border-color:var(--blue);color:var(--blue)}
 
-.avatars-row{
-margin-top:22px;display:flex;align-items:center;gap:12px;
-background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);
-border-radius:999px;padding:8px 16px 8px 8px;max-width:340px;margin-left:auto;
-}
-.avatars-row .stack{display:flex}
-.avatars-row .stack span{
-width:30px;height:30px;border-radius:50%;border:2px solid var(--dark);
-display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;
-margin-left:-9px;color:#fff;
-}
-.avatars-row .stack span:first-child{margin-left:0}
-.avatars-row p{font-size:.8rem;color:rgba(255,255,255,.85);font-weight:600}
+@media(max-width:600px){nav{padding:0 4%}.hero{padding:40px 5% 32px}.hero h1{font-size:25px}.offer-row2{grid-template-columns:1fr}}
 
-/* Value strip — floating card over hero */
-.value-strip{position:relative;z-index:5;margin-top:-58px}
-.value-card{
-background:#fff;border-radius:var(--radius-lg);box-shadow:0 30px 70px -25px rgba(15,35,27,.35);
-display:grid;grid-template-columns:repeat(4,1fr);padding:6px;
-}
-.value-item{display:flex;align-items:center;gap:12px;color:var(--ink);padding:18px 20px;border-radius:calc(var(--radius-lg) - 6px);position:relative;transition:background .2s ease}
-.value-item:hover{background:var(--bg-tint)}
-.value-item:not(:last-child)::after{content:"";position:absolute;right:0;top:14px;bottom:14px;width:1px;background:var(--line)}
-.value-item .ic{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.value-item .ic-orange{background:#fff1e4;color:var(--orange-dark)}
-.value-item .ic-mint{background:#e7faf1;color:var(--mint-dark)}
-.value-item .ic-purple{background:#efeafe;color:#6d59e8}
-.value-item .ic-dark{background:var(--bg-tint);color:var(--dark)}
-.value-item strong{display:block;font-size:.92rem}
-.value-item span{display:block;font-size:.78rem;color:var(--muted)}
-
-/* Section shells */
-section{padding:96px 0}
-.section-head{max-width:640px;margin-bottom:52px}
-.section-head.center{margin-inline:auto;text-align:center}
-.section-head h2{font-size:clamp(1.9rem,3.6vw,2.7rem);font-weight:800}
-.hi-block{position:relative;display:inline-block;padding:0 10px;color:#fff;z-index:1}
-.hi-block::before{content:"";position:absolute;inset:2px -2px;background:var(--orange);z-index:-1;transform:skewX(-6deg)}
-.hi-block.mint::before{background:var(--mint-dark)}
-.section-head p{margin-top:14px;color:var(--muted);font-size:1.05rem}
-
-/* How it works — pinned scroll story */
-.how-inner{display:grid;grid-template-columns:.8fr 1.6fr;gap:64px;align-items:start;margin-top:12px}
-.how-sticky{position:sticky;top:110px;display:flex;flex-direction:column;align-items:flex-start;gap:22px}
-.how-num{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:5.2rem;line-height:1;color:var(--line);transition:color .35s ease}
-.how-num.n-active-1{color:var(--dark)}
-.how-num.n-active-2{color:var(--orange)}
-.how-num.n-active-3{color:var(--mint-dark)}
-.how-line{width:3px;height:130px;background:var(--line);border-radius:3px;overflow:hidden;position:relative}
-.how-line-fill{position:absolute;top:0;left:0;width:100%;height:0%;background:linear-gradient(180deg,var(--dark),var(--orange),var(--mint-dark));transition:height .45s cubic-bezier(.16,.8,.24,1)}
-.how-dots{display:flex;flex-direction:column;gap:11px}
-.how-dot{width:8px;height:8px;border-radius:50%;background:var(--line);transition:.25s ease}
-.how-dot.active{background:var(--orange);transform:scale(1.35)}
-.how-track{display:flex;flex-direction:column;gap:15vh}
-.how-block{padding:8px 0;opacity:.32;transition:opacity .45s ease}
-.how-block.active{opacity:1}
-.how-block .ic{width:56px;height:56px;border-radius:14px;background:var(--bg-tint);color:var(--dark);display:flex;align-items:center;justify-content:center;margin-bottom:22px;transition:background .3s ease,color .3s ease}
-.how-block[data-step="1"].active .ic{background:var(--dark);color:#fff}
-.how-block[data-step="2"].active .ic{background:var(--orange);color:#fff}
-.how-block[data-step="3"].active .ic{background:var(--mint-dark);color:#fff}
-.how-block h3{font-size:1.55rem;margin-bottom:12px}
-.how-block p{color:var(--muted);font-size:1.03rem;max-width:44ch;line-height:1.65}
-.how-cta{
-margin-top:48px;background:var(--bg-tint);border-radius:var(--radius-lg);
-padding:32px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
-}
-.how-cta p{font-weight:600;font-size:1.02rem;max-width:46ch}
-
-/* Categories — horizontal drag carousel */
-.cat-carousel-wrap{position:relative}
-.cat-carousel{
-display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;
-padding:6px 4px 10px;margin:0 -4px;cursor:grab;user-select:none;
-scrollbar-width:none;-ms-overflow-style:none;
-}
-.cat-carousel::-webkit-scrollbar{display:none}
-.cat-carousel.dragging{cursor:grabbing;scroll-snap-type:none}
-.cat-slide{
-scroll-snap-align:start;flex:0 0 auto;width:270px;min-height:340px;
-border-radius:var(--radius-lg);padding:26px;position:relative;overflow:hidden;
-display:flex;flex-direction:column;color:#fff;
-background:linear-gradient(160deg,var(--dark) 0%,var(--dark-2) 100%);
-transition:transform .3s cubic-bezier(.2,.9,.3,1.3);
-}
-.cat-slide:hover{transform:translateY(-6px)}
-.cat-slide.v-orange{background:linear-gradient(160deg,var(--orange-dark) 0%,var(--orange) 100%)}
-.cat-slide.v-mint{background:linear-gradient(160deg,var(--mint-dark) 0%,#0f8a5a 100%)}
-.cat-slide.v-purple{background:linear-gradient(160deg,#4a3bb8 0%,#6d59e8 100%)}
-.cat-slide .ic{
-width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,.14);
-display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.cat-slide .tag{
-position:absolute;top:22px;right:22px;font-size:.68rem;font-weight:800;letter-spacing:.04em;
-padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.16);text-transform:uppercase;
-}
-.cat-slide .body{margin-top:auto;padding-top:34px}
-.cat-slide h3{color:#fff;font-size:1.3rem}
-.cat-slide p{color:rgba(255,255,255,.72);font-size:.9rem;margin-top:8px;line-height:1.55}
-.cat-slide .go{
-margin-top:16px;display:inline-flex;align-items:center;gap:6px;font-size:.85rem;font-weight:700;
-color:#fff;opacity:.85;transition:opacity .2s ease,transform .2s ease;
-}
-.cat-slide:hover .go{opacity:1;transform:translateX(3px)}
-.carousel-controls{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:18px}
-.car-arrow{
-width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);display:flex;
-align-items:center;justify-content:center;transition:border-color .2s ease,background .2s ease;flex-shrink:0;
-}
-.car-arrow:hover{border-color:var(--ink);background:var(--bg-tint)}
-.car-dots{display:flex;gap:7px}
-.car-dot{width:7px;height:7px;border-radius:50%;background:var(--line);transition:.25s ease}
-.car-dot.active{background:var(--orange);width:22px;border-radius:4px}
-.cat-more{margin-top:28px;text-align:center}
-
-/* Professionals — editorial list, not cards */
-.pros-section{background:var(--bg-tint)}
-.pro-grid{display:flex;flex-direction:column}
-.pro-card{
-display:grid;grid-template-columns:1.3fr 1.7fr auto;gap:24px;align-items:center;
-padding:26px 4px;border-top:1.5px solid rgba(17,32,26,.1);
-}
-.pro-grid .pro-card:last-child{border-bottom:1.5px solid rgba(17,32,26,.1)}
-.pro-top{display:flex;gap:14px;align-items:center}
-.pro-avatar{
-width:52px;height:52px;border-radius:50%;background:var(--dark);color:#fff;
-display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;flex-shrink:0;
-}
-.pro-name{font-weight:700;font-size:1.05rem;font-family:'Plus Jakarta Sans',sans-serif}
-.pro-meta{font-size:.8rem;color:var(--muted);margin-top:2px}
-.pro-bio-wrap{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
-.verified{
-display:inline-flex;align-items:center;gap:5px;font-size:.72rem;font-weight:800;
-color:var(--mint-dark);background:#e7faf1;padding:4px 9px;border-radius:999px;flex-shrink:0;
-}
-.pro-card p.bio{color:var(--muted);font-size:.9rem;line-height:1.55}
-.pro-card .btn{flex-shrink:0}
-.pro-more{margin-top:28px;text-align:center}
-
-/* Trust dark band */
-.trust-band{background:var(--dark);color:#fff}
-.trust-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center;padding-bottom:64px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:64px}
-.trust-stats .num{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:clamp(2rem,3.4vw,2.6rem)}
-.trust-stats div:nth-child(1) .num{color:#fff}
-.trust-stats div:nth-child(2) .num{color:var(--orange)}
-.trust-stats div:nth-child(3) .num{color:var(--mint)}
-.trust-stats div:nth-child(4) .num{color:var(--mint)}
-.trust-stats .lbl{margin-top:8px;font-size:.8rem;color:rgba(255,255,255,.6);letter-spacing:.03em;text-transform:uppercase;font-weight:700}
-.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
-.pillar .num{color:rgba(255,255,255,.35);font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.85rem;margin-bottom:14px}
-.pillar h3{color:#fff;font-size:1.08rem;margin-bottom:8px}
-.pillar p{color:rgba(255,255,255,.62);font-size:.92rem;line-height:1.6}
-
-/* Coverage — flowing tag cloud, sized by activity */
-.coverage-inner{display:grid;grid-template-columns:.85fr 1.15fr;gap:56px;align-items:center}
-.zone-grid{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-.zone-tile{
-display:inline-flex;align-items:center;gap:9px;padding:12px 20px;border-radius:999px;
-background:var(--bg-tint);font-weight:700;font-size:.95rem;color:var(--ink);
-transition:transform .2s ease,background .2s ease;
-}
-.zone-tile.lg{font-size:1.1rem;padding:15px 24px;background:#e7faf1;color:var(--mint-dark)}
-.zone-tile .n{width:7px;height:7px;border-radius:50%;background:var(--mint-dark);flex-shrink:0}
-.zone-note{margin-top:22px;font-size:.88rem;color:var(--muted)}
-
-/* FAQ */
-.faq-grid{display:grid;grid-template-columns:.62fr 1.38fr;gap:56px;align-items:start}
-.faq-side h2{margin-top:6px}
-.faq-side p{margin-top:14px;color:var(--muted);font-size:1rem}
-.faq-side .btn{margin-top:20px}
-.faq-list{display:flex;flex-direction:column;gap:14px}
-.faq-item{border:1.5px solid var(--line);border-radius:var(--radius-md);overflow:hidden}
-.faq-q{
-width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;
-padding:22px 24px;font-weight:700;font-size:1rem;text-align:left;
-}
-.faq-q .idx{color:var(--muted);font-weight:800;margin-right:10px;font-size:.85rem}
-.faq-q .chev{transition:transform .2s ease;flex-shrink:0;color:var(--muted)}
-.faq-item[data-open="true"] .chev{transform:rotate(180deg)}
-.faq-a{max-height:0;overflow:hidden;transition:max-height .25s ease}
-.faq-a p{padding:0 24px 22px 58px;color:var(--muted);font-size:.94rem;line-height:1.6}
-
-/* Final CTA */
-.final-cta{
-background:linear-gradient(135deg,var(--dark) 0%,var(--dark-3) 100%);
-border-radius:var(--radius-lg);padding:64px 40px;text-align:center;color:#fff;
-}
-.final-cta h2{color:#fff;font-size:clamp(1.9rem,3.6vw,2.6rem)}
-.final-cta p{margin-top:14px;color:rgba(255,255,255,.72);font-size:1.02rem}
-.final-cta .ctas{margin-top:30px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
-
-/* Footer */
-footer{background:var(--dark);color:rgba(255,255,255,.75);border-top:3px solid var(--orange)}
-.footer-top{padding:64px 0 40px;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:32px}
-.footer-logo{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.3rem;color:#fff}
-.footer-logo span{color:var(--orange)}
-.footer-top p{margin-top:14px;font-size:.92rem;max-width:34ch;line-height:1.6}
-.footer-col h4{font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:16px}
-.footer-col ul{display:flex;flex-direction:column;gap:11px;font-size:.92rem}
-.footer-col a:hover{color:#fff}
-.footer-bottom{
-border-top:1px solid rgba(255,255,255,.12);padding:22px 0;
-display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:.82rem;
-}
-.footer-bottom .legal{display:flex;gap:18px;flex-wrap:wrap}
-
-/* Responsive */
-@media (max-width:960px){
-.hero-inner{grid-template-columns:1fr}
-.hero-side{margin-top:12px}
-.live-card,.avatars-row{margin-left:0}
-.value-card{grid-template-columns:repeat(2,1fr)}
-.value-item:nth-child(2)::after{display:none}
-.value-strip{margin-top:-40px}
-.how-inner{grid-template-columns:1fr;gap:8px}
-.how-sticky{position:static;flex-direction:row;align-items:center;gap:16px;margin-bottom:8px}
-.how-line{display:none}
-.how-num{font-size:2.4rem}
-.how-track{gap:30px}
-.how-block{opacity:1}
-.cat-slide{width:240px;min-height:300px}
-.pro-card{grid-template-columns:1fr;gap:12px}
-.pro-card .btn{width:100%;justify-content:center}
-.trust-stats{grid-template-columns:repeat(2,1fr);row-gap:32px}
-.pillars{grid-template-columns:1fr;gap:36px}
-.coverage-inner{grid-template-columns:1fr}
-.faq-grid{grid-template-columns:1fr;gap:24px}
-.footer-top{grid-template-columns:1fr 1fr}
-}
-@media (max-width:720px){
-.nav-links{display:none}
-.nav-actions .btn-ghost{display:none}
-.nav-toggle{display:flex}
-.search-card{flex-direction:column}
-.search-field + .search-field{border-left:none;border-top:1px solid var(--line)}
-section{padding:64px 0}
-.footer-top{grid-template-columns:1fr;padding-bottom:24px}
-}
-@media (max-width:520px){
-.value-card{grid-template-columns:1fr}
-.value-item:not(:last-child)::after{display:none;content:none}
-.value-item:not(:last-child){border-bottom:1px solid var(--line)}
-.value-strip{margin-top:-24px}
-.cat-slide{width:82vw}
-.trust-stats{grid-template-columns:1fr}
-.how-cta{flex-direction:column;align-items:flex-start}
-}
-
-/* ============ motion / flow ============ */
-header{transition:box-shadow .25s ease}
-header.condensed{box-shadow:0 10px 30px -22px rgba(15,35,27,.4)}
-
-/* hero entrance */
-.hero::before{transform:scale(1.08);transition:transform 5s cubic-bezier(.16,.8,.24,1)}
-.hero.loaded::before{transform:scale(1)}
-.badge-pill,.hero h1,.hero p.lead,.search-card,.trust-row,.hero-ctas{opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.16,.8,.24,1),transform .7s cubic-bezier(.16,.8,.24,1)}
-.hero.loaded .badge-pill{opacity:1;transform:none;transition-delay:.05s}
-.hero.loaded h1{opacity:1;transform:none;transition-delay:.14s}
-.hero.loaded p.lead{opacity:1;transform:none;transition-delay:.22s}
-.hero.loaded .search-card{opacity:1;transform:none;transition-delay:.3s}
-.hero.loaded .trust-row{opacity:1;transform:none;transition-delay:.38s}
-.hero.loaded .hero-ctas{opacity:1;transform:none;transition-delay:.38s}
-.hero-side{opacity:0;transform:translateY(18px) scale(.98);transition:opacity .8s cubic-bezier(.16,.8,.24,1) .3s,transform .8s cubic-bezier(.16,.8,.24,1) .3s}
-.hero.loaded .hero-side{opacity:1;transform:none}
-.live-dot::before{animation:pulse-dot 1.8s ease-in-out infinite}
-@keyframes pulse-dot{0%,100%{box-shadow:0 0 0 4px rgba(63,214,147,.25)}50%{box-shadow:0 0 0 7px rgba(63,214,147,.08)}}
-
-/* search focus lift */
-.search-card{transition:box-shadow .25s ease,transform .25s ease}
-.search-card:focus-within{box-shadow:0 34px 70px -28px rgba(0,0,0,.6);transform:translateY(-2px)}
-
-/* scroll reveal */
-[data-reveal]{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.16,.8,.24,1),transform .7s cubic-bezier(.16,.8,.24,1)}
-[data-reveal].is-in{opacity:1;transform:none}
-[data-reveal="d1"]{transition-delay:.08s}
-[data-reveal="d2"]{transition-delay:.16s}
-[data-reveal="d3"]{transition-delay:.24s}
-[data-reveal="d4"]{transition-delay:.32s}
-
-/* icon micro-interaction */
-.value-item .ic{transition:transform .3s ease}
-.value-item:hover .ic{transform:translateY(-3px)}
-.pro-card{transition:background .2s ease}
-.pro-card:hover{background:rgba(255,255,255,.55)}
-.zone-tile:hover{transform:translateY(-2px);background:#e7faf1;color:var(--mint-dark)}
-.zone-tile .n{animation:chip-pulse 2.6s ease-in-out infinite}
-.zone-tile:nth-child(3n+2) .n{animation-delay:.5s}
-.zone-tile:nth-child(3n+3) .n{animation-delay:1s}
-@keyframes chip-pulse{0%,100%{opacity:1}50%{opacity:.35}}
-
-/* ============ extra polish pass ============ */
-
-/* scroll progress bar */
-.scroll-progress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--orange),var(--mint));z-index:300;transition:width .1s linear}
-
-/* hero ambient orbs */
-.hero-orbs{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
-.hero .hero-orbs{opacity:.4}
-.orb{position:absolute;border-radius:50%;filter:blur(50px);opacity:.35;animation:drift 14s ease-in-out infinite}
-.orb.o1{width:280px;height:280px;background:var(--orange);top:-60px;left:8%;animation-duration:16s}
-.orb.o2{width:220px;height:220px;background:var(--mint);bottom:-40px;right:14%;animation-duration:13s;animation-delay:-4s}
-.orb.o3{width:160px;height:160px;background:#6d59e8;top:38%;left:46%;animation-duration:18s;animation-delay:-8s;opacity:.22}
-@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(24px,-18px) scale(1.08)}}
-
-/* headline word reveal */
-.hero h1{display:block}
-.hw{display:inline-block;overflow:hidden;vertical-align:top}
-.hw span{display:inline-block;transform:translateY(110%);transition:transform .6s cubic-bezier(.16,.8,.24,1)}
-.hero.loaded .hw span{transform:translateY(0)}
-.hw:nth-of-type(1) span{transition-delay:.16s}
-.hw:nth-of-type(2) span{transition-delay:.2s}
-.hw:nth-of-type(3) span{transition-delay:.24s}
-.hw:nth-of-type(4) span{transition-delay:.28s}
-.hw:nth-of-type(5) span{transition-delay:.32s}
-.hw:nth-of-type(6) span{transition-delay:.36s}
-.hw:nth-of-type(7) span{transition-delay:.4s}
-.hw:nth-of-type(8) span{transition-delay:.44s}
-.hw:nth-of-type(9) span{transition-delay:.48s}
-
-/* nav underline */
-.nav-links a{position:relative}
-.nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:2px;background:var(--orange);transition:right .25s cubic-bezier(.2,.9,.3,1)}
-.nav-links a:hover::after{right:0}
-
-/* button arrow micro-interaction */
-.btn .arrow{display:inline-block;transition:transform .25s cubic-bezier(.2,.9,.3,1.3)}
-.btn:hover .arrow{transform:translateX(4px)}
-
-/* magnetic primary cta */
-.magnetic{will-change:transform}
-
-/* live-card / avatars idle float */
-.live-card{animation:float-a 5s ease-in-out infinite;animation-delay:1.1s}
-.avatars-row{animation:float-b 5.6s ease-in-out infinite;animation-delay:1.3s}
-@keyframes float-a{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-@keyframes float-b{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-
-/* pro-card tilt */
-
-/* category / zone ticker */
-.ticker{background:var(--bg-tint);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 0;overflow:hidden;white-space:nowrap}
-.ticker-track{display:inline-flex;gap:0;animation:ticker-scroll 30s linear infinite}
-.ticker:hover .ticker-track{animation-play-state:paused}
-.ticker-item{display:inline-flex;align-items:center;gap:14px;padding:0 28px;font-weight:700;font-size:.92rem;color:var(--ink);flex-shrink:0}
-.ticker-item .dot{width:5px;height:5px;border-radius:50%;background:var(--orange);flex-shrink:0}
-@keyframes ticker-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-
-/* ============ round 2: more ============ */
-
-/* cursor spotlight for dark sections (real element — avoids clashing with existing ::before/::after) */
-.spotlight{position:relative}
-.glow-spot{
-position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;transition:opacity .4s ease;
-background:radial-gradient(360px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.07),transparent 60%);
-}
-.spotlight:hover .glow-spot{opacity:1}
-
-/* ambient orbs reused on trust-band + final-cta */
-.trust-band{position:relative;overflow:hidden}
-.trust-band .hero-orbs{opacity:.7}
-.trust-band>.wrap{position:relative;z-index:2}
-.final-cta{position:relative;overflow:hidden}
-.final-cta>*:not(.hero-orbs){position:relative;z-index:2}
-
-/* idle bounce on category icons */
-.cat-slide .ic{animation:icon-bob 3.4s ease-in-out infinite}
-.cat-slide:nth-child(2) .ic{animation-delay:.15s}
-.cat-slide:nth-child(3) .ic{animation-delay:.3s}
-.cat-slide:nth-child(4) .ic{animation-delay:.45s}
-.cat-slide:nth-child(5) .ic{animation-delay:.6s}
-.cat-slide:nth-child(6) .ic{animation-delay:.75s}
-@keyframes icon-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-.cat-slide:hover .ic{animation-play-state:paused}
-
-/* counter finish pulse */
-.trust-stats .num{position:relative;display:inline-block}
-.trust-stats .num.counted{animation:num-pulse .6s ease-out}
-@keyframes num-pulse{0%{text-shadow:0 0 0 rgba(255,255,255,0)}40%{text-shadow:0 0 26px currentColor}100%{text-shadow:0 0 0 rgba(255,255,255,0)}}
-
-/* button shine sweep */
-.btn-orange,.btn-dark{position:relative;overflow:hidden}
-.btn-orange::before,.btn-dark::before{
-content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;
-background:linear-gradient(115deg,transparent 0%,rgba(255,255,255,.35) 50%,transparent 100%);
-transform:skewX(-18deg);transition:left .55s ease;
-}
-.btn-orange:hover::before,.btn-dark:hover::before{left:130%}
-
-/* button ripple */
-.btn{position:relative;overflow:hidden}
-.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.55);transform:scale(0);animation:ripple-anim .6s ease-out;pointer-events:none}
-.btn-ghost .ripple,.btn-ghost-dark .ripple{background:rgba(0,0,0,.12)}
-@keyframes ripple-anim{to{transform:scale(2.6);opacity:0}}
-
-/* back to top */
-.to-top{
-position:fixed;right:22px;bottom:22px;width:48px;height:48px;border-radius:50%;
-background:var(--dark);color:#fff;display:flex;align-items:center;justify-content:center;
-box-shadow:var(--shadow);z-index:250;opacity:0;transform:translateY(14px) scale(.9);pointer-events:none;
-transition:opacity .3s ease,transform .3s cubic-bezier(.2,.9,.3,1.3),background .2s ease;
-}
-.to-top.show{opacity:1;transform:none;pointer-events:auto}
-.to-top:hover{background:var(--orange)}
-
-/* footer link slide */
-.footer-col a{position:relative;display:inline-block;transition:color .15s ease,transform .2s ease}
-.footer-col a:hover{transform:translateX(3px)}
-
-/* logo hover */
-.logo{display:inline-flex;transition:transform .3s cubic-bezier(.2,.9,.3,1.3)}
-.logo:hover{transform:rotate(-2deg) scale(1.04)}
-
-@media (prefers-reduced-motion:reduce){
-html{scroll-behavior:auto}
-[data-reveal]{transition:none;opacity:1;transform:none}
-.badge-pill,.hero h1,.hero p.lead,.search-card,.trust-row,.hero-ctas,.hero-side{transition:none;opacity:1;transform:none}
-.hero::before{transition:none;transform:none}
-.live-dot::before,.zone-tile .n{animation:none}
-.orb{animation:none;opacity:.2}
-.hw span{transition:none;transform:none}
-.live-card,.avatars-row{animation:none}
-.ticker-track{animation:none}
-.scroll-progress{display:none}
-.cat-slide .ic{animation:none}
-.trust-stats .num.counted{animation:none}
-.btn-orange::before,.btn-dark::before{display:none}
-.to-top{transition:none}
-.glow-spot{display:none}
-.live-req{transition:none}
-.how-block{opacity:1;transition:none}
-.how-num,.how-line-fill,.how-dot{transition:none}
-.cat-slide{transition:none}
-}
-
-/* ============ Página de Pedidos ============ */
-.req-hero{position:relative;overflow:hidden;color:#fff;background:linear-gradient(180deg,var(--dark) 0%,var(--dark-2) 100%);padding:64px 0 0}
-.req-hero .hero-orbs{opacity:.5}
-.req-hero-inner{position:relative;z-index:2;max-width:640px}
-.req-hero .badge-pill{opacity:1;transform:none}
-.req-hero h1{font-size:clamp(2.2rem,4.4vw,3.2rem);line-height:1.05;color:#fff;max-width:16ch;font-weight:900}
-.req-hero p.lead{margin-top:18px;font-size:1.06rem;color:rgba(255,255,255,.78);max-width:48ch;line-height:1.6}
-
-.post-card{
-position:relative;z-index:2;background:#fff;color:var(--ink);border-radius:var(--radius-lg);
-padding:30px;margin-top:38px;box-shadow:0 40px 80px -30px rgba(0,0,0,.5);
-border-top:4px solid var(--orange);
-}
-.post-card h2{font-size:1.3rem}
-.post-card .sub{color:var(--muted);font-size:.92rem;margin-top:6px}
-.post-form{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.post-form .full{grid-column:1/-1}
-.form-field{display:flex;flex-direction:column;gap:7px}
-.form-field label{font-size:.82rem;font-weight:700;color:var(--ink)}
-.form-field select,.form-field input,.form-field textarea{
-border:1.5px solid var(--line);border-radius:12px;padding:13px 14px;font:inherit;font-size:.95rem;
-color:var(--ink);background:#fff;transition:border-color .2s ease;
-}
-.form-field select:focus,.form-field input:focus,.form-field textarea:focus{outline:none;border-color:var(--dark)}
-.form-field textarea{resize:vertical;min-height:96px}
-.post-form .submit-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.post-form .submit-note{font-size:.8rem;color:var(--muted)}
-
-.filter-bar{display:flex;flex-wrap:wrap;gap:10px}
-.filter-chip{
-display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:999px;
-background:var(--bg-tint);font-weight:700;font-size:.88rem;color:var(--ink);
-border:1.5px solid transparent;transition:.2s ease;
-}
-.filter-chip:hover{border-color:var(--line)}
-.filter-chip.active{background:var(--dark);color:#fff}
-
-.req-grid{display:flex;flex-direction:column;margin-top:8px}
-.req-card{
-display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center;
-padding:24px 4px;border-top:1.5px solid rgba(17,32,26,.1);transition:background .2s ease;
-}
-.req-grid .req-card:last-child{border-bottom:1.5px solid rgba(17,32,26,.1)}
-.req-card:hover{background:var(--bg-tint)}
-.req-card .cat-ic{
-width:48px;height:48px;border-radius:12px;background:#fff1e4;color:var(--orange-dark);
-display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.req-card.v-mint .cat-ic{background:#e7faf1;color:var(--mint-dark)}
-.req-card.v-purple .cat-ic{background:#efeafe;color:#6d59e8}
-.req-card .body h3{font-size:1.05rem;font-family:'Plus Jakarta Sans',sans-serif}
-.req-card .body p{color:var(--muted);font-size:.88rem;margin-top:4px}
-.req-card .meta{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
-.req-tag{font-size:.72rem;font-weight:800;color:var(--muted);background:var(--bg-tint);padding:4px 10px;border-radius:999px}
-.req-card .when{font-size:.78rem;color:var(--muted);white-space:nowrap}
-.req-card .btn{flex-shrink:0}
-.req-empty{display:none;text-align:center;padding:48px 0;color:var(--muted)}
-
-@media (max-width:720px){
-.post-form{grid-template-columns:1fr}
-.post-card{padding:22px}
-.req-card{grid-template-columns:auto 1fr;grid-template-areas:"ic body" "cta cta"}
-.req-card .cat-ic{grid-area:ic}
-.req-card .body{grid-area:body}
-.req-card .btn{grid-area:cta;width:100%;justify-content:center;margin-top:10px}
-}
+/* === tema navy+laranja: nav === */
+nav{background:#0F1A33}
+nav a.logo{color:#fff}
+nav a.logo em,nav a.logo span{color:#F2A55C}
+.navlinks{color:#9AA6C3}
+.navlinks a:hover{color:#fff}
+.hamburger-btn{background:transparent;border-color:rgba(255,255,255,.25);color:#fff}
+.mobile-nav-panel{background:#fff}
+nav .btn-ghost{color:#fff}
+nav .btn-ghost:hover{background:rgba(255,255,255,.1)}
+nav .btn-line{color:#fff;border-color:rgba(255,255,255,.3)}
+nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
+.btn-ink{background:#E8720A;color:#fff}
+.btn-ink:hover{background:#C25A06}
 </style>
+<meta property="og:title" content="Pedidos de Clientes – Flinko"/>
+<meta property="og:description" content="Vê pedidos recentes de clientes à procura de profissionais em Portugal."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://flinko.pt/pedidos.html"/>
+<meta property="og:image" content="https://flinko.pt/assets/og-image.png"/>
+<meta property="og:locale" content="pt_PT"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Pedidos de Clientes – Flinko"/>
+<meta name="twitter:description" content="Vê pedidos recentes de clientes à procura de profissionais em Portugal."/>
+<meta name="twitter:image" content="https://flinko.pt/assets/og-image.png"/>
 </head>
 <body>
-<a class="skip-link" href="#main">Saltar para o conteúdo</a>
-<div class="scroll-progress" id="scrollProgress"></div>
 
-<header id="siteHeader">
-<div class="wrap nav">
-<a href="/" class="logo">Flink<span>o</span></a>
-<nav class="nav-links" aria-label="Navegação principal">
-<a href="/categoria">Encontrar</a>
-<a href="/pedidos">Pedidos</a>
-<a href="/pricing">Preços</a>
-<a href="/profissionais">Para Profissionais</a>
-<a href="/blog">Blog</a>
+<nav>
+<a href="index.html" class="logo">Flink<span>o</span></a>
+<div style="display:flex;gap:8px;margin-left:auto;align-items:center">
+<a href="categoria.html" class="btn btn-ghost" style="font-size:13px">🛠️ Profissionais</a>
+<a href="como-funciona.html" class="btn btn-ghost" style="font-size:13px">Como Funciona</a>
+<div id="nav-guest" style="display:flex;gap:8px">
+<a href="auth.html?tab=login" class="btn btn-ghost">Entrar</a>
+<a href="auth.html?tab=register" class="btn btn-solid">Registar</a>
+</div>
+<div id="nav-user" style="display:none;align-items:center;gap:8px">
+<a href="dashboard.html" class="btn btn-outline">Dashboard</a>
+<div class="nav-avatar" id="nav-avatar" onclick="location.href='dashboard.html'">?</div>
+</div>
+</div>
 </nav>
-<div class="nav-actions">
-<a href="/dashboard" class="btn btn-ghost btn-sm">Dashboard</a>
-<a href="/auth?tab=register" class="btn btn-dark btn-sm">Criar conta grátis</a>
-<button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mobilePanel" aria-label="Abrir menu">
-<span></span>
-</button>
-</div>
-</div>
-<div class="mobile-panel" id="mobilePanel">
-<a href="/categoria">Encontrar profissional</a>
-<a href="/pedidos">Pedidos</a>
-<a href="/pricing">Preços</a>
-<a href="/profissionais">Para Profissionais</a>
-<a href="/blog">Blog</a>
-<a href="/dashboard">Dashboard</a>
-<a href="/auth?tab=register" class="btn btn-orange">Criar conta grátis</a>
-</div>
-</header>
 
-<main id="main">
-
-<!-- PAGE HERO + POST FORM -->
-<section class="req-hero" id="heroSection">
-<div class="hero-orbs" aria-hidden="true"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span></div>
-<div class="wrap req-hero-inner">
-<span class="badge-pill"><span class="dot"></span> Grátis · Sem compromisso</span>
-<h1>Publica o que precisas. <span class="hi-block">Profissionais</span> verificados respondem.</h1>
-<p class="lead">Descreve o trabalho, escolhe a categoria e a zona — os profissionais certos entram em contacto diretamente contigo.</p>
+<div class="hero">
+<h1>📢 Precisas de um profissional?</h1>
+<p>Publica o que precisas em menos de um minuto e recebe propostas diretas — grátis, sem compromisso. Profissionais: os pedidos abertos estão aqui em baixo, respondam diretamente.</p>
+<div class="hero-actions">
+<button class="btn btn-gold" onclick="openModal(prefillCat)">➕ Publicar um Pedido</button>
+<a href="#grid" class="btn btn-ghost" style="color:#fff;border:1.5px solid rgba(255,255,255,.35)">Ver pedidos abertos</a>
 </div>
+<div id="cat-context-note" style="display:none;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:10px;padding:12px 16px;margin-top:16px;font-size:13.5px;color:#fff;line-height:1.6;max-width:560px"></div>
+</div>
+
 <div class="wrap">
-<form class="post-card" id="postForm" data-reveal>
-<h2>Publicar um pedido</h2>
-<p class="sub">Preenche os dados abaixo. Não pagas nada para publicar nem para receber respostas.</p>
-<div class="post-form">
-<div class="form-field">
-<label for="pf-cat">Categoria</label>
-<select id="pf-cat" name="categoria" required>
-<option value="">Escolhe uma categoria</option>
-<option value="eletricistas">Eletricistas</option>
-<option value="canalizadores">Canalizadores</option>
-<option value="pintores">Pintores</option>
-<option value="limpeza">Limpeza</option>
-<option value="programadores">Programadores</option>
-<option value="designers">Designers</option>
-<option value="outro">Outro</option>
+<div class="filters">
+<input type="text" id="f-search" placeholder="🔍 Procurar por título ou descrição..." oninput="renderList()"/>
+<select id="f-cat" onchange="renderList()">
+<option value="">Todas as categorias</option>
+</select>
+<select id="f-loc" onchange="renderList()">
+<option value="">Todo o país</option>
+<option value="Aveiro">Aveiro</option>
+<option value="Beja">Beja</option>
+<option value="Braga">Braga</option>
+<option value="Bragança">Bragança</option>
+<option value="Castelo Branco">Castelo Branco</option>
+<option value="Coimbra">Coimbra</option>
+<option value="Évora">Évora</option>
+<option value="Faro">Faro</option>
+<option value="Guarda">Guarda</option>
+<option value="Leiria">Leiria</option>
+<option value="Lisboa">Lisboa</option>
+<option value="Portalegre">Portalegre</option>
+<option value="Porto">Porto</option>
+<option value="Santarém">Santarém</option>
+<option value="Setúbal">Setúbal</option>
+<option value="Viana do Castelo">Viana do Castelo</option>
+<option value="Vila Real">Vila Real</option>
+<option value="Viseu">Viseu</option>
+<option value="Açores">Açores</option>
+<option value="Madeira">Madeira</option>
 </select>
 </div>
-<div class="form-field">
-<label for="pf-local">Zona</label>
-<input type="text" id="pf-local" name="local" placeholder="Ex: Porto – Matosinhos" required />
-</div>
-<div class="form-field full">
-<label for="pf-desc">O que precisas?</label>
-<textarea id="pf-desc" name="descricao" placeholder="Descreve o trabalho com o máximo de detalhe possível — quanto mais claro, mais rápidas e certeiras são as respostas." required></textarea>
-</div>
-<div class="form-field">
-<label for="pf-nome">O teu nome</label>
-<input type="text" id="pf-nome" name="nome" placeholder="Nome" required />
-</div>
-<div class="form-field">
-<label for="pf-contacto">Contacto</label>
-<input type="text" id="pf-contacto" name="contacto" placeholder="Email ou telemóvel" required />
-</div>
-<div class="full submit-row">
-<span class="submit-note">Ao publicares, aceitas os nossos <a href="/termos" style="color:var(--orange-dark);font-weight:700">Termos</a>.</span>
-<button type="submit" class="btn btn-orange magnetic">Publicar pedido <span class="arrow">→</span></button>
-</div>
-</div>
-</form>
-</div>
-</section>
 
-<!-- VALUE STRIP (reused floating card) -->
-<div class="value-strip">
-<div class="wrap">
-<div class="value-card" data-reveal>
-<div class="value-item">
-<span class="ic ic-orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></span>
-<div><strong>Sempre grátis</strong><span>Publicar e receber respostas não custa nada</span></div>
-</div>
-<div class="value-item">
-<span class="ic ic-mint"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/></svg></span>
-<div><strong>Só profissionais verificados</strong><span>Respondem só perfis revistos à mão</span></div>
-</div>
-<div class="value-item">
-<span class="ic ic-purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg></span>
-<div><strong>Sem intermediários</strong><span>O contacto é sempre direto</span></div>
-</div>
-<div class="value-item">
-<span class="ic ic-dark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
-<div><strong>Resposta rápida</strong><span>Objetivo de 24h por parte dos profissionais</span></div>
-</div>
-</div>
-</div>
+<div id="headstart-note" style="display:none;background:var(--blue-light);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px"></div>
+<div class="grid" id="grid"><div class="loading"><div class="spinner"></div></div></div>
 </div>
 
-<!-- RECENT REQUESTS -->
-<section>
-<div class="wrap">
-<div class="section-head center" data-reveal>
-<span class="kicker">Comunidade</span>
-<h2>Pedidos recentes</h2>
-<p>Vê o que outras pessoas estão a pedir agora em todo o país</p>
+<!-- MODAL: criar pedido -->
+<div id="modal-overlay" onclick="if(event.target===this)closeModal()">
+<div class="modal">
+<h2>📢 Publicar um Pedido</h2>
+<div class="msg error" id="m-error"></div>
+<div class="msg success" id="m-success"></div>
+<div id="modal-body">
+<div class="form-group"><label>Título *</label><input id="m-title" type="text" placeholder="Ex: Preciso de um eletricista urgente"/></div>
+<div class="form-group"><label>Categoria *</label>
+<select id="m-cat">
+<option value="">Escolhe uma categoria</option>
+<option>Eletricistas</option><option>Canalizadores</option><option>Pintores</option>
+<option>Jardineiros</option><option>Limpeza</option><option>Mudanças</option>
+<option>Pedreiros</option><option>Carpinteiros</option><option>Serralheiros</option><option>Decoradores</option><option>Programadores</option><option>Designers</option><option>Reparações Tech</option><option>Personal Trainers</option><option>Cabeleireiros</option><option>Esteticistas</option>
+<option>Outro</option>
+</select>
+</div>
+<div class="form-group"><label>Distrito *</label>
+<select id="m-district">
+<option value="">Escolhe o distrito</option>
+<option>Aveiro</option>
+<option>Beja</option>
+<option>Braga</option>
+<option>Bragança</option>
+<option>Castelo Branco</option>
+<option>Coimbra</option>
+<option>Évora</option>
+<option>Faro</option>
+<option>Guarda</option>
+<option>Leiria</option>
+<option>Lisboa</option>
+<option>Portalegre</option>
+<option>Porto</option>
+<option>Santarém</option>
+<option>Setúbal</option>
+<option>Viana do Castelo</option>
+<option>Vila Real</option>
+<option>Viseu</option>
+<option>Açores</option>
+<option>Madeira</option>
+</select>
+</div>
+<div class="form-group"><label>Cidade / Zona</label><input id="m-city" type="text" placeholder="Ex: Sintra, Braga (centro)..."/></div>
+<div class="form-group"><label>Descreve o que precisas</label><textarea id="m-desc" placeholder="Dá detalhes: quando, o que precisa de ser feito, etc."></textarea></div>
+<div class="row2">
+<div class="form-group"><label>Orçamento mín. (€)</label><input id="m-bmin" type="number" min="0" placeholder="Ex: 30"/></div>
+<div class="form-group"><label>Orçamento máx. (€)</label><input id="m-bmax" type="number" min="0" placeholder="Ex: 100"/></div>
+</div>
+<div class="form-group">
+<label>Fotos (opcional, até 4)</label>
+<div class="photo-strip" id="m-photo-strip">
+<div class="photo-add" onclick="document.getElementById('m-photo-file').click()">➕</div>
+</div>
+<input type="file" id="m-photo-file" accept="image/*" multiple style="display:none" onchange="handlePhotoSelect(this)"/>
+</div>
+</div>
+<div class="modal-actions">
+<button class="btn btn-ghost" style="border:1.5px solid var(--border)" onclick="closeModal()">Cancelar</button>
+<button class="btn btn-gold" id="submit-btn" onclick="submitRequest()">Publicar</button>
+</div>
+</div>
 </div>
 
-<div class="filter-bar" id="filterBar" data-reveal>
-<button class="filter-chip active" data-filter="todos">Todos</button>
-<button class="filter-chip" data-filter="eletricistas">Eletricistas</button>
-<button class="filter-chip" data-filter="canalizadores">Canalizadores</button>
-<button class="filter-chip" data-filter="pintores">Pintores</button>
-<button class="filter-chip" data-filter="limpeza">Limpeza</button>
-<button class="filter-chip" data-filter="programadores">Programadores</button>
-<button class="filter-chip" data-filter="designers">Designers</button>
-</div>
-
-<div class="req-grid" id="reqGrid" style="margin-top:32px">
-<div class="req-card" data-cat="eletricistas" data-reveal="d1">
-<span class="cat-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg></span>
-<div class="body">
-<h3>Instalação elétrica em cozinha nova</h3>
-<p>Preciso de rever toda a instalação de uma cozinha remodelada, incluir tomadas extra e quadro elétrico.</p>
-<div class="meta"><span class="req-tag">Eletricistas</span><span class="req-tag">Porto – Matosinhos</span></div>
-</div>
-<span class="when">há 4 min</span>
-</div>
-<div class="req-card v-mint" data-cat="canalizadores" data-reveal="d2">
-<span class="cat-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/></svg></span>
-<div class="body">
-<h3>Fuga de água na casa de banho</h3>
-<p>Fuga por baixo do lavatório, preciso de alguém disponível esta semana.</p>
-<div class="meta"><span class="req-tag">Canalizadores</span><span class="req-tag">Braga – Barcelos</span></div>
-</div>
-<span class="when">há 20 min</span>
-</div>
-<div class="req-card" data-cat="pintores" data-reveal="d3">
-<span class="cat-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19a3 3 0 0 0 3-3V4H9v12a3 3 0 0 0 3 3Z"/></svg></span>
-<div class="body">
-<h3>Pintura de sala e corredor</h3>
-<p>Apartamento T2, preciso de orçamento para pintar sala e corredor, cor a combinar.</p>
-<div class="meta"><span class="req-tag">Pintores</span><span class="req-tag">Lisboa – Amadora</span></div>
-</div>
-<span class="when">há 35 min</span>
-</div>
-<div class="req-card v-purple" data-cat="limpeza" data-reveal="d1">
-<span class="cat-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 21 9-9m0 0 8-8m-8 8-5-5m5 5 5 5"/></svg></span>
-<div class="body">
-<h3>Limpeza pós-obra de escritório</h3>
-<p>Escritório de 120m² após pequena obra, preciso de limpeza profunda antes de reabrir.</p>
-<div class="meta"><span class="req-tag">Limpeza</span><span class="req-tag">Coimbra – Coimbra</span></div>
-</div>
-<span class="when">há 1h</span>
-</div>
-<div class="req-card" data-cat="programadores" data-reveal="d2">
-<span class="cat-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m8 6-6 6 6 6m8-12 6 6-6 6"/></svg></span>
-<div class="body">
-<h3>Pequenas correções num site em WordPress</h3>
-<p>Site já existente precisa de ajustes de layout mobile e uma nova página de contactos.</p>
-<div class="meta"><span class="req-tag">Programadores</span><span class="req-tag">Remoto</span></div>
-</div>
-<span class="when">há 2h</span>
-</div>
-<div class="req-card v-mint" data-cat="designers" data-reveal="d3">
-<span class="cat-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg></span>
-<div class="body">
-<h3>Logótipo para novo negócio de restauração</h3>
-<p>Preciso de identidade visual simples — logótipo e paleta de cores para um restaurante novo.</p>
-<div class="meta"><span class="req-tag">Designers</span><span class="req-tag">Setúbal – Setúbal</span></div>
-</div>
-<span class="when">há 3h</span>
-</div>
-<div class="req-card" data-cat="eletricistas" data-reveal="d1">
-<span class="cat-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg></span>
-<div class="body">
-<h3>Substituição de quadro elétrico antigo</h3>
-<p>Casa antiga, quadro elétrico já não cumpre normas atuais — preciso de substituição completa.</p>
-<div class="meta"><span class="req-tag">Eletricistas</span><span class="req-tag">Faro – Faro</span></div>
-</div>
-<span class="when">há 5h</span>
-</div>
-<div class="req-card v-purple" data-cat="pintores" data-reveal="d2">
-<span class="cat-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19a3 3 0 0 0 3-3V4H9v12a3 3 0 0 0 3 3Z"/></svg></span>
-<div class="body">
-<h3>Pintura exterior de moradia</h3>
-<p>Fachada de moradia com cerca de 140m², preciso de orçamento e disponibilidade em setembro.</p>
-<div class="meta"><span class="req-tag">Pintores</span><span class="req-tag">Guimarães – Guimarães</span></div>
-</div>
-<span class="when">há 6h</span>
-</div>
-</div>
-<p class="req-empty" id="reqEmpty">Ainda não há pedidos nesta categoria. <a href="#postForm" style="color:var(--orange-dark);font-weight:700">Sê o primeiro a publicar</a>.</p>
-</div>
-</section>
-
-<!-- FINAL CTA -->
-<section>
-<div class="wrap">
-<div class="final-cta spotlight" data-reveal>
-<div class="hero-orbs" aria-hidden="true"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span></div><div class="glow-spot" aria-hidden="true"></div>
-<span class="kicker" style="color:var(--mint)">És profissional?</span>
-<h2>Estes pedidos podiam ser <span class="hi-block mint">teus</span></h2>
-<p>Cria o teu perfil grátis e começa a receber pedidos como estes na tua zona.</p>
-<div class="ctas">
-<a href="/auth?tab=register" class="btn btn-orange magnetic">Criar perfil grátis <span class="arrow">→</span></a>
-<a href="/como-funciona" class="btn btn-ghost-dark">Como funciona</a>
-</div>
-</div>
-</div>
-</section>
-
-</main>
-
-<footer>
-<div class="wrap footer-top">
-<div>
-<a href="/" class="footer-logo">Flink<span>o</span></a>
-<p>O marketplace de serviços profissionais em Portugal. Conectamos clientes a profissionais de confiança.</p>
-</div>
-<div class="footer-col">
-<h4>Flinko</h4>
-<ul>
-<li><a href="/como-funciona">Como funciona</a></li>
-<li><a href="/porque-escolher">Porquê a Flinko</a></li>
-<li><a href="/pricing">Preços</a></li>
-<li><a href="/blog">Blog</a></li>
-<li><a href="/contacto">Contacto</a></li>
-</ul>
-</div>
-<div class="footer-col">
-<h4>Profissionais</h4>
-<ul>
-<li><a href="/categoria">Todas as categorias</a></li>
-<li><a href="/profissionais">Para profissionais</a></li>
-<li><a href="/auth?tab=register">Registar profissional</a></li>
-<li><a href="mailto:proliga.pt@gmail.com">proliga.pt@gmail.com</a></li>
-</ul>
-</div>
-</div>
-<div class="wrap footer-bottom">
-<span>© 2026 Flinko · Portugal</span>
-<span class="legal">
-<a href="/termos">Termos</a>
-<a href="/privacidade">Privacidade</a>
-<a href="/cookies">Cookies</a>
-<a href="/rgpd">RGPD</a>
-</span>
-</div>
-</footer>
-
-<button class="to-top" id="toTop" aria-label="Voltar ao topo">
-<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m18 15-6-6-6 6"/></svg>
-</button>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/escape-html.js"></script>
+<script src="/assets/a11y-clickable.js" defer></script>
+<script src="/assets/resize-image.js"></script>
 <script>
-(function(){
-var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
+const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
+let session=null,allRequests=[],offerCounts={},myOffers={}
+let pendingPhotos=[]
 
-var toggle = document.getElementById('navToggle');
-toggle.addEventListener('click', function(){
-var open = document.body.classList.toggle('menu-open');
-toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-});
+const CATEGORIES=['Eletricistas','Canalizadores','Pintores','Jardineiros','Limpeza','Mudanças','Pedreiros','Carpinteiros','Serralheiros','Decoradores','Programadores','Designers','Reparações Tech','Personal Trainers','Cabeleireiros','Esteticistas','Outro']
+const CAT_ICONS={'Eletricistas':'⚡','Canalizadores':'🔧','Pintores':'🎨','Jardineiros':'🌿','Limpeza':'🧹','Mudanças':'📦','Pedreiros':'🧱','Carpinteiros':'🪚','Serralheiros':'🔩','Decoradores':'🖼️','Programadores':'💻','Designers':'✏️','Reparações Tech':'🔌','Personal Trainers':'🏋️','Cabeleireiros':'💇','Esteticistas':'💅','Outro':'🛠️'}
 
-var header = document.getElementById('siteHeader');
-var progress = document.getElementById('scrollProgress');
-if(header || progress){
-var onScroll = function(){
-if(header) header.classList.toggle('condensed', window.scrollY > 30);
-if(progress){
-var h = document.documentElement;
-var max = h.scrollHeight - h.clientHeight;
-var pct = max > 0 ? (window.scrollY / max) * 100 : 0;
-progress.style.width = pct + '%';
+// Quem chega aqui vindo de uma categoria/pesquisa sem profissionais (ver
+// categoria.html e as paginas de categoria) traz ?cat=X na URL. Pre-filtra
+// a lista por essa categoria e oferece logo o atalho para publicar o pedido
+// já com a categoria escolhida.
+const prefillCat=new URLSearchParams(location.search).get('cat')||''
+
+async function init(){
+const catSel=document.getElementById('f-cat')
+CATEGORIES.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;catSel.appendChild(o)})
+
+if(prefillCat&&CATEGORIES.includes(prefillCat)){
+catSel.value=prefillCat
+const note=document.getElementById('cat-context-note')
+note.innerHTML=`Não encontraste profissionais de <strong>${prefillCat}</strong>? Publica um pedido nesta categoria e os profissionais candidatam-se a ti. <a href="#" onclick="openModal('${prefillCat.replace(/'/g,"\\'")}');return false" style="color:#fff;text-decoration:underline;font-weight:700">Publicar pedido em ${prefillCat} →</a>`
+note.style.display='block'
 }
-};
-document.addEventListener('scroll', function(){ requestAnimationFrame(onScroll); }, {passive:true});
 
-[output truncated at 50000 of 53206 characters. Pass a larger max_chars (default 50000) to see more, or use read_page with a ref_id to focus on a smaller section.]
+const{data:{session:s}}=await db.auth.getSession()
+session=s
+if(session){
+document.getElementById('nav-guest').style.display='none'
+const u=document.getElementById('nav-user');u.style.display='flex'
+const name=session.user.user_metadata?.name||session.user.email||'U'
+document.getElementById('nav-avatar').textContent=name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase()
+}
+
+await loadRequests()
+}
+
+async function loadRequests(){
+const{data,error}=await db.from('requests').select('*,profiles:client_id(name,photo_url)').eq('status','open').order('created_at',{ascending:false})
+if(error){document.getElementById('grid').innerHTML='<div class="empty">Erro ao carregar pedidos.</div>';return}
+allRequests=data||[]
+await loadOfferCounts()
+renderList()
+showHeadStartNotice()
+}
+
+async function loadOfferCounts(){
+offerCounts={};myOffers={}
+if(!allRequests.length)return
+const ids=allRequests.map(r=>r.id)
+const{data}=await db.from('request_offers').select('request_id,professional_id,message,price_from,price_to').in('request_id',ids)
+;(data||[]).forEach(o=>{
+offerCounts[o.request_id]=(offerCounts[o.request_id]||0)+1
+if(session&&o.professional_id===session.user.id)myOffers[o.request_id]=o
+})
+}
+
+// Os pedidos das ultimas 2 horas so aparecem a quem tem plano Pro.
+// O filtro esta na politica de seguranca da base de dados, nao aqui:
+// isto e so o aviso, para o utilizador perceber o que se passa.
+async function showHeadStartNotice(){
+const alvo=document.getElementById('headstart-note')
+if(!alvo)return
+if(!session){alvo.style.display='none';return}
+try{
+  const{data:atraso}=await db.rpc('my_request_delay_minutes')
+  const mins=Number(atraso)||0
+  if(mins<=0){alvo.style.display='none';return}
+  const h=mins>=60?String(Math.round(mins/60))+(Math.round(mins/60)===1?' hora':' horas'):mins+' min'
+  alvo.innerHTML='Os pedidos das últimas '+h+' aparecem primeiro a quem tem o plano Pro. '+
+    '<a href="pricing.html" style="color:var(--blue);font-weight:700">Ver o plano</a>'
+  alvo.style.display='block'
+}catch(e){alvo.style.display='none'}
+}
+
+function timeAgo(iso){
+const diff=(Date.now()-new Date(iso).getTime())/1000
+if(diff<3600)return Math.max(1,Math.floor(diff/60))+'m atrás'
+if(diff<86400)return Math.floor(diff/3600)+'h atrás'
+if(diff<604800)return Math.floor(diff/86400)+'d atrás'
+return new Date(iso).toLocaleDateString('pt-PT')
+}
+
+function renderList(){
+const search=document.getElementById('f-search').value.toLowerCase().trim()
+const cat=document.getElementById('f-cat').value
+const loc=document.getElementById('f-loc').value
+let list=allRequests.filter(r=>{
+if(cat&&r.category!==cat)return false
+if(loc&&!(r.location||'').startsWith(loc))return false
+if(search&&!(r.title+' '+(r.description||'')).toLowerCase().includes(search))return false
+return true
+})
+const grid=document.getElementById('grid')
+if(!list.length){
+grid.innerHTML='<div class="empty"><div class="ico">📭</div>Ainda não há pedidos que correspondam.<br>Sê o primeiro a publicar!</div>'
+return
+}
+grid.innerHTML=list.map(r=>{
+const budget=r.budget_from?('€'+r.budget_from+(r.budget_to?' – €'+r.budget_to:'+')):''
+const clientName=r.profiles?.name||'Cliente'
+const cover=(r.photo_urls&&r.photo_urls[0])
+  ?`<div class="req-cover" style="background-image:url('${escapeHtml(cover0(r))}')"><div class="req-cover-fade"></div><span class="req-cover-cat">${escapeHtml(r.category)}</span></div>`
+  :`<div class="req-cover placeholder">${CAT_ICONS[r.category]||'🛠️'}</div>`
+const nOffers=offerCounts[r.id]||0
+const isOwner=session&&session.user.id===r.client_id
+const mine=myOffers[r.id]
+let footer=''
+if(isOwner){
+  footer=`<div class="req-footer"><a class="btn btn-outline" href="dashboard.html" style="flex:1;justify-content:center">📋 Ver no dashboard</a></div>`
+}else{
+  footer=`<div class="req-footer">
+    <button class="btn btn-solid" onclick="contactClient('${r.client_id}')">💬 Contactar</button>
+    <button class="btn btn-outline" onclick="toggleOfferPanel('${r.id}')">${mine?'✏️ A minha proposta':'💰 Responder'}</button>
+  </div>
+  <div class="offer-panel" id="offer-panel-${r.id}">
+    ${mine?offerMineHtml(mine):offerFormHtml(r.id)}
+  </div>`
+}
+return `<div class="req-card">
+${cover}
+<div class="req-body">
+<div class="req-top"><div class="req-title">${escapeHtml(r.title)}</div><div class="req-time">${timeAgo(r.created_at)}</div></div>
+<div class="req-loc">📍 ${escapeHtml(r.location)} · por ${escapeHtml(clientName)}</div>
+${r.description?'<div class="req-desc">'+escapeHtml(r.description)+'</div>':''}
+<div class="req-meta-row">
+${budget?'<div class="req-budget">💰 '+budget+'</div>':'<span></span>'}
+${nOffers?'<div class="req-offers-pill">'+nOffers+' proposta'+(nOffers>1?'s':'')+'</div>':''}
+</div>
+${footer}
+</div>
+</div>`
+}).join('')
+}
+
+function cover0(r){return (r.photo_urls&&r.photo_urls[0])||''}
+
+function offerFormHtml(reqId){
+return `<div class="price-hint" id="price-hint-${reqId}"></div>
+<textarea id="offer-msg-${reqId}" placeholder="Escreve uma breve mensagem (ex: disponibilidade, o que inclui o preço...)"></textarea>
+<div class="offer-row2">
+<input type="number" min="0" id="offer-from-${reqId}" placeholder="Preço de (€)"/>
+<input type="number" min="0" id="offer-to-${reqId}" placeholder="Preço até (€)"/>
+</div>
+<button class="btn btn-gold btn-sm" onclick="sendOffer('${reqId}')">Enviar proposta</button>`
+}
+
+const priceSuggestCache={}
+async function loadPriceSuggestion(reqId){
+if(priceSuggestCache[reqId]!==undefined)return
+priceSuggestCache[reqId]=null
+const box=document.getElementById('price-hint-'+reqId)
+if(!box)return
+const{data,error}=await db.rpc('get_price_suggestion',{p_request_id:reqId})
+if(error||!data||!data.n||data.n<3||data.low==null){return}
+priceSuggestCache[reqId]=data
+box.classList.add('show')
+box.innerHTML=`💡 Outros profissionais propuseram entre <strong>€${Number(data.low).toFixed(0)}</strong> e <strong>€${Number(data.high).toFixed(0)}</strong> para pedidos parecidos.`
+}
+
+function offerMineHtml(o){
+const preco=o.price_from?('€'+o.price_from+(o.price_to?' – €'+o.price_to:'')):'Sem preço indicado'
+return `<div class="offer-mine"><strong>${preco}</strong><br>${escapeHtml(o.message||'(sem mensagem)')}</div>
+<button class="btn btn-outline btn-sm" onclick="editMyOffer('${o.request_id}')">Editar proposta</button>`
+}
+
+function editMyOffer(reqId){
+const panel=document.getElementById('offer-panel-'+reqId)
+const o=myOffers[reqId]
+panel.innerHTML=offerFormHtml(reqId)
+if(o){
+document.getElementById('offer-msg-'+reqId).value=o.message||''
+document.getElementById('offer-from-'+reqId).value=o.price_from||''
+document.getElementById('offer-to-'+reqId).value=o.price_to||''
+}
+loadPriceSuggestion(reqId)
+}
+
+function toggleOfferPanel(reqId){
+if(!session){location.href='auth.html?tab=login&redirect=pedidos.html&intent=professional';return}
+const panel=document.getElementById('offer-panel-'+reqId)
+panel.classList.toggle('open')
+if(panel.classList.contains('open'))loadPriceSuggestion(reqId)
+}
+
+async function sendOffer(reqId){
+const msg=document.getElementById('offer-msg-'+reqId).value.trim()
+const from=document.getElementById('offer-from-'+reqId).value
+const to=document.getElementById('offer-to-'+reqId).value
+const{error}=await db.from('request_offers').upsert({
+request_id:reqId,professional_id:session.user.id,
+message:msg||null,
+price_from:from?parseFloat(from):null,
+price_to:to?parseFloat(to):null
+},{onConflict:'request_id,professional_id'})
+if(error){alert('Erro ao enviar proposta: '+error.message);return}
+await loadOfferCounts()
+renderList()
+}
+
+
+function contactClient(clientId){
+if(!session){location.href='auth.html?tab=login&redirect='+encodeURIComponent('messages.html?with='+clientId)+'&intent=professional';return}
+if(session.user.id===clientId){alert('Este é o teu próprio pedido.');return}
+location.href='messages.html?with='+clientId
+}
+
+function openModal(cat){
+if(!session){location.href='auth.html?tab=login&redirect='+encodeURIComponent('pedidos.html'+location.search)+'&intent=client';return}
+pendingPhotos=[]
+renderPhotoStrip()
+document.getElementById('modal-overlay').classList.add('open')
+if(cat&&CATEGORIES.includes(cat))document.getElementById('m-cat').value=cat
+}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open')}
+
+function renderPhotoStrip(){
+const strip=document.getElementById('m-photo-strip')
+const thumbs=pendingPhotos.map((url,i)=>`<div class="photo-thumb"><img src="${escapeHtml(url)}" alt="Pré-visualização da foto ${i+1} anexada ao pedido"/><div class="rm" onclick="removePhoto(${i})">✕</div></div>`).join('')
+const addBtn=pendingPhotos.length<4?'<div class="photo-add" onclick="document.getElementById(&quot;m-photo-file&quot;).click()">➕</div>':''
+strip.innerHTML=thumbs+addBtn
+}
+function removePhoto(i){pendingPhotos.splice(i,1);renderPhotoStrip()}
+
+async function handlePhotoSelect(input){
+const files=Array.from(input.files||[]).slice(0,4-pendingPhotos.length)
+input.value=''
+for(const file of files){
+if(file.size>5*1024*1024)continue
+try{
+const uploadFile=await resizeImageFile(file)
+const ext=uploadFile.name.split('.').pop()
+const path=`requests/${session.user.id}/${Date.now()}-${Math.random().toString(36).slice(2,7)}.${ext}`
+const{error}=await db.storage.from('proliga-media').upload(path,uploadFile,{contentType:uploadFile.type})
+if(error){console.error(error);continue}
+const{data:urlData}=db.storage.from('proliga-media').getPublicUrl(path)
+pendingPhotos.push(urlData.publicUrl)
+}catch(e){console.error(e)}
+}
+renderPhotoStrip()
+}
+
+async function submitRequest(){
+const title=document.getElementById('m-title').value.trim()
+const category=document.getElementById('m-cat').value
+const _mdistrict=document.getElementById('m-district').value
+const _mcity=document.getElementById('m-city').value.trim()
+const location=_mdistrict?(_mcity?_mdistrict+' – '+_mcity:_mdistrict):''
+const description=document.getElementById('m-desc').value.trim()
+const bmin=document.getElementById('m-bmin').value
+const bmax=document.getElementById('m-bmax').value
+const btn=document.getElementById('submit-btn')
+document.getElementById('m-error').style.display='none'
+if(!title||!category||!location){
+const el=document.getElementById('m-error');el.textContent='Preenche título, categoria e zona.';el.style.display='block';return
+}
+btn.disabled=true;btn.textContent='A publicar...'
+const{data:novo,error}=await db.from('requests').insert({
+client_id:session.user.id,title,category,location,
+description:description||null,
+budget_from:bmin?parseFloat(bmin):null,
+budget_to:bmax?parseFloat(bmax):null,
+photo_urls:pendingPhotos
+}).select('id').single()
+btn.disabled=false;btn.textContent='Publicar'
+if(error){
+const el=document.getElementById('m-error');el.textContent='Erro ao publicar: '+error.message;el.style.display='block';return
+}
+const el=document.getElementById('m-success');el.textContent='Pedido publicado com sucesso!';el.style.display='block'
+notifyMatchingProfessionals(novo&&novo.id)
+setTimeout(()=>{
+closeModal()
+document.getElementById('m-success').style.display='none'
+;['m-title','m-desc','m-bmin','m-bmax'].forEach(id=>document.getElementById(id).value='')
+document.getElementById('m-cat').value=''
+document.getElementById('m-district').value=''
+document.getElementById('m-city').value=''
+pendingPhotos=[]
+loadRequests()
+},1200)
+}
+
+// Nao lemos emails aqui. Mandamos so o id do pedido; o servidor confirma
+// que o pedido e nosso e descobre os destinatarios sozinho.
+async function notifyMatchingProfessionals(requestId){
+if(!requestId)return
+try{
+const{data:{session:s}}=await db.auth.getSession()
+if(!s)return
+await fetch('/.netlify/functions/notify-request',{
+method:'POST',
+headers:{'Content-Type':'application/json','Authorization':'Bearer '+s.access_token},
+body:JSON.stringify({requestId})
+})
+}catch(e){}
+}
+init()
+</script>
+</body>
+</html>
