@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Pedido – Flinko</title>
+<meta name="description" content="Detalhe de um pedido de cliente em Portugal."/>
+<meta name="robots" content="noindex, follow"/>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
+<link rel="shortcut icon" href="/favicon.ico"/>
+<link rel="manifest" href="/manifest.json"/>
+<meta name="theme-color" content="#132420"/>
+<script src="/assets/pwa.js" defer></script>
+<script src="/assets/a11y-clickable.js" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--ink:#132420;--ink-soft:#4E5C57;--ink-mute:#84918C;
+--paper:#FFFFFF;--surface:#F3FBF6;--line:#E1EEE6;--line-2:#CFE4D9;
+--accent:#E8720A;--accent-deep:#B85608;--accent-soft:#FFE7CE;
+--fresh:#0F8B5F;--fresh-deep:#0A6B49;--fresh-soft:#D7F5E4;--fresh-light:#6FE3B4;
+--gold:#AF620A;--gold-light:#FFF3E4;
+--red:#C0362C;--red-light:#FDECEA;
+--shadow:0 1px 2px rgba(19,36,32,.04),0 8px 20px rgba(19,36,32,.06);
+--shadow-lift:0 6px 10px rgba(19,36,32,.06),0 18px 34px rgba(19,36,32,.12);
+}
+body{font-family:'Inter',sans-serif;color:var(--ink);background:var(--surface)}
+a{text-decoration:none;color:inherit}
+h1,h2,h3,.logo{font-family:'Plus Jakarta Sans',sans-serif}
+img{display:block;max-width:100%}
+
+/* NAV (igual à de pedidos.html) */
+nav{position:sticky;top:0;z-index:200;background:var(--paper);border-bottom:1px solid var(--line);padding:0 5%;height:64px;display:flex;align-items:center;gap:16px}
+.logo{font-size:20px;font-weight:800;color:var(--ink);letter-spacing:-.01em;white-space:nowrap}.logo span{color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.btn{padding:9px 17px;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s;font-family:inherit;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-ghost{background:transparent;color:var(--ink)}.btn-ghost:hover{background:var(--surface)}
+.btn-outline{background:transparent;color:var(--ink);border-color:var(--line-2)}.btn-outline:hover{border-color:var(--ink-mute)}
+.btn-solid{background:linear-gradient(100deg,var(--accent),var(--accent-deep));color:#fff;box-shadow:0 4px 12px rgba(232,114,10,.25)}.btn-solid:hover{filter:brightness(1.05)}
+.btn-fresh{background:linear-gradient(100deg,var(--fresh),var(--fresh-deep));color:#fff;box-shadow:0 4px 12px rgba(15,139,95,.25)}.btn-fresh:hover{filter:brightness(1.06)}
+.btn-sm{padding:7px 13px;font-size:12.5px}
+.nav-avatar{width:32px;height:32px;border-radius:9px;background:var(--ink);color:#fff;font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer}
+@media(max-width:680px){
+nav{flex-wrap:wrap;height:auto;padding:10px 4%;row-gap:8px}
+.nav-right{width:100%;justify-content:flex-end;flex-wrap:wrap;row-gap:8px}
+.nav-right .btn{padding:7px 13px;font-size:12.5px}
+}
+
+.wrap{max-width:1000px;margin:0 auto;padding:0 5% 60px}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--ink-soft);margin:20px 0 18px}
+.back-link:hover{color:var(--ink)}
+.loading{text-align:center;padding:100px 20px}
+.spinner{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--fresh);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.detail-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:26px;align-items:start}
+@media(max-width:800px){.detail-grid{grid-template-columns:1fr}}
+
+.detail-gallery{border-radius:18px;overflow:hidden;background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow)}
+.detail-gallery-main{height:340px;position:relative;background:var(--paper)}
+.detail-gallery-main.has-photo{cursor:zoom-in}
+.detail-gallery-main img{width:100%;height:100%;object-fit:cover}
+.detail-gallery-main.placeholder{display:flex;align-items:center;justify-content:center;font-size:68px;background:linear-gradient(135deg,var(--fresh-soft),var(--accent-soft))}
+.detail-gallery-thumbs{display:flex;gap:8px;padding:10px;flex-wrap:wrap}
+.detail-gallery-thumbs img{width:58px;height:58px;border-radius:9px;object-fit:cover;cursor:pointer;border:2px solid transparent;opacity:.7}
+.detail-gallery-thumbs img.active{border-color:var(--fresh);opacity:1}
+
+.detail-main{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:var(--shadow)}
+.detail-badges{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:99px}
+.pill-cat{background:var(--accent-soft);color:var(--accent-deep)}
+.pill-urgent{background:linear-gradient(100deg,var(--accent),var(--accent-deep));color:#fff}
+.pill-owner{background:var(--ink);color:#fff}
+.detail-title{font-size:25px;font-weight:800;margin-bottom:12px;line-height:1.25}
+.detail-meta-row{font-size:13.5px;color:var(--ink-mute);margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.detail-client{display:flex;align-items:center;gap:8px}
+.detail-client-avatar{width:26px;height:26px;border-radius:8px;background:var(--ink);color:#fff;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.detail-client-avatar img{width:100%;height:100%;object-fit:cover}
+.detail-budget{display:inline-block;margin-bottom:18px;font-size:14.5px;font-weight:700;color:var(--fresh-deep);background:var(--fresh-soft);padding:6px 14px;border-radius:99px}
+.detail-desc{font-size:14.5px;line-height:1.75;color:var(--ink-soft);margin-bottom:24px;white-space:pre-line}
+.detail-actions{display:flex;gap:10px;flex-wrap:wrap}
+.detail-actions .btn{padding:12px 20px}
+
+.offer-panel-detail{display:none;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;gap:10px;flex-direction:column;margin-top:16px}
+.offer-panel-detail.open{display:flex}
+.offer-panel-detail textarea{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:9px;font-size:13.5px;font-family:inherit;resize:vertical;min-height:64px;outline:none;background:var(--paper)}
+.offer-panel-detail textarea:focus{border-color:var(--fresh)}
+.offer-row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.offer-row2 input{padding:10px 12px;border:1.5px solid var(--line);border-radius:9px;font-size:13.5px;font-family:inherit;outline:none;background:var(--paper)}
+.offer-row2 input:focus{border-color:var(--fresh)}
+.price-hint{display:none;background:var(--accent-soft);color:var(--accent-deep);font-size:12.5px;padding:9px 12px;border-radius:9px;line-height:1.5}
+.price-hint.show{display:block}
+.offer-mine{background:var(--fresh-soft);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--fresh-deep);line-height:1.6;margin-top:16px}
+
+.offers-section{margin-top:34px}
+.offers-section h2{font-size:18px;font-weight:800;margin-bottom:14px}
+.offer-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;gap:12px;margin-bottom:10px;box-shadow:var(--shadow)}
+.oc-avatar{width:40px;height:40px;border-radius:11px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13.5px;flex-shrink:0;overflow:hidden}
+.oc-avatar img{width:100%;height:100%;object-fit:cover}
+.oc-body{flex:1}
+.oc-name-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.oc-name{font-weight:700;font-size:13.5px}
+.oc-verified{color:var(--fresh-deep);font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:2px}
+.oc-cat{font-size:11.5px;color:var(--ink-mute)}
+.oc-price{font-weight:700;color:var(--fresh-deep);font-size:13px;margin:6px 0 4px}
+.oc-msg{font-size:13px;color:var(--ink-soft);line-height:1.5}
+.oc-empty{color:var(--ink-mute);font-size:13.5px;background:var(--paper);border:1px dashed var(--line-2);border-radius:14px;padding:24px;text-align:center}
+
+.not-found{text-align:center;padding:80px 20px}
+.not-found .ico{font-size:48px;margin-bottom:14px}
+.not-found h2{font-size:19px;margin-bottom:8px}
+.not-found p{color:var(--ink-mute);font-size:14px;margin-bottom:20px}
+
+/* LIGHTBOX */
+#lightbox-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,17,.9);z-index:1000;align-items:center;justify-content:center;padding:20px}
+#lightbox-overlay.open{display:flex}
+.lightbox-inner{position:relative;max-width:920px;width:100%;display:flex;flex-direction:column;align-items:center;gap:14px}
+.lightbox-img-wrap{width:100%;max-height:68vh;display:flex;align-items:center;justify-content:center}
+.lightbox-img-wrap img{max-width:100%;max-height:68vh;border-radius:14px;object-fit:contain;box-shadow:var(--shadow-lift)}
+.lightbox-close{position:absolute;top:-46px;right:0;background:rgba(255,255,255,.14);color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer}
+.lightbox-close:hover{background:rgba(255,255,255,.26)}
+.lightbox-nav{display:flex;gap:18px;align-items:center}
+.lightbox-arrow{background:rgba(255,255,255,.14);color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0}
+.lightbox-arrow:hover{background:rgba(255,255,255,.28)}
+.lightbox-count{color:rgba(255,255,255,.85);font-size:13px;font-weight:600;min-width:52px;text-align:center}
+.lightbox-thumbs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:100%}
+.lightbox-thumb{width:52px;height:52px;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;opacity:.6;flex-shrink:0}
+.lightbox-thumb.active{border-color:var(--fresh-light);opacity:1}
+.lightbox-thumb img{width:100%;height:100%;object-fit:cover}
+</style>
+</head>
+<body>
+
+<nav>
+<a href="index.html" class="logo">Flink<span>o</span></a>
+<div class="nav-right">
+<a href="categoria.html" class="btn btn-ghost">🛠️ Profissionais</a>
+<a href="pedidos.html" class="btn btn-ghost">📢 Pedidos</a>
+<div id="nav-guest" style="display:flex;gap:8px">
+<a href="auth.html?tab=login" class="btn btn-ghost">Entrar</a>
+<a href="auth.html?tab=register" class="btn btn-solid">Registar</a>
+</div>
+<div id="nav-user" style="display:none;align-items:center;gap:8px">
+<a href="dashboard.html" class="btn btn-outline">Dashboard</a>
+<div class="nav-avatar" id="nav-avatar" onclick="location.href='dashboard.html'">?</div>
+</div>
+</div>
+</nav>
+
+<div class="wrap">
+<a href="pedidos.html" class="back-link">← Voltar aos pedidos</a>
+<div id="detail-root"><div class="loading"><div class="spinner"></div></div></div>
+</div>
+
+<!-- LIGHTBOX: galeria de fotos -->
+<div id="lightbox-overlay" onclick="if(event.target===this)closeLightbox()">
+<div class="lightbox-inner">
+<div class="lightbox-close" onclick="closeLightbox()">✕</div>
+<div class="lightbox-img-wrap"><img id="lightbox-img" src="" alt="Foto do pedido"/></div>
+<div class="lightbox-nav">
+<div class="lightbox-arrow" onclick="lightboxStep(-1)">‹</div>
+<span class="lightbox-count" id="lightbox-count"></span>
+<div class="lightbox-arrow" onclick="lightboxStep(1)">›</div>
+</div>
+<div class="lightbox-thumbs" id="lightbox-thumbs"></div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/escape-html.js"></script>
+<script>
+const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
+const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
+let session=null,currentRequest=null,currentOffers=[],myOffer=null
+const reqId=new URLSearchParams(location.search).get('id')
+
+const CAT_ICONS={'Eletricistas':'⚡','Canalizadores':'🔧','Pintores':'🎨','Jardineiros':'🌿','Limpeza':'🧹','Mudanças':'📦','Pedreiros':'🧱','Carpinteiros':'🪚','Serralheiros':'🔩','Decoradores':'🖼️','Programadores':'💻','Designers':'✏️','Reparações Tech':'🔌','Personal Trainers':'🏋️','Cabeleireiros':'💇','Esteticistas':'💅','Outro':'🛠️'}
+
+function timeAgo(iso){
+const diff=(Date.now()-new Date(iso).getTime())/1000
+if(diff<3600)return Math.max(1,Math.floor(diff/60))+'m atrás'
+if(diff<86400)return Math.floor(diff/3600)+'h atrás'
+if(diff<604800)return Math.floor(diff/86400)+'d atrás'
+return new Date(iso).toLocaleDateString('pt-PT')
+}
+
+async function init(){
+const{data:{session:s}}=await db.auth.getSession()
+session=s
+if(session){
+document.getElementById('nav-guest').style.display='none'
+const u=document.getElementById('nav-user');u.style.display='flex'
+const name=session.user.user_metadata?.name||session.user.email||'U'
+document.getElementById('nav-avatar').textContent=name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase()
+}
+
+if(!reqId){showNotFound();return}
+const{data,error}=await db.from('requests').select('*,profiles:client_id(name,photo_url)').eq('id',reqId).single()
+if(error||!data){showNotFound();return}
+currentRequest=data
+document.title=data.title+' – Flinko'
+await loadOffers()
+render()
+}
+
+function showNotFound(){
+document.getElementById('detail-root').innerHTML=`<div class="not-found"><div class="ico">🔍</div><h2>Pedido não encontrado</h2><p>Pode ter sido removido, fechado, ou o link está incorreto.</p><a href="pedidos.html" class="btn btn-solid">Ver todos os pedidos</a></div>`
+document.title='Pedido não encontrado – Flinko'
+}
+
+async function loadOffers(){
+const{data}=await db.from('request_offers').select('*,profiles:professional_id(name,photo_url,category,verified)').eq('request_id',reqId)
+currentOffers=data||[]
+if(session)myOffer=currentOffers.find(o=>o.professional_id===session.user.id)||null
+}
+
+function render(){
+const r=currentRequest
+const isOwner=session&&session.user.id===r.client_id
+const photos=r.photo_urls||[]
+const clientName=r.profiles?.name||'Cliente'
+const clientPhoto=r.profiles?.photo_url
+const clientInitials=clientName.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase()
+const clientAvatar=clientPhoto?`<img src="${escapeHtml(clientPhoto)}" alt=""/>`:clientInitials
+const budget=r.budget_from?('€'+r.budget_from+(r.budget_to?' – €'+r.budget_to:'+')):''
+
+const gallery=photos.length
+  ?`<div class="detail-gallery"><div class="detail-gallery-main has-photo" id="gallery-main" onclick="openLightbox()"><img id="gallery-main-img" src="${escapeHtml(photos[0])}" alt="Foto do pedido: ${escapeHtml(r.title)}"/></div>${photos.length>1?`<div class="detail-gallery-thumbs" id="gallery-thumbs">${photos.map((p,i)=>`<img src="${escapeHtml(p)}" class="${i===0?'active':''}" onclick="setGalleryMain(${i})" alt=""/>`).join('')}</div>`:''}</div>`
+  :`<div class="detail-gallery"><div class="detail-gallery-main placeholder">${CAT_ICONS[r.category]||'🛠️'}</div></div>`
+
+let footer=''
+if(isOwner){
+footer=`<div class="detail-actions"><a class="btn btn-outline" href="dashboard.html">📋 Ver no dashboard</a></div>`
+}else{
+footer=`<div class="detail-actions">
+<button class="btn btn-fresh" onclick="contactClient('${r.client_id}')">💬 Contactar</button>
+<button class="btn btn-outline" id="respond-btn" onclick="toggleOfferPanel()">${myOffer?'✏️ A minha proposta':'💰 Responder'}</button>
+</div>
+<div class="offer-panel-detail" id="offer-panel">
+${myOffer?offerMineHtml(myOffer):offerFormHtml()}
+</div>`
+}
+
+let offersSection=''
+if(isOwner){
+offersSection=`<div class="offers-section"><h2>Propostas recebidas (${currentOffers.length})</h2>${
+currentOffers.length?currentOffers.map(o=>{
+const p=o.profiles||{}
+const name=p.name||'Profissional'
+const initials=name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase()
+const avatar=p.photo_url?`<img src="${escapeHtml(p.photo_url)}" alt=""/>`:initials
+const preco=o.price_from?('€'+o.price_from+(o.price_to?' – €'+o.price_to:'')):'Sem preço indicado'
+return `<div class="offer-card"><div class="oc-avatar">${avatar}</div><div class="oc-body"><div class="oc-name-row"><span class="oc-name">${escapeHtml(name)}</span>${p.verified?'<span class="oc-verified">✓ Verificado</span>':''}</div><div class="oc-cat">${escapeHtml(p.category||'')}</div><div class="oc-price">${preco}</div>${o.message?'<div class="oc-msg">'+escapeHtml(o.message)+'</div>':''}</div></div>`
+}).join(''):'<div class="oc-empty">Ainda não há propostas para este pedido.</div>'
+}</div>`
+}
+
+document.getElementById('detail-root').innerHTML=`<div class="detail-grid">
+${gallery}
+<div class="detail-main">
+<div class="detail-badges">
+${isOwner?'<span class="pill pill-owner">O teu pedido</span>':''}
+${r.is_urgent?'<span class="pill pill-urgent">🔥 Urgente</span>':''}
+<span class="pill pill-cat">${CAT_ICONS[r.category]||'🛠️'} ${escapeHtml(r.category)}</span>
+</div>
+<h1 class="detail-title">${escapeHtml(r.title)}</h1>
+<div class="detail-meta-row">
+<span>📍 ${escapeHtml(r.location)}</span>
+<span class="detail-client"><span class="detail-client-avatar">${clientAvatar}</span> por ${escapeHtml(clientName)}</span>
+<span>· ${timeAgo(r.created_at)}</span>
+</div>
+${budget?'<div class="detail-budget">💰 '+budget+'</div>':''}
+${r.description?'<div class="detail-desc">'+escapeHtml(r.description)+'</div>':'<div class="detail-desc" style="color:var(--ink-mute)">Sem descrição adicional.</div>'}
+${footer}
+</div>
+</div>
+${offersSection}`
+}
+
+function offerFormHtml(){
+return `<div class="price-hint" id="price-hint"></div>
+<textarea id="offer-msg" placeholder="Escreve uma breve mensagem (ex: disponibilidade, o que inclui o preço...)"></textarea>
+<div class="offer-row2">
+<input type="number" min="0" id="offer-from" placeholder="Preço de (€)"/>
+<input type="number" min="0" id="offer-to" placeholder="Preço até (€)"/>
+</div>
+<button class="btn btn-solid btn-sm" onclick="sendOffer()">Enviar proposta</button>`
+}
+
+function offerMineHtml(o){
+const preco=o.price_from?('€'+o.price_from+(o.price_to?' – €'+o.price_to:'')):'Sem preço indicado'
+return `<div class="offer-mine"><strong>${preco}</strong><br>${escapeHtml(o.message||'(sem mensagem)')}</div>
+<button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="editMyOffer()">Editar proposta</button>`
+}
+
+function editMyOffer(){
+const panel=document.getElementById('offer-panel')
+panel.classList.add('open')
+panel.innerHTML=offerFormHtml()
+if(myOffer){
+document.getElementById('offer-msg').value=myOffer.message||''
+document.getElementById('offer-from').value=myOffer.price_from||''
+document.getElementById('offer-to').value=myOffer.price_to||''
+}
+loadPriceSuggestion()
+}
+
+function toggleOfferPanel(){
+if(!session){location.href='auth.html?tab=login&redirect='+encodeURIComponent('pedido.html?id='+reqId)+'&intent=professional';return}
+const panel=document.getElementById('offer-panel')
+panel.classList.toggle('open')
+if(panel.classList.contains('open'))loadPriceSuggestion()
+}
+
+const priceSuggestCache={}
+async function loadPriceSuggestion(){
+if(priceSuggestCache[reqId]!==undefined)return
+priceSuggestCache[reqId]=null
+const box=document.getElementById('price-hint')
+if(!box)return
+const{data,error}=await db.rpc('get_price_suggestion',{p_request_id:reqId})
+if(error||!data||!data.n||data.n<3||data.low==null){return}
+priceSuggestCache[reqId]=data
+box.classList.add('show')
+box.innerHTML=`💡 Outros profissionais propuseram entre <strong>€${Number(data.low).toFixed(0)}</strong> e <strong>€${Number(data.high).toFixed(0)}</strong> para pedidos parecidos.`
+}
+
+async function sendOffer(){
+const msg=document.getElementById('offer-msg').value.trim()
+const from=document.getElementById('offer-from').value
+const to=document.getElementById('offer-to').value
+const{error}=await db.from('request_offers').upsert({
+request_id:reqId,professional_id:session.user.id,
+message:msg||null,
+price_from:from?parseFloat(from):null,
+price_to:to?parseFloat(to):null
+},{onConflict:'request_id,professional_id'})
+if(error){alert('Erro ao enviar proposta: '+error.message);return}
+await loadOffers()
+render()
+}
+
+function contactClient(clientId){
+if(!session){location.href='auth.html?tab=login&redirect='+encodeURIComponent('messages.html?with='+clientId)+'&intent=professional';return}
+if(session.user.id===clientId){alert('Este é o teu próprio pedido.');return}
+location.href='messages.html?with='+clientId
+}
+
+// ===== GALERIA (thumbs inline + lightbox) =====
+function setGalleryMain(i){
+const photos=currentRequest.photo_urls||[]
+document.getElementById('gallery-main-img').src=photos[i]
+document.querySelectorAll('#gallery-thumbs img').forEach((img,idx)=>img.classList.toggle('active',idx===i))
+lightboxIndex=i
+}
+let lightboxIndex=0
+function openLightbox(){
+const photos=currentRequest.photo_urls||[]
+if(!photos.length)return
+const shown=document.getElementById('gallery-main-img').src
+lightboxIndex=Math.max(0,photos.findIndex(p=>shown.endsWith(p)||p===shown))
+renderLightbox()
+document.getElementById('lightbox-overlay').classList.add('open')
+}
+function renderLightbox(){
+const photos=currentRequest.photo_urls||[]
+document.getElementById('lightbox-img').src=photos[lightboxIndex]
+document.getElementById('lightbox-count').textContent=(lightboxIndex+1)+' / '+photos.length
+document.getElementById('lightbox-thumbs').innerHTML=photos.length>1?photos.map((u,i)=>`<div class="lightbox-thumb ${i===lightboxIndex?'active':''}" onclick="event.stopPropagation();lightboxIndex=${i};renderLightbox()"><img src="${escapeHtml(u)}" alt=""/></div>`).join(''):''
+}
+function lightboxStep(d){
+const photos=currentRequest.photo_urls||[]
+lightboxIndex=(lightboxIndex+d+photos.length)%photos.length
+renderLightbox()
+}
+function closeLightbox(){
+document.getElementById('lightbox-overlay').classList.remove('open')
+setGalleryMain(lightboxIndex)
+}
+document.addEventListener('keydown',e=>{
+if(!document.getElementById('lightbox-overlay').classList.contains('open'))return
+if(e.key==='Escape')closeLightbox()
+if(e.key==='ArrowLeft')lightboxStep(-1)
+if(e.key==='ArrowRight')lightboxStep(1)
+})
+
+init()
+</script>
+</body>
+</html>
