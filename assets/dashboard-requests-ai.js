@@ -32,11 +32,13 @@ async function loadMyRequests(){
   const{data}=await db.from('requests').select('*').eq('client_id',user.id).order('created_at',{ascending:false})
   const el=document.getElementById('myrequests-list')
   if(!data||!data.length){el.innerHTML='<div class="empty">Ainda não publicaste nenhum pedido.</div>';return}
-  const ids=data.map(r=>r.id)
+  // Pedidos urgentes aparecem sempre primeiro (mesmo critério usado em pedidos.html).
+  const sorted=[...data].sort((a,b)=>(b.is_urgent?1:0)-(a.is_urgent?1:0))
+  const ids=sorted.map(r=>r.id)
   const{data:offers}=await db.from('request_offers').select('*,profiles:professional_id(name,photo_url)').in('request_id',ids.length?ids:['00000000-0000-0000-0000-000000000000'])
   const offersByReq={}
   ;(offers||[]).forEach(o=>{(offersByReq[o.request_id]=offersByReq[o.request_id]||[]).push(o)})
-  el.innerHTML=data.map(r=>{
+  el.innerHTML=sorted.map(r=>{
     const budget=r.budget_from?('€'+r.budget_from+(r.budget_to?' – €'+r.budget_to:'')):'Sem orçamento definido'
     const resolved=r.status==='resolved'
     const photos=(r.photo_urls||[]).length?`<div class="req-photo-row">${r.photo_urls.map(u=>`<img src="${escapeHtml(u)}"/>`).join('')}</div>`:''
@@ -51,7 +53,7 @@ async function loadMyRequests(){
       :''
     return `<div class="list-item" style="flex-direction:column;align-items:stretch">
       <div class="list-item-body">
-        <div class="list-item-title">${escapeHtml(r.title)}<span class="status-pill ${resolved?'status-resolved':'status-open'}">${resolved?'Resolvido':'Aberto'}</span></div>
+        <div class="list-item-title">${escapeHtml(r.title)}${r.is_urgent?'<span class="status-pill status-urgent">🔥 Urgente</span>':''}<span class="status-pill ${resolved?'status-resolved':'status-open'}">${resolved?'Resolvido':'Aberto'}</span></div>
         <div class="list-item-sub">${escapeHtml(r.category)} · ${escapeHtml(r.location)} · ${budget}</div>
       </div>
       ${photos}
@@ -81,7 +83,8 @@ const location=_rdistrict?(_rcity?_rdistrict+' – '+_rcity:_rdistrict):''
     description:document.getElementById('req-desc').value.trim()||null,
     budget_from:parseFloat(document.getElementById('req-bmin').value)||null,
     budget_to:parseFloat(document.getElementById('req-bmax').value)||null,
-    photo_urls:pendingReqPhotos
+    photo_urls:pendingReqPhotos,
+    is_urgent:document.getElementById('req-urgent').checked
   }).select('id').single()
   if(error){showAlert('req-error','Erro: '+error.message,'error');return}
   showAlert('req-success','Pedido publicado com sucesso!')
@@ -89,6 +92,7 @@ const location=_rdistrict?(_rcity?_rdistrict+' – '+_rcity:_rdistrict):''
   document.getElementById('req-cat').value=''
   document.getElementById('req-district').value=''
   document.getElementById('req-city').value=''
+  document.getElementById('req-urgent').checked=false
   pendingReqPhotos=[]
   renderReqPhotoStrip()
   loadMyRequests()
