@@ -14,7 +14,8 @@
 <meta name="theme-color" content="#0f231b"/>
 <script src="/assets/pwa.js" defer></script>
 <script src="/assets/a11y-clickable.js" defer></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/assets/dashboard.css"/>
 </head>
 <body>
@@ -680,6 +681,9 @@ Letras minúsculas, números e hífenes. Entre 3 e 30 caracteres.
 <label>Fotos (opcional, até 4)</label>
 <div class="photo-strip" id="req-photo-strip"><div class="photo-add" onclick="document.getElementById('req-photo-file').click()">➕</div></div>
 <input type="file" id="req-photo-file" accept="image/*" multiple style="display:none" onchange="handleReqPhotoSelect(this)"/>
+</div>
+<div class="form-group full">
+<label class="urgent-check"><input type="checkbox" id="req-urgent"/> <span>🔥 Marcar como urgente (aparece em destaque em pedidos.html)</span></label>
 </div>
 </div>
 <button class="btn btn-primary" onclick="addMyRequest()">Publicar pedido</button>
