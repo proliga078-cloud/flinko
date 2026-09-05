@@ -92,6 +92,11 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 .intent-card .ic{width:22px;height:22px;color:#E8720A;margin-bottom:6px;display:inline-block}
 .intent-card .it{font-size:13px;font-weight:700;color:#1e293b}
 .intent-card .is{font-size:11px;color:#64748b;margin-top:2px}
+
+.oauth-divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:#94a3b8;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.oauth-divider::before,.oauth-divider::after{content:'';flex:1;height:1px;background:#ECECE9}
+.btn-google{width:100%;padding:12px 14px;background:#fff;color:#1e293b;border:1.5px solid #ECECE9;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .15s}
+.btn-google:hover{border-color:#c9d2de;background:#f8fafc}
 </style>
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
@@ -101,6 +106,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <meta name="theme-color" content="#0F1A33"/>
 <script src="/assets/pwa.js" defer></script>
 <script src="/assets/a11y-clickable.js" defer></script>
+<script src="/assets/cookie-consent.js" defer></script>
 </head>
 <body>
 <nav>
@@ -134,6 +140,11 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <div style="text-align:center;margin-top:14px">
 <a href="#" onclick="doResetPassword(event)" style="font-size:13px;color:#E8720A;text-decoration:none">Esqueci a palavra-passe</a>
 </div>
+<div class="oauth-divider">ou</div>
+<button type="button" class="btn-google" id="login-google-btn" onclick="signInWithGoogle(false)">
+<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.5 0 10.4-1.9 14.1-5.1l-6.5-5.5C29.6 35.4 26.9 36 24 36c-5.3 0-9.7-3.4-11.3-8l-6.6 5.1C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4 5.6l6.5 5.5C41.5 35.9 44 30.5 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
+Continuar com Google
+</button>
 </div>
 
 <!-- REGISTER -->
@@ -154,6 +165,11 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 </div>
 </div>
 </div>
+<button type="button" class="btn-google" id="reg-google-btn" onclick="signInWithGoogle(true)">
+<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.5 0 10.4-1.9 14.1-5.1l-6.5-5.5C29.6 35.4 26.9 36 24 36c-5.3 0-9.7-3.4-11.3-8l-6.6 5.1C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4 5.6l6.5 5.5C41.5 35.9 44 30.5 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
+Continuar com Google
+</button>
+<div class="oauth-divider">ou preenche os teus dados</div>
 <div class="form-group">
 <label for="reg-name">Nome completo</label>
 <input type="text" id="reg-name" placeholder="João Silva" autocomplete="name" />
@@ -203,15 +219,7 @@ const SUPABASE_KEY = 'sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 
 let inRecovery = false
-
-// Detect password recovery flow (user clicked the reset link in their email)
-db.auth.onAuthStateChange((event, session) => {
-if (event === 'PASSWORD_RECOVERY') {
-inRecovery = true
-document.getElementById('tabs-wrap').style.display = 'none'
-document.getElementById('form-recovery').style.display = 'block'
-}
-})
+let redirected = false
 
 // Impede open redirect: só aceita um ?redirect= que aponte para uma página
 // do próprio site (caminho relativo), nunca para um domínio externo — caso
@@ -226,15 +234,10 @@ if (url.origin === location.origin) return url.pathname + url.search + url.hash
 return null
 }
 
-// If already logged in (and not in the middle of a recovery flow), redirect to dashboard
-db.auth.getSession().then(({ data }) => {
-if (data.session && !inRecovery && !location.hash.includes('type=recovery')) location.href = safeRedirect(params.get('redirect')) || 'dashboard.html'
-})
-
 // Check if coming from ?tab=register
 const params = new URLSearchParams(location.search)
 if (params.get('tab') === 'register') showTab('register')
-const refCode = (params.get('ref') || '').trim().toUpperCase() || null
+let refCode = (params.get('ref') || '').trim().toUpperCase() || null
 
 let regAccountType = null
 function selectAccountType(t) {
@@ -307,6 +310,73 @@ btn.disabled = false
 btn.textContent = 'Entrar na conta'
 }
 }
+
+// Login/registo com Google. No registo exigimos que a pessoa escolha
+// primeiro "Contratar" ou "Oferecer serviços" (tal como no formulário
+// normal) porque isso decide o tipo de conta — e como o OAuth nos tira
+// da página e traz de volta, guardamos essa escolha (e o código de
+// referência, e o ?redirect=) em sessionStorage para sobreviver à ida
+// e volta ao ecrã de login da Google.
+async function signInWithGoogle(fromRegister) {
+if (fromRegister && !regAccountType) {
+showMsg('reg-msg', 'Escolhe se queres contratar ou oferecer serviços antes de continuares com o Google.', 'error')
+return
+}
+const btn = document.getElementById(fromRegister ? 'reg-google-btn' : 'login-google-btn')
+btn.disabled = true
+try {
+sessionStorage.setItem('flinko_oauth_pending', JSON.stringify({
+accountType: fromRegister ? regAccountType : null,
+ref: refCode,
+redirect: params.get('redirect') || null
+}))
+} catch (e) {}
+const { error } = await db.auth.signInWithOAuth({
+provider: 'google',
+options: { redirectTo: window.location.origin + '/auth.html' }
+})
+if (error) {
+showMsg(fromRegister ? 'reg-msg' : 'login-msg', 'Não foi possível continuar com o Google. Tenta novamente.', 'error')
+btn.disabled = false
+}
+}
+
+// Ponto único de conclusão do login — chamado tanto quando já havia sessão
+// ao abrir a página, como depois de voltar do redirect do Google.
+async function completeSignIn(session) {
+if (!session || redirected || inRecovery || location.hash.includes('type=recovery')) return
+redirected = true
+
+let pending = null
+try { pending = JSON.parse(sessionStorage.getItem('flinko_oauth_pending') || 'null') } catch (e) {}
+
+if (pending) {
+sessionStorage.removeItem('flinko_oauth_pending')
+const name = session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email
+await insertProfile(session.user.id, name, session.user.email, pending.accountType || 'professional')
+if (pending.ref) { refCode = pending.ref; await applyReferral(session.user.id) }
+location.href = (pending.redirect && safeRedirect(pending.redirect)) || postAuthDestination(pending.accountType)
+return
+}
+
+if (session.user.email === 'davidscampos10@gmail.com') { location.href = 'admin.html'; return }
+location.href = safeRedirect(params.get('redirect')) || 'dashboard.html'
+}
+
+// Detect password recovery flow (user clicked the reset link in their email)
+// e apanha tambem o regresso do login com o Google.
+db.auth.onAuthStateChange((event, session) => {
+if (event === 'PASSWORD_RECOVERY') {
+inRecovery = true
+document.getElementById('tabs-wrap').style.display = 'none'
+document.getElementById('form-recovery').style.display = 'block'
+return
+}
+if (event === 'SIGNED_IN') completeSignIn(session)
+})
+
+// If already logged in (and not in the middle of a recovery flow), redirect to dashboard
+db.auth.getSession().then(({ data }) => completeSignIn(data.session))
 
 // Live match feedback for register password confirmation
 function togglePw(inputId,btnId){

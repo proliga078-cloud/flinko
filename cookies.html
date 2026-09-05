@@ -70,6 +70,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#0f231b"/>
 <script src="/assets/pwa.js" defer></script>
+<script src="/assets/cookie-consent.js" defer></script>
 </head>
 <body>
 <nav><a href="index.html" class="logo">Flink<span>o</span></a></nav>
@@ -173,7 +174,8 @@ Esta política explica o que são cookies, como a Flinko os utiliza e como pode 
 <script>
 function savePrefs(){
 const analytics=document.getElementById('pref-analytics').checked;
-localStorage.setItem('proliga_cookie_consent',JSON.stringify({essential:true,analytics,saved:new Date().toISOString()}));
+if(window.flinkoCookieConsent){window.flinkoCookieConsent.set(analytics);}
+else{localStorage.setItem('proliga_cookie_consent',JSON.stringify({necessary:true,analytics,ts:Date.now()}));}
 alert('Preferências guardadas com sucesso!');
 }
 // Carregar preferências guardadas
