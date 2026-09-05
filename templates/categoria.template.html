@@ -144,6 +144,17 @@
  .badge-pill{font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:99px;white-space:nowrap;flex-shrink:0}
  .badge-premium{background:linear-gradient(135deg,#D9A441,#AF620A);color:#fff;box-shadow:0 2px 6px rgba(175,98,10,.35)}
  .badge-pro{background:linear-gradient(135deg,#F2A55C,#E8720A);color:#fff;box-shadow:0 2px 6px rgba(232,114,10,.35)}
+
+ .sponsored-strip{margin-bottom:22px}
+ .sponsored-strip-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+ .sponsored-track{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+ .sponsored-card{flex:0 0 220px;height:165px;border-radius:16px;overflow:hidden;position:relative;text-decoration:none;background:var(--ink);box-shadow:0 4px 14px rgba(15,26,51,.14);display:block}
+ .sponsored-card img,.sponsored-card video{width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0}
+ .sponsored-card .sp-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,26,51,0) 42%,rgba(15,26,51,.82) 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:12px}
+ .sponsored-card .sp-tag{position:absolute;top:9px;left:9px;background:rgba(255,255,255,.94);color:var(--ink);font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;padding:3px 9px;border-radius:99px}
+ .sponsored-card .sp-name{color:#fff;font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .sponsored-card .sp-meta{color:rgba(255,255,255,.82);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ @media(max-width:600px){.sponsored-card{flex:0 0 172px;height:140px}}
  .pro-card-cat{display:flex;align-items:center;gap:6px;font-size:13.5px;color:#5B6270;margin-bottom:4px}
  .pro-rating{font-size:12.5px;color:var(--muted)}
  .pro-rating .stars{color:var(--gold)}
@@ -364,6 +375,7 @@
  </aside>
 
  <main>
+ <div id="sponsored-container"></div>
  <div class="main-top">
  <div class="results-count" id="results-count" style="display:none"></div>
  <select class="sort-select" id="sort-select" onchange="loadPros()">
@@ -440,6 +452,48 @@ async function init(){
  }
  loadPros()
  loadCatStats()
+ loadSponsored()
+}
+
+// Profissionais com um slot de destaque ativo (comprado com creditos no
+// dashboard, ver buy_ad_slot) para esta categoria. Mostrados sempre, mesmo
+// com filtros/paginacao aplicados na lista principal, porque e um espaco
+// pago a parte - nao concorre com a ordenacao normal.
+async function loadSponsored(){
+ const box=document.getElementById('sponsored-container')
+ if(!box)return
+ try{
+ const{data:slots}=await db.from('ad_slots').select('professional_id,media_url,media_type,ends_at').eq('status','ativo').gt('ends_at',new Date().toISOString())
+ if(!slots||!slots.length){box.innerHTML='';return}
+ const ids=[...new Set(slots.map(s=>s.professional_id))]
+ const{data:pros}=await db.from('profiles').select('id,name,category,location,photo_url,slug,verified').in('id',ids).ilike('category',`%${filters.cat}%`).eq('is_demo',false).eq('suspended',false).eq('approved',true)
+ if(!pros||!pros.length){box.innerHTML='';return}
+ const slotByPro={}
+ slots.forEach(s=>{ if(!slotByPro[s.professional_id])slotByPro[s.professional_id]=s })
+ // Baralhado a cada carregamento de pagina - varios profissionais podem
+ // ter anuncio ativo ao mesmo tempo e nenhum deve ficar sempre em ultimo.
+ const shuffled=pros.map(p=>p).sort(()=>Math.random()-0.5)
+ box.innerHTML=`<div class="sponsored-strip">
+ <div class="sponsored-strip-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg> Em destaque</div>
+ <div class="sponsored-track">${shuffled.map(pro=>{
+ const slot=slotByPro[pro.id]
+ const safeName=escapeHtml(pro.name)
+ const media=slot.media_url
+ ? (slot.media_type==='video'
+ ? `<video src="${escapeHtml(slot.media_url)}" muted autoplay loop playsinline></video>`
+ : `<img src="${escapeHtml(slot.media_url)}" alt="${safeName}" loading="lazy"/>`)
+ : (pro.photo_url?`<img src="${escapeHtml(pro.photo_url)}" alt="${safeName}" loading="lazy"/>`:'')
+ return `<a class="sponsored-card" href="${pro.slug?("/"+pro.slug):("profile.html?id="+pro.id)}">
+ ${media}
+ <span class="sp-tag">Patrocinado</span>
+ <div class="sp-overlay">
+ <div class="sp-name">${safeName}</div>
+ <div class="sp-meta">${escapeHtml(pro.category||'')}${pro.location?' · '+escapeHtml(pro.location):''}</div>
+ </div>
+ </a>`
+ }).join('')}</div>
+ </div>`
+ }catch(e){box.innerHTML=''}
 }
 
 function formatResponseMinutes(mins){
