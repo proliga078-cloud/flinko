@@ -75,7 +75,7 @@ h1,h2,h3,.logo,.hd-title,.hero-greet .hg-title,.page-title,.setup-title,.cal-tit
 
 /* STATS CARDS */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:24px}
-.stat-card{border-radius:16px;padding:16px;border:none;position:relative;overflow:hidden;transition:transform .18s,box-shadow .18s}
+.stat-card{border-radius:16px;padding:16px;border:none;position:relative;overflow:hidden;transition:transform .22s cubic-bezier(.22,1,.36,1),box-shadow .22s cubic-bezier(.22,1,.36,1)}
 .stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift)}
 .stat-card .s-decor{position:absolute;right:-14px;top:-14px;width:60px;height:60px;border-radius:50%}
 .stat-card .s-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;position:relative}
@@ -117,8 +117,13 @@ textarea{resize:vertical;min-height:80px}
 
 /* LISTS */
 .item-list{display:flex;flex-direction:column;gap:10px}
-.list-item{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:16px;display:flex;align-items:flex-start;gap:12px;transition:box-shadow .18s,border-color .18s}
-.list-item:hover{box-shadow:var(--shadow);border-color:var(--line-2)}
+.list-item{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:16px;display:flex;align-items:flex-start;gap:12px;position:relative;isolation:isolate;overflow:hidden;transition:transform .22s cubic-bezier(.22,1,.36,1),box-shadow .22s cubic-bezier(.22,1,.36,1),border-color .22s cubic-bezier(.22,1,.36,1)}
+.list-item::before{content:'';position:absolute;inset:0;background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(232,114,10,.07),transparent 70%);opacity:0;transition:opacity .3s;pointer-events:none;z-index:0}
+.list-item::after{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background:linear-gradient(90deg,var(--accent),var(--fresh));transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.22,1,.36,1);z-index:2}
+.list-item>*{position:relative;z-index:1}
+.list-item:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift);border-color:var(--line-2)}
+.list-item:hover::before{opacity:1}
+.list-item:hover::after{transform:scaleX(1)}
 .list-item-body{flex:1}
 .list-item-title{font-size:15px;font-weight:600;margin-bottom:4px}
 .list-item-sub{font-size:13px;color:var(--muted);line-height:1.5}
@@ -193,8 +198,13 @@ textarea{resize:vertical;min-height:80px}
 .kanban-col-title{font-size:12.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
 .kanban-col-count{background:var(--white);border:1px solid var(--border);border-radius:99px;padding:1px 8px;font-size:11px}
 .kanban-cards{display:flex;flex-direction:column;gap:8px;min-height:40px}
-.job-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:13px;transition:box-shadow .18s,border-color .18s}
-.job-card:hover{box-shadow:var(--shadow);border-color:var(--line-2)}
+.job-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:13px;position:relative;isolation:isolate;overflow:hidden;transition:transform .22s cubic-bezier(.22,1,.36,1),box-shadow .22s cubic-bezier(.22,1,.36,1),border-color .22s cubic-bezier(.22,1,.36,1)}
+.job-card::before{content:'';position:absolute;inset:0;background:radial-gradient(200px circle at var(--mx,50%) var(--my,50%),rgba(232,114,10,.06),transparent 70%);opacity:0;transition:opacity .3s;pointer-events:none;z-index:0}
+.job-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background:linear-gradient(90deg,var(--accent),var(--fresh));transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.22,1,.36,1);z-index:2}
+.job-card>*{position:relative;z-index:1}
+.job-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift);border-color:var(--line-2)}
+.job-card:hover::before{opacity:1}
+.job-card:hover::after{transform:scaleX(1)}
 .job-card .jc-title{font-weight:700;font-size:13.5px;margin-bottom:3px}
 .job-card .jc-client{color:var(--muted);font-size:12px;margin-bottom:8px}
 .job-card .jc-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}

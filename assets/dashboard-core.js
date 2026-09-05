@@ -8,6 +8,24 @@ let calYear=new Date().getFullYear(),calMonth=new Date().getMonth(),calSelected=
 let aiChatOpen=false
 let pendingAiAction=null
 let quoteJobId=null,quotesCache=[]
+
+// Glow-spot que segue o cursor nos cartões (.list-item, .job-card), mesmo
+// efeito já usado na área pública. Delegado em .main-content (em vez de um
+// listener por lista) porque .list-item aparece em várias secções
+// diferentes (serviços, diário, faqs, avaliações) e cada uma é reconstruída
+// no seu próprio load*(). Este script tem "defer", por isso o DOM já está
+// pronto quando esta linha corre.
+;(()=>{
+  const main=document.querySelector('.main-content')
+  if(!main)return
+  main.addEventListener('mousemove',e=>{
+    const card=e.target.closest('.list-item,.job-card')
+    if(!card)return
+    const r=card.getBoundingClientRect()
+    card.style.setProperty('--mx',(e.clientX-r.left)+'px')
+    card.style.setProperty('--my',(e.clientY-r.top)+'px')
+  })
+})()
 let refJobId=null,refSelectedPro=null
 let marketPriceCache=null
 let planLimits={portfolio_max:3,quotes_per_month:3,finances:false,own_branding:false,custom_link:false,ai_actions:false}

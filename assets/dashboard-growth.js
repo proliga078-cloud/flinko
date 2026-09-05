@@ -21,7 +21,7 @@ function maybeShowPushBanner(){
 
   const el=document.createElement('div')
   el.id='push-banner'
-  el.setAttribute('style','position:fixed;left:14px;right:14px;bottom:14px;z-index:9999;background:#0F1A33;color:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.3);display:flex;align-items:center;gap:12px;font-family:inherit;max-width:420px;margin:0 auto')
+  el.setAttribute('style','position:fixed;left:14px;right:14px;bottom:14px;z-index:9999;background:var(--ink,#132420);color:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.3);display:flex;align-items:center;gap:12px;font-family:inherit;max-width:420px;margin:0 auto')
   el.innerHTML=
     '<div style="width:38px;height:38px;border-radius:10px;background:#E8720A;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px">🔔</div>'+
     '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">Ativar notificações</div><div style="font-size:11.5px;color:rgba(255,255,255,.65)">Sabe logo quando chega um pedido ou mensagem nova.</div></div>'+
