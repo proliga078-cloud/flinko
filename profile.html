@@ -3,36 +3,50 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title id="meta-title">Perfil Profissional – Proliga</title>
-  <meta id="meta-description" name="description" content="Vê o perfil, serviços, portfólio e avaliações deste profissional em Portugal. Contacta diretamente pela Proliga."/>
+  <title id="meta-title">Perfil Profissional – Flinko</title>
+  <meta id="meta-description" name="description" content="Vê o perfil, serviços, portfólio e avaliações deste profissional em Portugal. Contacta diretamente pela Flinko."/>
   <meta id="meta-robots" name="robots" content="index, follow"/>
   <link id="meta-canonical" rel="canonical" href="https://flinko.pt/profile.html"/>
-  <meta id="meta-og-title" property="og:title" content="Perfil Profissional – Proliga"/>
-  <meta id="meta-og-description" property="og:description" content="Vê o perfil, serviços, portfólio e avaliações deste profissional em Portugal. Contacta diretamente pela Proliga."/>
+  <meta id="meta-og-title" property="og:title" content="Perfil Profissional – Flinko"/>
+  <meta id="meta-og-description" property="og:description" content="Vê o perfil, serviços, portfólio e avaliações deste profissional em Portugal. Contacta diretamente pela Flinko."/>
   <meta property="og:type" content="profile"/>
-  <meta property="og:site_name" content="Proliga"/>
+  <meta property="og:site_name" content="Flinko"/>
   <meta property="og:locale" content="pt_PT"/>
   <meta id="meta-og-url" property="og:url" content="https://flinko.pt/profile.html"/>
   <meta id="meta-og-image" property="og:image" content="https://flinko.pt/assets/og-image.png"/>
   <meta property="og:image:width" content="1200"/>
   <meta property="og:image:height" content="630"/>
   <meta name="twitter:card" content="summary_large_image"/>
-  <meta id="meta-twitter-title" name="twitter:title" content="Perfil Profissional – Proliga"/>
-  <meta id="meta-twitter-description" name="twitter:description" content="Vê o perfil, serviços, portfólio e avaliações deste profissional em Portugal. Contacta diretamente pela Proliga."/>
+  <meta id="meta-twitter-title" name="twitter:title" content="Perfil Profissional – Flinko"/>
+  <meta id="meta-twitter-description" name="twitter:description" content="Vê o perfil, serviços, portfólio e avaliações deste profissional em Portugal. Contacta diretamente pela Flinko."/>
   <meta id="meta-twitter-image" name="twitter:image" content="https://flinko.pt/assets/og-image.png"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
   <link rel="shortcut icon" href="/favicon.ico"/>
 <link rel="manifest" href="/manifest.json"/>
-<meta name="theme-color" content="#0F1A33"/>
+<meta name="theme-color" content="#132420"/>
 <script src="/assets/pwa.js" defer></script>
 <script src="/assets/cookie-consent.js" defer></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--blue:#E8720A;--blue-dark:#C25A06;--blue-light:#FDECDD;--gold:#AF620A;--green:#1A8649;--text:#14181F;--muted:#5B6270;--border:#ECECE9;--bg:#F7F8FA;--white:#fff;--cream:#FAF8F4}
+    /* Paleta canónica partilhada com index.html/categoria.template.html/pedidos.html.
+       --blue/--green/--text/--muted/--border/--bg/--white/--cream mantidos como
+       aliases (o resto do ficheiro usa-os um bocado por todo o lado) para nao
+       ter de reescrever centenas de var(--blue) — mas passam a apontar para as
+       variaveis reais em vez de serem a unica fonte da verdade com nome errado
+       (--blue era sempre laranja, nunca azul). */
+    :root{
+      --ink:#132420;--ink-soft:#4E5C57;--ink-mute:#84918C;
+      --paper:#FFFFFF;--surface:#F3FBF6;--line:#E1EEE6;
+      --accent:#E8720A;--accent-deep:#B85608;--accent-soft:#FFE7CE;
+      --fresh:#0F8B5F;--fresh-deep:#0A6B49;--fresh-soft:#D7F5E4;
+      --gold:#AF620A;--gold-light:#FFF3E4;
+      --text:var(--ink);--muted:var(--ink-soft);--border:var(--line);--bg:var(--surface);--white:var(--paper);--cream:var(--surface);
+      --blue:var(--accent);--blue-dark:var(--accent-deep);--blue-light:var(--accent-soft);--green:var(--fresh)
+    }
     body{font-family:'Inter',sans-serif;color:var(--text);background:var(--cream)}
     a{text-decoration:none;color:inherit}
     nav{position:sticky;top:0;z-index:200;background:var(--white);border-bottom:1px solid var(--border);padding:0 5%;height:68px;display:flex;align-items:center;gap:16px}
@@ -110,8 +124,10 @@
     /* PACKAGES (Fiverr-style) */
     .packages-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
     @media(max-width:600px){.packages-grid{grid-template-columns:1fr}}
-    .package-card{border:2px solid var(--border);border-radius:14px;padding:18px;transition:all .2s;position:relative}
+    .package-card{border:2px solid var(--border);border-radius:14px;padding:18px;transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s cubic-bezier(.22,1,.36,1),border-color .2s;position:relative}
+    .package-card:hover{transform:translateY(-4px);box-shadow:0 10px 26px rgba(19,36,32,.10);border-color:var(--accent-soft)}
     .package-card.recommended{border-color:var(--blue);background:var(--blue-light)}
+    .package-card.recommended:hover{box-shadow:0 14px 32px rgba(232,114,10,.22)}
     .package-card h4{font-size:14px;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
     .package-price{font-size:28px;font-weight:900;color:var(--blue);margin-bottom:8px}
     .package-price span{font-size:14px;font-weight:500;color:var(--muted)}
@@ -135,7 +151,7 @@
     @media(max-width:600px){.portfolio-mosaic{grid-template-columns:1fr 1fr;grid-template-rows:auto;height:auto}.portfolio-mosaic .portfolio-img:first-child{grid-row:span 1;grid-column:span 2;aspect-ratio:16/9}}
     .portfolio-img{aspect-ratio:1;border-radius:14px;overflow:hidden;cursor:pointer;position:relative;background:var(--blue-light)}
     .portfolio-mosaic .portfolio-img{aspect-ratio:auto}
-    .portfolio-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+    .portfolio-img img{width:100%;height:100%;object-fit:cover;transition:transform .35s cubic-bezier(.22,1,.36,1)}
     .portfolio-img:hover img{transform:scale(1.06)}
     .portfolio-img .cap{position:absolute;inset:0;background:rgba(0,0,0,.5);color:#fff;font-size:12px;padding:8px;display:none;align-items:flex-end}
     .portfolio-img:hover .cap{display:flex}
@@ -193,24 +209,15 @@
     .spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
     @keyframes spin{to{transform:rotate(360deg)}}
   
-/* === tema navy+laranja: nav === */
-nav{background:#0F1A33}
-nav a.logo{color:#fff}
-nav a.logo em,nav a.logo span{color:#F2A55C}
-.navlinks{color:#9AA6C3}
-.navlinks a:hover{color:#fff}
-.hamburger-btn{background:transparent;border-color:rgba(255,255,255,.25);color:#fff}
-.mobile-nav-panel{background:#fff}
-nav .btn-ghost{color:#fff}
-nav .btn-ghost:hover{background:rgba(255,255,255,.1)}
-nav .btn-line{color:#fff;border-color:rgba(255,255,255,.3)}
-nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
-.btn-ink{background:#E8720A;color:#fff}
-.btn-ink:hover{background:#C25A06}
+/* Nav unificada com o resto do site (branca, logo a laranja) — esta página
+   tinha uma terceira linguagem visual (nav azul-marinho) só sua, diferente
+   da homepage e das páginas de categoria. As regras de um tema navy+hamburger
+   que existiam aqui não correspondiam a nenhum elemento no HTML desta página
+   (eram sobras de outra página), por isso foram removidas em vez de adaptadas. */
 
 /* === PERFIL RICO === */
 .spec-chip{background:var(--blue-light);color:var(--blue-dark);font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:99px}
-.exp-chip{background:#0F1A33;color:#fff;font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:99px;display:inline-flex;align-items:center;gap:4px}
+.exp-chip{background:var(--ink);color:#fff;font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:99px;display:inline-flex;align-items:center;gap:4px}
 .cert-strip{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
 .cert-item{display:flex;align-items:center;gap:8px;background:var(--bg);border-radius:10px;padding:7px 12px}
 .cert-item .ic{color:var(--blue)}
@@ -226,7 +233,8 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 .diary-photo-empty{width:60px;height:60px;border-radius:10px;flex-shrink:0;background:var(--blue-light);display:flex;align-items:center;justify-content:center;color:var(--blue)}
 .diary-text{font-size:13px;font-weight:600;margin-bottom:3px;line-height:1.4;white-space:pre-line}
 .diary-meta{font-size:11.5px;color:var(--muted)}
-.case-card{border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:14px}
+.case-card{border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:14px;cursor:pointer;transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s cubic-bezier(.22,1,.36,1)}
+.case-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(19,36,32,.10)}
 .case-card:last-child{margin-bottom:0}
 .case-imgs{display:grid;grid-template-columns:1fr 1fr}
 .case-imgs img{width:100%;height:140px;object-fit:cover;display:block}
@@ -246,7 +254,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 .badge-tile{background:var(--bg);border-radius:12px;padding:10px 8px;text-align:center}
 .badge-tile .ic{color:var(--blue);width:20px;height:20px}
 .badge-tile span{display:block;font-size:10.5px;font-weight:700;margin-top:5px;line-height:1.3}
-.zone-map{height:130px;border-radius:12px;overflow:hidden;background:#0F1A33;margin-bottom:10px}
+.zone-map{height:130px;border-radius:12px;overflow:hidden;background:var(--ink);margin-bottom:10px}
 .zone-chips{display:flex;gap:6px;flex-wrap:wrap}
 .zone-chip{background:var(--bg);font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px}
 .avail-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:2px}
@@ -256,12 +264,28 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 .avail-day.on .bar{background:var(--blue)}
 .info-pill{display:inline-flex;align-items:center;gap:6px;background:var(--bg);font-size:11.5px;font-weight:600;padding:6px 11px;border-radius:99px;margin:0 6px 6px 0}
 .info-pill .ic{width:14px;height:14px;color:var(--blue)}
+
+/* PROFISSIONAIS SEMELHANTES */
+.similar-section{max-width:1100px;margin:0 auto 40px;padding:0 24px}
+@media(max-width:600px){.similar-section{padding:0 16px}}
+.similar-section .card-title{margin-bottom:14px}
+.similar-track{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.similar-card{position:relative;isolation:isolate;overflow:hidden;background:var(--white);border:1px solid var(--border);border-radius:16px;padding:16px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s cubic-bezier(.22,1,.36,1)}
+.similar-card::before{content:'';position:absolute;inset:0;background:radial-gradient(180px circle at var(--mx,50%) var(--my,50%),rgba(232,114,10,.08),transparent 72%);opacity:0;transition:opacity .3s;pointer-events:none;z-index:0}
+.similar-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(19,36,32,.10)}
+.similar-card:hover::before{opacity:1}
+.similar-card>*{position:relative;z-index:1}
+.similar-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--ink),#1b4433);color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.similar-avatar img{width:100%;height:100%;object-fit:cover}
+.similar-name{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.similar-meta{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.similar-rating{font-size:11.5px;color:var(--gold);font-weight:700}
 </style>
 </head>
 <body>
 
 <nav>
-  <a href="index.html" class="logo">Pro<span>liga</span></a>
+  <a href="index.html" class="logo">Flink<span>o</span></a>
   <nav style="display:flex;gap:8px;margin-left:auto;align-items:center;border:none;position:static;height:auto;padding:0;background:transparent">
     <a href="categoria.html" class="btn btn-ghost" style="font-size:13px">← Voltar</a>
     <div id="nav-guest" style="display:flex;gap:8px">
@@ -372,7 +396,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
   <div>
     <div class="contact-card">
       <h3><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Fala com o Profissional</h3>
-      <p style="font-size:13px;color:rgba(255,255,255,.85);line-height:1.6;margin-bottom:16px">Envia uma mensagem diretamente pela Proliga. Sem sair do site, sem partilhar contactos externos.</p>
+      <p style="font-size:13px;color:rgba(255,255,255,.85);line-height:1.6;margin-bottom:16px">Envia uma mensagem diretamente pela Flinko. Sem sair do site, sem partilhar contactos externos.</p>
       <div class="msg error" id="msg-error"></div>
       <button class="btn-contact" id="msg-btn" onclick="startConversation()"><svg class="ic" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Enviar mensagem</button>
     </div>
@@ -417,6 +441,11 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
     </div>
   </div>
 </div>
+
+<section class="similar-section" id="similar-section" style="display:none">
+  <div class="card-title" style="font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px"><svg class="ic" viewBox="0 0 24 24" style="color:var(--blue)"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Profissionais semelhantes</div>
+  <div class="similar-track" id="similar-track"></div>
+</section>
 
 <!-- LIGHTBOX -->
 <div id="lightbox" onclick="closeLightbox()">
@@ -475,10 +504,10 @@ async function resolveSlug(){
 // título/descrição em todos os perfis, e a partilha no WhatsApp/redes
 // sociais nunca mostrava o nome nem a foto do profissional certo).
 function updateSeoTags(pro){
-  const titulo=`${pro.name} – Proliga`
+  const titulo=`${pro.name} – Flinko`
   const descricao=pro.bio
     ?pro.bio.replace(/\s+/g,' ').trim().slice(0,155)
-    :`Perfil de ${pro.category||'profissional'} em ${pro.location||'Portugal'}. Contacta diretamente pela Proliga.`
+    :`Perfil de ${pro.category||'profissional'} em ${pro.location||'Portugal'}. Contacta diretamente pela Flinko.`
   const url=pro.slug?`https://flinko.pt/${encodeURIComponent(pro.slug)}`:`https://flinko.pt/profile.html?id=${pro.id}`
   const imagem=pro.photo_url||'https://flinko.pt/assets/og-image.png'
   document.getElementById('meta-description').setAttribute('content',descricao)
@@ -510,7 +539,7 @@ async function init(){
     return
   }
   proData=pro
-  document.title=`${pro.name} – Proliga`
+  document.title=`${pro.name} – Flinko`
   updateSeoTags(pro)
   renderHeader(pro)
   document.getElementById('content-grid').style.display='grid'
@@ -523,9 +552,10 @@ async function init(){
   renderZoneMap(pro)
   renderAvailGrid(pro)
   renderExtraInfo(pro)
+  loadSimilarPros(pro)
   if(!session||session.user.id!==pro.id)logProfileView(pro.id)
   // WA share
-  document.getElementById('wa-share').href=`https://wa.me/?text=Confere%20o%20perfil%20de%20${encodeURIComponent(pro.name)}%20na%20Proliga%3A%20${encodeURIComponent(location.href)}`
+  document.getElementById('wa-share').href=`https://wa.me/?text=Confere%20o%20perfil%20de%20${encodeURIComponent(pro.name)}%20na%20Flinko%3A%20${encodeURIComponent(location.href)}`
 }
 
 // Tempo de resposta — só mostrado com amostra suficiente para ser fiável
@@ -785,7 +815,7 @@ function renderBadges({avgNum,reviewCount,portfolioCount,diaryCount,joinedYear})
   if(avgNum&&avgNum>=4.8&&reviewCount>=5)tiles.push([svg('<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>'),'Avaliação excecional'])
   if(hasResponseData(proData)&&Number(proData.avg_response_minutes)<=RESP_FAST_MINUTES)tiles.push([svg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>'),'Resposta rápida'])
   const yearsIn=new Date().getFullYear()-joinedYear
-  if(yearsIn>=1)tiles.push([svg('<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'),`${yearsIn} ano${yearsIn>1?'s':''} na Proliga`])
+  if(yearsIn>=1)tiles.push([svg('<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'),`${yearsIn} ano${yearsIn>1?'s':''} na Flinko`])
   if(portfolioCount>=5)tiles.push([svg('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/>'),'Portefólio completo'])
   if(diaryCount>=3)tiles.push([svg('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>'),'Diário ativo']) 
   if(proData.certifications&&proData.certifications.length)tiles.push([svg('<circle cx="12" cy="8" r="6"/><path d="M15.5 13.5L17 22l-5-3-5 3 1.5-8.5"/>'),'Certificado'])
@@ -830,6 +860,46 @@ function renderExtraInfo(pro){
   if(!pills.length)return
   document.getElementById('extra-info-card').style.display='block'
   document.getElementById('extra-info-list').innerHTML=pills.map(p=>`<span class="info-pill">${p}</span>`).join('')
+}
+
+// Profissionais semelhantes: mesma categoria, exclui o proprio perfil.
+// So aparece a seccao quando ha efetivamente outros profissionais para
+// mostrar (estado vazio honesto — sem seccao vazia nem "0 sugestoes").
+async function loadSimilarPros(pro){
+  if(!pro.category)return
+  try{
+    const{data}=await db.from('profiles').select('id,name,category,location,photo_url,slug,verified,plan,is_demo,suspended,approved')
+      .ilike('category',`%${pro.category}%`).neq('id',pro.id)
+      .eq('is_demo',false).eq('suspended',false).eq('approved',true)
+      .order('plan',{ascending:false}).limit(6)
+    if(!data||!data.length)return
+    const ids=data.map(p=>p.id)
+    const{data:revs}=await db.from('reviews').select('professional_id,rating').in('professional_id',ids)
+    const rMap={}
+    revs&&revs.forEach(r=>{if(!rMap[r.professional_id])rMap[r.professional_id]={s:0,c:0};rMap[r.professional_id].s+=r.rating;rMap[r.professional_id].c++})
+    document.getElementById('similar-track').innerHTML=data.map(p=>{
+      const safeName=escapeHtml(p.name)
+      const initials=p.name.split(' ').map(n=>n[0]).slice(0,2).join('')
+      const avatar=p.photo_url?`<img src="${escapeHtml(p.photo_url)}" alt="${safeName}"/>`:initials
+      const r=rMap[p.id]
+      const ratingHtml=r?`<span class="similar-rating">★ ${(r.s/r.c).toFixed(1)} <span style="color:var(--muted);font-weight:600">(${r.c})</span></span>`:`<span class="similar-meta">✨ Perfil novo</span>`
+      const href=p.slug?('/'+p.slug):('profile.html?id='+p.id)
+      return `<a class="similar-card" href="${href}">
+        <div class="similar-avatar">${avatar}</div>
+        <div class="similar-name">${safeName}${p.verified?' <svg class="ic" viewBox="0 0 24 24" style="width:12px;height:12px;color:var(--fresh-deep);vertical-align:-2px"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>':''}</div>
+        <div class="similar-meta">${escapeHtml(p.location||'Portugal')}</div>
+        ${ratingHtml}
+      </a>`
+    }).join('')
+    document.getElementById('similar-section').style.display='block'
+    document.getElementById('similar-track').addEventListener('mousemove',e=>{
+      const card=e.target.closest('.similar-card')
+      if(!card)return
+      const rect=card.getBoundingClientRect()
+      card.style.setProperty('--mx',(e.clientX-rect.left)+'px')
+      card.style.setProperty('--my',(e.clientY-rect.top)+'px')
+    })
+  }catch(e){}
 }
 
 async function loadDiary(){
