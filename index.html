@@ -382,6 +382,19 @@ section{padding:96px 0}
 
 /* Professionals — bordered card grid (Upwork-style) */
 .pros-section{background:var(--bg-tint)}
+
+/* Banner de profissionais patrocinados (ver compra de destaque no dashboard) */
+.sponsored-strip{margin-bottom:28px}
+.sponsored-strip-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px;justify-content:center}
+.sponsored-track{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.sponsored-card{flex:0 0 240px;height:170px;border-radius:16px;overflow:hidden;position:relative;text-decoration:none;background:var(--ink);box-shadow:0 4px 14px rgba(15,26,51,.14);display:block}
+.sponsored-card img,.sponsored-card video{width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0}
+.sponsored-card .sp-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,26,51,0) 42%,rgba(15,26,51,.82) 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:12px}
+.sponsored-card .sp-tag{position:absolute;top:9px;left:9px;background:rgba(255,255,255,.94);color:var(--ink);font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;padding:3px 9px;border-radius:99px}
+.sponsored-card .sp-name{color:#fff;font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sponsored-card .sp-meta{color:rgba(255,255,255,.82);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:600px){.sponsored-card{flex:0 0 188px;height:145px}}
+
 .pro-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 @media (max-width:960px){ .pro-grid{grid-template-columns:1fr 1fr} }
 @media (max-width:640px){ .pro-grid{grid-template-columns:1fr} }
@@ -1183,6 +1196,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
         <h2>Quem já está na <span class="hi-block mint">plataforma</span></h2>
         <p>Somos uma plataforma nova. Preferimos poucos perfis verificados a muitos por verificar.</p>
       </div>
+      <div id="sponsoredContainer"></div>
       <div class="pro-grid" id="proGrid" aria-live="polite">
         <p style="grid-column:1/-1;text-align:center;color:var(--muted)">A carregar profissionais…</p>
       </div>
@@ -1810,6 +1824,46 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
       '<a href="/auth" class="btn btn-orange">Criar perfil grátis</a>' +
     '</div>';
   }
+
+  // Banner de profissionais com destaque pago ativo (comprado com creditos
+  // no dashboard - "Creditos" -> "Anunciar no site"). Independente do
+  // spotlight_pros() de baixo, que e organico (baseado no plano).
+  function loadSponsoredHome(){
+    var box = document.getElementById('sponsoredContainer');
+    if(!box) return;
+    db.from('ad_slots').select('professional_id,media_url,media_type,ends_at').eq('status','ativo').gt('ends_at', new Date().toISOString())
+      .then(function(res){
+        var slots = (res && res.data) || [];
+        if(!slots.length){ box.innerHTML = ''; return; }
+        var ids = slots.map(function(s){ return s.professional_id; }).filter(function(v,i,a){ return a.indexOf(v)===i; });
+        return db.from('profiles').select('id,name,category,location,photo_url,slug').in('id', ids).eq('is_demo', false).eq('suspended', false).eq('approved', true)
+          .then(function(res2){
+            var pros = (res2 && res2.data) || [];
+            if(!pros.length){ box.innerHTML = ''; return; }
+            var slotByPro = {};
+            slots.forEach(function(s){ if(!slotByPro[s.professional_id]) slotByPro[s.professional_id] = s; });
+            var shuffled = pros.slice().sort(function(){ return Math.random() - 0.5; });
+            box.innerHTML = '<div class="sponsored-strip">' +
+              '<div class="sponsored-strip-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg> Em destaque</div>' +
+              '<div class="sponsored-track">' + shuffled.map(function(p){
+                var slot = slotByPro[p.id];
+                var safeName = esc(p.name);
+                var mediaHtml = slot.media_url
+                  ? (slot.media_type === 'video'
+                      ? '<video src="' + esc(slot.media_url) + '" muted autoplay loop playsinline></video>'
+                      : '<img src="' + esc(slot.media_url) + '" alt="' + safeName + '" loading="lazy"/>')
+                  : (p.photo_url ? ('<img src="' + esc(p.photo_url) + '" alt="' + safeName + '" loading="lazy"/>') : '');
+                return '<a class="sponsored-card" href="' + profileHref(p) + '">' + mediaHtml +
+                  '<span class="sp-tag">Patrocinado</span>' +
+                  '<div class="sp-overlay"><div class="sp-name">' + safeName + '</div>' +
+                  '<div class="sp-meta">' + esc(p.category || '') + (p.location ? (' · ' + esc(p.location)) : '') + '</div></div>' +
+                '</a>';
+              }).join('') + '</div></div>';
+          });
+      })
+      .catch(function(){ box.innerHTML = ''; });
+  }
+  loadSponsoredHome();
 
   Promise.resolve()
     .then(function(){ return db.rpc('spotlight_pros', {limite: 3}); })
