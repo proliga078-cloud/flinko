@@ -11,11 +11,16 @@ async function loadStats(){
   document.getElementById('stat-msgs').textContent=mc||0
   const msub=document.getElementById('stat-msgs-sub')
   if(msub)msub.textContent=(mc||0)>0?'Em curso':'Nenhuma por responder'
-  document.getElementById('stat-services').textContent=sc||0
+  const savg=document.getElementById('stat-avg'),savgSub=document.getElementById('stat-avg-sub')
   if(revs&&revs.length){
     reviewsAvg=(revs.reduce((s,r)=>s+r.rating,0)/revs.length).toFixed(1)
-    document.getElementById('stat-avg').textContent=reviewsAvg
-  } else {reviewsAvg=null;document.getElementById('stat-avg').textContent='—'}
+    if(savg)savg.textContent=reviewsAvg+' ★'
+    if(savgSub)savgSub.textContent=revs.length+' avaliaç'+(revs.length!==1?'ões':'ão')
+  } else {
+    reviewsAvg=null
+    if(savg)savg.textContent='—'
+    if(savgSub)savgSub.textContent='Sem avaliações ainda'
+  }
 
   // Visualizações do perfil (últimos 30 dias) + gráfico
   const d30=new Date();d30.setDate(d30.getDate()-29);d30.setHours(0,0,0,0)
@@ -38,12 +43,6 @@ async function loadStats(){
   const{data:paid6}=await db.from('jobs').select('paid_amount,paid_at').eq('professional_id',profileId).eq('status','pago').gte('paid_at',d6.toISOString())
   renderEarningsChart(paid6||[])
 
-  // Badge
-  const{count:unread}=await db.from('messages_legacy_contact_form').select('*',{count:'exact',head:true}).eq('professional_id',profileId).eq('read',false)
-  if(unread>0){
-    const badge=document.getElementById('msg-badge')
-    if(badge){badge.style.display='inline';badge.textContent=unread}
-  }
   renderInsights()
   renderFollowupReminders()
   // updateSidebar() (que chama renderSetup()) corre logo no init(), ANTES
@@ -219,7 +218,7 @@ function renderInsights(){
     tips.push({type:'good',icon:'chart',text:`A maior parte dos teus trabalhos concluídos caem à ${dowNames[maxIdx]}.`})
   }
 
-  if(marketPriceCache&&marketPriceCache.category===profileData.category)tips.push({type:'good',icon:'coin',text:`Profissionais de ${profileData.category} na Proliga cobram, em média, entre €${marketPriceCache.lo.toFixed(0)} e €${marketPriceCache.hi.toFixed(0)}. Usa isto para ajustares os teus preços.`})
+  if(marketPriceCache&&marketPriceCache.category===profileData.category)tips.push({type:'good',icon:'coin',text:`Profissionais de ${profileData.category} na Flinko cobram, em média, entre €${marketPriceCache.lo.toFixed(0)} e €${marketPriceCache.hi.toFixed(0)}. Usa isto para ajustares os teus preços.`})
 
   const respN=profileData.response_sample_count||0
   const respM=profileData.avg_response_minutes
@@ -324,7 +323,12 @@ async function loadRecentMsgs(){
 async function loadRecentReviews(){
   const{data}=await db.from('reviews').select('*').eq('professional_id',profileId).order('created_at',{ascending:false}).limit(3)
   const el=document.getElementById('recent-reviews')
-  if(!data||!data.length){el.innerHTML='<div class="empty">Sem avaliações ainda</div>';return}
+  const section=document.getElementById('recent-reviews-section')
+  // Só mostra o cartão quando há pelo menos 1 avaliação — sem isto, todos os
+  // profissionais novos (a maioria neste momento) veriam um cartão vazio
+  // "Sem avaliações ainda" na página de resumo, sem qualquer valor.
+  if(!data||!data.length){if(section)section.style.display='none';return}
+  if(section)section.style.display='block'
   el.innerHTML=data.map(r=>{
     const stars='★'.repeat(r.rating)+'☆'.repeat(5-r.rating)
     return`<div class="list-item">

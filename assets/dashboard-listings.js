@@ -206,30 +206,6 @@ async function deletePortItem(id){
   loadPortfolio()
 }
 
-// MESSAGES
-async function loadMessages(){
-  const{data}=await db.from('messages_legacy_contact_form').select('*').eq('professional_id',profileId).order('created_at',{ascending:false})
-  const el=document.getElementById('messages-list')
-  if(!data||!data.length){el.innerHTML='<div class="empty">Sem mensagens ainda.</div>';return}
-  // Mark all as read
-  db.from('messages_legacy_contact_form').update({read:true}).eq('professional_id',profileId).eq('read',false).then(()=>{
-    const b=document.getElementById('msg-badge'); if(b)b.style.display='none'
-  })
-  el.innerHTML=data.map(m=>`
-    <div class="msg-item ${!m.read?'unread':''}">
-      <div class="msg-header">
-        <div><div class="msg-from">${escapeHtml(m.sender_name)}</div><div style="font-size:12px;color:var(--muted)">${escapeHtml(m.sender_email)}${m.sender_phone?' · '+escapeHtml(m.sender_phone):''}</div></div>
-        <div class="msg-date">${new Date(m.created_at).toLocaleDateString('pt-PT')}</div>
-      </div>
-      <div class="msg-subject">${escapeHtml(m.subject)}</div>
-      <div style="font-size:14px;color:#475569;margin-top:6px;line-height:1.6">${escapeHtml(m.content)}</div>
-      <div style="margin-top:10px;display:flex;gap:8px">
-        <a href="mailto:${escapeHtml(m.sender_email)}?subject=Re: ${encodeURIComponent(m.subject)}" class="btn btn-outline btn-sm">Responder por email</a>
-        ${m.sender_phone?`<a href="tel:${escapeHtml(m.sender_phone)}" class="btn btn-gold btn-sm">Ligar</a>`:''}
-      </div>
-    </div>`).join('')
-}
-
 // REVIEWS
 async function loadReviews(){
   const{data}=await db.from('reviews').select('*').eq('professional_id',profileId).order('created_at',{ascending:false})
@@ -266,7 +242,6 @@ function showPage(name){
   if(name==='portfolio')loadPortfolio()
   if(name==='diario')loadDiaryDash()
   if(name==='faq')loadFaqsDash()
-  if(name==='messages')loadMessages()
   if(name==='reviews')loadReviews()
   if(name==='myrequests')loadMyRequests()
   if(name==='trabalhos'){loadJobs();loadQuotes()}

@@ -354,7 +354,7 @@ async function requestReviewForJob(jobId){
     if(!job||!job.conversation_id)return
     const{data:already}=await db.from('messages').select('id').eq('conversation_id',job.conversation_id).ilike('content','%deixa a tua avaliação%').limit(1).maybeSingle()
     if(already)return
-    const link=profileData?.slug?('https://proliga.pt/'+profileData.slug):('https://proliga.pt/profile.html?id='+profileId)
+    const link=profileData?.slug?('https://flinko.pt/'+profileData.slug):('https://flinko.pt/profile.html?id='+profileId)
     const content='Obrigado! O trabalho foi concluído e pago. Se puderes, deixa a tua avaliação aqui: '+link
     await db.from('messages').insert({conversation_id:job.conversation_id,sender_id:profileId,content})
     await db.from('conversations').update({last_message:content,last_message_at:new Date().toISOString()}).eq('id',job.conversation_id)
@@ -363,7 +363,7 @@ async function requestReviewForJob(jobId){
 }
 
 // Sem isto, o pedido de avaliação fica só dentro do chat e o cliente só o
-// vê se voltar a abrir a Proliga por iniciativa própria — a mesma Netlify
+// vê se voltar a abrir a Flinko por iniciativa própria — a mesma Netlify
 // Function que avisa por email/push em mensagens normais (messages.html)
 // tem de ser chamada aqui também, senão o pedido automático fica mudo.
 async function notifyReviewRequest(conversationId,content){

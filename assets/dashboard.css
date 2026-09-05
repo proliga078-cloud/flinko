@@ -278,6 +278,11 @@ textarea{resize:vertical;min-height:80px}
 .hd-cta:hover{transform:translateY(-1px)}
 .hd-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
 @media(max-width:700px){.hd-stats{grid-template-columns:1fr;gap:16px}}
+/* Resumo (overview) tem um 4º stat (Avaliação) — só ali, as outras 4
+   páginas que reutilizam .hd-stats continuam com 3 colunas. */
+.hd-stats.hd-stats-4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:900px){.hd-stats.hd-stats-4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.hd-stats.hd-stats-4{grid-template-columns:1fr}}
 .hd-stat+.hd-stat{border-left:1px solid rgba(255,255,255,.11);padding-left:22px}
 @media(max-width:700px){.hd-stat+.hd-stat{border-left:none;padding-left:0;border-top:1px solid rgba(255,255,255,.1);padding-top:16px}}
 .hd-lbl{font-size:10px;font-weight:700;letter-spacing:.09em;color:rgba(255,255,255,.42);text-transform:uppercase;margin-bottom:8px}

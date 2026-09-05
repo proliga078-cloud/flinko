@@ -140,7 +140,7 @@ function exportFinanceCsv(){
   const url=URL.createObjectURL(blob)
   const a=document.createElement('a')
   a.href=url
-  a.download='Proliga-trabalhos-pagos-'+new Date().toISOString().slice(0,10)+'.csv'
+  a.download='Flinko-trabalhos-pagos-'+new Date().toISOString().slice(0,10)+'.csv'
   document.body.appendChild(a)
   a.click()
   document.body.removeChild(a)
@@ -252,7 +252,7 @@ function exportAnnualCsv(){
   const url=URL.createObjectURL(blob)
   const a=document.createElement('a')
   a.href=url
-  a.download='Proliga-relatorio-anual-'+year+'.csv'
+  a.download='Flinko-relatorio-anual-'+year+'.csv'
   document.body.appendChild(a)
   a.click()
   document.body.removeChild(a)
@@ -318,7 +318,7 @@ function buildQuotePdf({client,items,subtotal,validDays,notes}){
   doc.setFont(undefined,'normal')
   doc.text([pro.category||'',pro.location||''].filter(Boolean).join(' · '),14,23)
   doc.setFontSize(9)
-  doc.text('Gerado via Proliga',196,16,{align:'right'})
+  doc.text('Gerado via Flinko',196,16,{align:'right'})
 
   doc.setTextColor(20,24,31)
   doc.setFontSize(20)
@@ -381,7 +381,7 @@ function buildQuotePdf({client,items,subtotal,validDays,notes}){
   }
   doc.setFontSize(8)
   doc.setTextColor(150,150,150)
-  if(!planLimits.own_branding)doc.text('Orçamento gerado através da Proliga · proliga.pt',14,287)
+  if(!planLimits.own_branding)doc.text('Orçamento gerado através da Flinko · flinko.pt',14,287)
   return doc
 }
 
@@ -460,7 +460,7 @@ async function loadMarketPricing(){
   marketPriceCache={category:profileData.category,lo,hi}
   if(box){
     box.classList.add('show')
-    box.innerHTML=`<svg class="ic" viewBox="0 0 24 24" style="width:16px;height:16px;flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="9"/><path d="M12 6v12M15.5 9.5a2.5 2.5 0 0 0-2.5-2H11a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2.5 2.5 0 0 1-2.5-2"/></svg><span>Profissionais de <strong>${escapeHtml(profileData.category)}</strong> na Proliga cobram, em média, entre <strong>€${lo.toFixed(0)}</strong> e <strong>€${hi.toFixed(0)}</strong>. Usa isto como referência ao definires os teus preços.</span>`
+    box.innerHTML=`<svg class="ic" viewBox="0 0 24 24" style="width:16px;height:16px;flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="9"/><path d="M12 6v12M15.5 9.5a2.5 2.5 0 0 0-2.5-2H11a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2.5 2.5 0 0 1-2.5-2"/></svg><span>Profissionais de <strong>${escapeHtml(profileData.category)}</strong> na Flinko cobram, em média, entre <strong>€${lo.toFixed(0)}</strong> e <strong>€${hi.toFixed(0)}</strong>. Usa isto como referência ao definires os teus preços.</span>`
   }
   if(typeof renderInsights==='function')renderInsights()
 }

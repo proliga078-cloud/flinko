@@ -117,7 +117,6 @@ async function init(){
       loadStats()
       loadRecentMsgs()
       loadRecentReviews()
-      loadMessages()
       loadReviews()
       loadServices()
       loadChatUnread()

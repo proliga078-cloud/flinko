@@ -269,18 +269,18 @@ const AI_FAQ=[
 {k:['metodos de pagamento que aceito','aceito multibanco','aceito mbway','como recebo o dinheiro'],a:'Em Perfil > Sobre mim avançado indicas que métodos de pagamento aceitas (Multibanco, MB Way, transferência, numerário, etc.), visível no teu perfil público.'},
 {k:['casos de sucesso','portefolio','portfolio de trabalhos'],a:'Podes mostrar casos de sucesso (fotos e descrição) no teu perfil público, em Perfil > Casos de Sucesso. O número que podes ter depende do teu plano.'},
 {k:['diario de trabalhos','historico no perfil publico'],a:'O Diário no teu perfil público mostra um resumo dos trabalhos que já fizeste, para dar confiança a novos clientes.'},
-{k:['conquistas','badges','distintivos'],a:'Ganhas badges automáticas conforme cresces na Proliga — perfil completo, primeiras avaliações, resposta rápida, entre outras. Aparecem no teu perfil público.'},
+{k:['conquistas','badges','distintivos'],a:'Ganhas badges automáticas conforme cresces na Flinko — perfil completo, primeiras avaliações, resposta rápida, entre outras. Aparecem no teu perfil público.'},
 {k:['zona de atuacao','area que sirvo','onde presto servico'],a:'Defines a tua zona de atuação em Perfil. Ajuda os clientes dessa área a encontrar-te nas pesquisas.'},
 {k:['disponibilidade semanal fixa','horario que trabalho','dias que trabalho'],a:'Podes definir a tua disponibilidade semanal fixa em Perfil, para os clientes saberem quando costumas estar disponível.'},
 {k:['orcamento automatico','pedido com varios orcamentos','receber varios orcamentos'],a:'Quando um cliente publica um pedido, vários profissionais da categoria certa podem enviar orçamento — tu respondes diretamente no Pipeline.'},
-{k:['sincronizar agenda','google calendar','exportar agenda','link ics'],a:'Podes sincronizar a tua Agenda da Proliga com o Google Calendar (ou outro) através de um link ICS, disponível na página Agenda.'},
-{k:['instalar a app','instalar aplicacao','adicionar ao ecra principal','pwa'],a:'A Proliga funciona como app (PWA). No telemóvel, o browser mostra \'Adicionar ao ecrã principal\' — depois abre como uma app normal, com notificações.'},
+{k:['sincronizar agenda','google calendar','exportar agenda','link ics'],a:'Podes sincronizar a tua Agenda da Flinko com o Google Calendar (ou outro) através de um link ICS, disponível na página Agenda.'},
+{k:['instalar a app','instalar aplicacao','adicionar ao ecra principal','pwa'],a:'A Flinko funciona como app (PWA). No telemóvel, o browser mostra \'Adicionar ao ecrã principal\' — depois abre como uma app normal, com notificações.'},
 {k:['notificacoes push','ativar notificacoes'],a:'Podes ativar notificações push no dashboard para receberes avisos de novas mensagens, pedidos e o resumo diário, mesmo com a app fechada.'},
 {k:['resumo diario','resumo matinal','notificacao de manha'],a:'Todas as manhãs, se tiveres algo relevante (trabalhos do dia, orçamentos por responder, mensagens por ler), recebes uma notificação resumo. Podes desligar em Notificações.'},
 {k:['aviso de chuva','vai chover','tempo para o trabalho','previsao do tempo'],a:'Para categorias que trabalham ao ar livre, avisamos automaticamente 2 dias antes se houver alta probabilidade de chuva num trabalho agendado.'},
 {k:['lista de material','material a levar'],a:'Em cada trabalho no Pipeline podes escrever uma lista de material a levar — fica guardada e visível antes de te deslocares.'},
 {k:['calculadora de orcamento','calcular preco por telefone','calculadora rapida'],a:'No Resumo tens uma calculadora rápida que sugere uma faixa de preço com base na tua categoria — útil para responderes por telefone.'},
-{k:['passar trabalho a colega','encaminhar trabalho','recomendar colega'],a:'Podes passar ou recomendar um trabalho a outro profissional da Proliga — ele recebe a informação numa conversa e tu podes ganhar crédito de indicação.'},
+{k:['passar trabalho a colega','encaminhar trabalho','recomendar colega'],a:'Podes passar ou recomendar um trabalho a outro profissional da Flinko — ele recebe a informação numa conversa e tu podes ganhar crédito de indicação.'},
 {k:['pedir avaliacao','avaliacao automatica ao cliente'],a:'Quando marcas um trabalho como pago, enviamos automaticamente uma mensagem ao cliente a pedir avaliação, com o link do teu perfil.'},
 {k:['programa de creditos','ganhar creditos'],a:'Ganhas créditos ao indicares colegas que se registam e completam o perfil, e também com avaliações positivas. Usa os créditos para destacar o teu perfil.'},
 {k:['anuncio pago','destacar perfil','impulsionar perfil'],a:'Podes usar créditos para pôr o teu perfil em destaque nas pesquisas por um período, na secção de Créditos.'},
@@ -291,21 +291,21 @@ const AI_FAQ=[
 {k:['relatorio anual','relatorio do ano'],a:'Em Finanças tens um relatório anual simples com o resumo de faturação, despesas e margem do ano.'},
 {k:['margem de lucro','margem do trabalho'],a:'Se preencheres o custo de material num trabalho, calculamos automaticamente a margem de lucro desse trabalho no Pipeline.'},
 {k:['verificacao por sms','verificar telemovel','numero verificado'],a:'Podes verificar o teu número de telemóvel por SMS — perfis verificados têm mais confiança dos clientes.'},
-{k:['verificacao manual','como sou verificado'],a:'Além da verificação por SMS, a equipa Proliga também pode verificar perfis manualmente — fica assinalado com o selo \'Verificado\'.'},
-{k:['stripe','pagamento pela plataforma','receber pagamento online','pagamento por cartao'],a:'Podes ativar pagamentos online opcionais via Stripe Connect, para receberes diretamente por cartão através da Proliga.'},
-{k:['avaliacoes externas','importar avaliacoes','trabalhos feitos fora da proliga'],a:'Podes adicionar avaliações e trabalhos feitos fora da Proliga (portefólio externo) para reforçares a tua reputação desde o primeiro dia.'},
-{k:['nova cidade','a minha cidade nao esta','lista de espera'],a:'Se a Proliga ainda não está ativa na tua zona, os clientes podem entrar numa lista de espera — assim que houver profissionais suficientes, ativamos a zona.'},
+{k:['verificacao manual','como sou verificado'],a:'Além da verificação por SMS, a equipa Flinko também pode verificar perfis manualmente — fica assinalado com o selo \'Verificado\'.'},
+{k:['stripe','pagamento pela plataforma','receber pagamento online','pagamento por cartao'],a:'Podes ativar pagamentos online opcionais via Stripe Connect, para receberes diretamente por cartão através da Flinko.'},
+{k:['avaliacoes externas','importar avaliacoes','trabalhos feitos fora da proliga','trabalhos feitos fora da flinko'],a:'Podes adicionar avaliações e trabalhos feitos fora da Flinko (portefólio externo) para reforçares a tua reputação desde o primeiro dia.'},
+{k:['nova cidade','a minha cidade nao esta','lista de espera'],a:'Se a Flinko ainda não está ativa na tua zona, os clientes podem entrar numa lista de espera — assim que houver profissionais suficientes, ativamos a zona.'},
 {k:['rgpd','protecao de dados','apagar a minha conta','eliminar conta'],a:'Podes pedir a exportação dos teus dados ou a eliminação da conta diretamente aqui no painel, em "Privacidade e RGPD" — o pedido fica registado e a equipa trata-o em até 30 dias. Também podes consultar todos os teus direitos RGPD na página RGPD do site.'},
 {k:['como sou encontrado','aparecer nas pesquisas','porque nao apareço'],a:'Apareces nas pesquisas com base na tua categoria, zona, perfil completo e avaliações. Perfis com foto, bio e serviços publicados aparecem primeiro.'},
 {k:['diferenca entre cliente e profissional','tipos de conta'],a:'Há dois tipos de conta: Cliente (contrata profissionais) e Profissional (oferece serviços) — escolheste isto no registo.'},
-{k:['contactar suporte','falar com a proliga','preciso de ajuda humana'],a:'Podes contactar o suporte da Proliga na página de Contacto do site.'},
-{k:['como funciona a proliga','o que e a proliga'],a:'A Proliga liga clientes a profissionais verificados em Portugal — publicas serviços, respondes a pedidos e geres tudo (agenda, orçamentos, pagamentos) num único painel.'},
-{k:['comissao','a proliga cobra comissao','quanto custa usar a proliga'],a:'A Proliga tem preços fixos e sem comissões sobre o que faturas — pagas apenas a mensalidade do plano que escolheres (o Gratuito não tem custo).'},
+{k:['contactar suporte','falar com a proliga','falar com a flinko','preciso de ajuda humana'],a:'Podes contactar o suporte da Flinko na página de Contacto do site.'},
+{k:['como funciona a proliga','o que e a proliga','como funciona a flinko','o que e a flinko'],a:'A Flinko liga clientes a profissionais verificados em Portugal — publicas serviços, respondes a pedidos e geres tudo (agenda, orçamentos, pagamentos) num único painel.'},
+{k:['comissao','a proliga cobra comissao','quanto custa usar a proliga','a flinko cobra comissao','quanto custa usar a flinko'],a:'A Flinko tem preços fixos e sem comissões sobre o que faturas — pagas apenas a mensalidade do plano que escolheres (o Gratuito não tem custo).'},
 {k:['editar servico','apagar servico','quantos servicos posso publicar'],a:'Podes editar ou remover os teus serviços a qualquer momento em Serviços. O número que podes publicar depende do teu plano.'},
 {k:['tempo de resposta','quanto tempo demoro a responder'],a:'Responder depressa aos pedidos ajuda-te a aparecer melhor nas pesquisas e conta para algumas badges de conquista.'},
 {k:['cancelar um trabalho','marcar como cancelado'],a:'Podes marcar um trabalho como cancelado no Pipeline a qualquer momento — fica registado no histórico mas sai dos trabalhos ativos.'},
 {k:['mudar a foto de perfil','atualizar foto'],a:'Podes atualizar a tua foto de perfil em Perfil — perfis com foto recebem mais contactos.'},
-{k:['link personalizado','slug do perfil','url do meu perfil'],a:'Alguns planos permitem um link personalizado para o teu perfil público (proliga.pt/o-teu-nome) em vez do link genérico com ID.'},
+{k:['link personalizado','slug do perfil','url do meu perfil'],a:'Alguns planos permitem um link personalizado para o teu perfil público (flinko.pt/o-teu-nome) em vez do link genérico com ID.'},
 {k:['exportar dados','descarregar os meus dados'],a:'Podes pedir os teus dados pessoais ao abrigo do RGPD através da página RGPD do site.'}
 ]
 
@@ -314,7 +314,7 @@ function answerLocally(question){
   const has=(...words)=>words.some(w=>q.includes(w))
 
   // Cumprimentos / agradecimentos
-  if(has('ola','boa tarde','bom dia','boa noite','oi ','ei proliga')){
+  if(has('ola','boa tarde','bom dia','boa noite','oi ','ei proliga','ei flinko')){
     return 'Olá! Pergunta-me sobre faturação, orçamentos pendentes, agenda, ticket médio, avaliações, perfil, serviços, trabalhos, o teu plano, preços de mercado, o código de referência ou o modo férias.'
   }
   if(has('obrigado','obrigada','valeu','fixe respondeste','otimo obrigado')){
@@ -456,7 +456,7 @@ function answerLocally(question){
     return 'De momento não tenho nenhuma sugestão urgente — continua o bom trabalho! Podes ver mais detalhes no painel de Insights no Resumo.'
   }
 
-  // Base alargada de perguntas sobre como cada funcionalidade da Proliga funciona
+  // Base alargada de perguntas sobre como cada funcionalidade da Flinko funciona
   for(const topic of AI_FAQ){
     if(has(...topic.k))return topic.a
   }

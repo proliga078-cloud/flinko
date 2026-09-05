@@ -128,7 +128,7 @@ function downloadQr(){
   if(!fonte){showAlert('profile-error','QR ainda não está pronto.','error');return}
   const a=document.createElement('a')
   a.href=fonte
-  a.download='proliga-'+((profileData&&profileData.slug)||'qr')+'.png'
+  a.download='flinko-'+((profileData&&profileData.slug)||'qr')+'.png'
   document.body.appendChild(a);a.click();a.remove()
 }
 
