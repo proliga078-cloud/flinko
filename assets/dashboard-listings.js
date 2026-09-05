@@ -263,6 +263,9 @@ function showPage(name){
   })
   document.querySelectorAll('.ptab').forEach(t=>t.classList.toggle('on',t.dataset.ptab===name))
   if(name==='services'){loadServices();loadMarketPricing()}
+  if(name==='portfolio')loadPortfolio()
+  if(name==='diario')loadDiaryDash()
+  if(name==='faq')loadFaqsDash()
   if(name==='messages')loadMessages()
   if(name==='reviews')loadReviews()
   if(name==='myrequests')loadMyRequests()
