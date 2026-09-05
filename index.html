@@ -1024,22 +1024,14 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
 
       <div class="hero-side">
         <div class="live-card">
-          <div class="head">Pedidos recentes <span class="live-dot">Ao vivo</span></div>
+          <div class="head">Pedidos recentes <span class="live-dot" id="liveDot" style="display:none">Ao vivo</span></div>
           <div class="live-feed" id="liveFeed">
             <div class="live-req is-active" data-i="0">
-              <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"/></svg></span>
-              <div><strong>Fazer um site</strong><span>Braga – Barcelos · publicado há pouco</span></div>
-            </div>
-            <div class="live-req" data-i="1">
-              <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg></span>
-              <div><strong>Instalação elétrica</strong><span>Porto – Matosinhos · publicado há 4 min</span></div>
-            </div>
-            <div class="live-req" data-i="2">
-              <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19a3 3 0 0 0 3-3V4H9v12a3 3 0 0 0 3 3Z"/></svg></span>
-              <div><strong>Pintura de sala</strong><span>Lisboa – Amadora · publicado há 9 min</span></div>
+              <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg></span>
+              <div><strong>A carregar…</strong><span>&nbsp;</span></div>
             </div>
           </div>
-          <div class="live-feed-dots" aria-hidden="true"><span class="active"></span><span></span><span></span></div>
+          <div class="live-feed-dots" id="liveFeedDots" aria-hidden="true"></div>
         </div>
         <div class="avatars-row">
           <span class="stack" aria-hidden="true">
@@ -1047,7 +1039,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
             <span style="background:var(--mint-dark)">DC</span>
             <span style="background:#6d59e8">AF</span>
           </span>
-          <p>23+ profissionais já a receber pedidos</p>
+          <p id="avatarsRowText">A carregar profissionais…</p>
         </div>
       </div>
     </div>
@@ -1112,36 +1104,36 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
         <p>Encontra o especialista certo para cada trabalho</p>
       </div>
       <div class="cat-grid" data-reveal>
-        <a href="/eletricistas" class="cat-tile"><span class="glow-spot"></span>
+        <a href="/eletricistas" class="cat-tile" data-cat="Eletricistas"><span class="glow-spot"></span>
           <span class="tag-pill">Mais procurada</span>
           <span class="ic ic-orange"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg></span>
           <div><h3>Eletricistas</h3><span class="desc">Instalações e reparações</span></div>
         </a>
-        <a href="/canalizadores" class="cat-tile"><span class="glow-spot"></span>
+        <a href="/canalizadores" class="cat-tile" data-cat="Canalizadores"><span class="glow-spot"></span>
           <span class="ic ic-mint"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/></svg></span>
           <div><h3>Canalizadores</h3><span class="desc">Água e saneamento</span></div>
         </a>
-        <a href="/limpeza" class="cat-tile"><span class="glow-spot"></span>
+        <a href="/limpeza" class="cat-tile" data-cat="Limpeza"><span class="glow-spot"></span>
           <span class="ic ic-dark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 21 9-9m0 0 8-8m-8 8-5-5m5 5 5 5"/></svg></span>
           <div><h3>Limpeza</h3><span class="desc">Casa e escritórios</span></div>
         </a>
-        <a href="/pintores" class="cat-tile"><span class="glow-spot"></span>
+        <a href="/pintores" class="cat-tile" data-cat="Pintores"><span class="glow-spot"></span>
           <span class="ic ic-orange"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19a3 3 0 0 0 3-3V4H9v12a3 3 0 0 0 3 3Z"/></svg></span>
           <div><h3>Pintores</h3><span class="desc">Interior e exterior</span></div>
         </a>
-        <a href="/programadores" class="cat-tile"><span class="glow-spot"></span>
+        <a href="/programadores" class="cat-tile" data-cat="Programadores"><span class="glow-spot"></span>
           <span class="ic ic-purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m8 6-6 6 6 6m8-12 6 6-6 6"/></svg></span>
           <div><h3>Programadores</h3><span class="desc">Sites, apps e sistemas</span></div>
         </a>
-        <a href="/designers" class="cat-tile"><span class="glow-spot"></span>
+        <a href="/designers" class="cat-tile" data-cat="Designers"><span class="glow-spot"></span>
           <span class="ic ic-mint"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg></span>
           <div><h3>Designers</h3><span class="desc">Design gráfico e visual</span></div>
         </a>
-        <a href="/jardineiros" class="cat-tile"><span class="glow-spot"></span>
+        <a href="/jardineiros" class="cat-tile" data-cat="Jardineiros"><span class="glow-spot"></span>
           <span class="ic ic-dark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></span>
           <div><h3>Jardineiros</h3><span class="desc">Jardins e exteriores</span></div>
         </a>
-        <a href="/carpinteiros" class="cat-tile"><span class="glow-spot"></span>
+        <a href="/carpinteiros" class="cat-tile" data-cat="Carpinteiros"><span class="glow-spot"></span>
           <span class="ic ic-orange"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
           <div><h3>Carpinteiros</h3><span class="desc">Móveis e madeira</span></div>
         </a>
@@ -1586,11 +1578,15 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
     });
   }
 
-  // rotating live-feed in hero
-  var liveFeed = document.getElementById('liveFeed');
-  if(liveFeed){
+  // rotating live-feed in hero — populated with real data from Supabase
+  // further down (loadLiveFeed()), which calls window.startLiveFeedRotation
+  // once the real items exist in the DOM. Nothing to wire up here at
+  // load time since the content doesn't exist yet.
+  window.startLiveFeedRotation = function(){
+    var liveFeed = document.getElementById('liveFeed');
+    if(!liveFeed) return;
     var liveItems = liveFeed.querySelectorAll('.live-req');
-    var liveDots = document.querySelectorAll('.live-feed-dots span');
+    var liveDots = document.querySelectorAll('#liveFeedDots span');
     var liveI = 0, liveTimer = null;
     function showLive(i){
       liveItems.forEach(function(el){ el.classList.remove('is-active'); });
@@ -1611,7 +1607,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
       liveCard.addEventListener('mouseenter', function(){ clearInterval(liveTimer); });
       liveCard.addEventListener('mouseleave', function(){ startLive(); });
     }
-  }
+  };
 
   // categories drag carousel
   var carousel = document.getElementById('catCarousel');
@@ -1784,6 +1780,124 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   function profileHref(p){
     return p.slug ? ('/' + encodeURIComponent(p.slug)) : ('/profile.html?u=' + encodeURIComponent(p.id));
   }
+
+  function timeAgo(dateStr){
+    var diffMs = Date.now() - new Date(dateStr).getTime();
+    var min = Math.floor(diffMs / 60000);
+    if(min < 1) return 'publicado agora';
+    if(min < 60) return 'publicado há ' + min + ' min';
+    var h = Math.floor(min / 60);
+    if(h < 24) return 'publicado há ' + h + (h === 1 ? ' hora' : ' horas');
+    var d = Math.floor(h / 24);
+    if(d < 30) return 'publicado há ' + d + (d === 1 ? ' dia' : ' dias');
+    var mo = Math.floor(d / 30);
+    if(mo < 12) return 'publicado há ' + mo + (mo === 1 ? ' mês' : ' meses');
+    var y = Math.floor(mo / 12);
+    return 'publicado há ' + y + (y === 1 ? ' ano' : ' anos');
+  }
+
+  var REQUEST_ICONS = {
+    'Programadores': '<path d="m8 6-6 6 6 6m8-12 6 6-6 6"/>',
+    'Eletricistas': '<path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/>',
+    'Pintores': '<path d="M12 19a3 3 0 0 0 3-3V4H9v12a3 3 0 0 0 3 3Z"/>',
+    'Canalizadores': '<path d="M12 2s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/>',
+    'Limpeza': '<path d="m3 21 9-9m0 0 8-8m-8 8-5-5m5 5 5 5"/>',
+    'Designers': '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/>',
+    'Jardineiros': '<path d="M12 2v20M2 12h20"/>',
+    'Carpinteiros': '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>'
+  };
+  var REQUEST_ICON_DEFAULT = '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/>';
+
+  // Pedidos recentes reais (tabela requests) no cartao "Ao vivo" do hero.
+  // Antes disto os 3 itens eram inteiramente escritos a mao no HTML (um
+  // deles era um pedido real copiado, os outros dois inventados) - agora
+  // mostra sempre o que existe de verdade, com estado honesto para quando
+  // ha poucos ou nenhum pedido publicado ainda.
+  function loadLiveFeed(){
+    var feed = document.getElementById('liveFeed');
+    var dotsWrap = document.getElementById('liveFeedDots');
+    var dot = document.getElementById('liveDot');
+    if(!feed) return;
+    db.from('requests').select('title,category,location,created_at').eq('status','open').order('created_at', {ascending:false}).limit(3)
+      .then(function(res){
+        var items = (res && res.data) || [];
+        if(!items.length){
+          feed.innerHTML = '<div class="live-req is-active"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span><div><strong>Ainda não há pedidos publicados</strong><span>Sê o primeiro a publicar um</span></div></div>';
+          dotsWrap.innerHTML = '';
+          return;
+        }
+        feed.innerHTML = items.map(function(it, i){
+          var icon = REQUEST_ICONS[it.category] || REQUEST_ICON_DEFAULT;
+          return '<div class="live-req' + (i === 0 ? ' is-active' : '') + '" data-i="' + i + '">' +
+            '<span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + icon + '</svg></span>' +
+            '<div><strong>' + esc(it.title) + '</strong><span>' + esc(it.location || 'Portugal') + ' · ' + timeAgo(it.created_at) + '</span></div>' +
+          '</div>';
+        }).join('');
+        dotsWrap.innerHTML = items.map(function(_, i){ return '<span' + (i === 0 ? ' class="active"' : '') + '></span>'; }).join('');
+        // "Ao vivo" só faz sentido a mostrar quando o pedido mais recente
+        // e mesmo recente - caso contrario seria uma etiqueta enganadora
+        // (a mesma logica ja usada para nao inventar tempos de resposta).
+        var freshMs = Date.now() - new Date(items[0].created_at).getTime();
+        if(dot) dot.style.display = freshMs < 1000*60*60*24*30 ? '' : 'none';
+        if(window.startLiveFeedRotation) window.startLiveFeedRotation();
+      })
+      .catch(function(){
+        feed.innerHTML = '';
+      });
+  }
+  loadLiveFeed();
+
+  // Contagem real de profissionais verificados (substitui o "23+" fixo) e
+  // de distritos com pelo menos um profissional verificado (substitui o
+  // "9" fixo no contador de zonas mais abaixo na pagina).
+  function loadRealCounts(){
+    var avatarsText = document.getElementById('avatarsRowText');
+    db.from('profiles').select('location').eq('account_type', 'professional').eq('verified', true).eq('is_demo', false).eq('suspended', false).eq('approved', true)
+      .then(function(res){
+        var rows = (res && res.data) || [];
+        if(avatarsText) avatarsText.textContent = rows.length + (rows.length === 1 ? ' profissional verificado em Portugal' : ' profissionais verificados em Portugal');
+        var districts = {};
+        rows.forEach(function(p){
+          var loc = (p.location || '').split('–')[0].trim();
+          if(loc) districts[loc] = true;
+        });
+        var zoneEl = document.querySelector('.trust-stats [data-suffix=""]');
+        if(zoneEl){
+          var n = Object.keys(districts).length;
+          zoneEl.setAttribute('data-count', n);
+        }
+      })
+      .catch(function(){
+        if(avatarsText) avatarsText.textContent = 'Profissionais verificados em Portugal';
+      });
+  }
+  loadRealCounts();
+
+  // Contagem real de profissionais por categoria nos tiles da homepage -
+  // só mostra o numero quando e maior que zero, para nao pintar as
+  // categorias ainda vazias como "0 profissionais" (desencorajador e nao
+  // acrescenta nada que a descricao generica ja nao diga).
+  function loadCategoryCounts(){
+    db.from('profiles').select('category').eq('account_type', 'professional').eq('is_demo', false).eq('suspended', false).eq('approved', true)
+      .then(function(res){
+        var rows = (res && res.data) || [];
+        var counts = {};
+        rows.forEach(function(p){
+          var c = (p.category || '').trim();
+          if(c) counts[c] = (counts[c] || 0) + 1;
+        });
+        document.querySelectorAll('.cat-tile[data-cat]').forEach(function(tile){
+          var n = counts[tile.getAttribute('data-cat')] || 0;
+          if(n > 0){
+            var descEl = tile.querySelector('.desc');
+            if(descEl) descEl.textContent = n + (n === 1 ? ' profissional' : ' profissionais');
+          }
+        });
+      })
+      .catch(function(){});
+  }
+  loadCategoryCounts();
+
   function statsHtml(p){
     if(p.response_sample_count > 0 && p.avg_response_minutes != null){
       var mins = Math.round(p.avg_response_minutes);
