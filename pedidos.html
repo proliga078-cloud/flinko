@@ -103,8 +103,13 @@ nav{position:sticky;top:0;z-index:200;background:var(--white);border-bottom:1px 
 /* GRID / CARDS */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:18px;padding-bottom:60px}
 @keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.req-card{background:var(--white);border:1px solid var(--border);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .18s,transform .18s;box-shadow:var(--shadow);position:relative;animation:cardIn .5s ease both}
+.req-card{background:var(--white);border:1px solid var(--border);border-radius:18px;overflow:hidden;isolation:isolate;display:flex;flex-direction:column;transition:box-shadow .25s cubic-bezier(.22,1,.36,1),transform .25s cubic-bezier(.22,1,.36,1);box-shadow:var(--shadow);position:relative;animation:cardIn .5s ease both}
+.req-card::before{content:'';position:absolute;inset:0;background:radial-gradient(240px circle at var(--mx,50%) var(--my,0%),rgba(232,114,10,.10),transparent 70%);opacity:0;transition:opacity .3s;pointer-events:none;z-index:0}
+.req-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--fresh));transform:scaleX(0);transform-origin:left;transition:transform .35s cubic-bezier(.22,1,.36,1);z-index:2}
+.req-card>*{position:relative;z-index:1}
 .req-card:hover{box-shadow:var(--shadow-lift);transform:translateY(-3px)}
+.req-card:hover::before{opacity:1}
+.req-card:hover::after{transform:scaleX(1)}
 .req-card.is-urgent{box-shadow:0 0 0 2px var(--accent),var(--shadow)}
 .req-card.is-urgent:hover{box-shadow:0 0 0 2px var(--accent),var(--shadow-lift)}
 .req-cover{height:168px;background-size:cover;background-position:center;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:10px 14px}
@@ -745,6 +750,17 @@ if(!document.getElementById('lightbox-overlay').classList.contains('open'))retur
 if(e.key==='Escape')closeLightbox()
 if(e.key==='ArrowLeft')lightboxStep(-1)
 if(e.key==='ArrowRight')lightboxStep(1)
+})
+
+// Glow-spot que segue o cursor nos cartões de pedido (mesmo efeito já usado
+// nas páginas de categoria/perfil). Delegado em #grid porque a lista é
+// reconstruída a cada loadRequests()/filtro.
+document.getElementById('grid').addEventListener('mousemove',e=>{
+const card=e.target.closest('.req-card')
+if(!card)return
+const r=card.getBoundingClientRect()
+card.style.setProperty('--mx',(e.clientX-r.left)+'px')
+card.style.setProperty('--my',(e.clientY-r.top)+'px')
 })
 
 init()

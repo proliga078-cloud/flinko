@@ -99,7 +99,13 @@ nav{flex-wrap:wrap;height:auto;padding:10px 4%;row-gap:8px}
 
 .offers-section{margin-top:34px}
 .offers-section h2{font-size:18px;font-weight:800;margin-bottom:14px}
-.offer-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;gap:12px;margin-bottom:10px;box-shadow:var(--shadow)}
+.offer-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;gap:12px;margin-bottom:10px;box-shadow:var(--shadow);position:relative;isolation:isolate;overflow:hidden;transition:transform .22s cubic-bezier(.22,1,.36,1),box-shadow .22s cubic-bezier(.22,1,.36,1)}
+.offer-card::before{content:'';position:absolute;inset:0;background:radial-gradient(200px circle at var(--mx,50%) var(--my,50%),rgba(15,139,95,.08),transparent 70%);opacity:0;transition:opacity .3s;pointer-events:none;z-index:0}
+.offer-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background:linear-gradient(90deg,var(--fresh),var(--accent));transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.22,1,.36,1);z-index:2}
+.offer-card>*{position:relative;z-index:1}
+.offer-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift)}
+.offer-card:hover::before{opacity:1}
+.offer-card:hover::after{transform:scaleX(1)}
 .oc-avatar{width:40px;height:40px;border-radius:11px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13.5px;flex-shrink:0;overflow:hidden}
 .oc-avatar img{width:100%;height:100%;object-fit:cover}
 .oc-body{flex:1}
@@ -388,6 +394,17 @@ if(!document.getElementById('lightbox-overlay').classList.contains('open'))retur
 if(e.key==='Escape')closeLightbox()
 if(e.key==='ArrowLeft')lightboxStep(-1)
 if(e.key==='ArrowRight')lightboxStep(1)
+})
+
+// Glow-spot que segue o cursor nos cartões de proposta (mesmo efeito já
+// usado no resto do site). Delegado em #detail-root porque a página inteira
+// (incluindo as propostas) é reconstruída a cada loadRequest().
+document.getElementById('detail-root').addEventListener('mousemove',e=>{
+const card=e.target.closest('.offer-card')
+if(!card)return
+const r=card.getBoundingClientRect()
+card.style.setProperty('--mx',(e.clientX-r.left)+'px')
+card.style.setProperty('--my',(e.clientY-r.top)+'px')
 })
 
 init()
