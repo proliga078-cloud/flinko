@@ -41,3 +41,54 @@
   to = "/profile.html?u=:slug"
   status = 200
   force = false
+
+# Cache de assets estaticos no browser do visitante. Os nomes dos ficheiros
+# NAO tem hash de versao, por isso os tempos sao propositadamente moderados
+# (nao "immutable" nem 1 ano) — se editarmos um destes ficheiros, os
+# visitantes com cache ainda quente veem a versao antiga ate o cache expirar.
+# JS/CSS: 1 hora (mudam com alguma frequencia durante o desenvolvimento).
+[[headers]]
+  for = "/assets/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/assets/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+# Imagens e icones: 1 semana (mudam raramente).
+[[headers]]
+  for = "/assets/*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/assets/*.jpeg"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/assets/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/*.ico"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/icon-*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/apple-touch-icon.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/og-image.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
