@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Admin – Proliga</title>
+<title>Admin – Flinko</title>
 <meta name="robots" content="noindex, nofollow"/>
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
@@ -147,13 +147,13 @@ tr:hover td{background:#f8f9fc}
 <!-- LOGIN -->
 <div id="login-screen">
 <div class="login-box">
-<div class="login-logo">Pro<span>liga</span></div>
+<div class="login-logo">Flink<span>o</span></div>
 <div class="login-sub">Área restrita — apenas administradores</div>
 <div class="login-title">🔐 Acesso Admin</div>
 <div class="login-error" id="login-error"></div>
 <div class="form-group">
 <label>Email</label>
-<input id="admin-email" type="email" placeholder="admin@proliga.pt" autocomplete="username"/>
+<input id="admin-email" type="email" placeholder="admin@flinko.pt" autocomplete="username"/>
 </div>
 <div class="form-group">
 <label>Palavra-passe</label>
@@ -166,7 +166,7 @@ tr:hover td{background:#f8f9fc}
 <!-- ADMIN PANEL -->
 <div id="admin-panel">
 <div class="admin-topbar">
-<div class="admin-logo">Pro<span>liga</span></div>
+<div class="admin-logo">Flink<span>o</span></div>
 <div class="admin-badge">ADMIN</div>
 <div class="topbar-right">
 <div class="topbar-email" id="topbar-email"></div>
@@ -817,7 +817,7 @@ box.innerHTML=`<div style="color:var(--red);font-size:12.5px">Erro a carregar pa
 }
 
 function formatCents(cents,currency){
-// A Proliga só cobra em EUR (create-checkout-session.js só cria sessões
+// A Flinko só cobra em EUR (create-checkout-session.js só cria sessões
 // em EUR) — sinaliza-se a moeda só para o caso raro de aparecer outra.
 const symbol=(currency||'eur').toLowerCase()==='eur'?'€':(currency||'').toUpperCase()+' '
 return symbol+((cents||0)/100).toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})
