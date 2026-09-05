@@ -1181,52 +1181,8 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(15,35,27,.4)}
         <h2>Quem já está na <span class="hi-block mint">plataforma</span></h2>
         <p>Somos uma plataforma nova. Preferimos poucos perfis verificados a muitos por verificar.</p>
       </div>
-      <div class="pro-grid">
-        <div class="pro-card" data-reveal="d1"><span class="glow-spot"></span>
-          <div class="pro-top">
-            <div class="pro-avatar">HS<span class="vid-badge" title="Tem vídeo de apresentação"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7Z"/></svg></span></div>
-            <div>
-              <div class="pro-name">Henrique Silva</div>
-              <div class="pro-meta">Eletricistas · Coimbra – Coimbra</div>
-            </div>
-          </div>
-          <div class="pro-bio-wrap">
-            <span class="verified">✓ Verificado</span>
-            <p class="bio">Disponível para esclarecer qualquer dúvida antes de avançarmos.</p>
-            <div class="pro-stats"><span><b>97%</b> taxa de resposta</span><span><b>~30min</b> tempo médio</span><span><b>52</b> trabalhos concluídos</span></div>
-          </div>
-          <a href="/eletricistas" class="btn btn-ghost">Ver perfil</a>
-        </div>
-        <div class="pro-card" data-reveal="d2"><span class="glow-spot"></span>
-          <div class="pro-top">
-            <div class="pro-avatar" style="background:linear-gradient(150deg,var(--orange),var(--orange-dark))">MS</div>
-            <div>
-              <div class="pro-name">Morais Silva</div>
-              <div class="pro-meta">Eletricistas · Aveiro – Aveiro</div>
-            </div>
-          </div>
-          <div class="pro-bio-wrap">
-            <span class="verified">✓ Verificado</span>
-            <p class="bio">Profissional experiente, resposta rápida a pedidos de orçamento.</p>
-            <div class="pro-stats"><span><b>94%</b> taxa de resposta</span><span><b>~45min</b> tempo médio</span><span><b>38</b> trabalhos concluídos</span></div>
-          </div>
-          <a href="/eletricistas" class="btn btn-ghost">Ver perfil</a>
-        </div>
-        <div class="pro-card" data-reveal="d3"><span class="glow-spot"></span>
-          <div class="pro-top">
-            <div class="pro-avatar" style="background:linear-gradient(150deg,var(--mint),var(--mint-dark))">HP</div>
-            <div>
-              <div class="pro-name">Helena Pereira</div>
-              <div class="pro-meta">Limpeza · Braga – Braga</div>
-            </div>
-          </div>
-          <div class="pro-bio-wrap">
-            <span class="verified">✓ Verificado</span>
-            <p class="bio">Serviços de limpeza doméstica e de escritórios em toda a zona de Braga.</p>
-            <div class="pro-stats"><span><b>99%</b> taxa de resposta</span><span><b>~20min</b> tempo médio</span><span><b>71</b> trabalhos concluídos</span></div>
-          </div>
-          <a href="/limpeza" class="btn btn-ghost">Ver perfil</a>
-        </div>
+      <div class="pro-grid" id="proGrid" aria-live="polite">
+        <p style="grid-column:1/-1;text-align:center;color:var(--muted)">A carregar profissionais…</p>
       </div>
       <div class="pro-more" data-reveal><a href="/categoria" class="btn btn-orange">Ver todos os profissionais <span class="arrow">→</span></a></div>
     </div>
@@ -1781,6 +1737,105 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(15,35,27,.4)}
       }
     });
   });
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  var SUPABASE_URL = 'https://cdwinidhtfxfxowflize.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk';
+  var db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  var grid = document.getElementById('proGrid');
+  if(!grid) return;
+
+  var AVATAR_STYLES = [
+    null,
+    'background:linear-gradient(150deg,var(--orange),var(--orange-dark))',
+    'background:linear-gradient(150deg,var(--mint),var(--mint-dark))'
+  ];
+
+  function esc(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function initials(name){
+    var parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+    if(!parts.length) return '?';
+    return (parts[0][0] + (parts.length > 1 ? parts[parts.length-1][0] : '')).toUpperCase();
+  }
+  function profileHref(p){
+    return p.slug ? ('/' + encodeURIComponent(p.slug)) : ('/profile.html?u=' + encodeURIComponent(p.id));
+  }
+  function statsHtml(p){
+    if(p.response_sample_count > 0 && p.avg_response_minutes != null){
+      var mins = Math.round(p.avg_response_minutes);
+      var label = mins < 60 ? ('~' + mins + 'min') : ('~' + Math.round(mins/60) + 'h');
+      return '<div class="pro-stats"><span><b>' + label + '</b> tempo médio de resposta</span></div>';
+    }
+    if(p.experience_years > 0){
+      return '<div class="pro-stats"><span><b>' + esc(p.experience_years) + '</b> anos de experiência</span></div>';
+    }
+    return '';
+  }
+  function cardHtml(p, i){
+    // Nota: sem data-reveal de propósito — o IntersectionObserver da pagina
+    // faz querySelectorAll('[data-reveal]') uma unica vez ao carregar a pagina,
+    // antes deste fetch assincrono terminar. Cartoes injetados depois nunca
+    // seriam observados e ficariam com opacity:0 para sempre.
+    var style = AVATAR_STYLES[i % AVATAR_STYLES.length];
+    return '' +
+      '<div class="pro-card"><span class="glow-spot"></span>' +
+        '<div class="pro-top">' +
+          '<div class="pro-avatar"' + (style ? ' style="' + style + '"' : '') + '>' + esc(initials(p.name)) + '</div>' +
+          '<div>' +
+            '<div class="pro-name">' + esc(p.name) + '</div>' +
+            '<div class="pro-meta">' + esc(p.category) + (p.location ? (' · ' + esc(p.location)) : '') + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="pro-bio-wrap">' +
+          (p.verified ? '<span class="verified">✓ Verificado</span>' : '') +
+          (p.bio ? ('<p class="bio">' + esc(p.bio.length > 140 ? p.bio.slice(0,137) + '…' : p.bio) + '</p>') : '') +
+          statsHtml(p) +
+        '</div>' +
+        '<a href="' + profileHref(p) + '" class="btn btn-ghost">Ver perfil</a>' +
+      '</div>';
+  }
+  function emptyStateHtml(){
+    return '<div class="pro-card" style="text-align:center;grid-column:1/-1">' +
+      '<p class="bio" style="margin-bottom:14px">Ainda não temos profissionais verificados para mostrar aqui — podes ser o primeiro.</p>' +
+      '<a href="/auth" class="btn btn-orange">Criar perfil grátis</a>' +
+    '</div>';
+  }
+
+  Promise.resolve()
+    .then(function(){ return db.rpc('spotlight_pros', {limite: 3}); })
+    .then(function(res){
+      var spotlight = (res && res.data) || [];
+      var have = spotlight.length;
+      if(have >= 3) return spotlight;
+      var excludeIds = spotlight.map(function(p){ return p.id; });
+      return db.from('profiles')
+        .select('id,name,bio,photo_url,category,location,verified,slug,experience_years,avg_response_minutes,response_sample_count,account_type')
+        .eq('account_type', 'professional')
+        .eq('verified', true)
+        .eq('is_demo', false)
+        .eq('suspended', false)
+        .not('category', 'is', null)
+        .order('created_at', {ascending: false})
+        .limit(3 + excludeIds.length)
+        .then(function(res2){
+          var extra = ((res2 && res2.data) || []).filter(function(p){ return excludeIds.indexOf(p.id) === -1; });
+          return spotlight.concat(extra).slice(0, 3);
+        });
+    })
+    .then(function(list){
+      grid.innerHTML = list.length ? list.map(cardHtml).join('') : emptyStateHtml();
+    })
+    .catch(function(){
+      grid.innerHTML = emptyStateHtml();
+    });
 })();
 </script>
 </body>
