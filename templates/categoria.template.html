@@ -67,7 +67,10 @@
  .breadcrumb{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted-2);margin-bottom:8px}
  .breadcrumb a{color:var(--muted)}.breadcrumb a:hover{color:var(--ink)}
  .trust-pillrow{display:none}
- .stats-row{display:none!important}
+ .stats-row{display:none;gap:26px;margin:14px 0 2px;flex-wrap:wrap}
+ .stats-row .stat-item{display:flex;align-items:baseline;gap:7px}
+ .stats-row .stat-item strong{font-family:'Plus Jakarta Sans',sans-serif;font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
+ .stats-row .stat-item span{font-size:12.5px;color:var(--muted);font-weight:600}
  .toolbar{background:var(--white);padding:11px 5% 12px;display:flex;gap:9px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--border);margin-top:11px}
  .toolbar .tcount{font-size:12.5px;font-weight:800}
  .toolbar .tverif{font-size:11px;color:var(--fresh-deep);font-weight:700;background:var(--fresh-soft);padding:3px 10px;border-radius:99px;display:inline-flex;align-items:center;gap:5px}
@@ -84,7 +87,8 @@
  .cat-chip.active{background:var(--blue);color:#fff;border-color:var(--blue)}
 
  .page-body{display:grid;grid-template-columns:260px minmax(0,1fr);gap:24px;padding:28px 5%;max-width:1400px;margin:0 auto}
- .mobile-filter-btn{display:none;align-items:center;gap:8px;background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text);margin-bottom:16px}
+ .mobile-filter-btn{display:none;align-items:center;gap:8px;background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text);margin-bottom:16px;transition:border-color .2s,color .2s}
+ .mobile-filter-btn:hover{border-color:var(--blue);color:var(--blue)}
  @media(max-width:900px){
  .page-body{grid-template-columns:1fr}
  .sidebar{display:none;position:fixed;top:0;left:0;width:min(320px,100vw);height:100vh;background:var(--white);z-index:500;overflow-y:auto;padding:20px;box-shadow:4px 0 24px rgba(0,0,0,.15)}
@@ -109,7 +113,8 @@
  .sidebar{position:sticky;top:88px;align-self:start}
  .sidebar-cta{border-radius:16px;padding:18px;margin-bottom:16px}
  .sidebar-cta a{display:inline-block;background:#fff;font-weight:700;padding:9px 18px;border-radius:8px;text-decoration:none;margin-top:2px}
- .filter-card{background:var(--white);border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid var(--border)}
+ .filter-card{background:var(--white);border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid var(--border);transition:border-color .2s,box-shadow .2s}
+ .filter-card:hover{border-color:var(--line-2);box-shadow:0 4px 16px rgba(19,36,32,.05)}
  .filter-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px}
  .filter-group{margin-bottom:8px}
  .filter-label{display:flex;align-items:center;gap:8px;font-size:14px;padding:8px 0;cursor:pointer;border-radius:8px;transition:background .15s}
@@ -131,8 +136,13 @@
  .sort-select:focus{border-color:var(--blue)}
 
  .pros-list{display:flex;flex-direction:column;gap:14px}
- .pro-card{background:linear-gradient(180deg,#fff,#FDFBF8);border:1px solid #F0F0EC;border-radius:18px;padding:22px 24px;display:flex;align-items:center;gap:20px;cursor:pointer;transition:all .2s;text-decoration:none;box-shadow:0 2px 4px rgba(15,26,51,.05),0 12px 28px rgba(15,26,51,.06)}
- .pro-card:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(15,26,51,.07),0 16px 34px rgba(15,26,51,.1)}
+ .pro-card{position:relative;isolation:isolate;overflow:hidden;background:linear-gradient(180deg,#fff,#FDFBF8);border:1px solid #F0F0EC;border-radius:18px;padding:22px 24px;display:flex;align-items:center;gap:20px;cursor:pointer;transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s cubic-bezier(.22,1,.36,1),border-color .2s;text-decoration:none;box-shadow:0 2px 4px rgba(15,26,51,.05),0 12px 28px rgba(15,26,51,.06)}
+ .pro-card::before{content:'';position:absolute;inset:0;background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(232,114,10,.09),transparent 72%);opacity:0;transition:opacity .3s;pointer-events:none;z-index:0}
+ .pro-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--fresh));transform:scaleX(0);transform-origin:left;transition:transform .35s cubic-bezier(.22,1,.36,1);z-index:2}
+ .pro-card>*{position:relative;z-index:1}
+ .pro-card:hover{transform:translateY(-3px);box-shadow:0 6px 14px rgba(15,26,51,.08),0 20px 40px rgba(15,26,51,.11)}
+ .pro-card:hover::before{opacity:1}
+ .pro-card:hover::after{transform:scaleX(1)}
  .pro-card.is-pro{border-color:#F5EFE6}
  .pro-avatar-wrap{position:relative;flex-shrink:0}
  .pro-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#132420,#1b4433);color:#fff;font-size:19px;font-weight:700;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 3px 10px rgba(19,36,32,.28);border:3px solid #F1EFE8}
@@ -148,7 +158,8 @@
  .sponsored-strip{margin-bottom:22px}
  .sponsored-strip-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px}
  .sponsored-track{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
- .sponsored-card{flex:0 0 220px;height:165px;border-radius:16px;overflow:hidden;position:relative;text-decoration:none;background:var(--ink);box-shadow:0 4px 14px rgba(15,26,51,.14);display:block}
+ .sponsored-card{flex:0 0 220px;height:165px;border-radius:16px;overflow:hidden;position:relative;text-decoration:none;background:var(--ink);box-shadow:0 4px 14px rgba(15,26,51,.14);display:block;transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s cubic-bezier(.22,1,.36,1)}
+ .sponsored-card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(15,26,51,.22)}
  .sponsored-card img,.sponsored-card video{width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0}
  .sponsored-card .sp-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,26,51,0) 42%,rgba(15,26,51,.82) 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:12px}
  .sponsored-card .sp-tag{position:absolute;top:9px;left:9px;background:rgba(255,255,255,.94);color:var(--ink);font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;padding:3px 9px;border-radius:99px}
@@ -505,10 +516,11 @@ function formatResponseMinutes(mins){
 async function loadCatStats(){
  try{
  const{data:pros,count}=await db.from('profiles').select('id,avg_response_minutes,response_sample_count',{count:'exact'}).eq('is_demo',false).ilike('category',`%${filters.cat}%`)
- if(!pros)return
+ // Estado vazio honesto: sem profissionais nesta categoria ainda, não
+ // mostramos a barra de estatísticas em vez de exibir "0 profissionais".
+ if(!pros||!pros.length)return
  const row=document.getElementById('cat-stats-row')
  document.getElementById('stat-count').textContent=(count||pros.length)
- if(pros.length){
  const ids=pros.map(p=>p.id)
  const{data:revs}=await db.from('reviews').select('rating').in('professional_id',ids)
  if(revs&&revs.length){
@@ -530,7 +542,6 @@ async function loadCatStats(){
  if(totalN>=3){
  document.getElementById('stat-response').textContent=formatResponseMinutes(totalMin/totalN)
  document.getElementById('stat-response-item').style.display=''
- }
  }
  row.style.display='flex'
  }catch(e){}
@@ -677,6 +688,17 @@ const initials=pro.name.split(' ').map(n=>n[0]).slice(0,2).join('')
 }
 
 function goPage(p){filters.page=p;loadPros();window.scrollTo({top:0,behavior:'smooth'})}
+
+// Glow-spot que segue o cursor nos cartões de profissional (mesmo efeito
+// já usado na homepage). Delegado no container em vez de um listener por
+// cartão, porque a lista é reconstruída a cada loadPros()/filtro.
+document.getElementById('pros-container').addEventListener('mousemove',e=>{
+ const card=e.target.closest('.pro-card')
+ if(!card)return
+ const r=card.getBoundingClientRect()
+ card.style.setProperty('--mx',(e.clientX-r.left)+'px')
+ card.style.setProperty('--my',(e.clientY-r.top)+'px')
+})
 
 function openSidebar(){
  document.getElementById('sidebar-el').classList.add('open')
