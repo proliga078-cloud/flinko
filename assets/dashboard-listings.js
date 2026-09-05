@@ -250,7 +250,7 @@ function showPage(name){
   if(name==='referrals')loadReferrals()
   if(name==='convidar')loadInvites()
   if(name==='financas'){renderFinance();loadExpenses();populateReportYears();renderAnnualReport()}
-  if(name==='mercado'&&planLimits.finances)loadMarketInsights()
+  if(name==='mercado'&&planLimits.market_insights)loadMarketInsights()
   if(name==='privacidade')loadGdprRequests()
 }
 

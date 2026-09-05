@@ -28,7 +28,7 @@ let quoteJobId=null,quotesCache=[]
 })()
 let refJobId=null,refSelectedPro=null
 let marketPriceCache=null
-let planLimits={portfolio_max:3,quotes_per_month:3,finances:false,own_branding:false,custom_link:false,ai_actions:false}
+let planLimits={portfolio_max:3,quotes_per_month:3,finances:false,market_insights:false,own_branding:false,custom_link:false,ai_actions:false}
 async function loadPlanLimits(){
   const plano=(profileData&&profileData.plan)||'free'
   const{data}=await db.from('plan_limits').select('*').eq('plan',plano).maybeSingle()
@@ -36,10 +36,14 @@ async function loadPlanLimits(){
   applyPlanGates()
 }
 function applyPlanGates(){
+  // "Finanças" (despesas/orçamentos) e "Mercado" (preços/concorrência) eram
+  // ambas controladas pela mesma coluna "finances" — hoje têm sempre o
+  // mesmo valor por plano, mas são funcionalidades sem relação direta entre
+  // si, por isso passaram a ter a sua própria coluna ("market_insights").
   const nav=document.querySelector('.nav-item[data-page="financas"]')
   if(nav)nav.style.display=planLimits.finances?'':'none'
   const navMkt=document.querySelector('.nav-item[data-page="mercado"]')
-  if(navMkt)navMkt.style.display=planLimits.finances?'':'none'
+  if(navMkt)navMkt.style.display=planLimits.market_insights?'':'none'
   applySlugGate()
   const lock=document.getElementById('fin-lock')
   const body=document.getElementById('fin-body')
@@ -50,8 +54,8 @@ function applyPlanGates(){
   const mktLock=document.getElementById('mkt-lock')
   const mktBody=document.getElementById('mkt-body')
   if(mktLock&&mktBody){
-    mktLock.style.display=planLimits.finances?'none':'block'
-    mktBody.style.display=planLimits.finances?'':'none'
+    mktLock.style.display=planLimits.market_insights?'none':'block'
+    mktBody.style.display=planLimits.market_insights?'':'none'
   }
 }
 
@@ -186,6 +190,24 @@ function updateSidebar(){
   renderSetup()
   const greetEl=document.getElementById('greet-title')
   if(greetEl)greetEl.textContent=`Olá, ${name.split(' ')[0]}`
+  updateCreditsBadge()
+}
+
+// Saldo de créditos visível em permanência na barra lateral (e no menu
+// mobile), não só na própria página "Créditos" — antes só se via o saldo
+// depois de já se ter descoberto essa página, que fica escondida numa
+// secção de navegação secundária. get_my_profile() já traz o campo
+// "credits", por isso não é preciso um pedido extra ao servidor aqui;
+// refreshCreditsBalance() (dashboard-growth.js) volta a chamar esta função
+// depois de confirmar o valor mais recente do servidor (ex: depois de
+// comprar um anúncio, que gasta créditos).
+function updateCreditsBadge(){
+  const credits=Number(profileData?.credits)||0
+  const label=credits>0?(credits.toLocaleString('pt-PT',{maximumFractionDigits:1})+' créditos'):'Ganhar créditos'
+  const el=document.getElementById('sidebar-credits-text')
+  if(el)el.textContent=label
+  const elM=document.getElementById('sidebar-credits-text-mobile')
+  if(elM)elM.textContent=label
 }
 
 async function loadPrivatePhone(){

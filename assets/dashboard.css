@@ -28,11 +28,15 @@ h1,h2,h3,.logo,.hd-title,.hero-greet .hg-title,.page-title,.setup-title,.cal-tit
 .sidebar{width:248px;background:#fff;min-height:100vh;flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:0;border-right:1px solid var(--border)}
 .sidebar-logo{padding:22px 20px 16px}
 .logo{font-size:21px;font-weight:800;color:var(--text);letter-spacing:-.02em}.logo span{color:var(--blue)}
-.sidebar-user{padding:12px 20px 18px;display:flex;align-items:center;gap:10px}
+.sidebar-user{padding:12px 20px 10px;display:flex;align-items:center;gap:10px}
 .sidebar-avatar{width:38px;height:38px;border-radius:11px;background:var(--ink);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
 .sidebar-avatar img{width:100%;height:100%;object-fit:cover}
 .sidebar-name{font-size:13.5px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sidebar-plan{font-size:11.5px;color:var(--muted)}
+.sidebar-credits{display:flex;align-items:center;gap:7px;padding:8px 20px;margin-bottom:8px;font-size:12px;font-weight:700;color:var(--accent-deep);background:var(--accent-soft);cursor:pointer;transition:background .18s cubic-bezier(.22,1,.36,1)}
+.sidebar-credits:hover{background:var(--gold-light)}
+.sidebar-credits .ic{width:14px;height:14px}
+.mobile-menu-sheet .sidebar-credits{margin:0 0 12px;padding:8px 10px;border-radius:9px}
 .sidebar-nav{flex:1;padding:6px 12px}
 .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;border-radius:9px;margin-bottom:1px}
 .nav-item:hover{background:var(--bg);color:var(--text)}

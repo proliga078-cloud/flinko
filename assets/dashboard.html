@@ -31,6 +31,10 @@
 <div class="sidebar-plan" id="sb-plan">Plano Grátis</div>
 </div>
 </div>
+<div class="sidebar-credits" onclick="showPage('convidar')" title="Ver créditos e link de convite">
+<svg class="ic" viewBox="0 0 24 24"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C9 2 12 7 12 7z"/></svg>
+<span id="sidebar-credits-text">Créditos</span>
+</div>
 <nav class="sidebar-nav">
 <div class="nav-label">Principal</div>
 <div class="nav-item active" data-page="overview" onclick="showPage('overview')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></span> Resumo</div>
@@ -73,6 +77,10 @@
 <div class="mobile-menu-sheet-head">
 <a href="index.html" class="logo" style="font-size:16px">Flink<span>o</span></a>
 <button class="mobile-menu-close" onclick="toggleMobileMenu(false)" aria-label="Fechar">&times;</button>
+</div>
+<div class="sidebar-credits" onclick="showPage('convidar');toggleMobileMenu(false)" title="Ver créditos e link de convite">
+<svg class="ic" viewBox="0 0 24 24"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C9 2 12 7 12 7z"/></svg>
+<span id="sidebar-credits-text-mobile">Créditos</span>
 </div>
 <a href="index.html" class="nav-item"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7"/><path d="M9 22V12h6v10"/></svg></span> Voltar ao site</a>
 <div class="nav-divider"></div>

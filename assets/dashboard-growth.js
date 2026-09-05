@@ -173,6 +173,7 @@ async function refreshCreditsBalance(){
   const{data}=await db.rpc('get_my_profile')
   const credits=(data&&data[0]?.credits)||0
   profileData={...profileData,credits}
+  updateCreditsBadge()
   const el=document.getElementById('credits-balance')
   if(el)el.textContent=Number(credits).toLocaleString('pt-PT',{maximumFractionDigits:1})
 }
