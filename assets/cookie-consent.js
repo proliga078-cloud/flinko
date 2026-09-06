@@ -1,8 +1,11 @@
 /* Flinko — banner de consentimento de cookies (RGPD)
    - Enquanto nao houver decisao guardada, mostra o banner e NAO carrega
      nada de analytics (assets/tracking.js so corre depois de consentimento).
-   - Guarda a decisao em localStorage: proliga_cookie_consent
+   - Guarda a decisao em localStorage: flinko_cookie_consent
      = {necessary:true, analytics:bool, ts:<epoch ms>}
+     (migra automaticamente decisoes antigas guardadas sob o nome
+     anterior, proliga_cookie_consent, para nao mostrar o banner outra
+     vez a quem ja tinha decidido)
    - Rejeitar e tao facil como aceitar (sem dark patterns): duas acoes,
      mesmo tamanho e destaque visual equivalente.
    - Enquanto o banner esta visivel, reserva espaco no fundo da pagina
@@ -12,14 +15,25 @@
      para clicar nele enquanto a pessoa nao decidisse sobre os cookies. */
 (function(){
   'use strict';
-  var STORAGE_KEY = 'proliga_cookie_consent';
+  var STORAGE_KEY = 'flinko_cookie_consent';
+  var LEGACY_STORAGE_KEY = 'proliga_cookie_consent';
   var bodyPadReserved = false;
   var origBodyPad = '';
 
   function getConsent(){
     try{
       var raw = localStorage.getItem(STORAGE_KEY);
-      if(!raw) return null;
+      if(!raw){
+        // Migracao: quem ja tinha decidido antes desta chave mudar de
+        // nome continua com a decisao guardada, sem ver o banner outra vez.
+        var legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+        if(!legacy) return null;
+        try{
+          localStorage.setItem(STORAGE_KEY, legacy);
+          localStorage.removeItem(LEGACY_STORAGE_KEY);
+        }catch(e){}
+        raw = legacy;
+      }
       var c = JSON.parse(raw);
       return (c && typeof c === 'object') ? c : null;
     }catch(e){ return null; }

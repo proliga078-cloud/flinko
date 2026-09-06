@@ -1,6 +1,6 @@
 (function(){
   try{
-    var raw=localStorage.getItem('proliga_cookie_consent');
+    var raw=localStorage.getItem('flinko_cookie_consent')||localStorage.getItem('proliga_cookie_consent');
     if(!raw)return;
     var consent=JSON.parse(raw);
     if(!consent||!consent.analytics)return;
