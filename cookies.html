@@ -98,13 +98,7 @@ Esta política explica o que são cookies, como a Flinko os utiliza e como pode 
 <td>Autenticação do utilizador via Supabase. Necessário para manter a sessão ativa.</td>
 </tr>
 <tr>
-<td><strong>proliga_session</strong></td>
-<td><span class="badge badge-essential">Essencial</span></td>
-<td>Sessão</td>
-<td>Gestão da sessão de utilizador e preferências de idioma.</td>
-</tr>
-<tr>
-<td><strong>proliga_cookie_consent</strong></td>
+<td><strong>flinko_cookie_consent</strong></td>
 <td><span class="badge badge-essential">Essencial</span></td>
 <td>12 meses</td>
 <td>Regista as suas preferências de cookies para não repetir o pedido.</td>
@@ -175,11 +169,12 @@ Esta política explica o que são cookies, como a Flinko os utiliza e como pode 
 function savePrefs(){
 const analytics=document.getElementById('pref-analytics').checked;
 if(window.flinkoCookieConsent){window.flinkoCookieConsent.set(analytics);}
-else{localStorage.setItem('proliga_cookie_consent',JSON.stringify({necessary:true,analytics,ts:Date.now()}));}
+else{localStorage.setItem('flinko_cookie_consent',JSON.stringify({necessary:true,analytics,ts:Date.now()}));}
 alert('Preferências guardadas com sucesso!');
 }
-// Carregar preferências guardadas
-const saved=localStorage.getItem('proliga_cookie_consent');
+// Carregar preferências guardadas (com fallback ao nome de chave antigo,
+// para quem tinha decidido antes da migração para flinko_cookie_consent)
+const saved=localStorage.getItem('flinko_cookie_consent')||localStorage.getItem('proliga_cookie_consent');
 if(saved){try{const p=JSON.parse(saved);document.getElementById('pref-analytics').checked=p.analytics||false;}catch(e){}}
 </script>
 </body>

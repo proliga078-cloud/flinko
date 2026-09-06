@@ -30,7 +30,7 @@
   to = "/.netlify/functions/sitemap-profiles"
   status = 200
 
-# Link proprio dos profissionais Pro: proliga.pt/o-nome-dele
+# Link proprio dos profissionais Pro: flinko.pt/o-nome-dele
 # Esta regra e a ULTIMA de proposito. O Netlify serve sempre os ficheiros
 # reais primeiro, por isso /pricing, /eletricistas e companhia continuam a
 # funcionar; so os caminhos que nao correspondem a nada e que chegam aqui.
