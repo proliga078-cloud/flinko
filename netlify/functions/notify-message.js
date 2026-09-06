@@ -2,8 +2,8 @@ const{createClient}=require('@supabase/supabase-js')
 const{sendPush}=require('./_push')
 
 const RESEND_API_KEY=process.env.RESEND_API_KEY
-const FROM=process.env.RESEND_FROM||'Proliga <onboarding@resend.dev>'
-const SITE=process.env.URL||'https://proliga.pt'
+const FROM=process.env.RESEND_FROM||'Flinko <onboarding@resend.dev>'
+const SITE=process.env.URL||'https://flinko.pt'
 const admin=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY)
 
 // Intervalo minimo entre emails da mesma conversa para a mesma pessoa.
@@ -74,26 +74,26 @@ exports.handler=async(event)=>{
 
     const html=`
     <div style="font-family:Arial,Helvetica,sans-serif;max-width:480px;margin:0 auto;padding:24px">
-      <div style="font-size:22px;font-weight:800;color:#1E4FD6;margin-bottom:20px">Pro<span style="color:#B4650A">liga</span></div>
-      <h2 style="color:#14181F;font-size:18px;margin-bottom:8px">Nova mensagem na Proliga</h2>
+      <div style="font-size:22px;font-weight:800;color:#132420;margin-bottom:20px">Flink<span style="color:#E8720A">o</span></div>
+      <h2 style="color:#14181F;font-size:18px;margin-bottom:8px">Nova mensagem na Flinko</h2>
       <p style="color:#5B6270;font-size:14px;line-height:1.6">Ol&aacute;${para.name?' '+esc(para.name):''},</p>
       <p style="color:#5B6270;font-size:14px;line-height:1.6"><strong>${nomeDe}</strong> enviou-te uma mensagem:</p>
       <div style="background:#F7F8FA;padding:14px 16px;border-left:3px solid #1E4FD6;border-radius:6px;color:#14181F;font-size:14px;margin:16px 0">${trecho}</div>
       <a href="${link}" style="display:inline-block;background:#1E4FD6;color:#fff;padding:11px 22px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700">Ver e responder</a>
-      <p style="color:#94a3b8;font-size:12px;margin-top:24px">Recebeste este email porque tens conta na Proliga. Podes desligar os avisos no teu painel.</p>
+      <p style="color:#94a3b8;font-size:12px;margin-top:24px">Recebeste este email porque tens conta na Flinko. Podes desligar os avisos no teu painel.</p>
     </div>`
 
     const resp=await fetch('https://api.resend.com/emails',{
       method:'POST',
       headers:{'Authorization':`Bearer ${RESEND_API_KEY}`,'Content-Type':'application/json'},
-      body:JSON.stringify({from:FROM,to:[emailPara],subject:`Nova mensagem de ${nomeDe} na Proliga`,html})
+      body:JSON.stringify({from:FROM,to:[emailPara],subject:`Nova mensagem de ${nomeDe} na Flinko`,html})
     })
     const data=await resp.json()
     if(!resp.ok){console.error('Resend error:',data);return{statusCode:resp.status,body:JSON.stringify(data)}}
 
     await admin.from('message_notices').insert({conversation_id:conversationId,recipient_id:destinatarioId})
 
-    sendPush(destinatarioId,{title:`Nova mensagem de ${nomeDe}`,body:trecho||'Enviou-te uma mensagem na Proliga.',url:'/messages.html',tag:'message-'+conversationId}).catch(()=>{})
+    sendPush(destinatarioId,{title:`Nova mensagem de ${nomeDe}`,body:trecho||'Enviou-te uma mensagem na Flinko.',url:'/messages.html',tag:'message-'+conversationId}).catch(()=>{})
 
     return{statusCode:200,body:JSON.stringify({sent:true})}
   }catch(err){

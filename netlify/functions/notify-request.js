@@ -2,8 +2,8 @@ const{createClient}=require('@supabase/supabase-js')
 const{sendPush}=require('./_push')
 
 const RESEND_API_KEY=process.env.RESEND_API_KEY
-const FROM=process.env.RESEND_FROM||'Proliga <onboarding@resend.dev>'
-const SITE=process.env.URL||'https://proliga.pt'
+const FROM=process.env.RESEND_FROM||'Flinko <onboarding@resend.dev>'
+const SITE=process.env.URL||'https://flinko.pt'
 const admin=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY)
 
 const MAX_DESTINATARIOS=15
@@ -25,7 +25,7 @@ exports.handler=async(event)=>{
 
   try{
     // Antes isto aceitava um endereco vindo do browser, o que permitia a
-    // qualquer pessoa enviar email em nome da Proliga para quem quisesse.
+    // qualquer pessoa enviar email em nome da Flinko para quem quisesse.
     // Agora exige sessao e descobre os destinatarios aqui.
     const token=(event.headers.authorization||'').replace(/^Bearer\s+/i,'')
     if(!token)return{statusCode:401,body:JSON.stringify({error:'Sem sessao.'})}
@@ -79,7 +79,7 @@ exports.handler=async(event)=>{
     for(const p of alvos){
       const html=`
       <div style="font-family:Arial,Helvetica,sans-serif;max-width:480px;margin:0 auto;padding:24px">
-        <div style="font-size:22px;font-weight:800;color:#1E4FD6;margin-bottom:20px">Pro<span style="color:#B4650A">liga</span></div>
+        <div style="font-size:22px;font-weight:800;color:#132420;margin-bottom:20px">Flink<span style="color:#E8720A">o</span></div>
         <h2 style="color:#14181F;font-size:18px;margin-bottom:8px">Novo pedido em ${cat}</h2>
         <p style="color:#5B6270;font-size:14px;line-height:1.6">Ol&aacute;${p.name?' '+esc(p.name):''},</p>
         <p style="color:#5B6270;font-size:14px;line-height:1.6">Algu&eacute;m publicou um pedido que pode ser para ti:</p>
@@ -93,7 +93,7 @@ exports.handler=async(event)=>{
       const resp=await fetch('https://api.resend.com/emails',{
         method:'POST',
         headers:{'Authorization':`Bearer ${RESEND_API_KEY}`,'Content-Type':'application/json'},
-        body:JSON.stringify({from:FROM,to:[p.email],subject:`Novo pedido em ${pedido.category} na Proliga`,html})
+        body:JSON.stringify({from:FROM,to:[p.email],subject:`Novo pedido em ${pedido.category} na Flinko`,html})
       })
       if(resp.ok)enviados++
       else console.error('Resend error:',await resp.text())

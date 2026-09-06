@@ -14,11 +14,11 @@
 // pode ler diretamente (ver supabase/migrations/20260815152431_*.sql).
 const { createClient } = require('@supabase/supabase-js')
 
-const SITE = process.env.URL || 'https://proliga.pt'
+const SITE = process.env.URL || 'https://flinko.pt'
 const admin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
 
 // Limite do próprio protocolo de sitemaps (50 000 URLs por ficheiro). Se a
-// Proliga chegar a ter mais profissionais aprovados do que isto, este
+// Flinko chegar a ter mais profissionais aprovados do que isto, este
 // ficheiro passa a precisar de paginação (sitemap index) — não é o caso
 // hoje, mas fica aqui documentado para quem chegar a esse ponto.
 const LIMITE_URLS = 50000
@@ -30,7 +30,7 @@ function esc(s) {
 }
 
 function urlDoPerfil(p) {
-  // Profissionais Pro têm link próprio (proliga.pt/o-nome-dele); os
+  // Profissionais Pro têm link próprio (flinko.pt/o-nome-dele); os
   // restantes ficam no endereço com ?id=, que continua indexável.
   return p.slug ? `${SITE}/${encodeURIComponent(p.slug)}` : `${SITE}/profile.html?id=${p.id}`
 }
