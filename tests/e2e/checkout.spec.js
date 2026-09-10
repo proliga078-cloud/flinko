@@ -26,6 +26,13 @@ async function withFakeSupabase(page, config) {
   );
   await page.addInitScript((cfg) => {
     window.__testAuthConfig = cfg;
+        // Evita que o banner de consentimento de cookies (assets/cookie-consent.js)
+        // apareça durante os testes: o banner é fixed/bottom e pode ficar por cima
+        // de botões nessa zona do ecrã, bloqueando cliques do Playwright em
+        // elementos que nada têm a ver com o que se está a testar.
+        try {
+      localStorage.setItem('flinko_cookie_consent', JSON.stringify({ necessary: true, analytics: false, ts: Date.now() }));
+        } catch (e) {}
   }, config);
 }
 
@@ -38,7 +45,7 @@ test('sem sessão: clicar em "Mudar para Pro" manda para o login, nunca chega a 
   });
 
   await page.goto('/pricing.html');
-  await page.click('a.plan-cta.btn-solid:has-text("Mudar para Pro")');
+  await page.click('a.plan-cta.btn-orange:has-text("Mudar para Pro")');
   await page.waitForURL('**/auth.html?tab=login&redirect=pricing.html');
   expect(checkoutCalled).toBe(false);
 });
@@ -62,7 +69,7 @@ test('com sessão: clicar em "Mudar para Pro" chama create-checkout-session com 
   );
 
   await page.goto('/pricing.html');
-  await page.click('a.plan-cta.btn-solid:has-text("Mudar para Pro")');
+  await page.click('a.plan-cta.btn-orange:has-text("Mudar para Pro")');
 
   await page.waitForURL('**/fake-stripe-checkout.html');
   expect(capturedAuthHeader).toBe(`Bearer ${accessToken}`);
