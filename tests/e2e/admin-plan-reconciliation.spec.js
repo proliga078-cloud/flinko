@@ -20,6 +20,13 @@ async function withFakeSupabase(page, config) {
   );
   await page.addInitScript((cfg) => {
     window.__testAuthConfig = cfg;
+        // Evita que o banner de consentimento de cookies (assets/cookie-consent.js)
+        // apareça durante os testes: o banner é fixed/bottom e pode ficar por cima
+        // de botões nessa zona do ecrã, bloqueando cliques do Playwright em
+        // elementos que nada têm a ver com o que se está a testar.
+        try {
+                localStorage.setItem('flinko_cookie_consent', JSON.stringify({ necessary: true, analytics: false, ts: Date.now() }));
+        } catch (e) {}
   }, config);
 }
 
