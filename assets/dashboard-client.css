@@ -1,0 +1,12 @@
+/* DASHBOARD DO CLIENTE — extras específicos do redesenho da área de
+clientes (Início, Guardados, Histórico, Avaliações que dei, Dados
+Pessoais). Carregado depois de dashboard.css: reaproveita as variáveis
+e a generalidade das classes de lá (hero-dark, stats-grid, two-cards,
+insights-list, pro-pick-row...), só acrescenta o que ainda não existia. */
+
+.cat-chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.cat-chip{display:flex;align-items:center;gap:9px;padding:12px 14px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;font-size:13px;font-weight:600;color:var(--text);text-decoration:none;transition:transform .18s cubic-bezier(.22,1,.36,1),border-color .18s cubic-bezier(.22,1,.36,1),background .18s cubic-bezier(.22,1,.36,1)}
+.cat-chip:hover{border-color:var(--blue);background:var(--blue-light);transform:translateY(-1px)}
+.cat-chip .cc-ico{width:30px;height:30px;border-radius:9px;background:var(--blue-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
+
+.chart-card canvas{max-height:220px}

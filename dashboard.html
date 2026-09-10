@@ -18,6 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/assets/dashboard.css"/>
+<link rel="stylesheet" href="/assets/dashboard-client.css"/>
 </head>
 <body>
 
@@ -33,27 +34,32 @@
 </div>
 <nav class="sidebar-nav">
 <div class="nav-label">Principal</div>
-<div class="nav-item active" data-page="overview" onclick="showPage('overview')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></span> Resumo</div>
-<div class="nav-item" data-page="trabalhos" onclick="showPage('trabalhos')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span> Trabalhos</div>
-<div class="nav-item" data-page="clientes" onclick="showPage('clientes')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Clientes</div>
-<div class="nav-item" data-page="agenda" onclick="showPage('agenda')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span> Agenda</div>
+<div class="nav-item active" data-page="overview" data-audience="pro" onclick="showPage('overview')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></span> Resumo</div>
+<div class="nav-item" data-page="trabalhos" data-audience="pro" onclick="showPage('trabalhos')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span> Trabalhos</div>
+<div class="nav-item" data-page="clientes" data-audience="pro" onclick="showPage('clientes')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Clientes</div>
+<div class="nav-item" data-page="agenda" data-audience="pro" onclick="showPage('agenda')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span> Agenda</div>
+<div class="nav-item" data-page="client-home" data-audience="client" style="display:none" onclick="showPage('client-home')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7"/><path d="M9 22V12h6v10"/></svg></span> Início</div>
+<div class="nav-item" data-page="myrequests" data-audience="client" style="display:none" onclick="showPage('myrequests')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg></span> Os Meus Pedidos</div>
+<div class="nav-item" data-page="saved-pros" data-audience="client" style="display:none" onclick="showPage('saved-pros')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span> Profissionais Guardados</div>
+<div class="nav-item" data-page="client-jobs" data-audience="client" style="display:none" onclick="showPage('client-jobs')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span> Histórico de Trabalhos</div>
 
-<div class="nav-label">Negócio</div>
-<div class="nav-item" data-page="profile" onclick="showPage('profile')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></span> O Meu Perfil</div>
-<div class="nav-item" data-page="financas" onclick="showPage('financas')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v12M15.5 9.5a2.5 2.5 0 0 0-2.5-2H11a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2.5 2.5 0 0 1-2.5-2"/></svg></span> Finanças</div>
-<div class="nav-item" data-page="mercado" onclick="showPage('mercado')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-5 3 3 5-7"/></svg></span> Mercado</div>
+<div class="nav-label" data-audience="pro">Negócio</div>
+<div class="nav-item" data-page="profile" data-audience="pro" onclick="showPage('profile')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></span> O Meu Perfil</div>
+<div class="nav-item" data-page="financas" data-audience="pro" onclick="showPage('financas')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v12M15.5 9.5a2.5 2.5 0 0 0-2.5-2H11a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2.5 2.5 0 0 1-2.5-2"/></svg></span> Finanças</div>
+<div class="nav-item" data-page="mercado" data-audience="pro" onclick="showPage('mercado')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-5 3 3 5-7"/></svg></span> Mercado</div>
 
 <div class="nav-label">Comunicação</div>
 <div class="nav-item" onclick="location.href='messages.html'"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4H12l-4.8 2.1 1-4a8.4 8.4 0 1 1 12.8-6.5z"/></svg></span> Chat <span id="chat-badge" style="display:none;background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px;margin-left:auto">0</span></div>
-<div class="nav-item" data-page="myrequests" onclick="showPage('myrequests')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg></span> Os Meus Pedidos</div>
-<div class="nav-item" data-page="reviews" onclick="showPage('reviews')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg></span> Avaliações</div>
-<div class="nav-item" data-page="referrals" onclick="showPage('referrals')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Referências</div>
-<div class="nav-item" data-page="convidar" onclick="showPage('convidar')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></span> Créditos</div>
+<div class="nav-item" data-page="reviews" data-audience="pro" onclick="showPage('reviews')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg></span> Avaliações</div>
+<div class="nav-item" data-page="client-reviews" data-audience="client" style="display:none" onclick="showPage('client-reviews')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg></span> Avaliações que Dei</div>
+<div class="nav-item" data-page="referrals" data-audience="pro" onclick="showPage('referrals')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Referências</div>
+<div class="nav-item" data-page="convidar" data-audience="pro" onclick="showPage('convidar')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></span> Créditos</div>
 
 <div class="nav-label">Conta</div>
+<div class="nav-item" data-page="client-profile" data-audience="client" style="display:none" onclick="showPage('client-profile')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></span> Dados Pessoais</div>
 <div class="nav-item" data-page="privacidade" onclick="showPage('privacidade')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span> Privacidade e RGPD</div>
 <div class="nav-divider"></div>
-<div class="nav-item" onclick="viewPublicProfile()"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></span> Ver Perfil Público</div>
+<div class="nav-item" data-audience="pro" onclick="viewPublicProfile()"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></span> Ver Perfil Público</div>
 </nav>
 <div class="sidebar-bottom">
 <button class="btn-signout" onclick="signOut()">Sair da conta</button>
@@ -76,13 +82,17 @@
 </div>
 <a href="index.html" class="nav-item"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7"/><path d="M9 22V12h6v10"/></svg></span> Voltar ao site</a>
 <div class="nav-divider"></div>
-<div class="nav-item" onclick="showPage('clientes');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Clientes</div>
-<div class="nav-item" onclick="showPage('financas');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v12M15.5 9.5a2.5 2.5 0 0 0-2.5-2H11a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2.5 2.5 0 0 1-2.5-2"/></svg></span> Finanças</div>
-<div class="nav-item" onclick="showPage('mercado');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-5 3 3 5-7"/></svg></span> Mercado</div>
-<div class="nav-item" onclick="showPage('myrequests');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg></span> Os Meus Pedidos</div>
-<div class="nav-item" onclick="showPage('reviews');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg></span> Avaliações</div>
-<div class="nav-item" onclick="showPage('referrals');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Referências</div>
-<div class="nav-item" onclick="showPage('convidar');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></span> Créditos</div>
+<div class="nav-item" data-audience="pro" onclick="showPage('clientes');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Clientes</div>
+<div class="nav-item" data-audience="pro" onclick="showPage('financas');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v12M15.5 9.5a2.5 2.5 0 0 0-2.5-2H11a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2.5 2.5 0 0 1-2.5-2"/></svg></span> Finanças</div>
+<div class="nav-item" data-audience="pro" onclick="showPage('mercado');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-5 3 3 5-7"/></svg></span> Mercado</div>
+<div class="nav-item" data-audience="pro" onclick="showPage('myrequests');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg></span> Os Meus Pedidos</div>
+<div class="nav-item" data-audience="pro" onclick="showPage('reviews');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg></span> Avaliações</div>
+<div class="nav-item" data-audience="pro" onclick="showPage('referrals');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Referências</div>
+<div class="nav-item" data-audience="pro" onclick="showPage('convidar');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></span> Créditos</div>
+<div class="nav-item" data-audience="client" style="display:none" onclick="showPage('saved-pros');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span> Profissionais Guardados</div>
+<div class="nav-item" data-audience="client" style="display:none" onclick="showPage('client-jobs');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span> Histórico de Trabalhos</div>
+<div class="nav-item" data-audience="client" style="display:none" onclick="showPage('client-reviews');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg></span> Avaliações que Dei</div>
+<div class="nav-item" data-audience="client" style="display:none" onclick="showPage('client-profile');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></span> Dados Pessoais</div>
 <div class="nav-item" onclick="showPage('privacidade');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span> Privacidade e RGPD</div>
 <div class="nav-divider"></div>
 <button class="btn-signout" onclick="signOut()">Sair da conta</button>
@@ -91,11 +101,18 @@
 
 <!-- MOBILE NAV -->
 <div class="mobile-nav">
-<div class="mobile-nav-items">
+<div class="mobile-nav-items" id="mobile-nav-pro-items">
 <div class="mob-item active" onclick="showPage('overview')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></span>Resumo</div>
 <div class="mob-item" onclick="showPage('trabalhos')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>Trabalhos</div>
 <div class="mob-item" onclick="showPage('agenda')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>Agenda</div>
 <div class="mob-item" onclick="showPage('profile')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></span>Perfil</div>
+<div class="mob-item" onclick="location.href='messages.html'"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4H12l-4.8 2.1 1-4a8.4 8.4 0 1 1 12.8-6.5z"/></svg></span>Chat</div>
+</div>
+<div class="mobile-nav-items" id="mobile-nav-client-items" style="display:none">
+<div class="mob-item active" data-cmob="client-home" onclick="clientMobShow('client-home')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7"/><path d="M9 22V12h6v10"/></svg></span>Início</div>
+<div class="mob-item" data-cmob="myrequests" onclick="clientMobShow('myrequests')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg></span>Pedidos</div>
+<div class="mob-item" data-cmob="saved-pros" onclick="clientMobShow('saved-pros')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span>Guardados</div>
+<div class="mob-item" data-cmob="client-jobs" onclick="clientMobShow('client-jobs')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>Histórico</div>
 <div class="mob-item" onclick="location.href='messages.html'"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4H12l-4.8 2.1 1-4a8.4 8.4 0 1 1 12.8-6.5z"/></svg></span>Chat</div>
 </div>
 </div>
@@ -634,6 +651,11 @@ Letras minúsculas, números e hífenes. Entre 3 e 30 caracteres.
 <div id="page-myrequests" class="page-section">
 <h1 class="page-title">Pedidos</h1>
 <p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:520px">Publica o que precisas (ex: "preciso de um eletricista") e qualquer profissional em Portugal pode ver e contactar-te. Aparece em <a href="pedidos.html" style="color:var(--blue);font-weight:600">pedidos.html</a> para todos verem.</p>
+<div class="stats-grid">
+<div class="stat-card c-blue"><div class="s-decor"></div><div class="s-icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg></div><div class="s-value" id="mr-stat-total">0</div><div class="s-label">Total de Pedidos</div></div>
+<div class="stat-card c-green"><div class="s-decor"></div><div class="s-icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><div class="s-value" id="mr-stat-open">0</div><div class="s-label">Pedidos Abertos</div></div>
+<div class="stat-card c-purple"><div class="s-decor"></div><div class="s-icon"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div class="s-value" id="mr-stat-resolved">0</div><div class="s-label">Pedidos Resolvidos</div></div>
+</div>
 <div class="alert success" id="req-success"></div>
 <div class="alert error" id="req-error"></div>
 <div class="form-section">
@@ -674,7 +696,7 @@ Letras minúsculas, números e hífenes. Entre 3 e 30 caracteres.
 <option>Madeira</option>
 </select>
 </div>
-<div class="form-group"><label>Cidade / Zona</label><input id="req-city" type="text" placeholder="Ex: Sintra, Braga (centro)..."/></div>
+<div class="form-group full"><label>Cidade / Zona</label><input id="req-city" type="text" placeholder="Ex: Sintra, Braga (centro)..."/></div>
 <div class="form-group"><label>Orçamento mín. (€)</label><input id="req-bmin" type="number" min="0" placeholder="Ex: 30"/></div>
 <div class="form-group"><label>Orçamento máx. (€)</label><input id="req-bmax" type="number" min="0" placeholder="Ex: 100"/></div>
 <div class="form-group full"><label>Descrição</label><textarea id="req-desc" placeholder="Dá detalhes sobre o que precisas..."></textarea></div>
@@ -692,6 +714,110 @@ Letras minúsculas, números e hífenes. Entre 3 e 30 caracteres.
 <div class="form-section">
 <div class="form-title">Os Meus Pedidos Publicados</div>
 <div id="myrequests-list" class="item-list"></div>
+</div>
+</div>
+
+<!-- INÍCIO (CLIENTE) -->
+<div id="page-client-home" class="page-section">
+<div class="hero-dark">
+<div class="hd-glow-a"></div><div class="hd-glow-b"></div>
+<div class="hd-inner">
+<div class="hd-top">
+<div><div class="hd-date" id="ch-date"></div><h1 class="hd-title" id="ch-greet">Olá</h1></div>
+<button class="hd-cta" onclick="showPage('myrequests')"><svg class="ic" viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#0F1218"><path d="M12 5v14M5 12h14"/></svg> Publicar pedido</button>
+</div>
+<div class="hd-stats hd-stats-4">
+<div class="hd-stat"><div class="hd-lbl">Pedidos Abertos</div><div class="hd-val" id="ch-stat-requests">0</div></div>
+<div class="hd-stat"><div class="hd-lbl">Agendamentos</div><div class="hd-val" id="ch-stat-scheduled">0</div></div>
+<div class="hd-stat"><div class="hd-lbl">Total Gasto (ano)</div><div class="hd-val" id="ch-stat-spent">€0</div></div>
+<div class="hd-stat"><div class="hd-lbl">Avaliações Dadas</div><div class="hd-val" id="ch-stat-reviews">0</div></div>
+</div>
+</div>
+</div>
+
+<div class="two-cards">
+<div class="form-section">
+<div class="tc-head"><span>Próximos agendamentos</span><button class="tc-link" onclick="showPage('client-jobs')">Ver histórico</button></div>
+<div id="ch-upcoming"></div>
+</div>
+<div class="form-section">
+<div class="tc-head"><span>Profissionais recomendados perto de ti</span><button class="tc-link" onclick="location.href='index.html#heroSearchForm'">Procurar mais</button></div>
+<div id="ch-recommended"></div>
+</div>
+</div>
+
+<div class="form-section chart-card">
+<div class="tc-head"><span>O que gastaste nos últimos 6 meses</span></div>
+<canvas id="chart-client-spend" height="70"></canvas>
+</div>
+
+<div class="form-section">
+<div class="tc-head"><span>Atividade recente</span></div>
+<div id="ch-activity"></div>
+</div>
+
+<div class="form-section">
+<div class="tc-head"><span>Procurar por categoria</span></div>
+<div class="cat-chips">
+<a class="cat-chip" href="categoria.html?cat=Eletricistas"><span class="cc-ico">⚡</span> Eletricistas</a>
+<a class="cat-chip" href="categoria.html?cat=Canalizadores"><span class="cc-ico">🔧</span> Canalizadores</a>
+<a class="cat-chip" href="categoria.html?cat=Limpeza"><span class="cc-ico">🧹</span> Limpeza</a>
+<a class="cat-chip" href="categoria.html?cat=Pintores"><span class="cc-ico">🎨</span> Pintores</a>
+<a class="cat-chip" href="categoria.html?cat=Jardineiros"><span class="cc-ico">🌱</span> Jardineiros</a>
+<a class="cat-chip" href="categoria.html?cat=Mudaças"><span class="cc-ico">📦</span> Mudaças</a>
+</div>
+</div>
+
+<div class="form-section">
+<div class="tc-head"><span>Dicas da Academia Flinko</span></div>
+<div class="insights-list">
+<a class="insight-card good" href="academia.html" style="text-decoration:none;color:inherit"><div class="ic-badge">💡</div><div><b>Como escolher o profissional certo</b><br/>5 perguntas a fazer antes de contratares alguém.</div></a>
+<a class="insight-card good" href="academia.html" style="text-decoration:none;color:inherit"><div class="ic-badge">💰</div><div><b>Preços justos, sem surpresas</b><br/>O que deves esperar pagar por categoria em Portugal.</div></a>
+<a class="insight-card good" href="academia.html" style="text-decoration:none;color:inherit"><div class="ic-badge">📝</div><div><b>Escreve um bom pedido</b><br/>Pedidos com mais detalhe recebem respostas mais rápidas.</div></a>
+</div>
+</div>
+</div>
+
+<!-- PROFISSIONAIS GUARDADOS (CLIENTE) -->
+<div id="page-saved-pros" class="page-section">
+<h1 class="page-title">Profissionais Guardados</h1>
+<p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:520px">Os profissionais que guardaste para contactares mais tarde.</p>
+<div id="saved-pros-list" class="item-list"></div>
+</div>
+
+<!-- HISTÓRICO DE TRABALHOS (CLIENTE) -->
+<div id="page-client-jobs" class="page-section">
+<h1 class="page-title">Histórico de Trabalhos</h1>
+<p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:520px">Todos os trabalhos que já tiveste com profissionais da Flinko.</p>
+<div id="client-jobs-list" class="item-list"></div>
+</div>
+
+<!-- AVALIAÇÕES QUE DEI (CLIENTE) -->
+<div id="page-client-reviews" class="page-section">
+<h1 class="page-title">Avaliações que Dei</h1>
+<div id="client-reviews-list" class="item-list"></div>
+</div>
+
+<!-- DADOS PESSOAIS (CLIENTE) -->
+<div id="page-client-profile" class="page-section">
+<h1 class="page-title">Dados Pessoais</h1>
+<div class="alert success" id="cp-success"></div>
+<div class="alert error" id="cp-error"></div>
+<div class="form-section">
+<div class="form-title">O Meu Perfil</div>
+<div style="display:flex;align-items:center;gap:16px;margin-bottom:18px">
+<div id="cp-photo-preview" style="display:none"></div>
+<div>
+<input type="file" id="cp-photo-file" accept="image/*" style="display:none" onchange="uploadClientPhoto(this)"/>
+<button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('cp-photo-file').click()">Alterar foto</button>
+<input type="hidden" id="cp-photo"/>
+</div>
+</div>
+<div class="form-group"><label>Nome *</label><input id="cp-name" type="text"/></div>
+<div class="form-group full">
+<label style="display:flex;align-items:center;gap:8px;cursor:pointer"><span class="switch"><input type="checkbox" id="cp-notif"/><span class="slider"></span></span> Receber notificações por email</label>
+</div>
+<button class="btn btn-primary" onclick="saveClientProfile()">Guardar</button>
 </div>
 </div>
 
@@ -856,193 +982,193 @@ Letras minúsculas, números e hífenes. Entre 3 e 30 caracteres.
 
 <div id="mkt-body">
 <div class="two-cards">
-        <div class="form-section">
-          <div class="tc-head"><span>A tua atividade</span><span style="font-size:11px;color:var(--muted-2);font-weight:500">últimos 30 dias</span></div>
-          <div id="mkt-activity"></div>
-        </div>
-        <div class="form-section">
-          <div class="tc-head"><span>Tempo de resposta</span><span style="font-size:11px;color:var(--muted-2);font-weight:500">tu vs. média da categoria</span></div>
-          <div id="mkt-response"></div>
-        </div>
-      </div>
-      <div class="form-section">
-        <div class="tc-head"><span>Como usar isto</span></div>
-        <div id="mkt-tips" style="font-size:13px;color:var(--muted);line-height:1.7"></div>
-      </div>
-    </div>
-    <p style="color:var(--muted);font-size:11.5px;margin-top:-6px">Nota: valores agregados e anónimos, calculados a partir de propostas reais enviadas na Flinko. Não identificam nenhum profissional em concreto.</p>
-  </div>
+<div class="form-section">
+<div class="tc-head"><span>A tua atividade</span><span style="font-size:11px;color:var(--muted-2);font-weight:500">últimos 30 dias</span></div>
+<div id="mkt-activity"></div>
+</div>
+<div class="form-section">
+<div class="tc-head"><span>Tempo de resposta</span><span style="font-size:11px;color:var(--muted-2);font-weight:500">tu vs. média da categoria</span></div>
+<div id="mkt-response"></div>
+</div>
+</div>
+<div class="form-section">
+<div class="tc-head"><span>Como usar isto</span></div>
+<div id="mkt-tips" style="font-size:13px;color:var(--muted);line-height:1.7"></div>
+</div>
+</div>
+<p style="color:var(--muted);font-size:11.5px;margin-top:-6px">Nota: valores agregados e anónimos, calculados a partir de propostas reais enviadas na Flinko. Não identificam nenhum profissional em concreto.</p>
+</div>
 
-  <!-- REFERRALS -->
-  <div id="page-referrals" class="page-section">
-    <h1 class="page-title">Referências</h1>
-    <p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:560px">Quando não podes aceitar um trabalho, recomenda outro profissional da Flinko em vez de perderes o cliente. Cria confiança e todos ganham.</p>
-    <div class="form-section">
-      <div class="form-title">Recomendações Recebidas</div>
-      <div id="referrals-received" class="item-list"></div>
-    </div>
-    <div class="form-section">
-      <div class="form-title" style="justify-content:space-between">
-        <span>Recomendações Enviadas</span>
-        <button class="btn btn-outline btn-sm" onclick="openReferModal()">+ Recomendar profissional</button>
-      </div>
-      <div id="referrals-sent" class="item-list"></div>
-    </div>
-  </div>
+<!-- REFERRALS -->
+<div id="page-referrals" class="page-section">
+<h1 class="page-title">Referências</h1>
+<p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:560px">Quando não podes aceitar um trabalho, recomenda outro profissional da Flinko em vez de perderes o cliente. Cria confiança e todos ganham.</p>
+<div class="form-section">
+<div class="form-title">Recomendações Recebidas</div>
+<div id="referrals-received" class="item-list"></div>
+</div>
+<div class="form-section">
+<div class="form-title" style="justify-content:space-between">
+<span>Recomendações Enviadas</span>
+<button class="btn btn-outline btn-sm" onclick="openReferModal()">+ Recomendar profissional</button>
+</div>
+<div id="referrals-sent" class="item-list"></div>
+</div>
+</div>
 
-  <!-- CREDITOS -->
-  <div id="page-convidar" class="page-section">
-    <h1 class="page-title">Créditos</h1>
-    <p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:560px">Ganha créditos e troca-os por um mês do plano Pro ou por destaque no site. Convida um amigo (10 créditos) e recebe boas avaliações em trabalhos reais (5 a 10 créditos por avaliação).</p>
+<!-- CREDITOS -->
+<div id="page-convidar" class="page-section">
+<h1 class="page-title">Créditos</h1>
+<p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:560px">Ganha créditos e troca-os por um mês do plano Pro ou por destaque no site. Convida um amigo (10 créditos) e recebe boas avaliações em trabalhos reais (5 a 10 créditos por avaliação).</p>
 
-    <div class="form-section" style="background:var(--bg);border:none;text-align:center;padding:24px">
-      <div style="font-size:13px;color:var(--muted);font-weight:600">Saldo atual</div>
-      <div style="font-size:40px;font-weight:800;color:var(--blue);margin-top:4px" id="credits-balance">0</div>
-    </div>
+<div class="form-section" style="background:var(--bg);border:none;text-align:center;padding:24px">
+<div style="font-size:13px;color:var(--muted);font-weight:600">Saldo atual</div>
+<div style="font-size:40px;font-weight:800;color:var(--blue);margin-top:4px" id="credits-balance">0</div>
+</div>
 
-    <div class="two-cards">
-      <div class="form-section">
-        <div class="tc-head"><span>Convidar amigos</span></div>
-        <p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px">10 créditos por cada registo através do teu link.</p>
-        <div id="invite-link-box"></div>
-      </div>
-      <div class="form-section">
-        <div class="tc-head"><span>Boas avaliações</span></div>
-        <p style="font-size:12.5px;color:var(--muted);line-height:1.6">Sempre que um cliente com quem tiveste um trabalho pago avalia com 5★ ganhas 10 créditos, com 4★ ganhas 5. Automático, não precisas de fazer nada.</p>
-      </div>
-    </div>
+<div class="two-cards">
+<div class="form-section">
+<div class="tc-head"><span>Convidar amigos</span></div>
+<p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px">10 créditos por cada registo através do teu link.</p>
+<div id="invite-link-box"></div>
+</div>
+<div class="form-section">
+<div class="tc-head"><span>Boas avaliações</span></div>
+<p style="font-size:12.5px;color:var(--muted);line-height:1.6">Sempre que um cliente com quem tiveste um trabalho pago avalia com 5★ ganhas 10 créditos, com 4★ ganhas 5. Automático, não precisas de fazer nada.</p>
+</div>
+</div>
 
-    <div class="form-section">
-      <div class="tc-head"><span>Trocar por Pro</span></div>
-      <p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px">120 créditos = 1 mês grátis de Pro. Escreve-nos para <a href="mailto:proliga.pt@gmail.com" style="color:var(--blue)">proliga.pt@gmail.com</a> a indicar quantos créditos queres usar.</p>
-    </div>
+<div class="form-section">
+<div class="tc-head"><span>Trocar por Pro</span></div>
+<p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px">120 créditos = 1 mês grátis de Pro. Escreve-nos para <a href="mailto:proliga.pt@gmail.com" style="color:var(--blue)">proliga.pt@gmail.com</a> a indicar quantos créditos queres usar.</p>
+</div>
 
-    <div class="form-section">
-      <div class="tc-head"><span>Anunciar no site</span></div>
-      <p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px">Usa créditos para o teu perfil aparecer num banner "Em destaque" na homepage e no topo da página da tua categoria. Podes usar uma foto ou um vídeo curto próprios do anúncio — se não puseres nada, usamos a tua foto de perfil.</p>
-      <div class="alert error" id="ad-error"></div>
-      <div class="alert success" id="ad-success"></div>
-      <div id="ad-active-box" style="margin-bottom:12px"></div>
+<div class="form-section">
+<div class="tc-head"><span>Anunciar no site</span></div>
+<p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px">Usa créditos para o teu perfil aparecer num banner "Em destaque" na homepage e no topo da página da tua categoria. Podes usar uma foto ou um vídeo curto próprios do anúncio — se não puseres nada, usamos a tua foto de perfil.</p>
+<div class="alert error" id="ad-error"></div>
+<div class="alert success" id="ad-success"></div>
+<div id="ad-active-box" style="margin-bottom:12px"></div>
 
-      <label style="font-size:12.5px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px">Foto ou vídeo do anúncio (opcional)</label>
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap">
-        <label for="ad-media-file" style="background:var(--blue-light);color:var(--blue);border:1.5px dashed var(--blue);border-radius:8px;padding:10px 16px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;margin:0">
-          <svg class="ic" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg> Carregar foto ou vídeo
-          <input type="file" id="ad-media-file" accept="image/*,video/mp4,video/webm" style="display:none" onchange="uploadAdMedia(this)"/>
-        </label>
-        <div id="ad-media-preview"></div>
-      </div>
+<label style="font-size:12.5px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px">Foto ou vídeo do anúncio (opcional)</label>
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+<label for="ad-media-file" style="background:var(--blue-light);color:var(--blue);border:1.5px dashed var(--blue);border-radius:8px;padding:10px 16px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;margin:0">
+<svg class="ic" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg> Carregar foto ou vídeo
+<input type="file" id="ad-media-file" accept="image/*,video/mp4,video/webm" style="display:none" onchange="uploadAdMedia(this)"/>
+</label>
+<div id="ad-media-preview"></div>
+</div>
 
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-        <select id="ad-days" style="max-width:180px">
-          <option value="3">3 dias · 27 créditos</option>
-          <option value="7" selected>7 dias · 60 créditos</option>
-          <option value="14">14 dias · 120 créditos</option>
-        </select>
-        <button class="btn btn-primary btn-sm" onclick="buyAdSlot()">Anunciar agora</button>
-      </div>
-    </div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+<select id="ad-days" style="max-width:180px">
+<option value="3">3 dias · 27 créditos</option>
+<option value="7" selected>7 dias · 60 créditos</option>
+<option value="14">14 dias · 120 créditos</option>
+</select>
+<button class="btn btn-primary btn-sm" onclick="buyAdSlot()">Anunciar agora</button>
+</div>
+</div>
 
-    <div class="form-section">
-      <div class="tc-head"><span>Pessoas convidadas</span></div>
-      <div id="invited-list"></div>
-    </div>
-  </div>
+<div class="form-section">
+<div class="tc-head"><span>Pessoas convidadas</span></div>
+<div id="invited-list"></div>
+</div>
+</div>
 
-  <!-- PRIVACIDADE E RGPD -->
-  <div id="page-privacidade" class="page-section">
-    <h1 class="page-title">Privacidade e RGPD</h1>
-    <p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:560px">
-      Podes pedir uma cópia dos teus dados ou a eliminação da tua conta diretamente aqui. Confirmamos o pedido e temos até 30 dias para o tratar (prazo do RGPD), como explicado na <a href="rgpd.html" target="_blank" style="color:var(--blue)">página de Privacidade</a>.
-    </p>
+<!-- PRIVACIDADE E RGPD -->
+<div id="page-privacidade" class="page-section">
+<h1 class="page-title">Privacidade e RGPD</h1>
+<p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:560px">
+Podes pedir uma cópia dos teus dados ou a eliminação da tua conta diretamente aqui. Confirmamos o pedido e temos até 30 dias para o tratar (prazo do RGPD), como explicado na <a href="rgpd.html" target="_blank" style="color:var(--blue)">página de Privacidade</a>.
+</p>
 
-    <div class="alert success" id="gdpr-success"></div>
-    <div class="alert error" id="gdpr-error"></div>
+<div class="alert success" id="gdpr-success"></div>
+<div class="alert error" id="gdpr-error"></div>
 
-    <div class="two-cards">
-      <div class="form-section">
-        <div class="tc-head"><span>📦 Exportar os meus dados</span></div>
-        <p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px;line-height:1.6">Direito de acesso (Art. 15º RGPD). Enviamos-te, por email, uma cópia dos dados que temos sobre ti — perfil, serviços, trabalhos, mensagens e avaliações.</p>
-        <button class="btn btn-outline" onclick="requestGdprAction('export')">Pedir exportação dos dados</button>
-      </div>
-      <div class="form-section">
-        <div class="tc-head"><span>🗑️ Eliminar a minha conta</span></div>
-        <p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px;line-height:1.6">Direito ao apagamento (Art. 17º RGPD). O teu perfil deixa de estar visível e os teus dados são apagados dentro do prazo legal. Esta ação não pode ser desfeita depois de confirmada pela nossa equipa.</p>
-        <button class="btn" style="background:#fef2f2;color:#b91c1c;border:1px solid #fecaca" onclick="requestGdprAction('delete')">Pedir eliminação da conta</button>
-      </div>
-    </div>
+<div class="two-cards">
+<div class="form-section">
+<div class="tc-head"><span>📦 Exportar os meus dados</span></div>
+<p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px;line-height:1.6">Direito de acesso (Art. 15º RGPD). Enviamos-te, por email, uma cópia dos dados que temos sobre ti — perfil, serviços, trabalhos, mensagens e avaliações.</p>
+<button class="btn btn-outline" onclick="requestGdprAction('export')">Pedir exportação dos dados</button>
+</div>
+<div class="form-section">
+<div class="tc-head"><span>🗑️ Eliminar a minha conta</span></div>
+<p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px;line-height:1.6">Direito ao apagamento (Art. 17º RGPD). O teu perfil deixa de estar visível e os teus dados são apagados dentro do prazo legal. Esta ação não pode ser desfeita depois de confirmada pela nossa equipa.</p>
+<button class="btn" style="background:#fef2f2;color:#b91c1c;border:1px solid #fecaca" onclick="requestGdprAction('delete')">Pedir eliminação da conta</button>
+</div>
+</div>
 
-    <div class="form-section">
-      <div class="tc-head"><span>Os teus pedidos</span></div>
-      <p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px">Histórico dos pedidos que fizeste. Um pedido pendente pode ser cancelado se mudares de ideias.</p>
-      <div id="gdpr-list" class="item-list"></div>
-    </div>
-  </div>
+<div class="form-section">
+<div class="tc-head"><span>Os teus pedidos</span></div>
+<p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px">Histórico dos pedidos que fizeste. Um pedido pendente pode ser cancelado se mudares de ideias.</p>
+<div id="gdpr-list" class="item-list"></div>
+</div>
+</div>
 
 </div>
 
 <!-- AI ASSISTANT -->
 <button id="ai-chat-fab" onclick="toggleAiChat()" title="Assistente Flinko">
-  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 0-5 5v3a5 5 0 0 0 10 0V7a5 5 0 0 0-5-5z"/><path d="M8 13v1a4 4 0 0 0 8 0v-1M12 18v3M9 21h6"/></svg>
+<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 0-5 5v3a5 5 0 0 0 10 0V7a5 5 0 0 0-5-5z"/><path d="M8 13v1a4 4 0 0 0 8 0v-1M12 18v3M9 21h6"/></svg>
 </button>
 <div id="ai-chat-panel">
-  <div class="ai-chat-head">
-    <div>Assistente Flinko<span class="sub">Pergunta-me sobre o teu negócio</span></div>
-    <button class="ai-chat-close" onclick="toggleAiChat()">✕</button>
-  </div>
-  <div class="ai-chat-body" id="ai-chat-body">
-    <div class="ai-msg bot">Olá! Posso ajudar-te a perceber como vai o teu negócio na Flinko — pergunta-me algo como "como está o meu mês?" ou "o que devo fazer a seguir?".</div>
-  </div>
-  <div class="ai-chat-foot">
-    <input id="ai-chat-input" type="text" placeholder="Escreve a tua pergunta…" onkeydown="if(event.key==='Enter')sendAiChat()"/>
-    <button id="ai-chat-send" onclick="sendAiChat()"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg></button>
-  </div>
+<div class="ai-chat-head">
+<div>Assistente Flinko<span class="sub">Pergunta-me sobre o teu negócio</span></div>
+<button class="ai-chat-close" onclick="toggleAiChat()">✕</button>
+</div>
+<div class="ai-chat-body" id="ai-chat-body">
+<div class="ai-msg bot">Olá! Posso ajudar-te a perceber como vai o teu negócio na Flinko — pergunta-me algo como "como está o meu mês?" ou "o que devo fazer a seguir?".</div>
+</div>
+<div class="ai-chat-foot">
+<input id="ai-chat-input" type="text" placeholder="Escreve a tua pergunta…" onkeydown="if(event.key==='Enter')sendAiChat()"/>
+<button id="ai-chat-send" onclick="sendAiChat()"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg></button>
+</div>
 </div>
 
 <!-- QUOTE MODAL -->
 <div class="modal-overlay" id="quote-modal-overlay" onclick="if(event.target===this)closeQuoteModal()">
-  <div class="modal">
-    <div class="modal-head">
-      <div class="modal-title"><svg class="ic" viewBox="0 0 24 24" style="width:17px;height:17px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg> Gerar Orçamento</div>
-      <button class="modal-close" onclick="closeQuoteModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-grid">
-        <div class="form-group"><label>Nome do cliente *</label><input id="q-client" type="text" placeholder="Nome do cliente"/></div>
-        <div class="form-group"><label>Validade (dias)</label><input id="q-valid" type="number" min="1" value="30"/></div>
-      </div>
-      <label style="font-size:12.5px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px">Itens</label>
-      <div id="q-items"></div>
-      <button class="btn btn-outline btn-sm" type="button" onclick="addQuoteItemRow()">+ Adicionar item</button>
-      <div class="form-group" style="margin-top:14px"><label>Notas (opcional)</label><textarea id="q-notes" placeholder="Condições de pagamento, observações..."></textarea></div>
-      <div class="quote-total">Total: <strong id="q-total">€0,00</strong></div>
-      <div class="alert error" id="quote-error"></div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-outline" onclick="closeQuoteModal()">Cancelar</button>
-      <button class="btn btn-primary" onclick="generateQuotePdf()">Gerar PDF</button>
-    </div>
-  </div>
+<div class="modal">
+<div class="modal-head">
+<div class="modal-title"><svg class="ic" viewBox="0 0 24 24" style="width:17px;height:17px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg> Gerar Orçamento</div>
+<button class="modal-close" onclick="closeQuoteModal()">✕</button>
+</div>
+<div class="modal-body">
+<div class="form-grid">
+<div class="form-group"><label>Nome do cliente *</label><input id="q-client" type="text" placeholder="Nome do cliente"/></div>
+<div class="form-group"><label>Validade (dias)</label><input id="q-valid" type="number" min="1" value="30"/></div>
+</div>
+<label style="font-size:12.5px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px">Itens</label>
+<div id="q-items"></div>
+<button class="btn btn-outline btn-sm" type="button" onclick="addQuoteItemRow()">+ Adicionar item</button>
+<div class="form-group" style="margin-top:14px"><label>Notas (opcional)</label><textarea id="q-notes" placeholder="Condições de pagamento, observações..."></textarea></div>
+<div class="quote-total">Total: <strong id="q-total">€0,00</strong></div>
+<div class="alert error" id="quote-error"></div>
+</div>
+<div class="modal-foot">
+<button class="btn btn-outline" onclick="closeQuoteModal()">Cancelar</button>
+<button class="btn btn-primary" onclick="generateQuotePdf()">Gerar PDF</button>
+</div>
+</div>
 </div>
 
 <!-- REFER MODAL -->
 <div class="modal-overlay" id="refer-modal-overlay" onclick="if(event.target===this)closeReferModal()">
-  <div class="modal">
-    <div class="modal-head">
-      <div class="modal-title"><svg class="ic" viewBox="0 0 24 24" style="width:17px;height:17px"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> Recomendar Profissional</div>
-      <button class="modal-close" onclick="closeReferModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group"><label>Procurar por nome, categoria ou zona</label><input id="ref-search" type="text" placeholder="Ex: eletricista, Braga..." oninput="searchReferralPros()"/></div>
-      <div id="ref-results"></div>
-      <div class="form-group" style="margin-top:10px"><label>Nota (opcional)</label><textarea id="ref-note" placeholder="Porque estás a recomendar este profissional..."></textarea></div>
-      <div class="alert error" id="ref-error"></div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-outline" onclick="closeReferModal()">Cancelar</button>
-      <button class="btn btn-primary" onclick="submitReferral()">Enviar recomendação</button>
-    </div>
-  </div>
+<div class="modal">
+<div class="modal-head">
+<div class="modal-title"><svg class="ic" viewBox="0 0 24 24" style="width:17px;height:17px"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> Recomendar Profissional</div>
+<button class="modal-close" onclick="closeReferModal()">✕</button>
+</div>
+<div class="modal-body">
+<div class="form-group"><label>Procurar por nome, categoria ou zona</label><input id="ref-search" type="text" placeholder="Ex: eletricista, Braga..." oninput="searchReferralPros()"/></div>
+<div id="ref-results"></div>
+<div class="form-group" style="margin-top:10px"><label>Nota (opcional)</label><textarea id="ref-note" placeholder="Porque estás a recomendar este profissional..."></textarea></div>
+<div class="alert error" id="ref-error"></div>
+</div>
+<div class="modal-foot">
+<button class="btn btn-outline" onclick="closeReferModal()">Cancelar</button>
+<button class="btn btn-primary" onclick="submitReferral()">Enviar recomendação</button>
+</div>
+</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
@@ -1060,5 +1186,6 @@ Letras minúsculas, números e hífenes. Entre 3 e 30 caracteres.
 <script src="/assets/dashboard-finance.js" defer></script>
 <script src="/assets/billing.js" defer></script>
 <script src="/assets/dashboard-growth.js" defer></script>
+<script src="/assets/dashboard-client.js" defer></script>
 </body>
 </html>
