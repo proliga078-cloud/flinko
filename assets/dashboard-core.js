@@ -11,7 +11,7 @@ let quoteJobId=null,quotesCache=[]
 
 // Glow-spot que segue o cursor nos cartões (.list-item, .job-card), mesmo
 // efeito já usado na área pública. Delegado em .main-content (em vez de um
-// listener por lista) porque .list-item aparece em várias secçõesh
+// listener por lista) porque .list-item aparece em várias secções
 // diferentes (serviços, diário, faqs, avaliações) e cada uma é reconstruída
 // no seu próprio load*(). Este script tem "defer", por isso o DOM já está
 // pronto quando esta linha corre.
