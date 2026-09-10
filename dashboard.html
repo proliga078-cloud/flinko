@@ -47,6 +47,7 @@
 <div class="nav-item" data-page="profile" data-audience="pro" onclick="showPage('profile')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></span> O Meu Perfil</div>
 <div class="nav-item" data-page="financas" data-audience="pro" onclick="showPage('financas')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v12M15.5 9.5a2.5 2.5 0 0 0-2.5-2H11a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2.5 2.5 0 0 1-2.5-2"/></svg></span> Finanças</div>
 <div class="nav-item" data-page="mercado" data-audience="pro" onclick="showPage('mercado')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-5 3 3 5-7"/></svg></span> Mercado</div>
+  <div class="nav-item" data-page="verificacao" data-audience="pro" onclick="showPage('verificacao')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/><path d="m9 12 2 2 4-4"/></svg></span> Verificação</div>
 
 <div class="nav-label">Comunicação</div>
 <div class="nav-item" onclick="location.href='messages.html'"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4H12l-4.8 2.1 1-4a8.4 8.4 0 1 1 12.8-6.5z"/></svg></span> Chat <span id="chat-badge" style="display:none;background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px;margin-left:auto">0</span></div>
@@ -85,6 +86,7 @@
 <div class="nav-item" data-audience="pro" onclick="showPage('clientes');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Clientes</div>
 <div class="nav-item" data-audience="pro" onclick="showPage('financas');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v12M15.5 9.5a2.5 2.5 0 0 0-2.5-2H11a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2.5 2.5 0 0 1-2.5-2"/></svg></span> Finanças</div>
 <div class="nav-item" data-audience="pro" onclick="showPage('mercado');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-5 3 3 5-7"/></svg></span> Mercado</div>
+<div class="nav-item" data-audience="pro" onclick="showPage('verificacao');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/><path d="m9 12 2 2 4-4"/></svg></span> Verificação</div>
 <div class="nav-item" data-audience="pro" onclick="showPage('myrequests');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg></span> Os Meus Pedidos</div>
 <div class="nav-item" data-audience="pro" onclick="showPage('reviews');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg></span> Avaliações</div>
 <div class="nav-item" data-audience="pro" onclick="showPage('referrals');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Referências</div>
@@ -1102,6 +1104,35 @@ Podes pedir uma cópia dos teus dados ou a eliminação da tua conta diretamente
 <div class="tc-head"><span>Os teus pedidos</span></div>
 <p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px">Histórico dos pedidos que fizeste. Um pedido pendente pode ser cancelado se mudares de ideias.</p>
 <div id="gdpr-list" class="item-list"></div>
+</div>
+</div>
+
+<!-- VERIFICAÇÃO -->
+<div id="page-verificacao" class="page-section">
+<h1 class="page-title">Verificação</h1>
+<p style="color:var(--muted);font-size:13px;margin:-8px 0 20px;max-width:560px">Perfis verificados têm um selo de confiança visível para os clientes. Pede a verificação e envia os documentos necessários — a nossa equipa analisa o pedido manualmente.</p>
+
+<div class="alert success" id="verif-success"></div>
+<div class="alert error" id="verif-error"></div>
+
+<div class="form-section" id="verif-status-box" style="display:none"></div>
+
+<div class="form-section" id="verif-form-box">
+<div class="form-title">Pedir verificação</div>
+<p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px;line-height:1.6">Envia um documento de identificação (cartão de cidadão, carta de condução ou passaporte) e, se tiveres, um comprovativo da atividade (certidão de atividade, recibo verde ou seguro de responsabilidade civil). Aceitamos JPG, PNG ou PDF, até 10MB por ficheiro.</p>
+
+<div class="form-group full">
+<label>Documentos *</label>
+<div id="verif-doc-list"></div>
+<label for="verif-doc-file" style="background:var(--blue-light);color:var(--blue);border:1.5px dashed var(--blue);border-radius:8px;padding:10px 16px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;display:inline-block;margin-top:6px">
+<svg class="ic" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg> Carregar documento
+<input type="file" id="verif-doc-file" accept="image/*,application/pdf" style="display:none" onchange="uploadVerificationDoc(this)"/>
+</label>
+</div>
+
+<div class="form-group full"><label>Nota para a equipa (opcional)</label><textarea id="verif-notes" placeholder="Ex: sou eletricista certificado há 5 anos, seguem em anexo o cartão profissional e o comprovativo de seguro..."></textarea></div>
+
+<button class="btn btn-primary" onclick="submitVerificationRequest()">Pedir verificação</button>
 </div>
 </div>
 

@@ -305,6 +305,106 @@ async function loadGdprRequests(){
   }).join('')
 }
 
+
+// VERIFICAÇÃO DE PROFISSIONAL
+const VERIF_STATUS_LABELS={pending:'Pendente',approved:'Aprovado',rejected:'Rejeitado',cancelled:'Cancelado'}
+let pendingVerifDocs=[]
+
+async function loadVerificationStatus(){
+if(!profileId)return
+const statusBox=document.getElementById('verif-status-box')
+const formBox=document.getElementById('verif-form-box')
+if(!statusBox||!formBox)return
+if(profileData?.verified){
+statusBox.style.display='block'
+formBox.style.display='none'
+statusBox.innerHTML='<div style="display:flex;align-items:center;gap:10px"><span style="font-size:22px">✅</span><div><div style="font-weight:700;font-size:14px">Perfil verificado</div><div style="font-size:12.5px;color:var(--muted)">O teu perfil já tem o selo de confiança Flinko.</div></div></div>'
+return
+}
+const{data,error}=await db.from('verification_requests').select('*').eq('profile_id',profileId).order('created_at',{ascending:false}).limit(1).maybeSingle()
+if(error){console.error('verification status error:',error);return}
+if(data&&data.status==='pending'){
+statusBox.style.display='block'
+formBox.style.display='none'
+const date=data.created_at?new Date(data.created_at).toLocaleDateString('pt-PT'):'—'
+const docs=data.documents||[]
+const links=await Promise.all(docs.map(async d=>{
+const{data:signed}=await db.storage.from('verification-docs').createSignedUrl(d.path,3600)
+return signed?`<div style="font-size:12.5px"><a href="${escapeHtml(signed.signedUrl)}" target="_blank" style="color:var(--blue)">📄 ${escapeHtml(d.name||'Documento')}</a></div>`:''
+}))
+statusBox.innerHTML=`<div style="font-weight:700;font-size:14px;margin-bottom:6px">⏳ Pedido em análise</div>
+<div style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Enviado em ${date}. A nossa equipa vai analisar os documentos e confirmar por aqui.</div>
+${links.join('')}
+<button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="cancelVerificationRequest('${data.id}')">Cancelar pedido</button>`
+return
+}
+if(data&&data.status==='rejected'){
+statusBox.style.display='block'
+formBox.style.display='block'
+statusBox.innerHTML=`<div style="font-weight:700;font-size:14px;color:var(--red);margin-bottom:6px">❌ Pedido não aprovado</div>
+<div style="font-size:12.5px;color:var(--muted)">${escapeHtml(data.admin_notes||'A nossa equipa não conseguiu confirmar os documentos enviados. Podes submeter um novo pedido abaixo.')}</div>`
+pendingVerifDocs=[]
+renderVerifDocList()
+return
+}
+statusBox.style.display='none'
+formBox.style.display='block'
+pendingVerifDocs=[]
+renderVerifDocList()
+}
+
+function renderVerifDocList(){
+const el=document.getElementById('verif-doc-list')
+if(!el)return
+if(!pendingVerifDocs.length){el.innerHTML='';return}
+el.innerHTML=pendingVerifDocs.map((d,i)=>`<div style="display:flex;align-items:center;gap:8px;font-size:12.5px;padding:4px 0">
+<span>📄</span><span style="flex:1">${escapeHtml(d.name)}</span>
+<button type="button" class="btn btn-outline btn-sm" onclick="removeVerifDoc(${i})">Remover</button>
+</div>`).join('')
+}
+
+function removeVerifDoc(i){
+pendingVerifDocs.splice(i,1)
+renderVerifDocList()
+}
+
+async function uploadVerificationDoc(input){
+const file=input.files[0]
+if(!file)return
+if(file.size>10*1024*1024){showAlert('verif-error','Ficheiro demasiado grande. Máx 10MB.','error');return}
+const isPdf=file.type==='application/pdf'
+try{
+const uploadFile=isPdf?file:await resizeImageFile(file)
+const ext=uploadFile.name.split('.').pop()
+const path=`${profileId}/${Date.now()}.${ext}`
+const{error}=await db.storage.from('verification-docs').upload(path,uploadFile,{contentType:uploadFile.type})
+if(error)throw error
+pendingVerifDocs.push({path,name:file.name})
+renderVerifDocList()
+}catch(e){
+showAlert('verif-error','Não foi possível carregar o documento: '+(e.message||e),'error')
+}
+input.value=''
+}
+
+async function submitVerificationRequest(){
+if(!pendingVerifDocs.length){showAlert('verif-error','Carrega pelo menos um documento antes de enviar o pedido.','error');return}
+const notes=document.getElementById('verif-notes').value.trim()
+const{error}=await db.from('verification_requests').insert({profile_id:profileId,documents:pendingVerifDocs,notes:notes||null})
+if(error){showAlert('verif-error','Não foi possível registar o pedido: '+(error.message||'erro desconhecido'),'error');return}
+showAlert('verif-success','Pedido de verificação enviado! A nossa equipa vai analisar os documentos.')
+document.getElementById('verif-notes').value=''
+pendingVerifDocs=[]
+loadVerificationStatus()
+}
+
+async function cancelVerificationRequest(id){
+if(!confirm('Cancelar este pedido de verificação?'))return
+const{error}=await db.from('verification_requests').update({status:'cancelled'}).eq('id',id)
+if(error){showAlert('verif-error','Não foi possível cancelar o pedido.','error');return}
+loadVerificationStatus()
+}
+
 function showAlert(id,msg,type='success'){
   const el=document.getElementById(id)
   if(!el)return

@@ -184,6 +184,7 @@ tr:hover td{background:#f8f9fc}
 <div class="atab" onclick="showAdminPage('portfolio')">🖼️ Portfólio</div>
 <div class="atab" onclick="showAdminPage('stats')">📈 Estatísticas</div>
 <div class="atab" onclick="showAdminPage('gdpr')">🔒 RGPD</div>
+<div class="atab" onclick="showAdminPage('verificacao')">✅ Verificação</div>
 </div>
 <div class="admin-body">
 
@@ -361,6 +362,28 @@ tr:hover td{background:#f8f9fc}
 </div>
 </div>
 
+</div>
+</div>
+
+<!-- VERIFICATION -->
+<div id="page-verificacao" class="page-section">
+<div class="stats-grid">
+<div class="stat-card accent-blue"><div class="stat-icon">✅</div><div class="stat-val" id="verif-pending-count">—</div><div class="stat-lbl">Pendentes</div></div>
+</div>
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">✅ Pedidos de Verificação <span id="verif-count" style="font-weight:400;color:var(--muted);font-size:13px"></span></div>
+<select class="search-box" id="verif-filter" style="width:190px" onchange="renderVerificationTable()">
+<option value="pending">Pendentes</option>
+<option value="">Todos os estados</option>
+<option value="approved">Aprovados</option>
+<option value="rejected">Rejeitados</option>
+<option value="cancelled">Cancelados</option>
+</select>
+</div>
+<table>
+<thead><tr><th>Profissional</th><th>Pedido em</th><th>Documentos</th><th>Notas</th><th>Estado</th><th>Ações</th></tr></thead>
+<tbody id="verif-tbody"></tbody>
+</table>
 </div>
 </div>
 
@@ -1149,11 +1172,70 @@ if(error){console.error('gdpr update error:',error);alert('Não foi possível at
 loadGdprAdmin()
 }
 
+// VERIFICAÇÃO
+// Pedidos de verificação criados pelos profissionais em dashboard.html
+// (tabela verification_requests), com documentos num bucket privado
+// (verification-docs, path <profile_id>/<ficheiro>). Aprovar marca
+// profiles.verified = true, tal como o botão manual em toggleVerified.
+const VERIF_STATUS_LABELS={pending:'Pendente',approved:'Aprovado',rejected:'Rejeitado',cancelled:'Cancelado'}
+let allVerificationRequests=[]
+
+async function loadVerificationAdmin(){
+const[{data:reqs,error},{data:pros}]=await Promise.all([
+db.from('verification_requests').select('*').order('created_at',{ascending:false}),
+db.from('profiles').select('id,name')
+])
+if(error)console.error('verification_requests:',error)
+const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
+allVerificationRequests=(reqs||[]).map(r=>({...r,accountName:pm[r.profile_id]||'—'}))
+document.getElementById('verif-pending-count').textContent=allVerificationRequests.filter(r=>r.status==='pending').length
+renderVerificationTable()
+}
+
+function renderVerificationTable(){
+const filter=document.getElementById('verif-filter').value
+let rows=allVerificationRequests
+if(filter)rows=rows.filter(r=>r.status===filter)
+document.getElementById('verif-count').textContent=rows.length?`(${rows.length})`:''
+const tbody=document.getElementById('verif-tbody')
+if(!rows.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Sem pedidos</td></tr>';return}
+tbody.innerHTML=rows.map(r=>{
+const docs=Array.isArray(r.documents)?r.documents:[]
+const docsHtml=docs.length?docs.map((d,i)=>`<button class="btn btn-outline btn-sm" onclick="viewVerificationDoc('${d.path}')">📄 ${escapeHtml(d.name||('Doc '+(i+1)))}</button>`).join(' '):'—'
+const isPending=r.status==='pending'
+const actions=isPending?`<button class="btn btn-primary btn-sm" onclick="resolveVerification('${r.id}','${r.profile_id}',true)">Aprovar</button> <button class="btn btn-sm" style="background:#fef2f2;color:#b91c1c;border:1px solid #fecaca" onclick="resolveVerification('${r.id}','${r.profile_id}',false)">Rejeitar</button>`:'—'
+return `<tr>
+<td><div class="td-name">${escapeHtml(r.accountName)}</div></td>
+<td>${new Date(r.created_at).toLocaleDateString('pt-PT')}</td>
+<td>${docsHtml}</td>
+<td>${escapeHtml(r.notes||'—')}</td>
+<td><span class="badge ${isPending?'badge-pending':'badge-approved'}">${escapeHtml(VERIF_STATUS_LABELS[r.status]||r.status)}</span></td>
+<td>${actions}</td>
+</tr>`
+}).join('')
+}
+
+async function viewVerificationDoc(path){
+const{data,error}=await db.storage.from('verification-docs').createSignedUrl(path,300)
+if(error){alert('Não foi possível abrir o documento: '+(error.message||'erro desconhecido'));return}
+window.open(data.signedUrl,'_blank')
+}
+
+async function resolveVerification(id,profileId,approve){
+if(!confirm(approve?'Aprovar esta verificação? O perfil fica marcado como verificado.':'Rejeitar este pedido?'))return
+const{error}=await db.from('verification_requests').update({status:approve?'approved':'rejected',resolved_at:new Date().toISOString()}).eq('id',id)
+if(error){alert('Não foi possível atualizar o pedido: '+(error.message||'erro desconhecido'));return}
+if(approve)await db.from('profiles').update({verified:true}).eq('id',profileId)
+loadVerificationAdmin()
+if(typeof loadProfiles==='function')loadProfiles()
+}
+
+
 // NAVIGATION
 function showAdminPage(name){
 document.querySelectorAll('.page-section').forEach(p=>p.classList.remove('active'))
 document.getElementById(`page-${name}`).classList.add('active')
-const names=['overview','profiles','subscricoes','conversations','messages','reviews','services','portfolio','stats','gdpr']
+const names=['overview','profiles','subscricoes','conversations','messages','reviews','services','portfolio','stats','gdpr','verificacao']
 document.querySelectorAll('.atab').forEach((t,i)=>t.classList.toggle('active',names[i]===name))
 if(name==='subscricoes')loadSubscriptions()
 if(name==='conversations')loadConversations()
@@ -1163,6 +1245,7 @@ if(name==='services')loadServices()
 if(name==='portfolio')loadPortfolio()
 if(name==='stats')loadSiteStats()
 if(name==='gdpr')loadGdprAdmin()
+if(name==='verificacao')loadVerificationAdmin()
 }
 
 init()
