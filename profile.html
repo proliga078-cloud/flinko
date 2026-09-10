@@ -553,7 +553,7 @@ async function init(){
   renderAvailGrid(pro)
   renderExtraInfo(pro)
   loadSimilarPros(pro)
-  if(!session||session.user.id!==pro.id)logProfileView(pro.id)
+  if(!session||session.user.id!==pro.id)logProfileView(pro.id);if(params.get('tab')==='avaliacoes'){showTab('avaliacoes');setTimeout(()=>document.getElementById('tab-avaliacoes')?.scrollIntoView({behavior:'smooth'}),400)}
   // WA share
   document.getElementById('wa-share').href=`https://wa.me/?text=Confere%20o%20perfil%20de%20${encodeURIComponent(pro.name)}%20na%20Flinko%3A%20${encodeURIComponent(location.href)}`
 }
