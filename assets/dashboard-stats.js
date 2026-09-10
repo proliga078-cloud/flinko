@@ -6,6 +6,8 @@ async function loadStats(){
     db.from('services').select('*',{count:'exact',head:true}).eq('professional_id',profileId)
   ])
   servicesCount=sc||0
+  const stSvc=document.getElementById('stat-services')
+  if(stSvc)stSvc.textContent=servicesCount
   msgsCount=mc||0
   reviewsCount=rc||0
   document.getElementById('stat-msgs').textContent=mc||0
