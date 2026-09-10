@@ -372,11 +372,11 @@ footer{background:var(--dark);color:rgba(255,255,255,.6);padding-top:56px}
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">Como posso fazer upgrade do meu plano?</div>
-<div class="faq-a">Clica em "Mudar para Pro" — vamos abrir um email pré-preenchido para <strong>avlistech2@gmail.com</strong>. Confirmamos contigo os detalhes de pagamento diretamente por email e ativamos o plano manualmente assim que o pagamento for confirmado.</div>
+<div class="faq-a">Clica em "Mudar para Pro" — vais ser encaminhado para um checkout seguro da <strong>Stripe</strong>, onde pagas com cartão de crédito ou débito. O plano é ativado automaticamente assim que o pagamento é confirmado.</div>
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">Posso cancelar a qualquer momento?</div>
-<div class="faq-a">Sim. Não há contratos nem períodos mínimos. Contacta-nos e o cancelamento é feito de imediato. O plano continua ativo até ao fim do período já pago.</div>
+<div class="faq-a">Sim. Não há contratos nem períodos mínimos. Cancela a qualquer momento a partir do teu dashboard — o plano continua ativo até ao fim do período já pago.</div>
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">Os clientes pagam alguma coisa?</div>
@@ -384,19 +384,19 @@ footer{background:var(--dark);color:rgba(255,255,255,.6);padding-top:56px}
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">Quanto tempo demora a ativação do plano?</div>
-<div class="faq-a">Ativamos manualmente assim que confirmamos o pagamento contigo por email — normalmente em poucas horas, no máximo até 24 horas.</div>
+<div class="faq-a">É automático. Assim que a Stripe confirma o pagamento, o teu plano passa a Pro em poucos segundos — não precisas de esperar por nós.</div>
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">Que métodos de pagamento aceitam?</div>
-<div class="faq-a">Por agora tratamos o pagamento diretamente por email — combinamos contigo transferência bancária ou MB Way. Ainda não temos checkout automático com cartão, mas é algo que estamos a preparar.</div>
+<div class="faq-a">Cartão de crédito ou débito, através de um checkout seguro processado pela Stripe.</div>
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">Recebo fatura ou recibo do pagamento?</div>
-<div class="faq-a">Sim. Depois de confirmarmos o pagamento por email, enviamos-te o recibo correspondente. Podes subscrever como profissional independente — não precisas de ter empresa aberta.</div>
+<div class="faq-a">Sim. A Stripe envia-te automaticamente a fatura/recibo por email a seguir a cada pagamento. Podes subscrever como profissional independente — não precisas de ter empresa aberta.</div>
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">Posso mudar de plano mais tarde?</div>
-<div class="faq-a">Sim, a qualquer momento — para cima ou para baixo. Contacta-nos por email e ajustamos o teu plano, normalmente já no período seguinte de faturação.</div>
+<div class="faq-a">Sim, a qualquer momento. Faz downgrade ou cancela diretamente a partir do teu dashboard — a alteração fica ativa até ao fim do período já pago.</div>
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">O que acontece se eu não renovar o plano Pro?</div>
@@ -481,7 +481,7 @@ async function init(){
 if(typeof supabase==='undefined')return
 const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
 const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
-const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);window.db=db
 const{data:{session}}=await db.auth.getSession()
 if(session){
 document.getElementById('nav-guest').style.display='none'
