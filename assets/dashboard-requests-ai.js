@@ -51,13 +51,13 @@ async function loadMyRequests(){
         return `<div class="offer-row"><div><div class="offer-row-name">${nome}</div><div class="offer-row-msg">${msg}</div></div><div style="display:flex;align-items:center;gap:8px"><div class="offer-row-price">${preco}</div><button class="btn btn-outline btn-sm" onclick="location.href='messages.html?with=${o.professional_id}'">💬</button></div></div>`
       }).join('')}</div>`
       :''
-    return `<div class="list-item" style="flex-direction:column;align-items:stretch">
+    const reviewCta=(resolved&&myOffers.length)?`<div class="review-cta" style="margin-top:2px;padding:10px 12px;background:#FFF7E0;border:1px solid #F5E3A8;border-radius:10px;font-size:13px;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span>⭐ Contrataste alguém? Deixa uma avaliação:</span>${myOffers.map(o=>`<a href="profile.html?id=${o.professional_id}&tab=avaliacoes" class="btn btn-outline btn-sm" style="text-decoration:none">${escapeHtml((o.profiles&&o.profiles.name)||'Profissional')}</a>`).join('')}</div>`:'';return `<div class="list-item" style="flex-direction:column;align-items:stretch">
       <div class="list-item-body">
         <div class="list-item-title">${escapeHtml(r.title)}${r.is_urgent?'<span class="status-pill status-urgent">🔥 Urgente</span>':''}<span class="status-pill ${resolved?'status-resolved':'status-open'}">${resolved?'Resolvido':'Aberto'}</span></div>
         <div class="list-item-sub">${escapeHtml(r.category)} · ${escapeHtml(r.location)} · ${budget}</div>
       </div>
       ${photos}
-      ${offersHtml}
+      ${offersHtml}${reviewCta}
       <div class="list-item-actions">
         <button class="btn btn-outline btn-sm" onclick="toggleRequestStatus('${r.id}','${resolved?'open':'resolved'}')">${resolved?'↩️ Reabrir':'✅ Marcar como resolvido'}</button>
         <button class="btn btn-danger btn-sm" onclick="deleteMyRequest('${r.id}')"><svg class="ic" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/><path d="M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/></svg> Eliminar</button>
@@ -67,7 +67,7 @@ async function loadMyRequests(){
 }
 
 async function toggleRequestStatus(id,newStatus){
-  await db.from('requests').update({status:newStatus}).eq('id',id)
+  await db.from('requests').update({status:newStatus}).eq('id',id);if(newStatus==='resolved')showAlert('req-success','Pedido marcado como resolvido! Já podes avaliar quem contrataste, mais abaixo.')
   loadMyRequests()
 }
 
