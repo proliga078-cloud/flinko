@@ -255,7 +255,8 @@ if(name==='financas'){renderFinance();loadExpenses();populateReportYears();rende
 if(name==='mercado'&&planLimits.market_insights)loadMarketInsights()
 if(name==='privacidade')loadGdprRequests()
 if(name==='client-home')loadClientHome()
-if(name==='saved-pros')loadSavedPros()
+if(name==='verificacao')loadVerificationStatus()
+  if(name==='saved-pros')loadSavedPros()
 if(name==='client-jobs')loadClientJobs()
 if(name==='client-reviews')loadClientReviews()
 }
