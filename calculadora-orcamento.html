@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Calculadora de Orçamentos – Preços por Região | Academia Flinko</title>
+<meta name="description" content="Estima quanto deverás pagar por eletricista, canalizador, pintor, limpeza, jardinagem ou um freelancer — e como o preço muda entre o Norte, Centro, Lisboa, Alentejo e Algarve." />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://flinko.pt/calculadora-orcamento" />
+<meta property="og:title" content="Calculadora de Orçamentos – Preços por Região | Academia Flinko" />
+<meta property="og:description" content="Estima quanto deverás pagar por um profissional — e como o preço muda consoante a região de Portugal." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://flinko.pt/calculadora-orcamento" />
+<meta property="og:image" content="https://flinko.pt/assets/og-image.png" />
+<meta property="og:locale" content="pt_PT" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Calculadora de Orçamentos – Preços por Região" />
+<meta name="twitter:description" content="Estima quanto deverás pagar por um profissional em Portugal, por região." />
+<meta name="twitter:image" content="https://flinko.pt/assets/og-image.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#132420" />
+<script src="/assets/pwa.js" defer></script>
+<script src="/assets/cookie-consent.js" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Calculadora de Orçamentos Flinko","url":"https://flinko.pt/calculadora-orcamento","applicationCategory":"UtilitiesApplication","description":"Estimador de preços de serviços profissionais em Portugal por região.","isPartOf":{"@type":"WebSite","name":"Flinko","url":"https://flinko.pt/"}}
+</script>
+<style>
+:root{
+  --dark:#132420;
+  --dark-2:#19352C;
+  --dark-3:#1F4538;
+  --orange:#E8720A;
+  --orange-dark:#B85608;
+  --mint:#0F8B5F;
+  --mint-dark:#0A6B49;
+  --ink:#132420;
+  --muted:#4E5C57;
+  --line:#E1EEE6;
+  --bg-tint:#F3FBF6;
+  --paper:#ffffff;
+  --radius-lg:22px;
+  --radius-md:14px;
+  --radius-sm:10px;
+  --theme:#E8720A;
+  --theme-dark:#B85608;
+  font-size:16px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--paper);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;background:none;border:none;color:inherit}
+ul{list-style:none}
+.ic{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:inline-block;vertical-align:-.15em}
+.wrap{max-width:1180px;margin-inline:auto;padding-inline:24px}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;border-radius:999px;font-weight:700;font-size:.95rem;transition:transform .15s ease,box-shadow .15s ease,background .15s ease;white-space:nowrap;border:none}
+.btn:active{transform:translateY(1px)}
+.btn-orange{background:var(--orange);color:#fff;box-shadow:0 12px 24px -10px rgba(232,114,10,.65)}
+.btn-orange:hover{background:var(--orange-dark)}
+.btn-dark{background:var(--dark);color:#fff}
+.btn-dark:hover{background:var(--dark-3)}
+.btn-ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--ink)}
+.btn-ghost-dark{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.35)}
+.btn-ghost-dark:hover{border-color:#fff;background:rgba(255,255,255,.08)}
+.btn-sm{padding:10px 18px;font-size:.85rem}
+
+.kicker{display:inline-flex;align-items:center;gap:7px;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--orange-dark);margin-bottom:14px;background:#FFE7CE;padding:6px 14px 6px 12px;border-radius:999px}
+.kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.kicker.mint{color:var(--mint-dark);background:#D7F5E4}
+.kicker.on-dark{background:rgba(255,255,255,.12);color:#fff}
+.kicker.on-dark::before{background:var(--mint)}
+
+/* Header (shared with rest of site) */
+header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.9);backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid var(--line)}
+header::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:3px;background:linear-gradient(90deg,var(--orange),var(--mint))}
+header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:76px;gap:24px}
+.logo{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.4rem;color:var(--ink);display:inline-flex}
+.logo span{color:var(--orange)}
+.nav-links{display:flex;align-items:center;gap:20px;font-weight:600;font-size:.88rem;color:var(--ink)}
+.nav-links a{opacity:.8;transition:opacity .15s;white-space:nowrap;position:relative}
+.nav-links a:hover{opacity:1}
+.nav-links a.active{opacity:1;color:var(--orange-dark)}
+.nav-actions{display:flex;align-items:center;gap:12px}
+.nav-toggle{display:none;width:44px;height:44px;border-radius:10px;align-items:center;justify-content:center;border:1.5px solid var(--line)}
+.nav-toggle span,.nav-toggle span::before,.nav-toggle span::after{content:"";display:block;width:20px;height:2px;background:var(--ink);position:relative;transition:.2s}
+.nav-toggle span::before{position:absolute;top:-6px}
+.nav-toggle span::after{position:absolute;top:6px}
+.mobile-panel{display:none;flex-direction:column;gap:4px;padding:16px 24px 24px;border-top:1px solid var(--line);background:#fff}
+.mobile-panel a{padding:12px 4px;font-weight:600;border-bottom:1px solid var(--line)}
+.mobile-panel .btn{margin-top:12px;justify-content:center}
+body.menu-open .mobile-panel{display:flex}
+body.menu-open .nav-toggle span{background:transparent}
+body.menu-open .nav-toggle span::before{transform:rotate(45deg);top:0}
+body.menu-open .nav-toggle span::after{transform:rotate(-45deg);top:0}
+@media (max-width:900px){
+  .nav-links{display:none}
+  .nav-actions .btn-ghost{display:none}
+  .nav-toggle{display:flex}
+}
+
+/* ===== Hero ===== */
+.calc-hero{background:var(--dark);color:#fff;position:relative;overflow:hidden;padding:72px 0 64px}
+.calc-hero::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(620px 360px at 96% -12%,rgba(15,139,95,.4),transparent 65%),
+  radial-gradient(460px 280px at 2% 112%,rgba(232,114,10,.26),transparent 65%)}
+.calc-hero-inner{position:relative;z-index:1;max-width:760px}
+.calc-hero h1{font-size:clamp(2.2rem,4.6vw,3.3rem);color:#fff;line-height:1.06;letter-spacing:-.03em}
+.calc-hero h1 .accent{color:var(--mint)}
+.calc-hero p.lead{margin-top:18px;font-size:1.08rem;color:rgba(255,255,255,.75);max-width:56ch;line-height:1.65}
+.hero-badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.hero-badge{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:9px 16px;border-radius:999px;font-size:.82rem;font-weight:600;color:rgba(255,255,255,.85)}
+.hero-badge svg{width:15px;height:15px;color:var(--mint)}
+
+/* ===== Calculator shell ===== */
+.calc-shell{margin-top:-40px;position:relative;z-index:2;padding-bottom:80px}
+.calc-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:0 30px 70px -40px rgba(19,36,32,.35);overflow:hidden}
+.calc-grid{display:grid;grid-template-columns:1.05fr 1fr}
+@media (max-width:960px){.calc-grid{grid-template-columns:1fr}}
+
+/* --- Left: inputs --- */
+.calc-inputs{padding:36px 36px 40px;border-right:1px solid var(--line)}
+@media (max-width:960px){.calc-inputs{border-right:none;border-bottom:1px solid var(--line)}}
+.calc-step{margin-bottom:28px}
+.calc-step:last-child{margin-bottom:0}
+.calc-step-label{display:flex;align-items:center;gap:9px;font-size:.78rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.calc-step-label .num{width:20px;height:20px;border-radius:50%;background:var(--dark);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.68rem;flex-shrink:0}
+
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media (max-width:520px){.cat-grid{grid-template-columns:repeat(2,1fr)}}
+.cat-btn{display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 6px 12px;border-radius:var(--radius-sm);border:1.5px solid var(--line);text-align:center;transition:border-color .15s,background .15s,transform .1s}
+.cat-btn:hover{border-color:var(--theme);transform:translateY(-1px)}
+.cat-btn .cat-ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem}
+.cat-btn span.lbl{font-size:.74rem;font-weight:700;line-height:1.2}
+.cat-btn.active{border-color:var(--theme-dark);background:var(--bg-tint);box-shadow:0 0 0 3px color-mix(in srgb, var(--theme) 18%, transparent)}
+
+.region-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+@media (max-width:640px){.region-grid{grid-template-columns:repeat(3,1fr)}}
+.region-btn{padding:11px 4px;border-radius:var(--radius-sm);border:1.5px solid var(--line);text-align:center;font-size:.78rem;font-weight:700;transition:border-color .15s,background .15s}
+.region-btn:hover{border-color:var(--theme)}
+.region-btn.active{border-color:var(--theme-dark);background:var(--dark);color:#fff}
+
+.service-list{display:flex;flex-direction:column;gap:8px}
+.service-opt{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border:1.5px solid var(--line);border-radius:var(--radius-sm);cursor:pointer;transition:border-color .15s,background .15s}
+.service-opt:hover{border-color:var(--theme)}
+.service-opt.active{border-color:var(--theme-dark);background:var(--bg-tint)}
+.service-opt input{accent-color:var(--theme-dark);margin-top:3px;flex-shrink:0}
+.service-opt .so-txt b{font-size:.92rem;display:block}
+.service-opt .so-txt span{font-size:.8rem;color:var(--muted)}
+
+.field-row{display:flex;gap:14px;flex-wrap:wrap}
+.field{flex:1;min-width:140px}
+.field label{display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:7px}
+.stepper{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;width:fit-content}
+.stepper button{width:38px;height:38px;font-size:1.1rem;font-weight:800;color:var(--theme-dark);flex-shrink:0}
+.stepper button:hover{background:var(--bg-tint)}
+.stepper .val{min-width:56px;text-align:center;font-weight:800;font-size:.95rem}
+.seg{display:flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;width:fit-content}
+.seg button{padding:9px 15px;font-size:.8rem;font-weight:700;color:var(--muted)}
+.seg button.active{background:var(--dark);color:#fff}
+.chk-row{display:flex;align-items:center;gap:10px;margin-top:6px}
+.chk-row input{accent-color:var(--theme-dark);width:17px;height:17px}
+.chk-row label{font-size:.85rem;font-weight:600;color:var(--ink)}
+
+.factor-group{margin-bottom:18px}
+.factor-group:last-child{margin-bottom:0}
+.factor-title{font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:8px}
+.factor-opts{display:flex;flex-direction:column;gap:7px}
+.factor-opt{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 13px;border:1.5px solid var(--line);border-radius:var(--radius-sm);cursor:pointer;transition:border-color .15s,background .15s}
+.factor-opt:hover{border-color:var(--theme)}
+.factor-opt.active{border-color:var(--theme-dark);background:var(--bg-tint)}
+.factor-opt input{position:absolute;opacity:0;pointer-events:none}
+.factor-opt .fo-label{font-size:.83rem;font-weight:600;color:var(--ink);line-height:1.35}
+.factor-opt .fo-badge{font-size:.72rem;font-weight:800;padding:4px 9px;border-radius:999px;background:var(--line);color:var(--muted);white-space:nowrap;flex-shrink:0}
+.factor-opt.active .fo-badge{background:var(--theme-dark);color:#fff}
+.addon-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 2px}
+.addon-row .a-txt{display:flex;align-items:center;gap:10px;font-size:.85rem;font-weight:600;color:var(--ink)}
+.addon-row .a-txt input{accent-color:var(--theme-dark);width:17px;height:17px;flex-shrink:0}
+.addon-row .a-amt{font-size:.76rem;font-weight:800;color:var(--muted);white-space:nowrap}
+.factors-toggle{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:700;color:var(--theme-dark);cursor:pointer;margin-top:4px}
+.factors-toggle svg{width:14px;height:14px;transition:transform .2s}
+.factors-toggle.open svg{transform:rotate(180deg)}
+.factors-panel{display:none;margin-top:16px;padding-top:16px;border-top:1px dashed var(--line)}
+.factors-panel.open{display:block}
+
+/* --- Right: results --- */
+.calc-results{padding:36px 36px 40px;background:linear-gradient(180deg,var(--bg-tint),#fff 60%)}
+.res-region-label{font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:4px}
+.res-region-label b{color:var(--ink)}
+.res-price{font-family:'Plus Jakarta Sans',sans-serif;font-weight:900;font-size:clamp(2.1rem,4.2vw,2.7rem);letter-spacing:-.03em;color:var(--ink);display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.res-price small{font-size:1.05rem;font-weight:700;color:var(--muted)}
+.res-avg{font-size:.85rem;color:var(--muted);margin-top:4px}
+.res-vs-national{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:.8rem;font-weight:700;padding:6px 12px;border-radius:999px}
+.res-vs-national.up{background:#FDEAD7;color:var(--orange-dark)}
+.res-vs-national.down{background:#D7F5E4;color:var(--mint-dark)}
+.res-vs-national.flat{background:var(--line);color:var(--muted)}
+
+.chart{margin-top:26px}
+.chart-title{font-size:.78rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.bar-row{display:grid;grid-template-columns:112px 1fr auto;align-items:center;gap:10px;margin-bottom:9px}
+.bar-row .b-label{font-size:.8rem;font-weight:700;color:var(--ink)}
+.bar-row.is-active .b-label{color:var(--theme-dark)}
+.bar-track{height:22px;background:#fff;border:1px solid var(--line);border-radius:999px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--theme),var(--theme-dark));transition:width .45s cubic-bezier(.22,1,.36,1);min-width:6%}
+.bar-row.is-active .bar-fill{background:linear-gradient(90deg,var(--theme-dark),var(--dark))}
+.bar-row .b-val{font-size:.78rem;font-weight:800;color:var(--ink);white-space:nowrap;min-width:78px;text-align:right}
+
+.tips-box{margin-top:26px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:18px 20px}
+.tips-box h4{font-size:.88rem;margin-bottom:10px}
+.tips-box ul{display:flex;flex-direction:column;gap:8px}
+.tips-box li{font-size:.85rem;color:var(--muted);display:flex;gap:9px;line-height:1.45}
+.tips-box li svg{width:15px;height:15px;color:var(--theme-dark);flex-shrink:0;margin-top:2px}
+
+.res-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.copy-note{font-size:.76rem;color:var(--mint-dark);font-weight:700;margin-left:2px;opacity:0;transition:opacity .2s}
+.copy-note.show{opacity:1}
+
+.guide-link{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:22px;padding:14px 16px;border-radius:var(--radius-sm);background:var(--dark);color:#fff}
+.guide-link span{font-size:.85rem;font-weight:700}
+.guide-link svg{width:16px;height:16px;flex-shrink:0}
+
+/* ===== Methodology ===== */
+.method{padding:60px 0}
+.method-box{background:var(--bg-tint);border:1px solid var(--line);border-radius:var(--radius-lg);padding:32px 36px}
+.method-box h2{font-size:1.4rem;margin-bottom:14px}
+.method-box p{color:var(--muted);font-size:.95rem;line-height:1.7;margin-bottom:12px}
+.method-box p:last-child{margin-bottom:0}
+.src-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.src-chip{font-size:.76rem;font-weight:700;color:var(--muted);background:#fff;border:1px solid var(--line);padding:6px 12px;border-radius:999px}
+
+/* ===== FAQ ===== */
+.faq{padding:0 0 70px}
+.faq h2{font-size:1.6rem;margin-bottom:22px}
+.faq-item{border-bottom:1px solid var(--line);padding:18px 0}
+.faq-item summary{cursor:pointer;font-weight:700;font-size:1rem;display:flex;justify-content:space-between;align-items:center;list-style:none}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:"+";font-size:1.3rem;color:var(--theme-dark);font-weight:400;flex-shrink:0;margin-left:12px}
+.faq-item[open] summary::after{content:"–"}
+.faq-item p{margin-top:10px;color:var(--muted);font-size:.92rem;line-height:1.65}
+
+/* ===== Final CTA ===== */
+.calc-cta{background:var(--dark);color:#fff;padding:60px 0;text-align:center}
+.calc-cta h2{color:#fff;font-size:1.7rem;margin-bottom:10px}
+.calc-cta p{color:rgba(255,255,255,.7);max-width:52ch;margin:0 auto 24px}
+
+/* ===== Footer (shared) ===== */
+footer{background:var(--dark);color:rgba(255,255,255,.7)}
+.footer-top{padding:56px 0 32px;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px}
+.footer-logo{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.3rem;color:#fff}
+.footer-logo span{color:var(--orange)}
+.footer-top>div>p{margin-top:12px;font-size:.88rem;line-height:1.6;max-width:32ch}
+.footer-col h4{color:#fff;font-size:.85rem;margin-bottom:14px}
+.footer-col ul{display:flex;flex-direction:column;gap:9px}
+.footer-col a{font-size:.86rem;transition:color .15s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.12);padding:22px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:.82rem}
+.footer-bottom .legal{display:flex;gap:18px;flex-wrap:wrap}
+@media (max-width:960px){ .footer-top{grid-template-columns:1fr 1fr} }
+@media (max-width:720px){ .footer-top{grid-template-columns:1fr;padding-bottom:24px} }
+@media (max-width:480px){ .footer-top{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap nav">
+    <a href="/" class="logo">Flink<span>o</span></a>
+    <nav class="nav-links" aria-label="Navegação principal">
+      <a href="/categoria">Encontrar</a>
+      <a href="/pedidos">Pedidos</a>
+      <a href="/pricing">Preços</a>
+      <a href="/profissionais">Para Profissionais</a>
+      <a href="/academia">Academia</a>
+      <a href="/calculadora-orcamento" class="active">Calculadora</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="/dashboard" class="btn btn-ghost btn-sm">Dashboard</a>
+      <a href="/auth?tab=register" class="btn btn-dark btn-sm">Criar conta grátis</a>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mobilePanel" aria-label="Abrir menu">
+        <span></span>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-panel" id="mobilePanel">
+    <a href="/categoria">Encontrar profissional</a>
+    <a href="/pedidos">Pedidos</a>
+    <a href="/pricing">Preços</a>
+    <a href="/profissionais">Para Profissionais</a>
+    <a href="/academia">Academia</a>
+    <a href="/calculadora-orcamento">Calculadora</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/auth?tab=register" class="btn btn-orange">Criar conta grátis</a>
+  </div>
+</header>
+
+<section class="calc-hero">
+  <div class="wrap calc-hero-inner">
+    <span class="kicker on-dark">Academia Flinko · Ferramenta</span>
+    <h1>Quanto deverias <span class="accent">mesmo</span> pagar — e como isso muda de região para região.</h1>
+    <p class="lead">Escolhe o serviço, a região e alguns detalhes. Mostramos uma faixa de preço realista com base em estudos de mercado reais, e como ela varia entre o Norte, Centro, Lisboa, Alentejo e Algarve.</p>
+    <div class="hero-badges">
+      <span class="hero-badge"><svg class="ic" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Baseado em dados de mercado reais</span>
+      <span class="hero-badge"><svg class="ic" viewBox="0 0 24 24"><path d="M12 22s8-4.5 8-11.8A8 8 0 0 0 4 10.2C4 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>5 regiões de Portugal</span>
+      <span class="hero-badge"><svg class="ic" viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Sempre gratuito</span>
+    </div>
+  </div>
+</section>
+
+<div class="wrap calc-shell">
+  <div class="calc-card">
+    <div class="calc-grid">
+
+      <div class="calc-inputs">
+
+        <div class="calc-step">
+          <div class="calc-step-label"><span class="num">1</span>Que serviço precisas?</div>
+          <div class="cat-grid" id="catGrid"></div>
+        </div>
+
+        <div class="calc-step">
+          <div class="calc-step-label"><span class="num">2</span>Em que região?</div>
+          <div class="region-grid" id="regionGrid"></div>
+        </div>
+
+        <div class="calc-step">
+          <div class="calc-step-label"><span class="num">3</span>Detalhes do serviço</div>
+          <div id="detailArea"></div>
+        </div>
+
+        <div class="calc-step">
+          <div class="calc-step-label"><span class="num">4</span>Fatores adicionais</div>
+          <div id="factorsArea"></div>
+        </div>
+
+      </div>
+
+      <div class="calc-results">
+        <div class="res-region-label">Estimativa em <b id="resRegionName">Lisboa e Vale do Tejo</b> para <b id="resCatName">Eletricistas</b></div>
+        <div class="res-price"><span id="resMin">€40</span><small>–</small><span id="resMax">€90</span></div>
+        <div class="res-avg" id="resAvgLine">Valor típico à volta de €65</div>
+        <span class="res-vs-national" id="resVsNational"></span>
+
+        <div class="chart">
+          <div class="chart-title">Comparação entre regiões</div>
+          <div id="barsArea"></div>
+        </div>
+
+        <div class="tips-box">
+          <h4>O que faz este preço subir ou descer</h4>
+          <ul id="tipsList"></ul>
+        </div>
+
+        <div class="res-actions">
+          <button class="btn btn-dark btn-sm" id="copyBtn">
+            <svg class="ic" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copiar esta estimativa
+          </button>
+          <a href="/pedidos" class="btn btn-orange btn-sm">Pedir orçamentos grátis →</a>
+          <span class="copy-note" id="copyNote">Copiado ✓</span>
+        </div>
+
+        <a class="guide-link" id="guideLink" href="blog-eletricista-confianca.html">
+          <span>Ver o guia completo: sinais de um eletricista de confiança</span>
+          <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<section class="method">
+  <div class="wrap">
+    <div class="method-box">
+      <h2>Como calculamos isto</h2>
+      <p>As faixas de preço nacionais desta calculadora vêm de plataformas portuguesas que publicam preços agregados de orçamentos reais (Zaask, Habitissimo, Fixando) e de reportagens com dados por distrito (Human Resources/SAPO). Não são preços fixos nem uma cotação da Flinko — são uma referência para saberes se um orçamento que recebas está dentro do razoável.</p>
+      <p>Para a diferença entre regiões, usámos os únicos dados reais e públicos que encontrámos com valores por distrito para um serviço do dia a dia — limpeza doméstica, que varia de 10€/h em Setúbal e Viseu a 15€/h em Lisboa, Braga e Évora — cruzados com o salário médio por distrito (Lisboa fica 16,4% acima da média nacional; Beja, Portalegre, Vila Real e Guarda mais de 15% abaixo). A partir disto construímos um fator regional aproximado, aplicado às outras categorias: <b>Centro 0,90×</b>, <b>Norte 0,95×</b>, <b>Alentejo 1,00×</b>, <b>Algarve 1,15×</b>, <b>Lisboa e Vale do Tejo 1,25×</b>. Para trabalho digital remoto (programação/design), esse fator pesa muito menos — a localização do profissional importa pouco quando o trabalho é feito à distância.</p>
+      <p>Dentro da mesma região, cidades grandes tendem para o topo da faixa e o interior para a base. O preço final depende sempre do profissional, do estado do que precisa de ser feito, e da urgência — por isso a forma mais fiável de saber o preço certo continua a ser pedir orçamentos reais.</p>
+      <div class="src-list">
+        <span class="src-chip">Zaask</span>
+        <span class="src-chip">Habitissimo</span>
+        <span class="src-chip">Fixando</span>
+        <span class="src-chip">Human Resources / SAPO</span>
+        <span class="src-chip">Brighter Future — salário por distrito</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="wrap">
+    <h2>Perguntas frequentes</h2>
+    <details class="faq-item" open>
+      <summary>Estes preços incluem materiais?</summary>
+      <p>Depende do serviço — indicámos isso em cada faixa sempre que a fonte o distinguia (por exemplo, pintura "com material incluído" vs. só mão de obra). Em serviços como instalações elétricas ou canalização, peças específicas (quadros, torneiras, esquentadores) costumam ser cobradas à parte. Confirma sempre isto no orçamento antes de fechar negócio.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Porque é que o preço varia tanto dentro da mesma região?</summary>
+      <p>Uma região inteira (ex: "Norte") junta cidades grandes como o Porto e zonas do interior com custos de vida muito diferentes — por isso mostramos sempre uma faixa, nunca um valor único. O estado do que precisa de ser feito, o acesso e a urgência pesam tanto ou mais do que a região.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Posso confiar 100% nestes valores?</summary>
+      <p>Não deves usá-los como cotação final — são uma referência para saberes se um orçamento está dentro do razoável antes de decidires. A única forma de saber o preço certo para o teu caso é pedir orçamentos reais a profissionais que vejam o trabalho.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Porque é que o trabalho digital (programação/design) varia menos por região?</summary>
+      <p>Um programador ou designer trabalha quase sempre à distância — o cliente normalmente não sabe nem quer saber em que cidade ele está. O preço depende muito mais da experiência e do portefólio do profissional do que da sua morada, por isso aplicamos um efeito regional muito mais ligeiro a esta categoria.</p>
+    </details>
+  </div>
+</section>
+
+<div class="calc-cta">
+  <div class="wrap">
+    <h2>Já sabes o que esperar pagar. Agora compara profissionais reais.</h2>
+    <p>Publica o teu pedido grátis na Flinko e recebe orçamentos de profissionais verificados na tua zona — sem compromisso.</p>
+    <a href="/pedidos" class="btn btn-orange">Pedir orçamentos grátis →</a>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap footer-top">
+    <div>
+      <a href="/" class="footer-logo">Flink<span>o</span></a>
+      <p>O marketplace de serviços profissionais em Portugal. Conectamos clientes a profissionais de confiança.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Para clientes</h4>
+      <ul>
+        <li><a href="/como-funciona">Como funciona</a></li>
+        <li><a href="/categoria">Todas as categorias</a></li>
+        <li><a href="/pedidos">Publicar pedido</a></li>
+        <li><a href="/contacto">Contacto</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Para profissionais</h4>
+      <ul>
+        <li><a href="/profissionais">Como funciona para profissionais</a></li>
+        <li><a href="/auth?tab=register">Criar perfil grátis</a></li>
+        <li><a href="/pricing">Preços</a></li>
+        <li><a href="/dashboard">Dashboard</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Recursos</h4>
+      <ul>
+        <li><a href="/academia">Academia</a></li>
+        <li><a href="/calculadora-orcamento">Calculadora de Orçamentos</a></li>
+        <li><a href="/rgpd">RGPD</a></li>
+        <li><a href="mailto:proliga.pt@gmail.com">proliga.pt@gmail.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© 2026 Flinko · Portugal</span>
+    <span class="legal">
+      <a href="/termos">Termos</a>
+      <a href="/privacidade">Privacidade</a>
+      <a href="/cookies">Cookies</a>
+      <a href="/rgpd">RGPD</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var toggle = document.getElementById('navToggle');
+  if(toggle){
+    toggle.addEventListener('click', function(){
+      var open = document.body.classList.toggle('menu-open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  }
+  var header = document.getElementById('siteHeader');
+  if(header){
+    var onScroll = function(){ header.classList.toggle('condensed', window.scrollY > 30); };
+    document.addEventListener('scroll', function(){ requestAnimationFrame(onScroll); }, {passive:true});
+  }
+})();
+
+/* ===================== Calculator data & logic ===================== */
+(function(){
+
+  var ICONS = {
+    eletricistas: '<path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/>',
+    canalizadores: '<path d="M4 7h5a3 3 0 0 1 3 3v7M12 7h8M12 7v4M20 7v4a3 3 0 0 1-3 3h-2"/>',
+    pintores: '<path d="M18 3a2 2 0 0 1 2 2c0 2-3 3-3 6h-4c0-3-3-4-3-6a2 2 0 0 1 2-2z"/><path d="M13 11v4a2 2 0 0 1-2 2H9l-2 5"/>',
+    limpeza: '<path d="M15 6v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M3 6h14M8 6V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/>',
+    jardinagem: '<path d="M12 22V12M12 12C7 12 5 8 5 4c4 0 7 2 7 8zM12 12c5 0 7-4 7-8-4 0-7 2-7 8z"/>',
+    programadores: '<path d="m18 16 4-4-4-4M6 8l-4 4 4 4M14.5 4l-5 16"/>'
+  };
+
+  var REGIONS = [
+    {id:'norte', label:'Norte', mult:0.95},
+    {id:'centro', label:'Centro', mult:0.90},
+    {id:'lisboa', label:'Lisboa e Vale do Tejo', mult:1.25},
+    {id:'alentejo', label:'Alentejo', mult:1.00},
+    {id:'algarve', label:'Algarve', mult:1.15}
+  ];
+
+  var CATEGORIES = {
+    eletricistas: {
+      label:'Eletricistas', color:'#E8720A', colorDark:'#B85608',
+      guideUrl:'blog-eletricista-confianca.html', guideText:'Ver o guia completo: sinais de um eletricista de confiança',
+      catUrl:'/eletricistas.html', regionSensitivity:1.0, inputType:'tiers',
+      services:[
+        {id:'reparacao', label:'Reparação pontual', hint:'troca de tomada, interruptor, pequena avaria', min:40, max:90},
+        {id:'instalacao', label:'Instalação ou substituição', hint:'quadro elétrico, iluminação, tomadas novas', min:150, max:400},
+        {id:'renovacao', label:'Renovação elétrica completa', hint:'readaptar toda a instalação de uma casa', min:1200, max:3000}
+      ],
+      factors:[
+        {key:'idade', title:'Idade da instalação existente', options:[
+          {id:'recente', label:'Recente (menos de 15 anos)', mult:1.0},
+          {id:'antiga', label:'Antiga (15–40 anos)', mult:1.15},
+          {id:'muito_antiga', label:'Muito antiga (mais de 40 anos / instalação original)', mult:1.35}
+        ]},
+        {key:'acesso', title:'Acesso ao local de trabalho', options:[
+          {id:'facil', label:'Fácil (paredes à vista, sem obras)', mult:1.0},
+          {id:'dificil', label:'Difícil (tetos altos, teto falso, embutido em parede)', mult:1.2}
+        ]},
+        {key:'materiais', title:'Materiais', options:[
+          {id:'standard', label:'Inclui materiais standard', mult:1.0},
+          {id:'so_mao_obra', label:'Só mão de obra (materiais por minha conta)', mult:0.8},
+          {id:'premium', label:'Materiais de gama alta / marca específica', mult:1.3}
+        ]},
+        {key:'prazo', title:'Prazo', options:[
+          {id:'normal', label:'Normal (agendado com alguns dias)', mult:1.0},
+          {id:'urgente', label:'Urgente (mesmo dia / fora de horário)', mult:1.3}
+        ]}
+      ],
+      tips:[
+        'Registo como técnico responsável (TR) na DGEG — confirma sempre antes de contratar',
+        'Pede sempre orçamento escrito com material e mão de obra discriminados separadamente'
+      ]
+    },
+    canalizadores: {
+      label:'Canalizadores', color:'#2E9BE6', colorDark:'#1D5FA0',
+      guideUrl:'blog-canalizador-confianca.html', guideText:'Ver o guia completo: como saber se um canalizador é de confiança',
+      catUrl:'/canalizadores.html', regionSensitivity:1.0, inputType:'tiers',
+      services:[
+        {id:'reparacao', label:'Reparação ou desentupimento', hint:'fuga, entupimento, torneira a pingar', min:40, max:120},
+        {id:'substituicao', label:'Substituição de equipamento', hint:'torneira, esquentador, autoclismo', min:100, max:350},
+        {id:'renovacao', label:'Renovação de canalização completa', hint:'tubagem de uma casa inteira', min:800, max:2500}
+      ],
+      factors:[
+        {key:'material_canalizacao', title:'Tipo de canalização existente', options:[
+          {id:'comum', label:'Cobre ou PVC (comum)', mult:1.0},
+          {id:'antiga', label:'Chumbo ou ferro fundido (antiga)', mult:1.25}
+        ]},
+        {key:'acesso', title:'Acesso à canalização', options:[
+          {id:'facil', label:'Fácil (visível, sem necessidade de obra)', mult:1.0},
+          {id:'dificil', label:'Difícil (preciso abrir parede ou pavimento)', mult:1.3}
+        ]},
+        {key:'materiais', title:'Materiais', options:[
+          {id:'standard', label:'Inclui materiais standard', mult:1.0},
+          {id:'so_mao_obra', label:'Só mão de obra', mult:0.8},
+          {id:'premium', label:'Equipamento premium (torneiras/esquentador topo de gama)', mult:1.3}
+        ]},
+        {key:'prazo', title:'Prazo', options:[
+          {id:'normal', label:'Normal', mult:1.0},
+          {id:'urgente', label:'Urgente / emergência fora de horário', mult:1.35}
+        ]}
+      ],
+      tips:[
+        'Peças especializadas (torneiras de marca, esquentadores certificados) pesam no preço final',
+        'Confirma sempre se o material foi fornecido pelo profissional ou por ti antes de comparar orçamentos'
+      ]
+    },
+    pintores: {
+      label:'Pintores', color:'#D4537E', colorDark:'#6B4FA0',
+      guideUrl:'blog-pintar-casa-precos.html', guideText:'Ver o guia completo: quanto custa pintar uma casa em 2026',
+      catUrl:'/pintores.html', regionSensitivity:1.0, inputType:'area',
+      services:[
+        {id:'interior', label:'Interior', hint:'com material incluído', min:4.5, max:9, perM2:true},
+        {id:'exterior', label:'Exterior / fachada', hint:'inclui preparação da superfície', min:10, max:20, perM2:true}
+      ],
+      factors:[
+        {key:'estado', title:'Estado atual da parede', options:[
+          {id:'boa', label:'Boa (só repintar)', mult:1.0},
+          {id:'razoavel', label:'Razoável (pequenas fissuras, reparação ligeira)', mult:1.2},
+          {id:'mau', label:'Mau estado (humidade, estuque necessário)', mult:1.5}
+        ]},
+        {key:'demaos', title:'Número de demãos', options:[
+          {id:'duas', label:'2 demãos (padrão)', mult:1.0},
+          {id:'tres_mais', label:'3 ou mais demãos', mult:1.25}
+        ]},
+        {key:'materiais', title:'Tinta', options:[
+          {id:'standard', label:'Tinta standard', mult:1.0},
+          {id:'premium', label:'Tinta premium (maior duração e acabamento)', mult:1.2}
+        ]},
+        {key:'acesso', title:'Acesso', options:[
+          {id:'facil', label:'Fácil (rés-do-chão ou interior)', mult:1.0},
+          {id:'andaime', label:'Necessita andaime (fachadas altas)', mult:1.3}
+        ]}
+      ],
+      tips:[
+        'Cores muito escuras ou vivas costumam precisar de mais demãos para cobrir bem',
+        'Confirma se o preço inclui proteção de mobiliário/pavimento e limpeza final'
+      ]
+    },
+    limpeza: {
+      label:'Limpeza', color:'#22B8A0', colorDark:'#0A6B49',
+      guideUrl:'blog-limpeza-precos.html', guideText:'Ver o guia completo: quanto custa uma limpeza profunda em 2026',
+      catUrl:'/limpeza.html', regionSensitivity:1.0, inputType:'hours',
+      baseHourly:12,
+      factors:[
+        {key:'estado', title:'Estado da casa', options:[
+          {id:'manutencao', label:'Manutenção regular', mult:1.0},
+          {id:'profunda', label:'Primeira limpeza / limpeza profunda', mult:1.3}
+        ]},
+        {key:'produtos', title:'Produtos de limpeza', options:[
+          {id:'cliente', label:'Eu forneço os produtos', mult:1.0},
+          {id:'profissional', label:'Profissional traz os produtos', mult:1.15}
+        ]}
+      ],
+      addons:[
+        {key:'eletrodomesticos', label:'Eletrodomésticos por dentro (forno, frigorífico)', min:10, max:20},
+        {key:'janelas', label:'Janelas altas ou exteriores', min:15, max:30},
+        {key:'engomadoria', label:'Engomadoria extra', min:10, max:20}
+      ],
+      tips:[
+        'Frequência — contratos regulares tendem a ter preço/hora mais baixo que serviços avulsos'
+      ]
+    },
+    jardinagem: {
+      label:'Jardinagem', color:'#65B33E', colorDark:'#2E7D32',
+      guideUrl:'blog-jardinagem-manutencao.html', guideText:'Ver o guia completo: manutenção mensal ou avulso?',
+      catUrl:'/jardineiros.html', regionSensitivity:1.0, inputType:'garden',
+      baseHourly:15,
+      factors:[
+        {key:'tipo_jardim', title:'Tipo de jardim', options:[
+          {id:'comum', label:'Relva e plantas comuns', mult:1.0},
+          {id:'elaborado', label:'Jardim elaborado (várias espécies, rega automática, sebes)', mult:1.25}
+        ]},
+        {key:'residuos', title:'Resíduos verdes', options:[
+          {id:'proprio', label:'Eu faço a recolha', mult:1.0},
+          {id:'profissional', label:'Profissional recolhe e transporta', mult:1.2}
+        ]}
+      ],
+      addons:[
+        {key:'poda_alta', label:'Poda de árvores altas', min:25, max:60},
+        {key:'pragas', label:'Tratamento de pragas ou doenças', min:20, max:45}
+      ],
+      tips:[
+        'Contratos mensais tendem a sair mais baratos por visita que serviços avulsos'
+      ]
+    },
+    programadores: {
+      label:'Programadores & Designers', color:'#7C6CF0', colorDark:'#4B3AA8',
+      guideUrl:'blog-freelancer-orcamento.html', guideText:'Ver o guia completo: como avaliar um orçamento freelancer',
+      catUrl:'/programadores.html', regionSensitivity:0.3, inputType:'tiers',
+      services:[
+        {id:'website', label:'Website institucional', hint:'poucas páginas, sem loja online', min:350, max:700},
+        {id:'ecommerce', label:'Loja online / e-commerce', hint:'catálogo, carrinho, pagamentos', min:600, max:1750},
+        {id:'design', label:'Logótipo ou identidade de marca', hint:'logótipo, cores, tipografia', min:200, max:1200}
+      ],
+      factors:[
+        {key:'experiencia', title:'Experiência do profissional', options:[
+          {id:'junior', label:'Freelancer júnior / em início de carreira', mult:0.75},
+          {id:'padrao', label:'Freelancer experiente (padrão)', mult:1.0},
+          {id:'senior', label:'Agência ou especialista sénior', mult:1.5}
+        ]},
+        {key:'prazo', title:'Prazo', options:[
+          {id:'normal', label:'Normal (2–4 semanas)', mult:1.0},
+          {id:'urgente', label:'Urgente (menos de 1 semana)', mult:1.3}
+        ]},
+        {key:'revisoes', title:'Revisões incluídas', options:[
+          {id:'padrao', label:'1–2 revisões', mult:1.0},
+          {id:'ilimitadas', label:'Revisões ilimitadas até aprovação', mult:1.15}
+        ]}
+      ],
+      tips:[
+        'Se inclui conteúdo (textos, imagens) ou só o desenvolvimento/design',
+        'Manutenção pós-entrega costuma ser um custo à parte (€40–160/mês)'
+      ]
+    }
+  };
+
+  var state = { cat:'eletricistas', region:'lisboa', service:'reparacao', m2:60, hours:3, freqLimpeza:'pontual', gardenSize:'medio', freqJardim:'pontual', factorSel:{}, addonSel:{} };
+
+  function resetFactorsForCat(catId){
+    var c = CATEGORIES[catId];
+    state.factorSel = {};
+    (c.factors||[]).forEach(function(f){
+      var def = f.options.filter(function(o){return o.mult===1;})[0] || f.options[0];
+      state.factorSel[f.key] = def.id;
+    });
+    state.addonSel = {};
+    (c.addons||[]).forEach(function(a){ state.addonSel[a.key] = false; });
+  }
+  resetFactorsForCat(state.cat);
+
+  function fmt(n){ return '€' + Math.round(n).toLocaleString('pt-PT'); }
+
+  function catIconHtml(catId, size){
+    var c = CATEGORIES[catId];
+    return '<span class="cat-ic" style="background:linear-gradient(150deg,'+c.color+','+c.colorDark+');width:'+(size||34)+'px;height:'+(size||34)+'px"><svg class="ic" viewBox="0 0 24 24" style="width:'+Math.round((size||34)*0.55)+'px;height:'+Math.round((size||34)*0.55)+'px">'+ICONS[catId]+'</svg></span>';
+  }
+
+  function renderCatGrid(){
+    var el = document.getElementById('catGrid');
+    el.innerHTML = Object.keys(CATEGORIES).map(function(id){
+      var c = CATEGORIES[id];
+      return '<button type="button" class="cat-btn'+(state.cat===id?' active':'')+'" data-cat="'+id+'">'+catIconHtml(id)+'<span class="lbl">'+c.label+'</span></button>';
+    }).join('');
+    Array.prototype.forEach.call(el.querySelectorAll('.cat-btn'), function(btn){
+      btn.addEventListener('click', function(){
+        state.cat = btn.getAttribute('data-cat');
+        var c = CATEGORIES[state.cat];
+        if(c.services && c.services.length){ state.service = c.services[0].id; }
+        resetFactorsForCat(state.cat);
+        render();
+      });
+    });
+  }
+
+  function renderRegionGrid(){
+    var el = document.getElementById('regionGrid');
+    el.innerHTML = REGIONS.map(function(r){
+      return '<button type="button" class="region-btn'+(state.region===r.id?' active':'')+'" data-region="'+r.id+'">'+r.label+'</button>';
+    }).join('');
+    Array.prototype.forEach.call(el.querySelectorAll('.region-btn'), function(btn){
+      btn.addEventListener('click', function(){
+        state.region = btn.getAttribute('data-region');
+        render();
+      });
+    });
+  }
+
+  function renderDetail(){
+    var c = CATEGORIES[state.cat];
+    var el = document.getElementById('detailArea');
+    var html = '';
+
+    if(c.inputType==='tiers'){
+      html += '<div class="service-list">' + c.services.map(function(s){
+        return '<label class="service-opt'+(state.service===s.id?' active':'')+'" data-service="'+s.id+'">'+
+          '<input type="radio" name="svc" value="'+s.id+'" '+(state.service===s.id?'checked':'')+'>'+
+          '<span class="so-txt"><b>'+s.label+'</b><span>'+s.hint+'</span></span></label>';
+      }).join('') + '</div>';
+    } else if(c.inputType==='area'){
+      html += '<div class="service-list">' + c.services.map(function(s){
+        return '<label class="service-opt'+(state.service===s.id?' active':'')+'" data-service="'+s.id+'">'+
+          '<input type="radio" name="svc" value="'+s.id+'" '+(state.service===s.id?'checked':'')+'>'+
+          '<span class="so-txt"><b>'+s.label+'</b><span>'+s.hint+' · €'+s.min+'–€'+s.max+'/m²</span></span></label>';
+      }).join('') + '</div>';
+      html += '<div class="field-row" style="margin-top:14px"><div class="field"><label>Área a pintar</label>'+
+        '<div class="stepper"><button type="button" data-step="m2-down">−</button><span class="val" id="m2Val">'+state.m2+' m²</span><button type="button" data-step="m2-up">+</button></div></div></div>';
+    } else if(c.inputType==='hours'){
+      html += '<div class="field-row"><div class="field"><label>Frequência</label><div class="seg" id="freqSeg">'+
+        ['pontual','semanal','quinzenal','mensal'].map(function(f){
+          var lbl = {pontual:'Pontual', semanal:'Semanal', quinzenal:'Quinzenal', mensal:'Mensal'}[f];
+          return '<button type="button" data-freq="'+f+'" class="'+(state.freqLimpeza===f?'active':'')+'">'+lbl+'</button>';
+        }).join('') + '</div></div></div>';
+      html += '<div class="field-row" style="margin-top:14px"><div class="field"><label>Horas por visita</label>'+
+        '<div class="stepper"><button type="button" data-step="hours-down">−</button><span class="val" id="hoursVal">'+state.hours+'h</span><button type="button" data-step="hours-up">+</button></div></div></div>';
+    } else if(c.inputType==='garden'){
+      html += '<div class="field-row"><div class="field"><label>Tamanho do jardim</label><div class="seg" id="gardenSeg">'+
+        ['pequeno','medio','grande'].map(function(g){
+          var lbl = {pequeno:'Pequeno', medio:'Médio', grande:'Grande'}[g];
+          return '<button type="button" data-garden="'+g+'" class="'+(state.gardenSize===g?'active':'')+'">'+lbl+'</button>';
+        }).join('') + '</div></div></div>';
+      html += '<div class="field-row" style="margin-top:14px"><div class="field"><label>Tipo de serviço</label><div class="seg" id="freqJardimSeg">'+
+        ['pontual','mensal'].map(function(f){
+          var lbl = {pontual:'Visita pontual', mensal:'Manutenção mensal'}[f];
+          return '<button type="button" data-freqj="'+f+'" class="'+(state.freqJardim===f?'active':'')+'">'+lbl+'</button>';
+        }).join('') + '</div></div></div>';
+    }
+
+    el.innerHTML = html;
+    attachDetailEvents();
+  }
+
+  function renderFactors(){
+    var c = CATEGORIES[state.cat];
+    var el = document.getElementById('factorsArea');
+    if(!el) return;
+    var html = '';
+    (c.factors||[]).forEach(function(f){
+      html += '<div class="factor-group"><div class="factor-title">'+f.title+'</div><div class="factor-opts">' +
+        f.options.map(function(o){
+          var active = state.factorSel[f.key]===o.id;
+          var badge = o.mult===1 ? 'padrão' : (o.mult>1 ? '+'+Math.round((o.mult-1)*100)+'%' : '−'+Math.round((1-o.mult)*100)+'%');
+          return '<label class="factor-opt'+(active?' active':'')+'" data-factor="'+f.key+'" data-opt="'+o.id+'">'+
+            '<input type="radio" name="f_'+f.key+'" value="'+o.id+'" '+(active?'checked':'')+'>'+
+            '<span class="fo-label">'+o.label+'</span><span class="fo-badge">'+badge+'</span></label>';
+        }).join('') + '</div></div>';
+    });
+    if(c.addons && c.addons.length){
+      html += '<div class="factor-group"><div class="factor-title">Extras opcionais</div>' +
+        c.addons.map(function(a){
+          var checked = !!state.addonSel[a.key];
+          return '<div class="addon-row"><label class="a-txt"><input type="checkbox" data-addon="'+a.key+'" '+(checked?'checked':'')+'>'+a.label+'</label>'+
+            '<span class="a-amt">+€'+a.min+'–'+a.max+'</span></div>';
+        }).join('') + '</div>';
+    }
+    el.innerHTML = html;
+    attachFactorEvents();
+  }
+
+  function attachFactorEvents(){
+    var el = document.getElementById('factorsArea');
+    if(!el) return;
+    Array.prototype.forEach.call(el.querySelectorAll('.factor-opt'), function(opt){
+      opt.addEventListener('click', function(){
+        state.factorSel[opt.getAttribute('data-factor')] = opt.getAttribute('data-opt');
+        render();
+      });
+    });
+    Array.prototype.forEach.call(el.querySelectorAll('[data-addon]'), function(chk){
+      chk.addEventListener('change', function(){
+        state.addonSel[chk.getAttribute('data-addon')] = chk.checked;
+        render();
+      });
+    });
+  }
+
+  function attachDetailEvents(){
+    var el = document.getElementById('detailArea');
+    Array.prototype.forEach.call(el.querySelectorAll('.service-opt'), function(opt){
+      opt.addEventListener('click', function(){ state.service = opt.getAttribute('data-service'); render(); });
+    });
+
+    var m2Down = el.querySelector('[data-step="m2-down"]'), m2Up = el.querySelector('[data-step="m2-up"]');
+    if(m2Down){ m2Down.addEventListener('click', function(){ state.m2 = Math.max(10, state.m2-10); render(); }); }
+    if(m2Up){ m2Up.addEventListener('click', function(){ state.m2 = Math.min(400, state.m2+10); render(); }); }
+
+    var hDown = el.querySelector('[data-step="hours-down"]'), hUp = el.querySelector('[data-step="hours-up"]');
+    if(hDown){ hDown.addEventListener('click', function(){ state.hours = Math.max(1, state.hours-1); render(); }); }
+    if(hUp){ hUp.addEventListener('click', function(){ state.hours = Math.min(10, state.hours+1); render(); }); }
+
+    var freqSeg = document.getElementById('freqSeg');
+    if(freqSeg){ Array.prototype.forEach.call(freqSeg.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){ state.freqLimpeza = b.getAttribute('data-freq'); render(); });
+    }); }
+
+    var gardenSeg = document.getElementById('gardenSeg');
+    if(gardenSeg){ Array.prototype.forEach.call(gardenSeg.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){ state.gardenSize = b.getAttribute('data-garden'); render(); });
+    }); }
+    var freqJardimSeg = document.getElementById('freqJardimSeg');
+    if(freqJardimSeg){ Array.prototype.forEach.call(freqJardimSeg.querySelectorAll('button'), function(b){
+      b.addEventListener('click', function(){ state.freqJardim = b.getAttribute('data-freqj'); render(); });
+    }); }
+  }
+
+  function regionMult(region, sensitivity){
+    var r = REGIONS.filter(function(x){return x.id===region})[0];
+    return 1 + (r.mult - 1) * sensitivity;
+  }
+
+  function factorMultiplier(catId){
+    var c = CATEGORIES[catId];
+    var mult = 1;
+    (c.factors||[]).forEach(function(f){
+      var selId = state.factorSel[f.key];
+      var opt = f.options.filter(function(o){return o.id===selId;})[0] || f.options[0];
+      mult *= opt.mult;
+    });
+    return mult;
+  }
+
+  function addonRangeFor(catId){
+    var c = CATEGORIES[catId];
+    var min = 0, max = 0;
+    (c.addons||[]).forEach(function(a){
+      if(state.addonSel[a.key]){ min += a.min; max += a.max; }
+    });
+    return {min:min, max:max};
+  }
+
+  // Returns {min,max} in national base terms (before regional mult), already including
+  // this category's selected factors and addons.
+  function baseRangeFor(cat, service){
+    var c = CATEGORIES[cat];
+    var fMult = factorMultiplier(cat);
+    var addon = addonRangeFor(cat);
+    var min, max;
+    if(c.inputType==='tiers'){
+      var s = c.services.filter(function(x){return x.id===service})[0] || c.services[0];
+      min = s.min; max = s.max;
+    } else if(c.inputType==='area'){
+      var s2 = c.services.filter(function(x){return x.id===service})[0] || c.services[0];
+      min = s2.min*state.m2; max = s2.max*state.m2;
+    } else if(c.inputType==='hours'){
+      var freqMult = {pontual:1, semanal:4.33, quinzenal:2.17, mensal:1}[state.freqLimpeza];
+      var lowH = c.baseHourly*0.85, highH = c.baseHourly*1.4; // observed spread around national avg
+      min = lowH*state.hours*freqMult; max = highH*state.hours*freqMult;
+    } else if(c.inputType==='garden'){
+      var sizeMult = {pequeno:0.7, medio:1, grande:1.8}[state.gardenSize];
+      var hrs = state.freqJardim==='mensal' ? 4 : 2;
+      var lowH2 = 10, highH2 = 22; // €/h spread around national avg of 15
+      min = lowH2*hrs*sizeMult; max = highH2*hrs*sizeMult;
+    } else {
+      min = 0; max = 0;
+    }
+    return {min: min*fMult + addon.min, max: max*fMult + addon.max};
+  }
+
+  function render(){
+    renderCatGrid();
+    renderRegionGrid();
+    renderDetail();
+    renderFactors();
+
+    var c = CATEGORIES[state.cat];
+    var base = baseRangeFor(state.cat, state.service);
+    var sel = REGIONS.filter(function(r){return r.id===state.region})[0];
+    var mult = regionMult(state.region, c.regionSensitivity);
+
+    document.documentElement.style.setProperty('--theme', c.color);
+    document.documentElement.style.setProperty('--theme-dark', c.colorDark);
+
+    document.getElementById('resRegionName').textContent = sel.label;
+    document.getElementById('resCatName').textContent = c.label;
+    var min = base.min*mult, max = base.max*mult;
+    document.getElementById('resMin').textContent = fmt(min);
+    document.getElementById('resMax').textContent = fmt(max);
+
+    var unitNote = '';
+    if(c.inputType==='hours'){ unitNote = ' para '+state.hours+'h, '+({pontual:'serviço pontual',semanal:'por mês (semanal)',quinzenal:'por mês (quinzenal)',mensal:'por visita mensal'})[state.freqLimpeza]; }
+    if(c.inputType==='area'){ unitNote = ' para '+state.m2+' m²'; }
+    if(c.inputType==='garden'){ unitNote = state.freqJardim==='mensal' ? ' por mês' : ' por visita'; }
+    document.getElementById('resAvgLine').textContent = 'Valor típico à volta de ' + fmt((min+max)/2) + unitNote;
+
+    var pct = Math.round((mult-1)*100);
+    var vsEl = document.getElementById('resVsNational');
+    if(pct > 2){ vsEl.className = 'res-vs-national up'; vsEl.textContent = '↑ '+pct+'% acima da média nacional'; }
+    else if(pct < -2){ vsEl.className = 'res-vs-national down'; vsEl.textContent = '↓ '+Math.abs(pct)+'% abaixo da média nacional'; }
+    else { vsEl.className = 'res-vs-national flat'; vsEl.textContent = '≈ na média nacional'; }
+
+    // bars
+    var maxMid = 0;
+    var rows = REGIONS.map(function(r){
+      var m = regionMult(r.id, c.regionSensitivity);
+      var rMin = base.min*m, rMax = base.max*m, mid = (rMin+rMax)/2;
+      if(mid>maxMid) maxMid = mid;
+      return {r:r, mid:mid, min:rMin, max:rMax};
+    });
+    var barsHtml = rows.map(function(row){
+      var pctWidth = Math.max(6, Math.round((row.mid/maxMid)*100));
+      var active = row.r.id===state.region;
+      return '<div class="bar-row'+(active?' is-active':'')+'"><span class="b-label">'+row.r.label+'</span>'+
+        '<div class="bar-track"><div class="bar-fill" style="width:'+pctWidth+'%"></div></div>'+
+        '<span class="b-val">'+fmt(row.min)+'–'+fmt(row.max)+'</span></div>';
+    }).join('');
+    document.getElementById('barsArea').innerHTML = barsHtml;
+
+    document.getElementById('tipsList').innerHTML = c.tips.map(function(t){
+      return '<li><svg class="ic" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>'+t+'</li>';
+    }).join('');
+
+    var guideLink = document.getElementById('guideLink');
+    guideLink.href = c.guideUrl;
+    guideLink.querySelector('span').textContent = c.guideText;
+
+    window._calcSummary = function(){
+      return 'Estimativa Flinko — ' + c.label + ' em ' + sel.label + ': ' + fmt(min) + ' a ' + fmt(max) + unitNote + '. Faixa nacional ajustada por região (ver metodologia em flinko.pt/calculadora-orcamento). Para um preço exato, pede orçamentos grátis em flinko.pt/pedidos.';
+    };
+  }
+
+  var copyBtn = document.getElementById('copyBtn');
+  copyBtn.addEventListener('click', function(){
+    var text = window._calcSummary ? window._calcSummary() : '';
+    var note = document.getElementById('copyNote');
+    function shown(){ note.classList.add('show'); setTimeout(function(){ note.classList.remove('show'); }, 2200); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(shown).catch(function(){
+        var ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); shown();
+      });
+    } else {
+      var ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); shown();
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
