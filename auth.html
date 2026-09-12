@@ -475,12 +475,11 @@ await db.rpc('create_my_profile_if_missing', { p_name: name, p_account_type: acc
 async function applyReferral(newUserId) {
 if (!refCode) return
 try {
-// referral_code nao e uma coluna legivel diretamente (so o proprio dono a
-// consegue ler) — usa-se uma funcao dedicada que so devolve o id de quem
-// convidou, sem expor mais nenhum dado do perfil dele.
-const { data: referrerId } = await db.rpc('resolve_referral_code', { code: refCode })
-if (!referrerId || referrerId === newUserId) return
-await db.from('signup_referrals').insert({ referrer_id: referrerId, referred_id: newUserId })
+// A validacao do codigo e a insercao sao feitas atomicamente no servidor
+// (apply_signup_referral, SECURITY DEFINER) para que nao seja possivel
+// inserir um signup_referrals a apontar para um referrer_id arbitrario
+// sem ter um codigo de convite valido.
+await db.rpc('apply_signup_referral', { code: refCode, new_user_id: newUserId })
 } catch (e) {}
 }
 
