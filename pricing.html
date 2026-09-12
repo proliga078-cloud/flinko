@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Planos e Preços – Flinko</title>
-<meta name="description" content="Planos claros para profissionais no Flinko. Gratuito para sempre, sem comissões sobre trabalhos fechados. Upgrade opcional para mais visibilidade."/>
+<meta name="description" content="Planos claros para profissionais e empresas no Flinko. Gratuito para sempre. Upgrade opcional para mais ferramentas e visibilidade."/>
 <meta name="robots" content="index, follow"/>
 <link rel="canonical" href="https://flinko.pt/pricing.html"/>
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
@@ -12,328 +12,330 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
 <link rel="shortcut icon" href="/favicon.ico"/>
 <link rel="manifest" href="/manifest.json"/>
-<meta name="theme-color" content="#0f231b"/>
+<meta name="theme-color" content="#0b0c0d"/>
 <script src="/assets/pwa.js" defer></script>
 <script src="/assets/cookie-consent.js" defer></script>
 <script src="/assets/a11y-clickable.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <meta property="og:title" content="Planos e Preços – Flinko"/>
-<meta property="og:description" content="Planos para profissionais no Flinko. Sempre há um plano gratuito para sempre, sem comissões."/>
+<meta property="og:description" content="Planos para profissionais e empresas no Flinko. Sempre há um plano gratuito para sempre."/>
 <meta property="og:type" content="website"/>
 <meta property="og:url" content="https://flinko.pt/pricing.html"/>
 <meta property="og:image" content="https://flinko.pt/assets/og-image.png"/>
 <meta property="og:locale" content="pt_PT"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="Planos e Preços – Flinko"/>
-<meta name="twitter:description" content="Planos para profissionais no Flinko. Sempre há um plano gratuito para sempre, sem comissões."/>
+<meta name="twitter:description" content="Planos para profissionais e empresas no Flinko. Sempre há um plano gratuito para sempre."/>
 <meta name="twitter:image" content="https://flinko.pt/assets/og-image.png"/>
 <style>
 :root{
---dark:#0f231b;
---dark-2:#153427;
---dark-3:#1b4433;
+--bg:#0b0c0d;
+--bg-2:#101113;
+--panel:#18191c;
+--panel-2:#1f2023;
+--line:rgba(255,255,255,.1);
+--line-soft:rgba(255,255,255,.07);
 --orange:#ee7c1f;
 --orange-dark:#d9670f;
---orange-soft:#fdeadb;
 --mint:#3fd693;
 --mint-dark:#1fae72;
---ink:#11201a;
---muted:#5b6d64;
---line:#e4ece6;
---bg-tint:#eef7f1;
---paper:#ffffff;
---radius-lg:22px;
---radius-md:14px;
---radius-sm:10px;
---shadow:0 20px 45px -25px rgba(15,35,27,.45);
+--ink:#f3f6f3;
+--muted:rgba(243,246,243,.58);
+--muted-dim:rgba(243,246,243,.4);
+--radius-lg:16px;
+--radius-md:12px;
+--radius-sm:8px;
 font-size:16px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--paper);line-height:1.5;-webkit-font-smoothing:antialiased}
-h1,h2,h3,h4{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased;position:relative}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.025;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");background-size:170px 170px}
+h1,h2,h3,h4{font-family:'Fraunces','Plus Jakarta Sans',serif;font-weight:600;letter-spacing:-.01em;color:var(--ink)}
 a{color:inherit;text-decoration:none}
 button{font:inherit;cursor:pointer;background:none;border:none;color:inherit}
 ul{list-style:none}
 .wrap{max-width:1180px;margin-inline:auto;padding-inline:24px}
-.ic{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;vertical-align:-3px}
+.ic{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;vertical-align:-3px}
 
 /* Buttons */
-.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;border-radius:999px;font-weight:700;font-size:.95rem;transition:transform .15s ease,box-shadow .15s ease,background .15s ease;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:8px;font-weight:600;font-size:.92rem;transition:background .15s ease,border-color .15s ease,color .15s ease;white-space:nowrap;font-family:'Inter',sans-serif}
 .btn:active{transform:translateY(1px)}
-.btn-orange{background:var(--orange);color:#fff;box-shadow:0 12px 24px -10px rgba(238,124,31,.65)}
-.btn-orange:hover{background:var(--orange-dark)}
-.btn-dark{background:var(--dark);color:#fff}
-.btn-dark:hover{background:var(--dark-3)}
-.btn-ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
-.btn-ghost:hover{border-color:var(--ink)}
-.btn-ghost-dark{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.35)}
-.btn-ghost-dark:hover{border-color:#fff}
-.btn-sm{padding:10px 18px;font-size:.85rem}
+.btn-orange{background:var(--orange);color:#0b0c0d}
+.btn-orange:hover{background:#ffa348}
+.btn-line{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn-line:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.04)}
+.btn-solid{background:var(--ink);color:var(--bg)}
+.btn-solid:hover{background:#fff}
+.btn-sm{padding:9px 18px;font-size:.85rem}
 .btn-block{display:flex;width:100%;justify-content:center}
 
-.kicker{display:inline-block;font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--orange-dark);margin-bottom:10px}
-.kicker.on-dark{color:var(--mint)}
+.kicker{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-dim);margin-bottom:14px;font-family:'Inter',sans-serif}
 
 /* Header */
-header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.9);backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid var(--line)}
-header.condensed{box-shadow:0 10px 30px -22px rgba(15,35,27,.4)}
-.nav{display:flex;align-items:center;justify-content:space-between;height:76px;gap:24px}
-.logo{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.4rem;color:var(--ink)}
+header{position:sticky;top:0;z-index:100;background:rgba(11,12,13,.85);backdrop-filter:saturate(160%) blur(14px);border-bottom:1px solid var(--line-soft)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:74px;gap:24px}
+.logo{font-family:'Fraunces',serif;font-weight:600;font-size:1.4rem;color:var(--ink)}
 .logo span{color:var(--orange)}
-.nav-links{display:flex;align-items:center;gap:22px;font-weight:600;font-size:.9rem;color:var(--ink)}
-.nav-links a{opacity:.8;transition:opacity .15s;white-space:nowrap}
-.nav-links a:hover,.nav-links a.current{opacity:1}
-.nav-links a.current{color:var(--orange-dark)}
-.nav-actions{display:flex;align-items:center;gap:12px}
-.nav-toggle{display:none;width:44px;height:44px;border-radius:10px;align-items:center;justify-content:center;border:1.5px solid var(--line)}
-.nav-toggle span,.nav-toggle span::before,.nav-toggle span::after{content:"";display:block;width:20px;height:2px;background:var(--ink);position:relative;transition:.2s}
+.nav-links{display:flex;align-items:center;gap:26px;font-weight:500;font-size:.88rem;color:rgba(243,246,243,.7);font-family:'Inter',sans-serif}
+.nav-links a{transition:color .15s}
+.nav-links a:hover,.nav-links a.current{color:var(--ink)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.nav-toggle{display:none;width:42px;height:42px;border-radius:8px;align-items:center;justify-content:center;border:1px solid var(--line)}
+.nav-toggle span,.nav-toggle span::before,.nav-toggle span::after{content:"";display:block;width:18px;height:1.5px;background:var(--ink);position:relative;transition:.2s}
 .nav-toggle span::before{position:absolute;top:-6px}
 .nav-toggle span::after{position:absolute;top:6px}
-.mobile-panel{display:none;flex-direction:column;gap:4px;padding:16px 24px 24px;border-top:1px solid var(--line);background:#fff}
-.mobile-panel a{padding:12px 4px;font-weight:600;border-bottom:1px solid var(--line)}
+.mobile-panel{display:none;flex-direction:column;gap:2px;padding:14px 24px 22px;border-top:1px solid var(--line-soft);background:var(--bg)}
+.mobile-panel a{padding:12px 4px;font-weight:500;font-size:.92rem;border-bottom:1px solid var(--line-soft);color:rgba(243,246,243,.8)}
 .mobile-panel .btn{margin-top:12px;justify-content:center}
 body.menu-open .mobile-panel{display:flex}
 body.menu-open .nav-toggle span{background:transparent}
 body.menu-open .nav-toggle span::before{transform:rotate(45deg);top:0}
 body.menu-open .nav-toggle span::after{transform:rotate(-45deg);top:0}
-.nav-user{display:none;align-items:center;gap:10px}
-.nav-avatar{width:34px;height:34px;border-radius:50%;background:var(--dark);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer}
 @media(max-width:900px){.nav-links{display:none}.nav-toggle{display:flex}.nav-actions .btn:not(.nav-toggle){display:none}}
 
-.scroll-progress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--orange),var(--mint));z-index:300;transition:width .1s linear}
+.scroll-progress{position:fixed;top:0;left:0;height:2px;width:0%;background:var(--orange);z-index:300;transition:width .1s linear}
 
 /* Hero */
-.hero{position:relative;overflow:hidden;color:#fff;background:linear-gradient(180deg,var(--dark) 0%,var(--dark-2) 100%);padding:76px 0 64px;text-align:center}
-.hero-orbs{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
-.hero .hero-orbs{opacity:.5}
-.orb{position:absolute;border-radius:50%;filter:blur(50px);opacity:.35;animation:drift 14s ease-in-out infinite}
-.o1{width:340px;height:340px;background:var(--orange);top:-120px;left:6%}
-.o2{width:280px;height:280px;background:var(--mint);bottom:-100px;right:8%;animation-delay:2s}
-.o3{width:200px;height:200px;background:var(--mint-dark);top:20%;right:26%;animation-delay:4s}
-@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(24px,-18px) scale(1.08)}}
-.hero-inner{position:relative;z-index:2}
-.badge-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);font-size:.82rem;font-weight:700;margin-bottom:22px}
-.badge-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--mint)}
-.hero h1{font-size:clamp(2rem,4.4vw,3.1rem);line-height:1.1;margin-bottom:16px}
-.hero h1 .hi{position:relative;display:inline-block;padding:0 10px;color:#fff;z-index:1}
-.hero h1 .hi::before{content:"";position:absolute;inset:2px -2px;background:var(--orange);z-index:-1;transform:skewX(-6deg)}
-.hero p.lead{font-size:1.08rem;color:rgba(255,255,255,.75);max-width:520px;margin:0 auto}
+.hero{padding:100px 0 70px;text-align:center;border-bottom:1px solid var(--line-soft)}
+.hero-inner{max-width:720px;margin:0 auto}
+.eyebrow-line{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px}
+.eyebrow-line .rule{width:28px;height:1px;background:var(--line)}
+.eyebrow-line span:not(.rule){font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-dim);font-family:'Inter',sans-serif}
+.hero h1{font-size:clamp(2.4rem,5.2vw,3.6rem);line-height:1.08;margin-bottom:22px}
+.hero h1 em{font-style:italic;color:var(--orange)}
+.hero p.lead{font-size:1.08rem;color:var(--muted);max-width:520px;margin:0 auto;font-family:'Inter',sans-serif}
+.hero-facts{display:flex;justify-content:center;flex-wrap:wrap;gap:0;margin-top:40px;font-family:'Inter',sans-serif}
+.hero-facts span{font-size:.85rem;font-weight:500;color:var(--muted);padding:0 18px;border-left:1px solid var(--line-soft)}
+.hero-facts span:first-child{border-left:none}
 
 /* Toggle */
-.pricing-wrap{padding:64px 0 0}
-.pricing-toggle{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:52px}
-.toggle-label{font-size:15px;font-weight:700;color:var(--muted)}
-.toggle-label.active{color:var(--ink)}
-.toggle{width:52px;height:28px;border-radius:99px;background:var(--dark-3);border:none;cursor:pointer;position:relative;transition:background .2s}
-.toggle-thumb{width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left .2s}
-.toggle.yearly .toggle-thumb{left:27px}
-.badge-save{background:#d7f5e4;color:var(--mint-dark);font-size:11px;font-weight:800;padding:3px 9px;border-radius:99px}
+.pricing-section{padding:64px 0 0}
+.pricing-toggle{display:inline-flex;align-items:center;gap:2px;margin:0 auto 56px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:3px}
+.pricing-toggle-wrap{display:flex;justify-content:center}
+.toggle-opt{padding:9px 20px;border-radius:6px;font-size:.86rem;font-weight:600;color:var(--muted);font-family:'Inter',sans-serif;transition:background .2s,color .2s;display:flex;align-items:center;gap:8px}
+.toggle-opt.active{background:var(--orange);color:#0b0c0d}
+.badge-save{font-size:.7rem;font-weight:700;opacity:.75}
 
 /* Plans */
-.plans-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:24px;max-width:860px;margin:0 auto;padding:0 24px}
-@media(max-width:820px){.plans-grid{grid-template-columns:1fr}}
-.plan-card{background:var(--paper);border-radius:var(--radius-lg);border:1.5px solid var(--line);padding:36px;position:relative;transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
-.plan-card.popular{border-color:var(--orange);box-shadow:var(--shadow)}
-.popular-tag{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;font-size:12px;font-weight:800;padding:5px 16px;border-radius:99px;white-space:nowrap;box-shadow:0 10px 18px -8px rgba(238,124,31,.6)}
-.plan-icon{width:48px;height:48px;border-radius:14px;background:var(--bg-tint);color:var(--mint-dark);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
-.plan-card.popular .plan-icon{background:var(--orange-soft);color:var(--orange-dark)}
-.plan-icon svg{width:22px;height:22px}
-.plan-name{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:8px}
-.plan-price{margin-bottom:4px;display:flex;align-items:baseline;gap:6px}
-.plan-price .amount{font-size:46px;font-weight:800;letter-spacing:-.02em;font-family:'Plus Jakarta Sans',sans-serif}
-.plan-price .per{font-size:15px;font-weight:500;color:var(--muted)}
-.price-vat{font-size:13px;color:var(--muted);margin:2px 0 16px}
-.plan-desc{font-size:14.5px;color:var(--muted);line-height:1.6;margin-bottom:24px;min-height:44px}
+.plans-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;max-width:1180px;margin:0 auto;padding:0 24px;background:var(--line-soft);border:1px solid var(--line-soft);border-radius:var(--radius-lg);overflow:hidden}
+@media(max-width:1080px){.plans-grid{grid-template-columns:1fr 1fr;padding:0 24px;gap:1px}}
+@media(max-width:620px){.plans-grid{grid-template-columns:1fr;border-radius:var(--radius-md)}}
+.plan-card{background:var(--panel);padding:32px 26px;position:relative;display:flex;flex-direction:column}
+.plan-card.popular{background:var(--panel-2)}
+.plan-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.plan-name{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-family:'Inter',sans-serif}
+.plan-card.popular .plan-name{color:var(--orange)}
+.rec-tag{font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--orange);background:rgba(238,124,31,.12);border:1px solid rgba(238,124,31,.3);padding:3px 9px;border-radius:99px;font-family:'Inter',sans-serif}
+.plan-price{margin-bottom:6px;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;font-family:'Fraunces',serif}
+.plan-price .amount{font-size:42px;font-weight:600;letter-spacing:-.01em;color:var(--ink)}
+.plan-price .per{font-size:13px;font-weight:400;color:var(--muted-dim);font-family:'Inter',sans-serif}
+.price-vat{font-size:11.5px;color:var(--muted-dim);margin:0 0 20px;min-height:15px;font-family:'Inter',sans-serif}
+.plan-desc{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:24px;min-height:52px;font-family:'Inter',sans-serif}
 .plan-cta{margin-bottom:26px}
-.plan-features{display:flex;flex-direction:column;gap:0}
-.plan-features li{font-size:14px;padding:9px 0;border-bottom:1px solid var(--bg-tint);display:flex;align-items:center;gap:10px;color:var(--ink)}
-.plan-features li:last-child{border-bottom:none}
-.feat-yes{color:var(--mint-dark);font-weight:800;font-size:13px;flex-shrink:0}
-.feat-no{color:#c3d1c9;font-weight:800;font-size:13px;flex-shrink:0}
-.plan-features li.dim{color:var(--muted)}
-.plan-footnote{margin-top:auto;padding-top:20px;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.5}
+.plan-features{display:flex;flex-direction:column;gap:0;font-family:'Inter',sans-serif}
+.plan-features li{font-size:13px;padding:9px 0;border-top:1px solid var(--line-soft);display:flex;align-items:flex-start;gap:9px;color:rgba(243,246,243,.85)}
+.plan-features li:first-child{border-top:none}
+.feat-yes{color:var(--mint);font-weight:700;font-size:12px;flex-shrink:0;margin-top:2px}
+.feat-no{color:rgba(255,255,255,.22);font-weight:700;font-size:12px;flex-shrink:0;margin-top:2px}
+.plan-features li.dim{color:var(--muted-dim)}
+.soon-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--orange);background:rgba(238,124,31,.14);padding:1px 7px;border-radius:99px;margin-left:6px;vertical-align:1px}
+.plan-footnote{margin-top:auto;padding-top:20px;font-size:11.5px;color:var(--muted-dim);line-height:1.5;font-family:'Inter',sans-serif}
+.plan-footnote a{color:var(--muted);text-decoration:underline}
 
-.plan-block{background:var(--bg-tint);border-radius:var(--radius-md);padding:16px;margin-top:16px}
-.plan-block.dark{background:var(--dark)}
-.pb-title{font-size:10.5px;font-weight:800;letter-spacing:.08em;color:var(--orange-dark);text-transform:uppercase;margin-bottom:10px}
-.plan-block.dark .pb-title{color:var(--mint)}
-.plan-block .plan-features li{border-bottom-color:rgba(15,35,27,.06)}
-.plan-features.light li{color:rgba(255,255,255,.85);border-bottom-color:rgba(255,255,255,.1)}
-.plan-features.light .feat-yes{color:var(--mint)}
-
-.price-lock{max-width:812px;margin:22px auto 0;background:var(--paper);border-radius:var(--radius-md);padding:16px 20px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 6px 20px -14px rgba(15,35,27,.25);font-size:13.5px;color:var(--muted);line-height:1.6;text-align:left}
+.price-lock{max-width:1132px;margin:0 auto;padding:16px 24px;display:flex;gap:12px;align-items:flex-start;font-size:13px;color:var(--muted);line-height:1.6;text-align:left;font-family:'Inter',sans-serif;border:1px solid var(--line-soft);border-top:none;border-radius:0 0 var(--radius-lg) var(--radius-lg)}
 .price-lock strong{color:var(--ink)}
-.pl-ico{width:34px;height:34px;border-radius:10px;background:var(--orange-soft);color:var(--orange-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
 /* Compare table */
-.compare-section{padding:88px 0;background:var(--bg-tint)}
-.section-head{max-width:640px;margin:0 auto 44px;text-align:center}
-.section-head h2{font-size:clamp(1.7rem,3.2vw,2.3rem)}
-.section-head p{margin-top:12px;color:var(--muted);font-size:1rem}
-.compare-table{width:100%;border-collapse:collapse;background:var(--paper);border-radius:16px;overflow:hidden;box-shadow:0 2px 16px -10px rgba(15,35,27,.14)}
-.compare-table th{padding:18px 20px;text-align:center;font-size:13.5px;font-weight:800;background:var(--bg-tint);color:var(--muted)}
+.compare-section{padding:100px 0}
+.section-head{max-width:600px;margin:0 auto 48px;text-align:center}
+.section-head h2{font-size:clamp(1.7rem,3vw,2.2rem)}
+.section-head p{margin-top:14px;color:var(--muted);font-size:.98rem;font-family:'Inter',sans-serif}
+.compare-table{width:100%;min-width:680px;border-collapse:collapse;font-family:'Inter',sans-serif}
+.compare-table th{padding:14px 16px;text-align:center;font-size:12px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--line);text-transform:uppercase;letter-spacing:.06em}
 .compare-table th:first-child{text-align:left;color:var(--ink)}
-.compare-table th.col-pro{background:var(--orange-soft);color:var(--orange-dark)}
-.compare-table td{padding:14px 20px;text-align:center;font-size:14px;border-top:1px solid var(--line)}
-.compare-table td:first-child{text-align:left;font-weight:500}
-.compare-table tr:hover td{background:#fbfdfc}
-.check{color:var(--mint-dark);font-size:16px;font-weight:800}
-.cross{color:#c3d1c9;font-size:16px}
-.col-pro-cell{background:#fffaf4}
+.compare-table th.col-pro{color:var(--orange)}
+.compare-table td{padding:13px 16px;text-align:center;font-size:13.5px;border-bottom:1px solid var(--line-soft);color:rgba(243,246,243,.85)}
+.compare-table td:first-child{text-align:left;color:var(--muted)}
+.compare-table tr:hover td{background:rgba(255,255,255,.02)}
+.check{color:var(--mint);font-size:15px;font-weight:700}
+.cross{color:rgba(255,255,255,.2);font-size:15px}
+.col-pro-cell{background:rgba(238,124,31,.045)}
 
 /* FAQ */
-.faq-section{padding:88px 0;max-width:760px;margin:0 auto}
-.faq-item{border-bottom:1px solid var(--line);padding:20px 0}
-.faq-q{font-size:16px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.faq-q::after{content:'+';font-size:20px;color:var(--orange);flex-shrink:0;font-weight:800}
+.faq-section{padding:100px 0;max-width:720px;margin:0 auto;font-family:'Inter',sans-serif}
+.faq-item{border-bottom:1px solid var(--line-soft);padding:22px 0}
+.faq-q{font-size:15.5px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--ink)}
+.faq-q::after{content:'+';font-size:18px;color:var(--muted-dim);flex-shrink:0;font-weight:400}
 .faq-item.open .faq-q::after{content:'–'}
-.faq-a{font-size:14.5px;color:var(--muted);line-height:1.7;margin-top:12px;display:none}
+.faq-a{font-size:14px;color:var(--muted);line-height:1.7;margin-top:14px;display:none}
 .faq-item.open .faq-a{display:block}
 
 /* Final CTA */
-.final-cta{position:relative;overflow:hidden;background:linear-gradient(160deg,var(--dark) 0%,var(--dark-2) 60%,var(--dark-3) 100%);border-radius:var(--radius-lg);padding:64px 6%;text-align:center;color:#fff;margin:0 24px}
-.final-cta>*:not(.hero-orbs){position:relative;z-index:2}
-.final-cta h2{color:#fff;font-size:clamp(1.7rem,3.2vw,2.3rem)}
-.final-cta p{margin-top:12px;color:rgba(255,255,255,.72);font-size:1rem;max-width:480px;margin-inline:auto}
-.final-cta .ctas{margin-top:26px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
-.cta-wrap{padding:88px 0}
+.final-cta{border:1px solid var(--line);border-radius:var(--radius-lg);padding:64px 6%;text-align:center;margin:0 24px;background:var(--panel)}
+.final-cta h2{font-size:clamp(1.7rem,3vw,2.2rem)}
+.final-cta p{margin-top:14px;color:var(--muted);font-size:1rem;max-width:460px;margin-inline:auto;font-family:'Inter',sans-serif}
+.final-cta .ctas{margin-top:28px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.cta-wrap{padding:100px 0}
 
 /* Footer */
-footer{background:var(--dark);color:rgba(255,255,255,.6);padding-top:56px}
+footer{background:var(--bg-2);color:rgba(243,246,243,.5);padding-top:56px;border-top:1px solid var(--line-soft);font-family:'Inter',sans-serif}
 .footer-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:36px;padding-bottom:36px}
 .footer-top>div:first-child{max-width:280px}
-.footer-logo{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.3rem;color:#fff}
+.footer-logo{font-family:'Fraunces',serif;font-weight:600;font-size:1.3rem;color:var(--ink)}
 .footer-logo span{color:var(--orange)}
 .footer-top p{margin-top:12px;font-size:13px;line-height:1.7}
-.footer-col h4{color:#fff;font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
-.footer-col ul{display:flex;flex-direction:column;gap:10px}
-.footer-col a{font-size:13.5px;transition:color .15s}
-.footer-col a:hover{color:#fff}
-.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding:20px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12.5px}
+.footer-col h4{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(243,246,243,.35);margin-bottom:16px}
+.footer-col ul{display:flex;flex-direction:column;gap:11px;font-size:.92rem}
+.footer-col a{font-size:13px;transition:color .15s}
+.footer-col a:hover{color:var(--ink)}
+.footer-bottom{border-top:1px solid var(--line-soft);padding:20px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12px}
 .footer-bottom .legal{display:flex;gap:16px;flex-wrap:wrap}
-.footer-bottom a:hover{color:#fff}
+.footer-bottom a:hover{color:var(--ink)}
 
 /* Reveal + misc */
-[data-reveal]{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.16,.8,.24,1),transform .7s cubic-bezier(.16,.8,.24,1)}
+[data-reveal]{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
 [data-reveal].is-in{opacity:1;transform:none}
-.to-top{position:fixed;bottom:24px;right:24px;width:46px;height:46px;border-radius:50%;background:var(--dark);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 24px -10px rgba(15,35,27,.5);z-index:120;opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .2s,transform .2s,background .2s}
+.to-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:8px;background:var(--panel);border:1px solid var(--line);color:var(--ink);display:flex;align-items:center;justify-content:center;z-index:120;opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .2s,transform .2s,border-color .2s}
 .to-top.show{opacity:1;transform:none;pointer-events:auto}
-.to-top:hover{background:var(--orange)}
+.to-top:hover{border-color:var(--orange)}
 
-@media(prefers-reduced-motion:reduce){[data-reveal]{transition:none;opacity:1;transform:none}.orb{animation:none;opacity:.2}.to-top{transition:none}}
+@media(prefers-reduced-motion:reduce){[data-reveal]{transition:none;opacity:1;transform:none}.to-top{transition:none}}
 </style>
 </head>
 <body>
-<a class="skip-link" href="#main" style="position:absolute;left:16px;top:-60px;background:var(--dark);color:#fff;padding:10px 16px;border-radius:8px;z-index:200;transition:top .2s">Saltar para o conteúdo</a>
+<a class="skip-link" href="#main" style="position:absolute;left:16px;top:-60px;background:var(--panel);color:var(--ink);padding:10px 16px;border-radius:8px;z-index:200;transition:top .2s">Saltar para o conteúdo</a>
 <div class="scroll-progress" id="scrollProgress"></div>
 
 <header id="siteHeader">
 <div class="wrap nav">
-<a href="index.html" class="logo">Flink<span>o</span></a>
+<a href="/" class="logo">Flink<span>o</span></a>
 <nav class="nav-links" aria-label="Navegação principal">
-<a href="categoria.html">Encontrar</a>
-<a href="pedidos.html">Pedidos</a>
-<a href="pricing.html" class="current">Preços</a>
-<a href="profissionais.html">Para Profissionais</a>
-<a href="blog.html">Blog</a>
+<a href="/categoria">Encontrar</a>
+<a href="/pedidos">Pedidos</a>
+<a href="/pricing" class="current">Preços</a>
+<a href="/profissionais">Para Profissionais</a>
+<a href="/academia">Academia</a>
+<a href="/calculadora-orcamento">Calculadora</a>
 </nav>
 <div class="nav-actions">
-<div id="nav-guest" style="display:flex;gap:10px">
-<a href="auth.html" class="btn btn-ghost btn-sm">Entrar</a>
-<a href="auth.html?tab=register" class="btn btn-dark btn-sm">Registar grátis</a>
-</div>
-<div class="nav-user" id="nav-user">
-<a href="dashboard.html" class="btn btn-ghost btn-sm">Dashboard</a>
-<div class="nav-avatar" id="nav-avatar" onclick="location.href='dashboard.html'">?</div>
-</div>
+<a href="/dashboard" class="btn btn-line btn-sm">Dashboard</a>
+<a href="/auth?tab=register" class="btn btn-solid btn-sm">Criar conta grátis</a>
 <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mobilePanel" aria-label="Abrir menu"><span></span></button>
 </div>
 </div>
 <div class="mobile-panel" id="mobilePanel">
-<a href="categoria.html">Encontrar</a>
-<a href="pedidos.html">Pedidos</a>
-<a href="pricing.html">Preços</a>
-<a href="profissionais.html">Para Profissionais</a>
-<a href="blog.html">Blog</a>
-<a href="auth.html?tab=register" class="btn btn-orange">Registar grátis</a>
+<a href="/categoria">Encontrar</a>
+<a href="/pedidos">Pedidos</a>
+<a href="/pricing">Preços</a>
+<a href="/profissionais">Para Profissionais</a>
+<a href="/academia">Academia</a>
+<a href="/calculadora-orcamento">Calculadora</a>
+<a href="/dashboard">Dashboard</a>
+<a href="/auth?tab=register" class="btn btn-orange">Criar conta grátis</a>
 </div>
 </header>
 
 <main id="main">
 
 <section class="hero">
-<div class="hero-orbs" aria-hidden="true"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span></div>
 <div class="wrap hero-inner">
-<span class="badge-pill"><span class="dot"></span> Sempre há um plano grátis</span>
-<h1>Preços fixos. <span class="hi">Sem comissões.</span></h1>
-<p class="lead">Nunca cobramos sobre o trabalho que fechas. Começa grátis e muda só se precisares de mais visibilidade.</p>
+<div class="eyebrow-line"><span class="rule"></span><span>Planos Flinko</span><span class="rule"></span></div>
+<h1>Preços claros, <em>sem letra pequena.</em></h1>
+<p class="lead">Começa grátis, ganha ferramentas com o Starter ou o Pro, ou usa o Empresas se trabalhas com equipa.</p>
+<div class="hero-facts">
+<span>Sem contratos</span>
+<span>Grátis para sempre</span>
+<span>Cancela quando quiseres</span>
+</div>
 </div>
 </section>
 
-<div class="pricing-wrap">
+<div class="pricing-section">
+<div class="pricing-toggle-wrap" data-reveal>
 <div class="pricing-toggle">
-<span class="toggle-label active" id="label-monthly">Mensal</span>
-<button class="toggle" id="billing-toggle" onclick="toggleBilling()" aria-label="Alternar entre mensal e anual"><div class="toggle-thumb" id="toggle-thumb"></div></button>
-<span class="toggle-label" id="label-yearly">Anual <span class="badge-save">Poupa 20%</span></span>
+<button class="toggle-opt active" id="opt-monthly" onclick="setBilling(false)">Mensal</button>
+<button class="toggle-opt" id="opt-yearly" onclick="setBilling(true)">Anual <span class="badge-save">−20%</span></button>
+</div>
 </div>
 
-<div class="plans-grid">
-<div class="plan-card" data-reveal>
-<div class="plan-icon"><svg class="ic" style="width:22px;height:22px" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/></svg></div>
-<div class="plan-name">Grátis</div>
+<div class="plans-grid" data-reveal>
+
+<div class="plan-card">
+<div class="plan-top"><span class="plan-name">Grátis</span></div>
 <div class="plan-price"><span class="amount">€0</span><span class="per">/sempre</span></div>
-<div class="price-vat">Sem custos. Sem cartão de crédito.</div>
-<div class="plan-desc">Tudo o que precisas para <strong>gerir</strong> o teu trabalho.</div>
-<a href="auth.html?tab=register" class="btn btn-ghost btn-block plan-cta">Começar sem custos</a>
+<div class="price-vat">Sem cartão de crédito.</div>
+<div class="plan-desc">Para experimentares a Flinko sem custos.</div>
+<a href="/auth?tab=register" class="btn btn-line btn-block plan-cta">Começar sem custos</a>
 <ul class="plan-features">
 <li><span class="feat-yes">✓</span> Perfil público verificado</li>
-<li><span class="feat-yes">✓</span> Serviços ilimitados</li>
-<li><span class="feat-yes">✓</span> Mensagens de clientes</li>
-<li><span class="feat-yes">✓</span> Agenda e gestão de trabalhos</li>
+<li><span class="feat-yes">✓</span> 1 serviço/categoria</li>
+<li><span class="feat-yes">✓</span> Até 5 conversas novas de clientes/mês</li>
 <li><span class="feat-yes">✓</span> 3 orçamentos em PDF por mês</li>
 <li><span class="feat-yes">✓</span> 3 fotos de portfólio</li>
-<li class="dim"><span class="feat-no">✕</span> Contas, margens e CSV</li>
-<li class="dim"><span class="feat-no">✕</span> Marca própria nos documentos</li>
+<li class="dim"><span class="feat-no">✕</span> Agenda e gestão de trabalhos</li>
+<li class="dim"><span class="feat-no">✕</span> Marca própria e contas/CSV</li>
+<li class="dim"><span class="feat-no">✕</span> Mais visibilidade</li>
 </ul>
-<div class="plan-footnote">Sem fidelização. Passa para Pro quando quiseres, sem perder nada.</div>
+<div class="plan-footnote">Sem fidelização. <a href="#nota-limites">Nota sobre estes limites ↓</a></div>
 </div>
 
-<div class="plan-card popular" data-reveal="d1">
-<span class="popular-tag">Recomendado</span>
-<div class="plan-icon"><svg class="ic" style="width:22px;height:22px" viewBox="0 0 24 24"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg></div>
-<div class="plan-name">Pro</div>
-<div class="plan-price"><span class="amount" id="price-pro">€12,99</span><span class="per" id="per-pro">/mês</span></div>
-<div class="price-vat">Preço final. Isento de IVA — art. 53.º do CIVA.</div>
-<div class="plan-desc">Para <strong>pareceres uma empresa</strong> junto dos teus clientes — e crescer com a plataforma.</div>
-<a href="#" class="btn btn-orange btn-block plan-cta" onclick="requestUpgrade('pro');return false">Mudar para Pro</a>
-
-<div class="plan-block">
-<div class="pb-title">Vale já hoje</div>
+<div class="plan-card">
+<div class="plan-top"><span class="plan-name">Starter</span></div>
+<div class="plan-price"><span class="amount" id="price-starter">€9,99</span><span class="per" id="per-starter">/mês</span></div>
+<div class="price-vat">Isento de IVA — art. 53.º do CIVA.</div>
+<div class="plan-desc">Ferramentas a sério para geres o teu negócio.</div>
+<a href="#" class="btn btn-line btn-block plan-cta" onclick="requestUpgrade('starter');return false">Mudar para Starter</a>
 <ul class="plan-features">
-<li><span class="feat-yes">✓</span> Orçamentos com o teu logótipo, sem a marca Flinko</li>
-<li><span class="feat-yes">✓</span> Link próprio e código QR (flinko.pt/o-teu-nome)</li>
+<li><span class="feat-yes">✓</span> Serviços e mensagens sem limite</li>
+<li><span class="feat-yes">✓</span> Agenda e gestão de trabalhos</li>
 <li><span class="feat-yes">✓</span> Orçamentos e portfólio ilimitados</li>
-<li><span class="feat-yes">✓</span> Contas, margens por trabalho e CSV</li>
+<li class="dim"><span class="feat-no">✕</span> Marca própria nos orçamentos</li>
+<li class="dim"><span class="feat-no">✕</span> Contas, margens e CSV</li>
+<li class="dim"><span class="feat-no">✕</span> Avanço nos pedidos novos</li>
+<li class="dim"><span class="feat-no">✕</span> Destaque nas listagens</li>
 </ul>
+<div class="plan-footnote">Passa para Pro quando quiseres, sem perder nada.</div>
 </div>
 
-<div class="plan-block dark">
-<div class="pb-title">Vale cada vez mais</div>
-<ul class="plan-features light">
+<div class="plan-card popular">
+<div class="plan-top"><span class="plan-name">Pro</span><span class="rec-tag">Recomendado</span></div>
+<div class="plan-price"><span class="amount" id="price-pro">€19,99</span><span class="per" id="per-pro">/mês</span></div>
+<div class="price-vat">Isento de IVA — art. 53.º do CIVA.</div>
+<div class="plan-desc">Para apareceres primeiro e cresceres mais depressa.</div>
+<a href="#" class="btn btn-orange btn-block plan-cta" onclick="requestUpgrade('pro');return false">Mudar para Pro</a>
+<ul class="plan-features">
+<li><span class="feat-yes">✓</span> Tudo do Starter</li>
+<li><span class="feat-yes">✓</span> Orçamentos com o teu logótipo, sem marca Flinko</li>
+<li><span class="feat-yes">✓</span> Contas, margens por trabalho e CSV</li>
+<li><span class="feat-yes">✓</span> Link próprio e código QR</li>
 <li><span class="feat-yes">✓</span> 2 horas de avanço nos pedidos novos</li>
 <li><span class="feat-yes">✓</span> Primeiro lugar nas listagens da tua zona</li>
 <li><span class="feat-yes">✓</span> Destaque na página inicial, à vez entre os Pro</li>
 </ul>
-</div>
-</div>
+<div class="plan-footnote">Preço travado enquanto não cancelares (ver abaixo).</div>
 </div>
 
+<div class="plan-card">
+<div class="plan-top"><span class="plan-name">Empresas</span></div>
+<div class="plan-price"><span class="amount" id="price-empresas">€39,99</span><span class="per" id="per-empresas">/mês</span></div>
+<div class="price-vat">Isento de IVA — art. 53.º do CIVA.</div>
+<div class="plan-desc">Para negócios com equipa, não só um profissional sozinho.</div>
+<a href="#" class="btn btn-line btn-block plan-cta" onclick="requestUpgrade('empresas');return false">Falar sobre o Empresas</a>
+<ul class="plan-features">
+<li><span class="feat-yes">✓</span> Tudo do Pro</li>
+<li><span class="feat-yes">✓</span> Vários técnicos numa única conta<span class="soon-tag">Em breve</span></li>
+<li><span class="feat-yes">✓</span> Faturação em nome da empresa, com o teu NIF<span class="soon-tag">Em breve</span></li>
+<li><span class="feat-yes">✓</span> Apoio prioritário e configuração acompanhada</li>
+</ul>
+<div class="plan-footnote">Plano novo — ativação e configuração feitas a falar contigo.</div>
+</div>
+
+</div>
 <div class="price-lock" data-reveal>
-<div class="pl-ico"><svg class="ic" style="width:17px;height:17px" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-<div><strong>Preço travado para quem entra primeiro.</strong> Quem subscrever este ano mantém os €12,99 enquanto não cancelar, mesmo quando o preço subir.</div>
+<div><strong>Preço travado para quem entra primeiro.</strong> Quem subscrever um plano pago este ano mantém o preço de hoje enquanto não cancelar, mesmo quando os preços subirem no futuro.</div>
 </div>
 </div>
 
@@ -342,25 +344,28 @@ footer{background:var(--dark);color:rgba(255,255,255,.6);padding-top:56px}
 <div class="section-head" data-reveal>
 <span class="kicker">Comparar</span>
 <h2>Comparação completa</h2>
-<p>Vê exatamente o que muda entre o plano Grátis e o Pro.</p>
+<p>Vê exatamente o que muda entre os 4 planos.</p>
 </div>
 <div style="overflow-x:auto"><table class="compare-table">
-<thead><tr><th>Funcionalidade</th><th>Grátis</th><th class="col-pro">Pro</th></tr></thead>
+<thead><tr><th>Funcionalidade</th><th>Grátis</th><th>Starter</th><th class="col-pro">Pro</th><th>Empresas</th></tr></thead>
 <tbody>
-<tr><td>Perfil público verificado</td><td><span class="check">✓</span></td><td class="col-pro-cell"><span class="check">✓</span></td></tr>
-<tr><td>Serviços listados</td><td>Ilimitados</td><td class="col-pro-cell">Ilimitados</td></tr>
-<tr><td>Mensagens de clientes</td><td><span class="check">✓</span></td><td class="col-pro-cell"><span class="check">✓</span></td></tr>
-<tr><td>Agenda e gestão de trabalhos</td><td><span class="check">✓</span></td><td class="col-pro-cell"><span class="check">✓</span></td></tr>
-<tr><td>Orçamentos em PDF</td><td>3 por mês</td><td class="col-pro-cell">Ilimitados</td></tr>
-<tr><td>Fotos de portfólio</td><td>3</td><td class="col-pro-cell">Ilimitadas</td></tr>
-<tr><td>Contas, margens e exportação CSV</td><td><span class="cross">✕</span></td><td class="col-pro-cell"><span class="check">✓</span></td></tr>
-<tr><td>Marca própria nos orçamentos</td><td><span class="cross">✕</span></td><td class="col-pro-cell"><span class="check">✓</span></td></tr>
-<tr><td>Link próprio e código QR</td><td><span class="cross">✕</span></td><td class="col-pro-cell"><span class="check">✓</span></td></tr>
-<tr><td>Avanço nos pedidos novos</td><td><span class="cross">✕</span></td><td class="col-pro-cell">2 horas</td></tr>
-<tr><td>Posição nas listagens</td><td>Normal</td><td class="col-pro-cell">Primeiro lugar</td></tr>
-<tr><td>Suporte prioritário</td><td><span class="cross">✕</span></td><td class="col-pro-cell"><span class="check">✓</span></td></tr>
+<tr><td>Perfil público verificado</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td class="col-pro-cell"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+<tr><td>Serviços/categorias listados</td><td>1*</td><td>Ilimitados</td><td class="col-pro-cell">Ilimitados</td><td>Ilimitados</td></tr>
+<tr><td>Conversas novas de clientes/mês</td><td>5*</td><td>Ilimitadas</td><td class="col-pro-cell">Ilimitadas</td><td>Ilimitadas</td></tr>
+<tr><td>Agenda e gestão de trabalhos</td><td><span class="cross">✕*</span></td><td><span class="check">✓</span></td><td class="col-pro-cell"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+<tr><td>Orçamentos em PDF</td><td>3 por mês</td><td>Ilimitados</td><td class="col-pro-cell">Ilimitados</td><td>Ilimitados</td></tr>
+<tr><td>Fotos de portfólio</td><td>3</td><td>Ilimitadas</td><td class="col-pro-cell">Ilimitadas</td><td>Ilimitadas</td></tr>
+<tr><td>Marca própria nos orçamentos</td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td><td class="col-pro-cell"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+<tr><td>Contas, margens e exportação CSV</td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td><td class="col-pro-cell"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+<tr><td>Link próprio e código QR</td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td><td class="col-pro-cell"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+<tr><td>Avanço nos pedidos novos</td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td><td class="col-pro-cell">2 horas</td><td>2 horas</td></tr>
+<tr><td>Posição nas listagens</td><td>Normal</td><td>Normal</td><td class="col-pro-cell">Primeiro lugar</td><td>Primeiro lugar</td></tr>
+<tr><td>Vários técnicos numa conta</td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td><td class="col-pro-cell"><span class="cross">✕</span></td><td>Em breve</td></tr>
+<tr><td>Faturação em nome da empresa</td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td><td class="col-pro-cell"><span class="cross">✕</span></td><td>Em breve</td></tr>
+<tr><td>Suporte prioritário</td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td><td class="col-pro-cell"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
 </tbody>
 </table></div>
+<p id="nota-limites" style="font-size:12.5px;color:var(--muted-dim);margin-top:14px;scroll-margin-top:100px;font-family:'Inter',sans-serif">* Os limites do plano Grátis assinalados com asterisco (serviços, conversas, agenda) ainda não estão a ser aplicados no sistema — é para onde o plano Grátis vai, mas as contas grátis de hoje continuam sem estas restrições até isso ficar pronto.</p>
 </div>
 </section>
 
@@ -372,48 +377,51 @@ footer{background:var(--dark);color:rgba(255,255,255,.6);padding-top:56px}
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">Como posso fazer upgrade do meu plano?</div>
-<div class="faq-a">Clica em "Mudar para Pro" — vais ser encaminhado para um checkout seguro da <strong>Stripe</strong>, onde pagas com cartão de crédito ou débito. O plano é ativado automaticamente assim que o pagamento é confirmado.</div>
+<div class="faq-a">Clica no botão do plano que queres — vais receber um email pronto a enviar com o pedido. Confirmamos o pagamento contigo e ativamos o plano manualmente, normalmente em poucas horas e no máximo em 24h. Ainda não temos checkout automático, por isso preferimos ser diretos sobre isso em vez de prometer uma ativação instantânea que ainda não existe.</div>
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">Posso cancelar a qualquer momento?</div>
-<div class="faq-a">Sim. Não há contratos nem períodos mínimos. Cancela a qualquer momento a partir do teu dashboard — o plano continua ativo até ao fim do período já pago.</div>
+<div class="faq-a">Sim. Não há contratos nem períodos mínimos. Escreve-nos a pedir o cancelamento a partir do email que usaste para subscrever — o plano continua ativo até ao fim do período já pago.</div>
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">Os clientes pagam alguma coisa?</div>
-<div class="faq-a">Não. A plataforma é completamente gratuita para clientes. Os profissionais é que escolhem se querem um plano pago para ter mais visibilidade.</div>
-</div>
-<div class="faq-item">
-<div class="faq-q" onclick="toggleFaq(this)">Quanto tempo demora a ativação do plano?</div>
-<div class="faq-a">É automático. Assim que a Stripe confirma o pagamento, o teu plano passa a Pro em poucos segundos — não precisas de esperar por nós.</div>
+<div class="faq-a">Não. A plataforma é completamente gratuita para clientes. Os profissionais e empresas é que escolhem se querem um plano pago para ter mais ferramentas e visibilidade.</div>
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">Que métodos de pagamento aceitam?</div>
-<div class="faq-a">Cartão de crédito ou débito, através de um checkout seguro processado pela Stripe.</div>
+<div class="faq-a">Por agora, transferência bancária ou MB Way, combinados por email depois de pedires o upgrade. Vamos adicionar pagamento direto por cartão assim que o checkout automático estiver pronto.</div>
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">Recebo fatura ou recibo do pagamento?</div>
-<div class="faq-a">Sim. A Stripe envia-te automaticamente a fatura/recibo por email a seguir a cada pagamento. Podes subscrever como profissional independente — não precisas de ter empresa aberta.</div>
+<div class="faq-a">Sim, enviamos recibo por email a seguir a cada pagamento confirmado. Podes subscrever como profissional independente — não precisas de ter empresa aberta, exceto no plano Empresas.</div>
 </div>
 <div class="faq-item">
-<div class="faq-q" onclick="toggleFaq(this)">Posso mudar de plano mais tarde?</div>
-<div class="faq-a">Sim, a qualquer momento. Faz downgrade ou cancela diretamente a partir do teu dashboard — a alteração fica ativa até ao fim do período já pago.</div>
+<div class="faq-q" onclick="toggleFaq(this)">Qual a diferença entre Starter e Pro?</div>
+<div class="faq-a">O Starter tira-te só os limites do Grátis: serviços e mensagens sem limite, agenda e gestão de trabalhos, orçamentos e portfólio ilimitados. O Pro tem tudo isso e acrescenta as ferramentas de imagem/gestão (marca própria nos orçamentos, contas/margens/CSV) e a visibilidade: avanço de 2 horas nos pedidos novos, primeiro lugar na tua zona e destaque na homepage.</div>
 </div>
 <div class="faq-item">
-<div class="faq-q" onclick="toggleFaq(this)">O que acontece se eu não renovar o plano Pro?</div>
-<div class="faq-a">O teu perfil volta automaticamente ao plano Grátis assim que o período pago terminar. Não perdes o perfil nem os dados — só deixas de ter as funcionalidades extra do Pro, como o logótipo próprio ou o destaque nas listagens.</div>
+<div class="faq-q" onclick="toggleFaq(this)">O que já está pronto no plano Empresas e o que ainda falta?</div>
+<div class="faq-a">Já está tudo o que o Pro tem, mais apoio prioritário e configuração acompanhada por nós. A gestão de vários técnicos numa única conta e a faturação em nome da empresa são funcionalidades novas que estamos a construir — se subscreveres agora, ajudamos-te manualmente enquanto isso não chega ao dashboard.</div>
+</div>
+<div class="faq-item">
+<div class="faq-q" onclick="toggleFaq(this)">O plano Grátis já tem os limites de serviços/conversas/agenda que aparecem na tabela?</div>
+<div class="faq-a">Ainda não — estamos a preparar isso no sistema. As contas grátis de hoje continuam sem essas restrições por agora. Preferimos mostrar-te já para onde o plano Grátis vai do que anunciar um limite e não o aplicar de repente sem aviso.</div>
+</div>
+<div class="faq-item">
+<div class="faq-q" onclick="toggleFaq(this)">O que acontece se eu não renovar um plano pago?</div>
+<div class="faq-a">O teu perfil volta automaticamente ao plano Grátis assim que o período pago terminar. Não perdes o perfil nem os dados — só deixas de ter as funcionalidades extra do plano que tinhas.</div>
 </div>
 </section>
 
 <section class="cta-wrap">
 <div class="wrap">
 <div class="final-cta" data-reveal>
-<div class="hero-orbs" aria-hidden="true"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span></div>
-<span class="kicker on-dark">Começa hoje</span>
+<span class="kicker">Começa hoje</span>
 <h2>Cria o teu perfil grátis</h2>
 <p>Configura o teu perfil em 5 minutos e começa a receber contactos de clientes.</p>
 <div class="ctas">
-<a href="auth.html?tab=register" class="btn btn-orange">Criar conta grátis <span class="arrow">→</span></a>
-<a href="categoria.html" class="btn btn-ghost-dark">Ver profissionais</a>
+<a href="/auth?tab=register" class="btn btn-orange">Criar conta grátis <span class="arrow">→</span></a>
+<a href="/categoria" class="btn btn-line">Ver profissionais</a>
 </div>
 </div>
 </div>
@@ -424,25 +432,33 @@ footer{background:var(--dark);color:rgba(255,255,255,.6);padding-top:56px}
 <footer>
 <div class="wrap footer-top">
 <div>
-<a href="index.html" class="footer-logo">Flink<span>o</span></a>
+<a href="/" class="footer-logo">Flink<span>o</span></a>
 <p>O marketplace de serviços profissionais em Portugal. Conectamos clientes a profissionais de confiança.</p>
 </div>
 <div class="footer-col">
-<h4>Flinko</h4>
+<h4>Para clientes</h4>
 <ul>
-<li><a href="como-funciona.html">Como funciona</a></li>
-<li><a href="porque-escolher.html">Porquê a Flinko</a></li>
-<li><a href="pricing.html">Preços</a></li>
-<li><a href="blog.html">Blog</a></li>
-<li><a href="contacto.html">Contacto</a></li>
+<li><a href="/como-funciona">Como funciona</a></li>
+<li><a href="/categoria">Todas as categorias</a></li>
+<li><a href="/pedidos">Publicar pedido</a></li>
+<li><a href="/contacto">Contacto</a></li>
 </ul>
 </div>
 <div class="footer-col">
-<h4>Profissionais</h4>
+<h4>Para profissionais</h4>
 <ul>
-<li><a href="categoria.html">Todas as categorias</a></li>
-<li><a href="profissionais.html">Para profissionais</a></li>
-<li><a href="auth.html?tab=register">Registar profissional</a></li>
+<li><a href="/profissionais">Como funciona para profissionais</a></li>
+<li><a href="/auth?tab=register">Criar perfil grátis</a></li>
+<li><a href="/pricing">Preços</a></li>
+<li><a href="/dashboard">Dashboard</a></li>
+</ul>
+</div>
+<div class="footer-col">
+<h4>Recursos</h4>
+<ul>
+<li><a href="/academia">Academia</a></li>
+<li><a href="/calculadora-orcamento">Calculadora de Orçamentos</a></li>
+<li><a href="/rgpd">RGPD</a></li>
 <li><a href="mailto:proliga.pt@gmail.com">proliga.pt@gmail.com</a></li>
 </ul>
 </div>
@@ -450,82 +466,72 @@ footer{background:var(--dark);color:rgba(255,255,255,.6);padding-top:56px}
 <div class="wrap footer-bottom">
 <span>© 2026 Flinko · Portugal</span>
 <span class="legal">
-<a href="termos.html">Termos</a>
-<a href="privacidade.html">Privacidade</a>
-<a href="cookies.html">Cookies</a>
-<a href="rgpd.html">RGPD</a>
+<a href="/termos">Termos</a>
+<a href="/privacidade">Privacidade</a>
+<a href="/cookies">Cookies</a>
+<a href="/rgpd">RGPD</a>
 </span>
 </div>
 </footer>
 
 <button class="to-top" id="toTop" aria-label="Voltar ao topo">
-<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m18 15-6-6-6 6"/></svg>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>
 </button>
 
 <!-- UPGRADE MODAL -->
-<div id="upgrade-modal" style="display:none;position:fixed;inset:0;background:rgba(15,35,27,.55);z-index:200;align-items:center;justify-content:center">
-<div style="background:#fff;border-radius:20px;padding:36px;max-width:420px;width:90%;text-align:center">
-<div style="color:var(--orange-dark);margin-bottom:16px" id="modal-icon"><svg class="ic" style="width:34px;height:34px" viewBox="0 0 24 24"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg></div>
-<h3 style="font-size:22px;font-weight:800;margin-bottom:8px" id="modal-title">Mudar para Pro</h3>
-<p style="color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:24px">Para ativar o teu plano, entra em contacto connosco. A ativação é feita em até 24 horas após confirmação do pagamento.</p>
-<a href="mailto:avlistech2@gmail.com?subject=Upgrade%20Flinko&body=Olá,%20quero%20fazer%20upgrade%20para%20o%20plano%20Pro." id="modal-email-link" class="btn btn-orange btn-block" style="margin-bottom:12px">Enviar email para upgrade</a>
+<div id="upgrade-modal" style="display:none;position:fixed;inset:0;background:rgba(11,12,13,.7);z-index:200;align-items:center;justify-content:center">
+<div style="background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:36px;max-width:420px;width:90%;text-align:center;font-family:'Inter',sans-serif">
+<h3 style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin-bottom:10px;color:var(--ink)" id="modal-title">Mudar de plano</h3>
+<p style="color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:24px" id="modal-desc">Para ativar o teu plano, entra em contacto connosco. A ativação é feita manualmente em até 24 horas após confirmares o pagamento.</p>
+<a href="#" id="modal-email-link" class="btn btn-orange btn-block" style="margin-bottom:12px">Enviar email para upgrade</a>
 <button onclick="closeModal()" style="background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;font-family:inherit">Fechar</button>
 </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 let isYearly=false
 
-async function init(){
-if(typeof supabase==='undefined')return
-const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
-const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
-const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);window.db=db
-const{data:{session}}=await db.auth.getSession()
-if(session){
-document.getElementById('nav-guest').style.display='none'
-document.getElementById('nav-user').style.display='flex'
-const name=session.user.user_metadata?.name||session.user.email||'U'
-document.getElementById('nav-avatar').textContent=name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase()
-}
+const PLAN_INFO={
+starter:{name:'Starter',monthly:'9,99',yearly:'7,99',yearlyTotal:'95,88'},
+pro:{name:'Pro',monthly:'19,99',yearly:'15,99',yearlyTotal:'191,88'},
+empresas:{name:'Empresas',monthly:'39,99',yearly:'31,99',yearlyTotal:'383,88'}
 }
 
-function toggleBilling(){
-isYearly=!isYearly
-const toggle=document.getElementById('billing-toggle')
-toggle.classList.toggle('yearly',isYearly)
-document.getElementById('label-monthly').classList.toggle('active',!isYearly)
-document.getElementById('label-yearly').classList.toggle('active',isYearly)
-const a=document.getElementById('price-pro')
-const per=document.getElementById('per-pro')
+function setBilling(yearly){
+isYearly=yearly
+document.getElementById('opt-monthly').classList.toggle('active',!yearly)
+document.getElementById('opt-yearly').classList.toggle('active',yearly)
+Object.keys(PLAN_INFO).forEach(function(key){
+const info=PLAN_INFO[key]
+const a=document.getElementById('price-'+key)
+const per=document.getElementById('per-'+key)
 if(!a||!per)return
-if(isYearly){a.textContent='€10,39';per.textContent='/mês · faturado €124,70/ano'}
-else{a.textContent='€12,99';per.textContent='/mês'}
+if(isYearly){a.textContent='€'+info.yearly;per.textContent='/mês · faturado €'+info.yearlyTotal+'/ano'}
+else{a.textContent='€'+info.monthly;per.textContent='/mês'}
+})
 }
 
 function requestUpgrade(plan){
 const modal=document.getElementById('upgrade-modal')
-const icon=document.getElementById('modal-icon')
 const title=document.getElementById('modal-title')
+const desc=document.getElementById('modal-desc')
 const link=document.getElementById('modal-email-link')
-if(plan==='pro'){
-icon.innerHTML='<svg class="ic" style="width:26px;height:26px" viewBox="0 0 24 24"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg>'
-title.textContent='Obter plano Pro'
-link.href=`mailto:avlistech2@gmail.com?subject=Upgrade%20Flinko%20Pro&body=Olá%2C%20quero%20fazer%20upgrade%20para%20o%20plano%20Pro%20(€${isYearly?'124,70/ano':'12,99/mês'}).`
+const info=PLAN_INFO[plan]
+if(!info)return
+const priceTxt=isYearly?(info.yearly+'/mês, faturado '+info.yearlyTotal+'/ano'):(info.monthly+'/mês')
+title.textContent='Mudar para '+info.name
+if(plan==='empresas'){
+desc.textContent='O plano Empresas é novo — vamos falar contigo para perceber a tua equipa e ativar tudo à mão, incluindo o que ainda estamos a construir (vários técnicos, faturação da empresa).'
 }else{
-icon.innerHTML='<svg class="ic" style="width:26px;height:26px" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M8.2 13.9 7 22l5-3 5 3-1.2-8.1"/></svg>'
-title.textContent='Obter plano Premium'
-link.href=`mailto:avlistech2@gmail.com?subject=Upgrade%20Flinko%20Premium&body=Olá%2C%20quero%20fazer%20upgrade%20para%20o%20plano%20Premium%20(€${isYearly?'182/ano':'19/mês'}).`
+desc.textContent='Para ativar o teu plano, entra em contacto connosco. A ativação é feita manualmente em até 24 horas após confirmares o pagamento.'
 }
+link.href='mailto:avlistech2@gmail.com?subject=Upgrade%20Flinko%20'+encodeURIComponent(info.name)+'&body='+encodeURIComponent('Olá, quero fazer upgrade para o plano '+info.name+' (€'+priceTxt+').')
 modal.style.display='flex'
 }
 function closeModal(){document.getElementById('upgrade-modal').style.display='none'}
 document.getElementById('upgrade-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal()})
 
 function toggleFaq(el){el.parentElement.classList.toggle('open')}
-
-init()
 </script>
 
 <script>
@@ -540,12 +546,10 @@ toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
 });
 }
 
-var header = document.getElementById('siteHeader');
 var progress = document.getElementById('scrollProgress');
 var toTop = document.getElementById('toTop');
-if(header || progress || toTop){
+if(progress || toTop){
 var onScroll = function(){
-if(header) header.classList.toggle('condensed', window.scrollY > 30);
 if(progress){
 var h = document.documentElement;
 var max = h.scrollHeight - h.clientHeight;
