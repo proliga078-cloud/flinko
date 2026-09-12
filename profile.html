@@ -352,13 +352,12 @@
         <div class="card-title"><svg class="ic" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg> Deixar Avaliação</div>
         <div class="msg error" id="rev-error"></div>
         <div class="msg success" id="rev-success"></div>
-        <div id="rev-loggedout" style="display:none;font-size:13px;color:var(--muted);line-height:1.6">
-          Só podes avaliar profissionais com quem já falaste no chat. <a href="auth.html?tab=login" style="color:var(--blue);font-weight:600">Inicia sessão</a> para deixares a tua avaliação.
-        </div>
-        <div id="rev-noconvo" style="display:none;font-size:13px;color:var(--muted);line-height:1.6">
-          Só podes avaliar profissionais com quem já tiveste uma conversa. <a href="#" onclick="startConversation();return false" style="color:var(--blue);font-weight:600">Envia uma mensagem primeiro</a>.
+        <div id="rev-self" style="display:none;font-size:13px;color:var(--muted);line-height:1.6">
+          Não podes avaliar o teu próprio perfil.
         </div>
         <div id="rev-form-fields">
+        <div class="form-group"><label>O teu nome *</label><input type="text" id="rev-name" placeholder="Nome" maxlength="80"></div>
+        <div class="form-group"><label>O teu email *</label><input type="email" id="rev-email" placeholder="email@exemplo.com" maxlength="160"></div>
         <div class="form-group">
           <label>Classificação *</label>
           <div class="star-select" role="radiogroup" aria-label="Classificação de 1 a 5 estrelas">
@@ -942,17 +941,26 @@ function setStar(v){
   })
 }
 
+// Qualquer visitante pode deixar avaliação, com ou sem conta na Flinko —
+// já não é preciso ter sessão iniciada nem ter falado antes com o
+// profissional pelo chat (decisão de 2026-09, ver reviews_insert no RLS).
+// Como não há sessão obrigatória, o nome/email têm de vir sempre do
+// próprio formulário (o insert antigo não os enviava e por isso nunca
+// tinha sucesso — a tabela reviews é NOT NULL em reviewer_name/reviewer_email).
 async function submitReview(){
+  const name=document.getElementById('rev-name').value.trim()
+  const email=document.getElementById('rev-email').value.trim()
   const comment=document.getElementById('rev-comment').value.trim()
   const btn=document.getElementById('rev-btn')
-  const{data:{session}}=await db.auth.getSession()
-  if(!session)return showMsg('rev-error','Precisas de iniciar sessão para avaliar.')
+  if(!name)return showMsg('rev-error','Escreve o teu nome.')
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return showMsg('rev-error','Escreve um email válido.')
   if(!currentRating)return showMsg('rev-error','Escolhe uma classificação.')
   btn.disabled=true;btn.textContent='A publicar...'
-  const{error}=await db.from('reviews').insert({professional_id:proId,client_id:session.user.id,rating:currentRating,comment})
+  const{data:{session}}=await db.auth.getSession()
+  const{error}=await db.from('reviews').insert({professional_id:proId,client_id:session?session.user.id:null,reviewer_name:name,reviewer_email:email,rating:currentRating,comment})
   btn.disabled=false;btn.textContent='Publicar avaliação'
   if(error){
-    showMsg('rev-error','Só podes avaliar profissionais com quem já falaste no chat.')
+    showMsg('rev-error','Não foi possível publicar a avaliação. Tenta novamente.')
     return
   }
   showMsg('rev-success','Avaliação publicada! Obrigado.','success')
@@ -962,14 +970,16 @@ async function submitReview(){
 
 async function checkReviewEligibility(){
   const{data:{session}}=await db.auth.getSession()
-  const loggedout=document.getElementById('rev-loggedout')
-  const noconvo=document.getElementById('rev-noconvo')
+  const self=document.getElementById('rev-self')
   const fields=document.getElementById('rev-form-fields')
-  if(!session){loggedout.style.display='block';noconvo.style.display='none';fields.style.display='none';return}
-  if(session.user.id===proId){loggedout.style.display='none';noconvo.style.display='none';fields.style.display='none';return}
-  const{data:convo}=await db.from('conversations').select('id').or('and(client_id.eq.'+session.user.id+',professional_id.eq.'+proId+'),and(professional_id.eq.'+session.user.id+',client_id.eq.'+proId+')').limit(1).maybeSingle()
-  if(!convo){loggedout.style.display='none';noconvo.style.display='block';fields.style.display='none';return}
-  loggedout.style.display='none';noconvo.style.display='none';fields.style.display='block'
+  if(session&&session.user.id===proId){self.style.display='block';fields.style.display='none';return}
+  self.style.display='none';fields.style.display='block'
+  if(session){
+    const emailInput=document.getElementById('rev-email')
+    if(!emailInput.value)emailInput.value=session.user.email||''
+    const nameInput=document.getElementById('rev-name')
+    if(!nameInput.value&&session.user.user_metadata?.name)nameInput.value=session.user.user_metadata.name
+  }
 }
 
 async function startConversation(){
