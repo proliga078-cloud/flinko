@@ -2,9 +2,16 @@ const Stripe=require('stripe')
 const{createClient}=require('@supabase/supabase-js')
 const stripe=Stripe(process.env.STRIPE_SECRET_KEY)
 const admin=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY)
-// Apenas o plano Pro esta a venda. O Premium foi descontinuado do site;
-// subscricoes antigas continuam validas mas nao se aceitam novas.
-const PRICE_MAP={pro_monthly:process.env.STRIPE_PRICE_PRO_MONTHLY,pro_yearly:process.env.STRIPE_PRICE_PRO_YEARLY}
+// Starter e Pro estao a venda com checkout automatico. O Empresas fica de
+// fora de proposito (contacto direto, conta de equipa e faturacao feitas a
+// mao) — ver contactEmpresas() em pricing.html. O Premium foi descontinuado
+// do site; subscricoes antigas continuam validas mas nao se aceitam novas.
+const PRICE_MAP={
+pro_monthly:process.env.STRIPE_PRICE_PRO_MONTHLY,
+pro_yearly:process.env.STRIPE_PRICE_PRO_YEARLY,
+starter_monthly:process.env.STRIPE_PRICE_STARTER_MONTHLY,
+starter_yearly:process.env.STRIPE_PRICE_STARTER_YEARLY
+}
 
 exports.handler=async(event)=>{
 if(event.httpMethod!=='POST')return{statusCode:405,body:'Method Not Allowed'}
