@@ -330,7 +330,8 @@ async function addJob(){
 }
 
 async function updateJobField(id,field,value){
-  await db.from('jobs').update({[field]:value}).eq('id',id)
+  const{error}=await db.from('jobs').update({[field]:value}).eq('id',id)
+  if(error){alert('Não foi possível guardar: '+error.message);return}
   loadJobs()
 }
 
@@ -342,7 +343,8 @@ async function updateJobStatus(id,status){
     const job=allJobs.find(j=>j.id===id)
     if(job&&!job.paid_amount)updates.paid_amount=job.quote_amount||null
   }
-  await db.from('jobs').update(updates).eq('id',id)
+  const{error}=await db.from('jobs').update(updates).eq('id',id)
+  if(error){alert('Não foi possível atualizar o estado: '+error.message);return}
   if(status==='pago')await requestReviewForJob(id)
   loadJobs()
 }
@@ -380,7 +382,8 @@ async function notifyReviewRequest(conversationId,content){
 
 async function deleteJob(id){
   if(!confirm('Remover este trabalho?'))return
-  await db.from('jobs').delete().eq('id',id)
+  const{error}=await db.from('jobs').delete().eq('id',id)
+  if(error){alert('Não foi possível remover: '+error.message);return}
   loadJobs()
 }
 

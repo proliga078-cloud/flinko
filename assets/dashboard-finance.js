@@ -199,7 +199,8 @@ async function addExpense(){
 
 async function deleteExpense(id){
   if(!confirm('Remover esta despesa?'))return
-  await db.from('business_expenses').delete().eq('id',id)
+  const{error}=await db.from('business_expenses').delete().eq('id',id)
+  if(error){alert('Não foi possível remover: '+error.message);return}
   loadExpenses()
 }
 

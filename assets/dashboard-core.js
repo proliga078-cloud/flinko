@@ -353,9 +353,9 @@ certifications:certState,
 updated_at:new Date().toISOString()
 }
 const{error}=await db.from('profiles').update(updates).eq('id',profileId)
-if(error){showAlert('profile-error','Erro ao guardar: '+error.message);return}
+if(error){showAlert('profile-error','Erro ao guardar: '+error.message,'error');return}
 const{error:phoneErr}=await db.from('profile_private').upsert({profile_id:profileId,phone:phoneVal,updated_at:new Date().toISOString()},{onConflict:'profile_id'})
-if(phoneErr){showAlert('profile-error','Perfil guardado, mas o telefone não foi atualizado: '+phoneErr.message);return}
+if(phoneErr){showAlert('profile-error','Perfil guardado, mas o telefone não foi atualizado: '+phoneErr.message,'error');return}
 profileData={...profileData,...updates,phone:phoneVal}
 updateSidebar()
 showAlert('profile-success','Perfil guardado com sucesso!')

@@ -67,7 +67,9 @@ async function loadMyRequests(){
 }
 
 async function toggleRequestStatus(id,newStatus){
-  await db.from('requests').update({status:newStatus}).eq('id',id);if(newStatus==='resolved')showAlert('req-success','Pedido marcado como resolvido! Já podes avaliar quem contrataste, mais abaixo.')
+  const{error}=await db.from('requests').update({status:newStatus}).eq('id',id)
+  if(error){alert('Não foi possível atualizar: '+error.message);return}
+  if(newStatus==='resolved')showAlert('req-success','Pedido marcado como resolvido! Já podes avaliar quem contrataste, mais abaixo.')
   loadMyRequests()
 }
 
@@ -114,7 +116,8 @@ async function notifyMatchingProfessionalsDash(requestId){
 
 async function deleteMyRequest(id){
   if(!confirm('Remover este pedido?'))return
-  await db.from('requests').delete().eq('id',id)
+  const{error}=await db.from('requests').delete().eq('id',id)
+  if(error){alert('Não foi possível remover: '+error.message);return}
   loadMyRequests()
 }
 

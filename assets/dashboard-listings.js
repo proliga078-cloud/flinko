@@ -30,7 +30,7 @@ price_from:parseFloat(document.getElementById('srv-pmin').value)||null,
 price_to:parseFloat(document.getElementById('srv-pmax').value)||null,
 price_unit:document.getElementById('srv-unit').value
 })
-if(error){showAlert('srv-error','Erro: '+error.message);return}
+if(error){showAlert('srv-error','Erro: '+error.message,'error');return}
 showAlert('srv-success','Serviço adicionado!')
 ;['srv-title','srv-desc','srv-pmin','srv-pmax'].forEach(id=>document.getElementById(id).value='')
 loadServices()
@@ -38,7 +38,8 @@ loadServices()
 
 async function deleteService(id){
 if(!confirm('Remover este serviço?'))return
-await db.from('services').delete().eq('id',id)
+const{error}=await db.from('services').delete().eq('id',id)
+if(error){alert('Não foi possível remover: '+error.message);return}
 loadServices()
 }
 
@@ -98,7 +99,7 @@ description:isCase?(document.getElementById('port-desc').value.trim()||null):nul
 duration_label:isCase?(document.getElementById('port-duration').value.trim()||null):null,
 before_photo_url:isCase?(document.getElementById('port-before-url').value.trim()||null):null
 })
-if(error){showAlert('port-error','Erro: '+error.message);return}
+if(error){showAlert('port-error','Erro: '+error.message,'error');return}
 showAlert('port-success','Foto adicionada!')
 ;['port-url','port-cap','port-title','port-desc','port-duration','port-before-url'].forEach(id=>document.getElementById(id).value='')
 document.getElementById('port-is-case').checked=false
@@ -139,7 +140,8 @@ loadDiaryDash()
 }
 async function deleteDiaryUpdate(id){
 if(!confirm('Remover esta publicação?'))return
-await db.from('professional_updates').delete().eq('id',id)
+const{error}=await db.from('professional_updates').delete().eq('id',id)
+if(error){alert('Não foi possível remover: '+error.message);return}
 loadDiaryDash()
 }
 async function uploadDiaryPhoto(input){
@@ -196,13 +198,15 @@ loadFaqsDash()
 }
 async function deleteFaqDash(id){
 if(!confirm('Remover esta pergunta?'))return
-await db.from('professional_faqs').delete().eq('id',id)
+const{error}=await db.from('professional_faqs').delete().eq('id',id)
+if(error){alert('Não foi possível remover: '+error.message);return}
 loadFaqsDash()
 }
 
 async function deletePortItem(id){
 if(!confirm('Remover esta foto?'))return
-await db.from('portfolio_items').delete().eq('id',id)
+const{error}=await db.from('portfolio_items').delete().eq('id',id)
+if(error){alert('Não foi possível remover: '+error.message);return}
 loadPortfolio()
 }
 

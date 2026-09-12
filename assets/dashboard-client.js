@@ -191,7 +191,8 @@ const{error}=await db.from('saved_professionals').insert({client_id:profileId,pr
 if(error){alert('Não foi possível guardar: '+error.message);return}
 }
 async function removeSavedPro(professionalId){
-await db.from('saved_professionals').delete().eq('client_id',profileId).eq('professional_id',professionalId)
+const{error}=await db.from('saved_professionals').delete().eq('client_id',profileId).eq('professional_id',professionalId)
+if(error){alert('Não foi possível remover: '+error.message);return}
 loadSavedPros()
 }
 
