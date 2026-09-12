@@ -323,7 +323,7 @@ footer{background:var(--bg-2);color:rgba(243,246,243,.5);padding-top:56px;border
 <div class="plan-price"><span class="amount" id="price-empresas">€39,99</span><span class="per" id="per-empresas">/mês</span></div>
 <div class="price-vat">Isento de IVA — art. 53.º do CIVA.</div>
 <div class="plan-desc">Para negócios com equipa, não só um profissional sozinho.</div>
-<a href="#" class="btn btn-line btn-block plan-cta" onclick="requestUpgrade('empresas');return false">Falar sobre o Empresas</a>
+<a href="#" class="btn btn-line btn-block plan-cta" onclick="contactEmpresas();return false">Falar sobre o Empresas</a>
 <ul class="plan-features">
 <li><span class="feat-yes">✓</span> Tudo do Pro</li>
 <li><span class="feat-yes">✓</span> Vários técnicos numa única conta<span class="soon-tag">Em breve</span></li>
@@ -377,11 +377,11 @@ footer{background:var(--bg-2);color:rgba(243,246,243,.5);padding-top:56px;border
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">Como posso fazer upgrade do meu plano?</div>
-<div class="faq-a">Clica no botão do plano que queres — vais receber um email pronto a enviar com o pedido. Confirmamos o pagamento contigo e ativamos o plano manualmente, normalmente em poucas horas e no máximo em 24h. Ainda não temos checkout automático, por isso preferimos ser diretos sobre isso em vez de prometer uma ativação instantânea que ainda não existe.</div>
+<div class="faq-a">No Starter e no Pro, clica no botão do plano — pagas por cartão através do Stripe e o plano fica ativo de imediato, sem esperar por ninguém. No Empresas, o botão abre um contacto direto connosco, porque a conta de equipa e a faturação são configuradas à mão.</div>
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">Posso cancelar a qualquer momento?</div>
-<div class="faq-a">Sim. Não há contratos nem períodos mínimos. Escreve-nos a pedir o cancelamento a partir do email que usaste para subscrever — o plano continua ativo até ao fim do período já pago.</div>
+<div class="faq-a">Sim. Não há contratos nem períodos mínimos. No Starter e no Pro, cancela a partir do dashboard (Gerir subscrição) — o plano continua ativo até ao fim do período já pago. No Empresas, escreve-nos diretamente.</div>
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">Os clientes pagam alguma coisa?</div>
@@ -389,11 +389,11 @@ footer{background:var(--bg-2);color:rgba(243,246,243,.5);padding-top:56px;border
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">Que métodos de pagamento aceitam?</div>
-<div class="faq-a">Por agora, transferência bancária ou MB Way, combinados por email depois de pedires o upgrade. Vamos adicionar pagamento direto por cartão assim que o checkout automático estiver pronto.</div>
+<div class="faq-a">No Starter e no Pro, cartão através do Stripe. No Empresas, combinamos o método contigo depois de falarmos.</div>
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">Recebo fatura ou recibo do pagamento?</div>
-<div class="faq-a">Sim, enviamos recibo por email a seguir a cada pagamento confirmado. Podes subscrever como profissional independente — não precisas de ter empresa aberta, exceto no plano Empresas.</div>
+<div class="faq-a">Sim, o Stripe envia-te o recibo por email a seguir a cada pagamento. Podes subscrever como profissional independente — não precisas de ter empresa aberta, exceto no plano Empresas.</div>
 </div>
 <div class="faq-item">
 <div class="faq-q" onclick="toggleFaq(this)">Qual a diferença entre Starter e Pro?</div>
@@ -511,6 +511,9 @@ else{a.textContent='€'+info.monthly;per.textContent='/mês'}
 })
 }
 
+// Fallback para Starter/Pro: só é chamada se o assets/billing.js não
+// tiver carregado (falha de rede) — em condições normais, billing.js
+// substitui window.requestUpgrade pelo checkout Stripe automático.
 function requestUpgrade(plan){
 const modal=document.getElementById('upgrade-modal')
 const title=document.getElementById('modal-title')
@@ -520,11 +523,23 @@ const info=PLAN_INFO[plan]
 if(!info)return
 const priceTxt=isYearly?(info.yearly+'/mês, faturado '+info.yearlyTotal+'/ano'):(info.monthly+'/mês')
 title.textContent='Mudar para '+info.name
-if(plan==='empresas'){
-desc.textContent='O plano Empresas é novo — vamos falar contigo para perceber a tua equipa e ativar tudo à mão, incluindo o que ainda estamos a construir (vários técnicos, faturação da empresa).'
-}else{
-desc.textContent='Para ativar o teu plano, entra em contacto connosco. A ativação é feita manualmente em até 24 horas após confirmares o pagamento.'
+desc.textContent='Não foi possível iniciar o pagamento automático agora (pode ser um problema de rede). Contacta-nos e ativamos o plano manualmente.'
+link.href='mailto:avlistech2@gmail.com?subject=Upgrade%20Flinko%20'+encodeURIComponent(info.name)+'&body='+encodeURIComponent('Olá, quero fazer upgrade para o plano '+info.name+' (€'+priceTxt+').')
+modal.style.display='flex'
 }
+// Empresas nunca passa pelo checkout automático — é sempre um contacto
+// direto (conta de equipa e faturação são configuradas à mão). Usa um
+// nome de função à parte para nunca ser intercetada pelo window.requestUpgrade
+// que o assets/billing.js define para Starter/Pro.
+function contactEmpresas(){
+const modal=document.getElementById('upgrade-modal')
+const title=document.getElementById('modal-title')
+const desc=document.getElementById('modal-desc')
+const link=document.getElementById('modal-email-link')
+const info=PLAN_INFO.empresas
+const priceTxt=isYearly?(info.yearly+'/mês, faturado '+info.yearlyTotal+'/ano'):(info.monthly+'/mês')
+title.textContent='Mudar para '+info.name
+desc.textContent='O plano Empresas é novo — vamos falar contigo para perceber a tua equipa e ativar tudo à mão, incluindo o que ainda estamos a construir (vários técnicos, faturação da empresa).'
 link.href='mailto:avlistech2@gmail.com?subject=Upgrade%20Flinko%20'+encodeURIComponent(info.name)+'&body='+encodeURIComponent('Olá, quero fazer upgrade para o plano '+info.name+' (€'+priceTxt+').')
 modal.style.display='flex'
 }
