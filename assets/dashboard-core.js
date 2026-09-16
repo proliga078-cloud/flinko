@@ -213,6 +213,18 @@ document.getElementById('p-payments').value=(pro.payment_methods||[]).join(', ')
 document.getElementById('p-insurance').checked=!!pro.has_insurance
 certState=Array.isArray(pro.certifications)?JSON.parse(JSON.stringify(pro.certifications)):[]
 renderCertList()
+  document.getElementById('p-video').value=pro.intro_video_url||''
+  const sl=pro.social_links||{}
+  document.getElementById('p-social-instagram').value=sl.instagram||''
+  document.getElementById('p-social-facebook').value=sl.facebook||''
+  document.getElementById('p-social-whatsapp').value=sl.whatsapp||''
+  document.getElementById('p-social-tiktok').value=sl.tiktok||''
+  document.getElementById('p-social-youtube').value=sl.youtube||''
+  document.getElementById('p-social-linkedin').value=sl.linkedin||''
+  awardState=Array.isArray(pro.awards)?JSON.parse(JSON.stringify(pro.awards)):[]
+  renderAwardList()
+  promoState=Array.isArray(pro.promotions)?JSON.parse(JSON.stringify(pro.promotions)):[]
+  renderPromoList()
 document.getElementById('p-unavail-until').value=pro.unavailable_until||''
 document.getElementById('p-unavail-msg').value=pro.unavailable_message||''
 renderWeeklyScheduleGrid()
@@ -246,6 +258,8 @@ showAlert('notif-success', on?'Vais receber um resumo diário.':'Deixaste de rec
 }
 
 let certState=[]
+let awardState=[]
+let promoState=[]
 function renderCertList(){
 const el=document.getElementById('cert-list')
 if(!el)return
@@ -262,6 +276,42 @@ document.getElementById('cert-year').value=''
 renderCertList()
 }
 function removeCertification(i){certState.splice(i,1);renderCertList()}
+function renderAwardList(){
+  const el=document.getElementById('award-list')
+  if(!el)return
+  if(!awardState.length){el.innerHTML='<div style="font-size:12.5px;color:var(--muted)">Nenhum prémio adicionado.</div>';return}
+  el.innerHTML=awardState.map((a,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:8px;padding:8px 12px"><span style="font-size:13px;font-weight:600">${escapeHtml(a.title)}${a.issuer?' · '+escapeHtml(a.issuer):''}${a.year?' · '+escapeHtml(String(a.year)):''}</span><button type="button" class="btn btn-danger btn-sm" onclick="removeAward(${i})">✕</button></div>`).join('')
+}
+function addAward(){
+  const title=document.getElementById('award-title').value.trim()
+  const issuer=document.getElementById('award-issuer').value.trim()
+  const year=document.getElementById('award-year').value.trim()
+  if(!title)return
+  awardState.push({title,issuer:issuer||null,year:year||null})
+  document.getElementById('award-title').value=''
+  document.getElementById('award-issuer').value=''
+  document.getElementById('award-year').value=''
+  renderAwardList()
+}
+function removeAward(i){awardState.splice(i,1);renderAwardList()}
+function renderPromoList(){
+  const el=document.getElementById('promo-list')
+  if(!el)return
+  if(!promoState.length){el.innerHTML='<div style="font-size:12.5px;color:var(--muted)">Nenhuma promoção adicionada.</div>';return}
+  el.innerHTML=promoState.map((p,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:8px;padding:8px 12px"><span style="font-size:13px;font-weight:600">${escapeHtml(p.title)}${p.description?' · '+escapeHtml(p.description):''}${p.valid_until?' · até '+escapeHtml(p.valid_until):''}</span><button type="button" class="btn btn-danger btn-sm" onclick="removePromotion(${i})">✕</button></div>`).join('')
+}
+function addPromotion(){
+  const title=document.getElementById('promo-title').value.trim()
+  const description=document.getElementById('promo-desc').value.trim()
+  const valid_until=document.getElementById('promo-until').value||null
+  if(!title)return
+  promoState.push({title,description:description||null,valid_until})
+  document.getElementById('promo-title').value=''
+  document.getElementById('promo-desc').value=''
+  document.getElementById('promo-until').value=''
+  renderPromoList()
+}
+function removePromotion(i){promoState.splice(i,1);renderPromoList()}
 function splitCsv(v){return (v||'').split(',').map(s=>s.trim()).filter(Boolean)}
 
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
@@ -330,6 +380,16 @@ document.getElementById('p-bio').value=parts.join(' ')
 showAlert('profile-success','Bio gerada — revê o texto e ajusta o que quiseres antes de guardar.')
 }
 
+function normalizeVideoUrl(v){
+  if(!v)return null
+    return v.trim()||null
+}
+function buildSocialLinks(){
+  const map={instagram:'p-social-instagram',facebook:'p-social-facebook',whatsapp:'p-social-whatsapp',tiktok:'p-social-tiktok',youtube:'p-social-youtube',linkedin:'p-social-linkedin'}
+    const out={}
+      for(const k in map){const el=document.getElementById(map[k]);const v=el?el.value.trim():'';if(v)out[k]=v}
+  return out
+}
 async function saveProfile(){
 if(!profileId){showAlert('profile-error','Erro: perfil não carregado. Recarrega a página.','error');return}
 const name=document.getElementById('p-name').value.trim()
@@ -350,6 +410,10 @@ languages:splitCsv(document.getElementById('p-languages').value),
 payment_methods:splitCsv(document.getElementById('p-payments').value),
 has_insurance:document.getElementById('p-insurance').checked,
 certifications:certState,
+  intro_video_url:normalizeVideoUrl(document.getElementById('p-video').value.trim())||null,
+  social_links:buildSocialLinks(),
+  awards:awardState,
+  promotions:promoState,
 updated_at:new Date().toISOString()
 }
 const{error}=await db.from('profiles').update(updates).eq('id',profileId)
