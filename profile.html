@@ -520,6 +520,31 @@ function updateSeoTags(pro){
   document.getElementById('meta-twitter-image').setAttribute('content',imagem)
 }
 
+function injectStructuredData(pro){
+    try{
+          const existing=document.getElementById('structured-data-ld')
+                if(existing) existing.remove()
+                      const url=pro.slug?`https://flinko.pt/${encodeURIComponent(pro.slug)}`:`https://flinko.pt/profile.html?id=${pro.id}`
+                            const data={
+                                    "@context":"https://schema.org",
+                                    "@type":"LocalBusiness",
+                                    "name":pro.name,
+                                    "description":pro.bio?pro.bio.replace(/\s+/g,' ').trim().slice(0,500):undefined,
+                                    "image":pro.photo_url||undefined,
+        "url":url,
+                                    "additionalType":pro.category||undefined,
+                                    "areaServed":pro.location||undefined,
+                                    "address":pro.location?{"@type":"PostalAddress","addressLocality":pro.location,"addressCountry":"PT"}:undefined
+                            }
+                                  Object.keys(data).forEach(k=>data[k]===undefined&&delete data[k])
+                                        const script=document.createElement('script')
+                                              script.type='application/ld+json'
+                                                    script.id='structured-data-ld'
+                                                          script.textContent=JSON.stringify(data)
+                                                                document.head.appendChild(script)
+    }catch(e){console.error('injectStructuredData error',e)}
+}
+  
 async function init(){
   if(!await resolveSlug()){location.href='index.html';return}
   const{data:{session}}=await db.auth.getSession()
@@ -540,7 +565,8 @@ async function init(){
   proData=pro
   document.title=`${pro.name} – Flinko`
   updateSeoTags(pro)
-  renderHeader(pro)
+  injectStructuredData(pro)
+renderHeader(pro)
   document.getElementById('content-grid').style.display='grid'
   loadServices()
   loadReviews()
