@@ -426,6 +426,13 @@
       <div id="extra-info-list"></div>
     </div>
 
+    <div class="info-card" id="video-card" style="display:none">
+      <div class="info-title">Vídeo de apresentação</div>
+      <div style="position:relative;width:100%;padding-top:56.25%;border-radius:10px;overflow:hidden;background:#000">
+        <iframe id="video-embed" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+
     <div class="info-card" id="plan-card" style="display:none">
       <div class="info-title">Plano</div>
       <div id="plan-info"></div>
@@ -484,7 +491,7 @@ let currentRating=0,proData=null,preloadedPro=null
 // aqui em vez de select('*') porque a tabela profiles tambem tem colunas
 // sensiveis (creditos, ids do Stripe, is_admin, etc.) que so o proprio dono
 // ou um admin podem ler — pedir '*' falharia com "permission denied".
-const PUBLIC_PROFILE_COLS='id,name,bio,category,location,photo_url,plan,verified,created_at,slug,avg_response_minutes,response_sample_count,unavailable_until,unavailable_message,weekly_schedule,cover_url,certifications,has_insurance,experience_years,languages,specialties,website,is_demo'
+const PUBLIC_PROFILE_COLS='id,name,bio,category,location,photo_url,plan,verified,created_at,slug,avg_response_minutes,response_sample_count,unavailable_until,unavailable_message,weekly_schedule,cover_url,certifications,has_insurance,experience_years,languages,specialties,website,is_demo,social_links,intro_video_url,awards,promotions'
 
 async function resolveSlug(){
   if(proId&&proId!=='null'&&proId!=='undefined')return true
@@ -577,6 +584,7 @@ renderHeader(pro)
   renderZoneMap(pro)
   renderAvailGrid(pro)
   renderExtraInfo(pro)
+  renderVideoCard(pro)
   loadSimilarPros(pro)
   if(!session||session.user.id!==pro.id)logProfileView(pro.id);if(params.get('tab')==='avaliacoes'){showTab('avaliacoes');setTimeout(()=>document.getElementById('tab-avaliacoes')?.scrollIntoView({behavior:'smooth'}),400)}
   // WA share
@@ -617,6 +625,19 @@ function renderCertifications(pro){
   const svgCert='<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5L17 22l-5-3-5 3 1.5-8.5"/></svg>'
   return `<div class="cert-strip">${pro.certifications.map(c=>`<div class="cert-item">${svgCert}<div><div class="cert-name">${escapeHtml(c.name||'')}</div>${c.year?`<div class="cert-year">${c.year}</div>`:''}</div></div>`).join('')}</div>`
 }
+function renderAwards(pro){
+  if(!pro.awards||!pro.awards.length)return ''
+  const svgAward='<svg class="ic" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M5 4H3v2a4 4 0 0 0 4 4M19 4h2v2a4 4 0 0 1-4 4"/></svg>'
+  return `<div class="cert-strip">${pro.awards.map(a=>`<div class="cert-item">${svgAward}<div><div class="cert-name">${escapeHtml(a.title||'')}</div>${a.issuer||a.year?`<div class="cert-year">${[a.issuer?escapeHtml(a.issuer):'',a.year||''].filter(Boolean).join(' · ')}</div>`:''}</div></div>`).join('')}</div>`
+}
+function renderPromotions(pro){
+  if(!pro.promotions||!pro.promotions.length)return ''
+  const today=new Date().toISOString().slice(0,10)
+  const active=pro.promotions.filter(p=>!p.valid_until||p.valid_until>=today)
+  if(!active.length)return ''
+  const svgTag='<svg class="ic" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M20.59 13.41L11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>'
+  return `<div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">${active.map(p=>`<div style="display:flex;gap:10px;align-items:flex-start;background:var(--gold-light,#fff7e6);border:1px solid var(--gold,#e8b23a);border-radius:10px;padding:10px 12px"><span style="color:var(--gold,#b8860b);flex-shrink:0;margin-top:2px">${svgTag}</span><div><div style="font-weight:700;font-size:14px">${escapeHtml(p.title||'')}</div>${p.description?`<div style="font-size:13px;color:var(--muted);margin-top:2px">${escapeHtml(p.description)}</div>`:''}${p.valid_until?`<div style="font-size:11px;color:var(--muted);margin-top:4px">Válido até ${new Date(p.valid_until+'T00:00:00').toLocaleDateString('pt-PT')}</div>`:''}</div></div>`).join('')}</div>`
+}
 function isUnavailable(pro){
   if(!pro.unavailable_until)return false
   return new Date(pro.unavailable_until+'T23:59:59')>=new Date()
@@ -647,6 +668,8 @@ function renderHeader(pro){
       ${pro.bio?`<div class="profile-bio">${escapeHtml(pro.bio)}</div>`:''}
       ${renderSpecialties(pro)}
       ${renderCertifications(pro)}
+      ${renderAwards(pro)}
+      ${renderPromotions(pro)}
     </div>
     <div class="profile-actions">
       ${pro.website?`<a href="${escapeHtml(pro.website)}" target="_blank" class="btn btn-outline"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Website</a>`:''}
@@ -800,6 +823,21 @@ function renderSidebar(pro){
   const svgCal='<svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>'
   if(pro.location)items.push(`<div class="info-row"><span class="info-icon">${svgLoc}</span>${escapeHtml(pro.location)}</div>`)
   if(pro.website)items.push(`<div class="info-row"><span class="info-icon">${svgWeb}</span><a href="${escapeHtml(pro.website)}" target="_blank" style="color:var(--blue)">Website</a></div>`)
+  if(pro.social_links&&typeof pro.social_links==='object'){
+    const svgSocial='<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>'
+    const socialMeta={instagram:'Instagram',facebook:'Facebook',whatsapp:'WhatsApp',tiktok:'TikTok',youtube:'YouTube',linkedin:'LinkedIn'}
+    for(const key in socialMeta){
+      const raw=(pro.social_links[key]||'').trim()
+      if(!raw)continue
+      let url=raw
+      if(!/^https?:\/\//i.test(url)){
+        if(key==='whatsapp'){const digits=url.replace(/\D/g,'');url=digits?`https://wa.me/${digits}`:url}
+        else if((key==='instagram'||key==='tiktok')&&url.startsWith('@')){url=`https://www.${key==='instagram'?'instagram.com':'tiktok.com'}/${url.slice(1)}`}
+        else if(url.includes('.')){url=`https://${url}`}
+      }
+      items.push(`<div class="info-row"><span class="info-icon">${svgSocial}</span><a href="${escapeHtml(url)}" target="_blank" rel="noopener" style="color:var(--blue)">${socialMeta[key]}</a></div>`)
+    }
+  }
   const joined=new Date(pro.created_at).toLocaleDateString('pt-PT',{month:'long',year:'numeric'})
   items.push(`<div class="info-row"><span class="info-icon">${svgCal}</span>Membro desde ${joined}</div>`)
   document.getElementById('info-items').innerHTML=items.join('')
@@ -885,6 +923,18 @@ function renderExtraInfo(pro){
   if(!pills.length)return
   document.getElementById('extra-info-card').style.display='block'
   document.getElementById('extra-info-list').innerHTML=pills.map(p=>`<span class="info-pill">${p}</span>`).join('')
+}
+
+function renderVideoCard(pro){
+  if(!pro.intro_video_url)return
+  const url=pro.intro_video_url.trim()
+  let embed=null
+  let m=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]+)/)
+  if(m)embed=`https://www.youtube.com/embed/${m[1]}`
+  if(!embed){m=url.match(/vimeo\.com\/(?:video\/)?(\d+)/);if(m)embed=`https://player.vimeo.com/video/${m[1]}`}
+  if(!embed)return
+  document.getElementById('video-embed').src=embed
+  document.getElementById('video-card').style.display='block'
 }
 
 // Profissionais semelhantes: mesma categoria, exclui o proprio perfil.
