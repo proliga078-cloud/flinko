@@ -314,11 +314,11 @@
   <!-- LEFT -->
   <div>
     <div class="tabs">
-      <div class="tab active" onclick="showTab('servicos')"><svg class="ic" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Serviços</div>
-      <div class="tab" onclick="showTab('portfolio')"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg> Portfólio</div>
-      <div class="tab" onclick="showTab('avaliacoes')"><svg class="ic" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Avaliações</div>
-      <div class="tab" onclick="showTab('diario')"><svg class="ic" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Diário</div>
-      <div class="tab" onclick="showTab('faq')"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg> FAQ</div>
+      <div class="tab active" data-tab="servicos" onclick="showTab('servicos')"><svg class="ic" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Serviços</div>
+      <div class="tab" data-tab="portfolio" onclick="showTab('portfolio')"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg> Portfólio</div>
+      <div class="tab" data-tab="avaliacoes" onclick="showTab('avaliacoes')"><svg class="ic" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Avaliações</div>
+      <div class="tab" data-tab="diario" onclick="showTab('diario')"><svg class="ic" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Diário</div>
+      <div class="tab" data-tab="faq" onclick="showTab('faq')"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg> FAQ</div>
     </div>
 
     <!-- SERVICES TAB -->
@@ -492,7 +492,7 @@ let currentRating=0,proData=null,preloadedPro=null
 // aqui em vez de select('*') porque a tabela profiles tambem tem colunas
 // sensiveis (creditos, ids do Stripe, is_admin, etc.) que so o proprio dono
 // ou um admin podem ler — pedir '*' falharia com "permission denied".
-const PUBLIC_PROFILE_COLS='id,name,bio,category,location,photo_url,plan,verified,created_at,slug,avg_response_minutes,response_sample_count,unavailable_until,unavailable_message,weekly_schedule,cover_url,certifications,has_insurance,experience_years,languages,specialties,website,is_demo,social_links,intro_video_url,awards,promotions'
+const PUBLIC_PROFILE_COLS='id,name,bio,category,location,photo_url,plan,verified,created_at,slug,avg_response_minutes,response_sample_count,unavailable_until,unavailable_message,weekly_schedule,cover_url,certifications,has_insurance,experience_years,languages,specialties,website,is_demo,social_links,intro_video_url,awards,promotions,theme_color,custom_sections,section_order,hidden_sections'
 
 async function resolveSlug(){
   if(proId&&proId!=='null'&&proId!=='undefined')return true
@@ -571,6 +571,7 @@ async function init(){
     return
   }
   proData=pro
+  applyThemeColor(pro)
   document.title=`${pro.name} – Flinko`
   updateSeoTags(pro)
   injectStructuredData(pro)
@@ -586,6 +587,8 @@ renderHeader(pro)
   renderAvailGrid(pro)
   renderExtraInfo(pro)
   renderVideoCard(pro)
+  renderCustomSections(pro)
+  applySectionLayout(pro)
   loadSimilarPros(pro)
   if(!session||session.user.id!==pro.id)logProfileView(pro.id);if(params.get('tab')==='avaliacoes'){showTab('avaliacoes');setTimeout(()=>document.getElementById('tab-avaliacoes')?.scrollIntoView({behavior:'smooth'}),400)}
   // WA share
@@ -998,9 +1001,8 @@ async function loadFaqs(){
 function toggleFaq(i){document.getElementById('faq-'+i).classList.toggle('open')}
 
 function showTab(name){
-  document.querySelectorAll('.tab').forEach((t,i)=>{
-    const names=['servicos','portfolio','avaliacoes','diario','faq']
-    t.classList.toggle('active',names[i]===name)
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.classList.toggle('active',t.dataset.tab===name)
   })
   document.getElementById('tab-servicos').style.display=name==='servicos'?'block':'none'
   document.getElementById('tab-portfolio').style.display=name==='portfolio'?'block':'none'
@@ -1092,6 +1094,77 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox()})
 function showToast(msg){
   const t=document.getElementById('toast');t.textContent=msg;t.style.display='block'
   setTimeout(()=>t.style.display='none',2500)
+}
+
+const THEME_PRESETS_CSS={orange:{accent:'#E8720A',deep:'#B85608',soft:'#FFE7CE'},blue:{accent:'#1D6FE0',deep:'#154FA3',soft:'#DCEBFF'},green:{accent:'#0F8B5F',deep:'#0A6B49',soft:'#D7F5E4'},purple:{accent:'#7C3AED',deep:'#5B21B6',soft:'#EDE3FF'},red:{accent:'#D8342B',deep:'#A8241C',soft:'#FCE1DE'},teal:{accent:'#0E9AA3',deep:'#0A6E75',soft:'#D6F3F4'}}
+function applyThemeColor(pro){
+  const t=THEME_PRESETS_CSS[pro.theme_color]
+  if(!t)return
+  const r=document.documentElement.style
+  r.setProperty('--accent',t.accent)
+  r.setProperty('--accent-deep',t.deep)
+  r.setProperty('--accent-soft',t.soft)
+}
+
+function renderCustomSections(pro){
+  const list=Array.isArray(pro.custom_sections)?pro.custom_sections:[]
+  const planCard=document.getElementById('plan-card')
+  if(!planCard||!planCard.parentElement)return
+  const parent=planCard.parentElement
+  document.querySelectorAll('.custom-info-card').forEach(el=>el.remove())
+  list.forEach((sec,i)=>{
+    if(!sec||!sec.title||!sec.body)return
+    const card=document.createElement('div')
+    card.className='info-card custom-info-card'
+    card.id='custom-section-'+i
+    const titleEl=document.createElement('div')
+    titleEl.className='info-title'
+    titleEl.textContent=sec.title
+    const bodyEl=document.createElement('div')
+    bodyEl.style.fontSize='13px'
+    bodyEl.style.color='var(--ink-soft)'
+    bodyEl.style.lineHeight='1.6'
+    bodyEl.style.whiteSpace='pre-wrap'
+    bodyEl.textContent=sec.body
+    card.appendChild(titleEl)
+    card.appendChild(bodyEl)
+    parent.insertBefore(card,planCard)
+  })
+}
+
+function applySectionLayout(pro){
+  const DEFAULT_TABS=['servicos','portfolio','avaliacoes','diario','faq']
+  const DEFAULT_SIDEBAR=['badges','zone','avail','extra_info','video']
+  const SIDEBAR_CARD_ID={badges:'badges-card',zone:'zone-card',avail:'avail-card',extra_info:'extra-info-card',video:'video-card'}
+  const TAB_PANEL_ID={servicos:'tab-servicos',portfolio:'tab-portfolio',avaliacoes:'tab-avaliacoes',diario:'tab-diario',faq:'tab-faq'}
+  const so=pro.section_order&&typeof pro.section_order==='object'?pro.section_order:{}
+  const hidden=Array.isArray(pro.hidden_sections)?pro.hidden_sections:[]
+
+  const tabsOrder=Array.isArray(so.tabs)&&so.tabs.length?so.tabs.filter(k=>DEFAULT_TABS.includes(k)):DEFAULT_TABS.slice()
+  DEFAULT_TABS.forEach(k=>{if(!tabsOrder.includes(k))tabsOrder.push(k)})
+  const navContainer=document.querySelector('.tabs')
+  let firstVisible=null
+  tabsOrder.forEach(key=>{
+    const nav=navContainer?navContainer.querySelector('[data-tab="'+key+'"]'):null
+    const panel=document.getElementById(TAB_PANEL_ID[key])
+    if(nav&&navContainer)navContainer.appendChild(nav)
+    if(panel&&panel.parentElement)panel.parentElement.appendChild(panel)
+    const isHidden=hidden.includes(key)&&key!=='servicos'
+    if(nav)nav.style.display=isHidden?'none':''
+    if(!isHidden&&firstVisible===null)firstVisible=key
+  })
+  if(firstVisible&&typeof showTab==='function')showTab(firstVisible)
+
+  const sidebarOrder=Array.isArray(so.sidebar)&&so.sidebar.length?so.sidebar.filter(k=>DEFAULT_SIDEBAR.includes(k)):DEFAULT_SIDEBAR.slice()
+  DEFAULT_SIDEBAR.forEach(k=>{if(!sidebarOrder.includes(k))sidebarOrder.push(k)})
+  const planCard2=document.getElementById('plan-card')
+  const sidebarParent=planCard2?planCard2.parentElement:null
+  sidebarOrder.forEach(key=>{
+    const card=document.getElementById(SIDEBAR_CARD_ID[key])
+    if(!card||!sidebarParent)return
+    if(hidden.includes(key))card.style.display='none'
+    sidebarParent.insertBefore(card,planCard2)
+  })
 }
 
 init()
