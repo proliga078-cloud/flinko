@@ -199,3 +199,16 @@ function handleAiBuilderCheckoutReturn(){
   const qs = params.toString()
   history.replaceState({}, '', location.pathname + (qs ? '?'+qs : ''))
 }
+
+// Auto-inicializa o banner assim que profileData estiver disponível — não depende da ordem
+// exata de carregamento dos scripts do dashboard (dashboard-core.js também chama isto,
+// mas pode correr antes deste ficheiro estar pronto; isto garante que corre sempre).
+;(function waitForProfileThenRender(tries){
+  if(typeof profileData!=='undefined' && profileData){
+    renderAiBuilderBanner()
+    handleAiBuilderCheckoutReturn()
+    return
+  }
+  if(tries>60) return
+  setTimeout(function(){ waitForProfileThenRender(tries+1) }, 250)
+})(0)
