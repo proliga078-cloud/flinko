@@ -360,6 +360,16 @@ return
 }
 
 if (session.user.email === 'davidscampos10@gmail.com') { location.href = 'admin.html'; return }
+// Garante que existe sempre uma linha em profiles antes de avançar (fecha o buraco em que
+// alguém confirma o email, faz login, e nunca chega a ter perfil porque o insertProfile só
+// corria no signUp com sessão imediata). Idempotente (on conflict do nothing), por isso é
+// seguro chamar em todos os logins. Preserva a intenção de 'cliente' vinda do link de
+// contacto (?intent=client), senão mantém o default 'professional' de sempre.
+try {
+const name = session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email
+const intentParam2 = params.get('intent')
+await db.rpc('create_my_profile_if_missing', intentParam2 === 'client' ? { p_name: name, p_account_type: 'client' } : { p_name: name })
+} catch (e) {}
 location.href = safeRedirect(params.get('redirect')) || 'dashboard.html'
 }
 
