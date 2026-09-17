@@ -6,6 +6,7 @@
 
   var SUPABASE_URL = 'https://cdwinidhtfxfxowflize.supabase.co';
   var SUPABASE_KEY = 'sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk';
+  var ANON_JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkd2luaWRodGZ4Znhvd2ZsaXplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NTM4MzUsImV4cCI6MjA5NzEyOTgzNX0.GVaz_WZYP3Rtr7grTrTAkE-3QX5t5d-l-dMMlgcaEwo'; // chave anon publica (formato JWT) - exigida pela verificacao de JWT do gateway Supabase para esta funcao publica
   var FN_URL = SUPABASE_URL + '/functions/v1/public-assistant';
 
   var history = [];
@@ -164,7 +165,7 @@
         headers: {
           'Content-Type': 'application/json',
           'apikey': SUPABASE_KEY,
-          'Authorization': 'Bearer ' + SUPABASE_KEY
+          'Authorization': 'Bearer ' + ANON_JWT
         },
         body: JSON.stringify({ question: text, history: history.slice(-10) })
       })
