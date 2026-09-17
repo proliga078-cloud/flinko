@@ -131,7 +131,7 @@ loadPlanLimits()
 subscribeJobsRealtime()
 setTimeout(maybeShowPushBanner, 2000)
 }
-checkUpgrade();if(profileData?.account_type==='client'){
+checkUpgrade();if(typeof renderAiBuilderBanner==='function'){renderAiBuilderBanner();handleAiBuilderCheckoutReturn()};if(profileData?.account_type==='client'){
 var qc=document.getElementById('quick-calc-card');if(qc)qc.style.display='none';
 document.querySelectorAll('[data-audience="pro"]').forEach(function(el){el.style.display='none'});
 document.querySelectorAll('[data-audience="client"]').forEach(function(el){el.style.display=''});
