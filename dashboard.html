@@ -311,6 +311,7 @@ panel.classList.toggle('open', open);
 <!-- PROFILE -->
 <div id="page-profile" class="page-section">
 <h1 class="page-title">O meu perfil</h1>
+<div id="ai-builder-banner-wrap"></div>
 <div class="ptabs">
 <button class="ptab" data-ptab="profile" onclick="showPage('profile')">Dados</button>
 <button class="ptab" data-ptab="services" onclick="showPage('services')">Serviços</button>
@@ -1191,6 +1192,23 @@ Podes pedir uma cópia dos teus dados ou a eliminação da tua conta diretamente
 </div>
 </div>
 
+<!-- AI PROFILE BUILDER -->
+<div class="modal-overlay" id="ai-builder-overlay" onclick="if(event.target===this)closeAiBuilder()">
+<div class="modal">
+<div class="modal-head">
+<div class="modal-title">✨ Construtor de Perfil com IA</div>
+<button class="modal-close" onclick="closeAiBuilder()">✕</button>
+</div>
+<div class="modal-body" style="display:flex;flex-direction:column;gap:12px">
+<div class="ai-chat-body" id="ai-builder-body" style="max-height:50vh;min-height:220px;border:1px solid var(--border);border-radius:12px"></div>
+<div class="ai-chat-foot" style="border-top:none;padding:0">
+<input id="ai-builder-input" type="text" placeholder="Escreve a tua resposta..." onkeydown="if(event.key==='Enter')sendAiBuilderMsg()"/>
+<button id="ai-builder-send" onclick="sendAiBuilderMsg()"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg></button>
+</div>
+</div>
+</div>
+</div>
+
 <!-- QUOTE MODAL -->
 <div class="modal-overlay" id="quote-modal-overlay" onclick="if(event.target===this)closeQuoteModal()">
 <div class="modal">
@@ -1249,6 +1267,7 @@ Podes pedir uma cópia dos teus dados ou a eliminação da tua conta diretamente
 <script src="/assets/dashboard-listings.js" defer></script>
 <script src="/assets/dashboard-jobs.js" defer></script>
 <script src="/assets/dashboard-requests-ai.js" defer></script>
+<script src="/assets/dashboard-ai-builder.js" defer></script>
 <script src="/assets/dashboard-finance.js" defer></script>
 <script src="/assets/billing.js" defer></script>
 <script src="/assets/dashboard-growth.js" defer></script>
