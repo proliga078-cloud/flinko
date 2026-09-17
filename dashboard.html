@@ -406,6 +406,41 @@ panel.classList.toggle('open', open);
 </div>
 <div id="cert-list" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
+<div class="form-group full">
+  <label>Vídeo de apresentação (link do YouTube ou Vimeo)</label>
+<input id="p-video" type="text" placeholder="Ex: https://www.youtube.com/watch?v=..."/>
+</div>
+<div class="form-group full">
+<label>Redes sociais</label>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+<input id="p-social-instagram" type="text" placeholder="Instagram (link ou @utilizador)" style="flex:1;min-width:160px;margin-bottom:0"/>
+<input id="p-social-facebook" type="text" placeholder="Facebook (link)" style="flex:1;min-width:160px;margin-bottom:0"/>
+<input id="p-social-whatsapp" type="text" placeholder="WhatsApp (nº ou link wa.me)" style="flex:1;min-width:160px;margin-bottom:0"/>
+<input id="p-social-tiktok" type="text" placeholder="TikTok (link ou @utilizador)" style="flex:1;min-width:160px;margin-bottom:0"/>
+<input id="p-social-youtube" type="text" placeholder="YouTube (link do canal)" style="flex:1;min-width:160px;margin-bottom:0"/>
+<input id="p-social-linkedin" type="text" placeholder="LinkedIn (link)" style="flex:1;min-width:160px;margin-bottom:0"/>
+</div>
+</div>
+<div class="form-group full">
+<label>Prémios e distinções</label>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+<input id="award-title" type="text" placeholder="Ex: Melhor Eletricista de Lisboa" style="flex:2;min-width:180px;margin-bottom:0"/>
+<input id="award-issuer" type="text" placeholder="Atribuído por (opcional)" style="flex:1;min-width:140px;margin-bottom:0"/>
+<input id="award-year" type="number" placeholder="Ano" style="flex:1;min-width:80px;margin-bottom:0"/>
+<button type="button" class="btn btn-outline" onclick="addAward()" style="white-space:nowrap">+ Adicionar</button>
+</div>
+<div id="award-list" style="display:flex;flex-direction:column;gap:6px"></div>
+</div>
+<div class="form-group full">
+<label>Promoções ativas</label>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+<input id="promo-title" type="text" placeholder="Ex: -10% em instalações novas" style="flex:2;min-width:180px;margin-bottom:0"/>
+<input id="promo-desc" type="text" placeholder="Detalhes (opcional)" style="flex:2;min-width:180px;margin-bottom:0"/>
+<input id="promo-until" type="date" style="flex:1;min-width:140px;margin-bottom:0"/>
+<button type="button" class="btn btn-outline" onclick="addPromotion()" style="white-space:nowrap">+ Adicionar</button>
+</div>
+<div id="promo-list" style="display:flex;flex-direction:column;gap:6px"></div>
+</div>
 <button class="btn btn-primary" onclick="saveProfile()">Guardar</button>
 </div>
 
