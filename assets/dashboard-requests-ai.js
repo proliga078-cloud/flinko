@@ -147,9 +147,9 @@ async function sendAiChat(){
   body.insertAdjacentHTML('beforeend',`<div class="ai-msg bot" id="${typingId}">…</div>`)
   body.scrollTop=body.scrollHeight
 
-  // Assistente local, sem custo: responde com regras a partir dos dados já carregados.
-  // (A Edge Function "ai-assistant" com IA real fica disponível para quem quiser ativá-la
-  // mais tarde com uma chave da Anthropic — ver answerWithClaude() abaixo, não usada por defeito.)
+  // Assistente local, sem custo: responde primeiro com regras a partir dos dados já carregados.
+  // Quando a pergunta não é reconhecida (answerLocally devolve AI_LOCAL_FALLBACK), usa a
+  // Edge Function "ai-assistant" (IA real, Claude) como resposta de recurso — ver answerWithClaude() abaixo.
   await new Promise(r=>setTimeout(r,300)) // pequena pausa para parecer natural
   const typingEl=document.getElementById(typingId)
   if(typingEl)typingEl.remove()
@@ -162,7 +162,15 @@ async function sendAiChat(){
       proposeAiAction(action.label,action.run)
     }
   } else {
-    const answer=answerLocally(q)
+    let answer=answerLocally(q)
+    if(answer===AI_LOCAL_FALLBACK){
+      const thinkId='thinking-'+Date.now()
+      body.insertAdjacentHTML('beforeend',`<div class="ai-msg bot" id="${thinkId}">A pensar…</div>`)
+      body.scrollTop=body.scrollHeight
+      answer=await answerWithClaude(q)
+      const thinkEl=document.getElementById(thinkId)
+      if(thinkEl)thinkEl.remove()
+    }
     body.insertAdjacentHTML('beforeend',`<div class="ai-msg bot">${answer.replace(/\n/g,'<br>')}</div>`)
   }
 
@@ -312,6 +320,7 @@ const AI_FAQ=[
 {k:['exportar dados','descarregar os meus dados'],a:'Podes pedir os teus dados pessoais ao abrigo do RGPD através da página RGPD do site.'}
 ]
 
+const AI_LOCAL_FALLBACK='Não percebi bem a pergunta. Consigo responder sobre: faturação, orçamentos pendentes, agenda, ticket médio, avaliações, perfil, serviços, trabalhos, o teu plano, preços de mercado, o código de referência e o modo férias. Tenta perguntar, por exemplo, "como está o meu mês?" ou "quanto devo cobrar?".'
 function answerLocally(question){
   const q=normalizeText(question)
   const has=(...words)=>words.some(w=>q.includes(w))
@@ -464,12 +473,12 @@ function answerLocally(question){
     if(has(...topic.k))return topic.a
   }
 
-  return 'Não percebi bem a pergunta. Consigo responder sobre: faturação, orçamentos pendentes, agenda, ticket médio, avaliações, perfil, serviços, trabalhos, o teu plano, preços de mercado, o código de referência e o modo férias. Tenta perguntar, por exemplo, "como está o meu mês?" ou "quanto devo cobrar?".'
+  return AI_LOCAL_FALLBACK
 }
 
-// Chamada opcional à Edge Function com IA real (Claude). Não é usada por defeito —
-// fica aqui pronta caso um dia queiras trocar o assistente local por IA generativa
-// (basta configurar ANTHROPIC_API_KEY no Supabase e chamar esta função em vez de answerLocally).
+// Chamada à Edge Function com IA real (Claude), usada como resposta de recurso quando
+// o assistente local (answerLocally) não reconhece a pergunta. Requer ANTHROPIC_API_KEY
+// configurada no Supabase.
 async function answerWithClaude(question){
   const{data,error}=await db.functions.invoke('ai-assistant',{body:{question}})
   if(error||!data||data.error){
