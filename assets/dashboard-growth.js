@@ -368,6 +368,14 @@ pendingVerifDocs.splice(i,1)
 renderVerifDocList()
 }
 
+async function renderVerifNudge(){
+const card=document.getElementById('verif-nudge-card')
+if(!card)return
+if(!profileData||profileData.account_type==='client'||profileData.verified){card.style.display='none';return}
+const{data}=await db.from('verification_requests').select('status').eq('profile_id',profileId).order('created_at',{ascending:false}).limit(1).maybeSingle()
+card.style.display=(data&&data.status==='pending')?'none':'block'
+}
+
 async function uploadVerificationDoc(input){
 const file=input.files[0]
 if(!file)return
