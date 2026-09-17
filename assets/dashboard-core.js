@@ -172,6 +172,7 @@ if(ndt)ndt.checked=profileData?.notify_digest!==false
 const dt=document.getElementById('hd-date')
 if(dt)dt.textContent=new Date().toLocaleDateString('pt-PT',{weekday:'long',day:'numeric',month:'long'})
 renderSetup()
+if(typeof renderVerifNudge==='function')renderVerifNudge()
 const greetEl=document.getElementById('greet-title')
 if(greetEl)greetEl.textContent=`Olá, ${name.split(' ')[0]}`
 const chGreet=document.getElementById('ch-greet')
