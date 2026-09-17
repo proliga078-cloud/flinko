@@ -225,6 +225,20 @@ renderCertList()
   renderAwardList()
   promoState=Array.isArray(pro.promotions)?JSON.parse(JSON.stringify(pro.promotions)):[]
   renderPromoList()
+  themeColorState=pro.theme_color||null
+  renderThemeColorPicker()
+  customSectionState=Array.isArray(pro.custom_sections)?JSON.parse(JSON.stringify(pro.custom_sections)):[]
+  renderCustomSectionList()
+  ;(function(){
+    const so=pro.section_order&&typeof pro.section_order==='object'?pro.section_order:{}
+    tabsOrderState=Array.isArray(so.tabs)?so.tabs.filter(k=>DEFAULT_TABS_ORDER.includes(k)):[]
+    DEFAULT_TABS_ORDER.forEach(k=>{if(!tabsOrderState.includes(k))tabsOrderState.push(k)})
+    sidebarOrderState=Array.isArray(so.sidebar)?so.sidebar.filter(k=>DEFAULT_SIDEBAR_ORDER.includes(k)):[]
+    DEFAULT_SIDEBAR_ORDER.forEach(k=>{if(!sidebarOrderState.includes(k))sidebarOrderState.push(k)})
+  })()
+  hiddenSectionsState=Array.isArray(pro.hidden_sections)?[...pro.hidden_sections]:[]
+  renderLayoutList('tabs')
+  renderLayoutList('sidebar')
 document.getElementById('p-unavail-until').value=pro.unavailable_until||''
 document.getElementById('p-unavail-msg').value=pro.unavailable_message||''
 renderWeeklyScheduleGrid()
@@ -423,4 +437,93 @@ if(phoneErr){showAlert('profile-error','Perfil guardado, mas o telefone não foi
 profileData={...profileData,...updates,phone:phoneVal}
 updateSidebar()
 showAlert('profile-success','Perfil guardado com sucesso!')
+}
+
+
+// ---- Personalizacao do perfil (cor de destaque, seccoes livres, ordem/visibilidade) ----
+const THEME_PRESETS={orange:{label:'Laranja (padrão)',accent:'#E8720A'},blue:{label:'Azul',accent:'#1D6FE0'},green:{label:'Verde',accent:'#0F8B5F'},purple:{label:'Roxo',accent:'#7C3AED'},red:{label:'Vermelho',accent:'#D8342B'},teal:{label:'Turquesa',accent:'#0E9AA3'}}
+const LAYOUT_LABELS={servicos:'Serviços',portfolio:'Portfólio',avaliacoes:'Avaliações',diario:'Diário',faq:'Perguntas frequentes',badges:'Conquistas',zone:'Zona de atuação',avail:'Disponibilidade',extra_info:'Outras informações',video:'Vídeo de apresentação'}
+const DEFAULT_TABS_ORDER=['servicos','portfolio','avaliacoes','diario','faq']
+const DEFAULT_SIDEBAR_ORDER=['badges','zone','avail','extra_info','video']
+let themeColorState=null
+let customSectionState=[]
+let tabsOrderState=[...DEFAULT_TABS_ORDER]
+let sidebarOrderState=[...DEFAULT_SIDEBAR_ORDER]
+let hiddenSectionsState=[]
+
+function renderThemeColorPicker(){
+  const el=document.getElementById('theme-color-picker')
+  if(!el)return
+  el.innerHTML=Object.keys(THEME_PRESETS).map(key=>{
+    const t=THEME_PRESETS[key]
+    const active=(themeColorState||'orange')===key
+    return `<button type='button' onclick='pickThemeColor("${key}")' title='${escapeHtml(t.label)}' style='width:36px;height:36px;border-radius:50%;background:${t.accent};border:3px solid ${active?'var(--ink)':'transparent'};cursor:pointer;padding:0'></button>`
+  }).join('')
+}
+function pickThemeColor(key){
+  themeColorState=key
+  renderThemeColorPicker()
+}
+
+function renderCustomSectionList(){
+  const el=document.getElementById('custom-section-list')
+  if(!el)return
+  if(!customSectionState.length){el.innerHTML=`<div style='font-size:12.5px;color:var(--muted)'>Nenhuma secção adicionada.</div>`;return}
+  el.innerHTML=customSectionState.map((s,i)=>`<div style='display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--bg);border-radius:8px;padding:8px 12px'><span style='font-size:13px;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>${escapeHtml(s.title)}</span><button type='button' class='btn btn-outline btn-sm' onclick='moveCustomSection(${i},-1)' ${i===0?'disabled':''}>↑</button><button type='button' class='btn btn-outline btn-sm' onclick='moveCustomSection(${i},1)' ${i===customSectionState.length-1?'disabled':''}>↓</button><button type='button' class='btn btn-danger btn-sm' onclick='removeCustomSection(${i})'>✕</button></div>`).join('')
+}
+function addCustomSection(){
+  const titleEl=document.getElementById('custom-sec-title')
+  const bodyEl=document.getElementById('custom-sec-body')
+  const title=titleEl.value.trim()
+  const body=bodyEl.value.trim()
+  if(!title||!body)return
+  customSectionState.push({title,body})
+  titleEl.value=''
+  bodyEl.value=''
+  renderCustomSectionList()
+}
+function removeCustomSection(i){customSectionState.splice(i,1);renderCustomSectionList()}
+function moveCustomSection(i,dir){
+  const j=i+dir
+  if(j<0||j>=customSectionState.length)return
+  ;[customSectionState[i],customSectionState[j]]=[customSectionState[j],customSectionState[i]]
+  renderCustomSectionList()
+}
+
+function renderLayoutList(group){
+  const el=document.getElementById(group==='tabs'?'layout-list-tabs':'layout-list-sidebar')
+  if(!el)return
+  const arr=group==='tabs'?tabsOrderState:sidebarOrderState
+  el.innerHTML=arr.map((key,i)=>{
+    const hidden=hiddenSectionsState.includes(key)
+    return `<div style='display:flex;align-items:center;gap:8px;background:var(--bg);border-radius:8px;padding:8px 12px'><span style='flex:1;font-size:13px;font-weight:600;${hidden?'color:var(--muted);text-decoration:line-through':''}'>${escapeHtml(LAYOUT_LABELS[key]||key)}</span><button type='button' class='btn btn-outline btn-sm' onclick='moveSection("${group}",${i},-1)' ${i===0?'disabled':''}>↑</button><button type='button' class='btn btn-outline btn-sm' onclick='moveSection("${group}",${i},1)' ${i===arr.length-1?'disabled':''}>↓</button><label style='display:flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap;cursor:pointer'><input type='checkbox' ${hidden?'':'checked'} onchange='toggleSectionVisible("${key}",this.checked)'/> Visível</label></div>`
+  }).join('')
+}
+function moveSection(group,i,dir){
+  const arr=group==='tabs'?tabsOrderState:sidebarOrderState
+  const j=i+dir
+  if(j<0||j>=arr.length)return
+  ;[arr[i],arr[j]]=[arr[j],arr[i]]
+  renderLayoutList(group)
+}
+function toggleSectionVisible(key,visible){
+  hiddenSectionsState=hiddenSectionsState.filter(k=>k!==key)
+  if(!visible)hiddenSectionsState.push(key)
+  renderLayoutList('tabs')
+  renderLayoutList('sidebar')
+}
+
+async function saveCustomization(){
+  if(!profileId){showAlert('profile-error','Erro: perfil não carregado. Recarrega a página.','error');return}
+  const updates={
+    theme_color:themeColorState,
+    custom_sections:customSectionState,
+    section_order:{tabs:tabsOrderState,sidebar:sidebarOrderState},
+    hidden_sections:hiddenSectionsState,
+    updated_at:new Date().toISOString()
+  }
+  const{error}=await db.from('profiles').update(updates).eq('id',profileId)
+  if(error){showAlert('profile-error','Erro ao guardar: '+error.message,'error');return}
+  Object.assign(profileData,updates)
+  showAlert('profile-success','Personalização guardada!','success')
 }
