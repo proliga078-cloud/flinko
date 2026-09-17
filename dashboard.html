@@ -445,6 +445,38 @@ panel.classList.toggle('open', open);
 <button class="btn btn-primary" onclick="saveProfile()">Guardar</button>
 </div>
 
+<div class='form-section' id='customization-section'>
+<div class='form-title'>🎨 Personalização do perfil</div>
+<p style='color:var(--muted);font-size:13px;margin:-8px 0 16px;max-width:560px'>Deixa o teu perfil público com a tua cara: escolhe uma cor de destaque, acrescenta secções de texto livre e decide que informação aparece primeiro (ou nem aparece).</p>
+
+<div class='form-group full'>
+<label>Cor de destaque</label>
+<div id='theme-color-picker' style='display:flex;gap:10px;flex-wrap:wrap;margin-top:6px'></div>
+</div>
+
+<div class='form-group full'>
+<label>Secções de texto livre</label>
+<p style='color:var(--muted);font-size:12.5px;margin:4px 0 8px'>Acrescenta blocos de texto ao teu perfil público — garantias, horário especial, zona de cobertura detalhada, ou o que fizer sentido para o teu negócio.</p>
+<div style='display:flex;flex-direction:column;gap:8px;margin-bottom:8px'>
+<input id='custom-sec-title' type='text' placeholder='Título da secção (ex: Garantia dos trabalhos)' style='margin-bottom:0'/>
+<textarea id='custom-sec-body' rows='3' placeholder='Texto da secção' style='margin-bottom:0'></textarea>
+<button type='button' class='btn btn-outline' onclick='addCustomSection()' style='align-self:flex-start'>+ Adicionar secção</button>
+</div>
+<div id='custom-section-list' style='display:flex;flex-direction:column;gap:6px'></div>
+</div>
+
+<div class='form-group full'>
+<label>Ordem e visibilidade das secções</label>
+<p style='color:var(--muted);font-size:12.5px;margin:4px 0 8px'>Usa as setas para reordenar e desliga o interruptor para esconder secções que não precisas de mostrar.</p>
+<div style='font-size:12.5px;font-weight:700;color:var(--muted-2);margin:8px 0 4px'>Separadores principais</div>
+<div id='layout-list-tabs' style='display:flex;flex-direction:column;gap:6px'></div>
+<div style='font-size:12.5px;font-weight:700;color:var(--muted-2);margin:14px 0 4px'>Barra lateral</div>
+<div id='layout-list-sidebar' style='display:flex;flex-direction:column;gap:6px'></div>
+</div>
+
+<button class='btn btn-primary' onclick='saveCustomization()'>Guardar personalização</button>
+</div>
+
 <div class="form-section" id="weekly-schedule-section">
 <div class="form-title">📅 Disponibilidade semanal</div>
 <p style="color:var(--muted);font-size:13px;margin:-8px 0 16px;max-width:520px">Marca os dias em que costumas trabalhar. Aparece no teu perfil público para os clientes saberem quando te podem chamar.</p>
