@@ -1,0 +1,11 @@
+# Fins de linha consistentes (LF) em todos os sistemas, para não haver diffs
+# gigantes nem avisos "LF will be replaced by CRLF" ao trabalhar no Windows.
+* text=auto eol=lf
+
+# Ficheiros binários: nunca tocar
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.webp binary
+*.woff2 binary

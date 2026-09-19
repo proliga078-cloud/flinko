@@ -1,0 +1,20 @@
+# Dependabot: abre pull requests semanais a atualizar dependências com
+# vulnerabilidades ou versões novas. O CI corre em cada um, por isso só se faz
+# merge se os testes passarem.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      # Atualizações menores e de correção vêm juntas num único PR.
+      minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
