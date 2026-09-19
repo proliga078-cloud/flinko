@@ -24,7 +24,7 @@ async function withFakeSupabase(page, config) {
 
 function adminConfig(subs) {
   return {
-    session: { access_token: 'admin-tok', user: { id: 'admin-1', email: 'davidscampos10@gmail.com' } },
+    session: { access_token: 'admin-tok', user: { id: 'admin-1', email: 'admin@example.com' } },
     rpcResults: { is_admin: true, admin_list_profiles: subs },
     tableData: { profiles: { data: subs } },
   };

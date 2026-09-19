@@ -25,7 +25,7 @@ test('perfil marcado suspended=true (por disputa) mostra o badge "Disputado" e p
     { id: 'pro-2', name: 'Profissional Normal', category: 'Pintores', location: 'Braga', plan: 'free', approved: true, suspended: false, credits: 0 },
   ];
   await withFakeSupabase(page, {
-    session: { access_token: 'admin-tok', user: { id: 'admin-1', email: 'davidscampos10@gmail.com' } },
+    session: { access_token: 'admin-tok', user: { id: 'admin-1', email: 'admin@example.com' } },
     rpcResults: { is_admin: true, admin_list_profiles: pros },
     tableData: { profiles: { data: pros }, profile_private: { data: [] } },
   });

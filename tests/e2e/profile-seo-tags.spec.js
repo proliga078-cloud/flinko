@@ -49,16 +49,16 @@ test.describe('profile.html — SEO (canonical, Open Graph, Twitter)', () => {
   test('perfil sem link próprio: canonical e og:url apontam para ?id=, título/descrição/imagem vêm do profissional', async ({ page }) => {
     await withFakeSupabase(page, profileConfig());
     await page.goto('/profile.html?id=pro-1');
-    await expect(page).toHaveTitle('Ana Jardineira – Proliga');
+    await expect(page).toHaveTitle('Ana Jardineira – Flinko');
 
     const canonical = page.locator('#meta-canonical');
-    await expect(canonical).toHaveAttribute('href', 'https://proliga.pt/profile.html?id=pro-1');
+    await expect(canonical).toHaveAttribute('href', 'https://flinko.pt/profile.html?id=pro-1');
 
     const ogUrl = page.locator('#meta-og-url');
-    await expect(ogUrl).toHaveAttribute('content', 'https://proliga.pt/profile.html?id=pro-1');
+    await expect(ogUrl).toHaveAttribute('content', 'https://flinko.pt/profile.html?id=pro-1');
 
-    await expect(page.locator('#meta-og-title')).toHaveAttribute('content', 'Ana Jardineira – Proliga');
-    await expect(page.locator('#meta-twitter-title')).toHaveAttribute('content', 'Ana Jardineira – Proliga');
+    await expect(page.locator('#meta-og-title')).toHaveAttribute('content', 'Ana Jardineira – Flinko');
+    await expect(page.locator('#meta-twitter-title')).toHaveAttribute('content', 'Ana Jardineira – Flinko');
 
     // A bio real do profissional deve aparecer na descrição, não o texto genérico.
     const desc = await page.locator('#meta-description').getAttribute('content');
@@ -73,15 +73,15 @@ test.describe('profile.html — SEO (canonical, Open Graph, Twitter)', () => {
     await withFakeSupabase(page, profileConfig({ slug: 'ana-jardineira', plan: 'pro' }));
     await page.goto('/profile.html?id=pro-1');
 
-    await expect(page.locator('#meta-canonical')).toHaveAttribute('href', 'https://proliga.pt/ana-jardineira');
-    await expect(page.locator('#meta-og-url')).toHaveAttribute('content', 'https://proliga.pt/ana-jardineira');
+    await expect(page.locator('#meta-canonical')).toHaveAttribute('href', 'https://flinko.pt/ana-jardineira');
+    await expect(page.locator('#meta-og-url')).toHaveAttribute('content', 'https://flinko.pt/ana-jardineira');
   });
 
-  test('perfil sem foto: usa a imagem genérica da Proliga, não fica sem imagem', async ({ page }) => {
+  test('perfil sem foto: usa a imagem genérica da Flinko, não fica sem imagem', async ({ page }) => {
     await withFakeSupabase(page, profileConfig({ photo_url: null }));
     await page.goto('/profile.html?id=pro-1');
 
-    await expect(page.locator('#meta-og-image')).toHaveAttribute('content', 'https://proliga.pt/assets/og-image.png');
+    await expect(page.locator('#meta-og-image')).toHaveAttribute('content', 'https://flinko.pt/assets/og-image.png');
   });
 
   test('profissional inexistente: página fica marcada como noindex (não é conteúdo real a mostrar ao Google)', async ({ page }) => {

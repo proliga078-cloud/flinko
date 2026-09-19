@@ -1,12 +1,13 @@
 {
-  "name": "proliga",
+  "name": "flinko",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "build:categories": "node scripts/build-categories.js",
-    "test:unit": "node --test tests/functions/**/*.test.js",
+    "check": "node scripts/check-syntax.js",
+    "test:unit": "node --test \"tests/functions/**/*.test.js\"",
     "test:e2e": "playwright test",
-    "test": "npm run test:unit && npm run test:e2e"
+    "test": "npm run check && npm run test:unit && npm run test:e2e"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",

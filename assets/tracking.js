@@ -11,10 +11,10 @@
 
  var visitorId;
   try{
-    visitorId=localStorage.getItem('proliga_visitor_id');
+    visitorId=localStorage.getItem('flinko_visitor_id')||localStorage.getItem('proliga_visitor_id');
     if(!visitorId){
       visitorId=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():('v-'+Date.now()+'-'+Math.random().toString(36).slice(2));
-      localStorage.setItem('proliga_visitor_id',visitorId);
+      localStorage.setItem('flinko_visitor_id',visitorId);
     }
   }catch(e){visitorId='anon-'+Date.now()}
 

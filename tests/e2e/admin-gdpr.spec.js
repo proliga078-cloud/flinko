@@ -24,7 +24,7 @@ const daysAgoIso = (days) => new Date(Date.now() - days * 86400000).toISOString(
 
 test('separador RGPD mostra pedidos pendentes/urgentes e permite mudar de estado', async ({ page }) => {
   await withFakeSupabase(page, {
-    session: { access_token: 'tok', user: { id: 'admin-1', email: 'davidscampos10@gmail.com' } },
+    session: { access_token: 'tok', user: { id: 'admin-1', email: 'admin@example.com' } },
     rpcResults: { is_admin: true },
     tableData: {
       profiles: { data: [{ id: 'pro-1', name: 'Profissional Teste' }, { id: 'pro-2', name: 'Cliente Teste' }] },

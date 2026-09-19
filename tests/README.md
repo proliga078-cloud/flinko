@@ -1,11 +1,12 @@
-# Testes automáticos — checkout e auth
+# Testes automáticos
 
 Duas camadas, cada uma a testar uma coisa diferente:
 
 ## `tests/functions/` — testes unitários das funções Netlify
 
-Testa `create-checkout-session.js`, `create-portal-session.js` e
-`stripe-webhook.js` diretamente (sem servidor, sem rede), com o Stripe e o
+Testa todas as funções Netlify com lógica de negócio (checkout, portal,
+webhook do Stripe, admin, notificações, resumo diário, meteorologia)
+diretamente (sem servidor, sem rede), com o Stripe e o
 Supabase substituídos por objetos falsos controláveis (ver
 `tests/functions/helpers/`). O foco principal é regressão de segurança: os
 dois primeiros ficheiros só foram corrigidos a 21 de agosto de 2026 (o

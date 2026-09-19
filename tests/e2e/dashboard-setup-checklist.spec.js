@@ -69,7 +69,7 @@ test.describe('dashboard.html — cartão de passos em falta', () => {
       baseConfig({ category: 'Jardineiros', location: 'Porto' }, { services: { count: 1, data: [{}] } })
     );
     await page.goto('/dashboard.html');
-    await page.waitForFunction(() => document.getElementById('stat-services')?.textContent === '1');
+    await page.waitForFunction(() => servicesCount === 1);
     await expect(page.locator('#setup-card')).toBeHidden();
   });
 
@@ -81,7 +81,7 @@ test.describe('dashboard.html — cartão de passos em falta', () => {
     await page.goto('/dashboard.html');
     // O cartão pode aparecer momentaneamente (1º render, antes de loadStats
     // resolver), mas tem de ficar escondido assim que os dados reais chegam.
-    await page.waitForFunction(() => document.getElementById('stat-services')?.textContent === '1');
+    await page.waitForFunction(() => servicesCount === 1);
     await expect(page.locator('#setup-card')).toBeHidden();
   });
 });

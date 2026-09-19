@@ -1,7 +1,7 @@
 // Testes E2E do fluxo de "Privacidade e RGPD" em dashboard.html (Art. 15º
 // direito de acesso / Art. 17º direito ao apagamento). Antes deste fix não
 // havia forma de o utilizador pedir isto diretamente na conta — só por
-// email manual, sem registo nenhum do lado da Proliga. Agora o pedido cria
+// email manual, sem registo nenhum do lado da Flinko. Agora o pedido cria
 // uma linha na tabela gdpr_requests (RLS: só o próprio dono e admins veem/
 // tratam), visível também no painel admin.
 //

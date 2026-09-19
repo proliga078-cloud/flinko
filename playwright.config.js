@@ -1,6 +1,7 @@
 // Configuração do Playwright para os testes E2E de auth/checkout.
-// As páginas são servidas tal como estão no repositório (site estático,
-// sem build step para HTML/JS) por tests/e2e/static-server.js.
+// As páginas são servidas por tests/e2e/static-server.js depois de gerar as
+// páginas de categoria (o mesmo passo que o Netlify corre no deploy), para
+// testar exatamente o que vai para produção.
 const { defineConfig, devices } = require('@playwright/test');
 
 const PORT = process.env.E2E_STATIC_PORT || 4173;
@@ -13,10 +14,19 @@ module.exports = defineConfig({
   reporter: [['list']],
   use: {
     baseURL: `http://localhost:${PORT}`,
+    // Consentimento de cookies já dado (só o necessário): sem isto o banner
+    // do assets/cookie-consent.js fica por cima dos botões e tapa os cliques.
+    storageState: {
+      cookies: [],
+      origins: [{
+        origin: `http://localhost:${PORT}`,
+        localStorage: [{ name: 'flinko_cookie_consent', value: JSON.stringify({ necessary: true, analytics: false, ts: 1 }) }],
+      }],
+    },
     trace: 'retain-on-failure',
   },
   webServer: {
-    command: `node tests/e2e/static-server.js`,
+    command: `node scripts/build-categories.js && node tests/e2e/static-server.js`,
     port: Number(PORT),
     reuseExistingServer: !process.env.CI,
     env: { E2E_STATIC_PORT: String(PORT) },

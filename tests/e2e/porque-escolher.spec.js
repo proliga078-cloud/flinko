@@ -76,7 +76,7 @@ test.describe('porque-escolher.html — prova social honesta', () => {
     expect(bodyText).not.toContain('4.8');
     expect(bodyText).not.toContain('Avaliação média');
     // A linha "Cobertura geográfica" da tabela comparativa tem de mostrar o
-    // símbolo parcial (~) para a Proliga, nunca o "✓" cheio (a densidade
+    // símbolo parcial (~) para a Flinko, nunca o "✓" cheio (a densidade
     // fora do Porto/Braga ainda é baixa — ver rodapé da tabela).
     const row = page.locator('table tr', { hasText: 'Cobertura geográfica' });
     await expect(row.locator('td.hl')).toHaveText('~');

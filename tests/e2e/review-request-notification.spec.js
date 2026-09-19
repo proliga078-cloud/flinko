@@ -12,7 +12,7 @@
 // messages.html chama /.netlify/functions/notify-message (que envia
 // email+push) depois de inserir uma mensagem; requestReviewForJob() nunca
 // chamava essa função, por isso o cliente só via o pedido de avaliação se
-// voltasse a abrir a Proliga por iniciativa própria. Corrigido chamando a
+// voltasse a abrir a Flinko por iniciativa própria. Corrigido chamando a
 // mesma Netlify Function usada para mensagens normais.
 const { test, expect } = require('@playwright/test');
 const path = require('path');
@@ -91,7 +91,7 @@ test('marcar trabalho como pago: chama notify-message para avisar o cliente do p
 test('pedido de avaliação já enviado antes: não insere mensagem duplicada nem chama notify-message outra vez', async ({ page }) => {
   await withFakeSupabase(
     page,
-    proConfig({}, [{ id: 'm-old', content: 'Obrigado! ... deixa a tua avaliação aqui: https://proliga.pt/joao-eletricista' }])
+    proConfig({}, [{ id: 'm-old', content: 'Obrigado! ... deixa a tua avaliação aqui: https://flinko.pt/joao-eletricista' }])
   );
 
   let notifyCalled = false;
