@@ -432,12 +432,12 @@
  </div>
 </footer>
 
+<script src="/assets/escape-html.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
 const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
-function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 
 
 const params=new URLSearchParams(location.search)
@@ -571,7 +571,7 @@ async function loadPros(){
  q=q.range(from,from+filters.perPage-1)
 
  const{data,error,count}=await q
- if(error){container.innerHTML=`<p style="color:red;padding:20px">Erro: ${error.message}</p>`;return}
+ if(error){container.innerHTML=`<p style="color:red;padding:20px">Erro: ${escapeHtml(error.message)}</p>`;return}
 
  if(!data||!data.length){
  container.innerHTML=`<div class="pros-list"><div class="empty-state"><h3>Nenhum profissional encontrado ainda</h3><p>Ainda não há {{EMPTY_STATE_SENTENCE}} nesta zona. Publica um pedido grátis e os profissionais desta categoria candidatam-se a ti, ou experimenta outro distrito.</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><a href="pedidos.html?cat={{SERVICE_TYPE_URL}}" class="btn btn-solid">Publicar pedido grátis</a><a href="categoria.html" class="btn btn-outline">Ver todos os profissionais</a></div></div></div>`

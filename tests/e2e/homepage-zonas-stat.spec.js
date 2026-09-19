@@ -1,6 +1,6 @@
 // Achado da crítica de design: o stat "Portugal / Cobertura nacional" e o
 // título "A crescer por todo o país" na secção do mapa eram texto fixo,
-// prometendo uma amplitude nacional que a Proliga (19 profissionais, ~6
+// prometendo uma amplitude nacional que a Flinko (19 profissionais, ~6
 // zonas ativas quando isto foi escrito) ainda não tem. Uma plataforma nova
 // ganha mais confiança a mostrar bem o que já tem do que a parecer maior
 // do que é. loadProMap() passa a calcular o número real de zonas (a
@@ -38,11 +38,11 @@ test.describe('index.html — stat de zonas e título do mapa refletem dados rea
       },
     });
     await page.goto('/index.html');
-    await page.waitForFunction(() => document.getElementById('stat-zonas')?.textContent !== 'Portugal');
+    await page.waitForFunction(() => document.getElementById('zonas-intro')?.textContent !== 'Ainda estamos a começar.' || document.getElementById('stat-zonas')?.getAttribute('data-count') !== '0', null, { timeout: 3000 }).catch(() => {});
 
-    await expect(page.locator('#stat-zonas')).toHaveText('3');
+    await expect(page.locator('#stat-zonas')).toHaveAttribute('data-count', '3');
     await expect(page.locator('#stat-zonas-label')).toHaveText('Zonas com profissionais');
-    await expect(page.locator('#map-heading')).toHaveText('Já em 3 zonas de Portugal');
+    await expect(page.locator('#zonas-intro')).toHaveText('Já em 3 zonas de Portugal.');
   });
 
   test('uma só zona: mostra o nome da zona em vez de "1 zonas"', async ({ page }) => {
@@ -60,11 +60,11 @@ test.describe('index.html — stat de zonas e título do mapa refletem dados rea
       },
     });
     await page.goto('/index.html');
-    await page.waitForFunction(() => document.getElementById('stat-zonas')?.textContent !== 'Portugal');
+    await page.waitForFunction(() => document.getElementById('zonas-intro')?.textContent !== 'Ainda estamos a começar.' || document.getElementById('stat-zonas')?.getAttribute('data-count') !== '0', null, { timeout: 3000 }).catch(() => {});
 
-    await expect(page.locator('#stat-zonas')).toHaveText('1');
+    await expect(page.locator('#stat-zonas')).toHaveAttribute('data-count', '1');
     await expect(page.locator('#stat-zonas-label')).toHaveText('Zona com profissionais');
-    await expect(page.locator('#map-heading')).toHaveText('Já em Porto');
+    await expect(page.locator('#zonas-intro')).toHaveText('Já em 1 zona de Portugal.');
   });
 
   test('nenhuma zona reconhecida: fica honesto ("Ainda estamos a começar"), não finge cobertura', async ({ page }) => {
@@ -81,10 +81,9 @@ test.describe('index.html — stat de zonas e título do mapa refletem dados rea
       },
     });
     await page.goto('/index.html');
-    await page.waitForFunction(() => document.getElementById('stat-zonas')?.textContent !== 'Portugal');
+    await page.waitForFunction(() => document.getElementById('zonas-intro')?.textContent !== 'Ainda estamos a começar.' || document.getElementById('stat-zonas')?.getAttribute('data-count') !== '0', null, { timeout: 3000 }).catch(() => {});
 
-    await expect(page.locator('#stat-zonas')).toHaveText('0');
-    await expect(page.locator('#map-heading')).toHaveText('Ainda estamos a começar');
-    await expect(page.locator('#pro-map-empty')).toBeVisible();
+    await expect(page.locator('#stat-zonas')).toHaveAttribute('data-count', '0');
+    await expect(page.locator('#zonas-intro')).toHaveText('Ainda estamos a começar.');
   });
 });

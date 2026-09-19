@@ -54,6 +54,23 @@
   status = 200
   force = false
 
+# Cabecalhos de seguranca para todas as paginas.
+# A CSP esta em modo "Report-Only": o browser NAO bloqueia nada, so regista no
+# consola (F12) o que bloquearia. Navega o site com a consola aberta; se nao
+# aparecer nenhum aviso legitimo, troca o nome do cabecalho para
+# Content-Security-Policy para passar a bloquear a serio. Mantem
+# 'unsafe-inline' porque as paginas usam <script> e onclick= inline — o
+# objetivo a medio prazo e removê-los e tirar o 'unsafe-inline'.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(self), payment=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    Content-Security-Policy-Report-Only = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.open-meteo.com; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+
 # Cache de assets estaticos no browser do visitante. Os nomes dos ficheiros
 # NAO tem hash de versao, por isso os tempos sao propositadamente moderados
 # (nao "immutable" nem 1 ano) — se editarmos um destes ficheiros, os

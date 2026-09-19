@@ -89,6 +89,7 @@ tr:hover td{background:#f8f9fc}
 .badge-pending{background:#fef9c3;color:#854d0e}
 .badge-premium{background:var(--gold);color:#fff}
 .badge-pro{background:var(--purple);color:#fff}
+.badge-starter{background:var(--muted);color:#fff}
 .badge-free{background:var(--border);color:var(--muted)}
 .badge-demo{background:#fee2e2;color:#991b1b;margin-left:6px}
 .badge-acc-pro{background:#dbeafe;color:#1e40af}
@@ -248,6 +249,7 @@ tr:hover td{background:#f8f9fc}
 <select class="search-box" id="sub-filter" style="width:170px" onchange="filterSubs()">
 <option value="">Todos os planos</option>
 <option value="free">Free</option>
+<option value="starter">Starter</option>
 <option value="pro">Pro</option>
 <option value="premium">Premium</option>
 <option value="expiring">A expirar em breve</option>
@@ -395,7 +397,7 @@ tr:hover td{background:#f8f9fc}
 <div class="form-group"><label>Categoria</label><input id="ed-category"/></div>
 <div class="form-group"><label>Localização</label><input id="ed-location"/></div>
 <div class="form-group"><label>Plano</label>
-<select id="ed-plan"><option value="free">Free</option><option value="pro">Pro</option><option value="premium" disabled>Premium (legado — já não é vendido)</option></select>
+<select id="ed-plan"><option value="free">Free</option><option value="starter">Starter</option><option value="pro">Pro</option><option value="premium" disabled>Premium (legado — já não é vendido)</option></select>
 </div>
 <div class="form-group"><label>Bio</label><textarea id="ed-bio" rows="4"></textarea></div>
 <div class="modal-actions">
@@ -427,7 +429,7 @@ tr:hover td{background:#f8f9fc}
 <div id="sub-modal-name" style="font-size:14px;font-weight:700;color:var(--muted);margin-bottom:16px"></div>
 <div class="form-group">
 <label>Plano</label>
-<select id="sub-plan"><option value="free">Free</option><option value="pro">Pro</option><option value="premium" disabled>Premium (legado — já não é vendido)</option></select>
+<select id="sub-plan"><option value="free">Free</option><option value="starter">Starter</option><option value="pro">Pro</option><option value="premium" disabled>Premium (legado — já não é vendido)</option></select>
 <div style="font-size:11.5px;color:var(--muted);margin-top:5px">Só o Pro está à venda atualmente. Premium é um plano legado — só aparece aqui se o profissional já o tiver.</div>
 </div>
 <div class="form-group">
@@ -471,7 +473,6 @@ tr:hover td{background:#f8f9fc}
 <script>
 const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
 const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
-const ADMIN_EMAIL='davidscampos10@gmail.com'
 const PRO_MONTHLY_PRICE=12.99
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
 function escAttrJs(s){return escapeHtml(String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"))}
@@ -485,12 +486,11 @@ async function init(){
 try{
 const{data:{session}}=await db.auth.getSession()
 if(!session)return
-const isAdminEmail=session.user.email===ADMIN_EMAIL
 // is_admin já não é uma coluna legível diretamente (só o próprio dono podia
 // lê-la de qualquer forma) — usa-se a função is_admin(), que verifica
 // sempre a sessão de quem pede.
 const{data:isAdminFlag}=await db.rpc('is_admin')
-if(isAdminEmail||isAdminFlag===true)showAdmin(session.user)
+if(isAdminFlag===true)showAdmin(session.user)
 }catch(e){console.error('init:',e)}
 }
 
@@ -505,7 +505,7 @@ btn.disabled=true;btn.textContent='A verificar...'
 const{data,error}=await db.auth.signInWithPassword({email,password:pass})
 if(error){showLoginError('Credenciais inválidas.');btn.disabled=false;btn.textContent='Entrar no painel';return}
 const{data:isAdminFlag2}=await db.rpc('is_admin')
-if(data.user.email!==ADMIN_EMAIL&&isAdminFlag2!==true){
+if(isAdminFlag2!==true){
 await db.auth.signOut()
 showLoginError('Acesso negado. Esta conta não tem permissões de administrador.')
 btn.disabled=false;btn.textContent='Entrar no painel';return
@@ -715,7 +715,7 @@ closeEditModal();loadProfiles();loadOverview()
 // SUBSCRIPTIONS
 async function loadSubscriptions(){
 const{data,error}=await db.rpc('admin_list_profiles')
-if(error){document.getElementById('subs-tbody').innerHTML=`<tr class="empty-row"><td colspan="6">Erro a carregar: ${error.message}</td></tr>`;return}
+if(error){document.getElementById('subs-tbody').innerHTML=`<tr class="empty-row"><td colspan="6">Erro a carregar: ${escapeHtml(error.message)}</td></tr>`;return}
 allSubs=(data||[]).sort((a,b)=>(a.name||'').localeCompare(b.name||''))
 renderSubStats(allSubs)
 filterSubs()
@@ -927,7 +927,7 @@ async function loadConversations(){
 const list=document.getElementById('conv-list')
 list.innerHTML='<div style="padding:20px;color:var(--muted)">A carregar...</div>'
 const{data:convs,error}=await db.from('conversations').select('*').order('last_message_at',{ascending:false})
-if(error){list.innerHTML=`<div style="padding:20px;color:var(--red)">Erro a carregar conversas: ${error.message}</div>`;return}
+if(error){list.innerHTML=`<div style="padding:20px;color:var(--red)">Erro a carregar conversas: ${escapeHtml(error.message)}</div>`;return}
 if(!convs||!convs.length){list.innerHTML='<div style="padding:20px;color:var(--muted)">Ainda não há conversas na plataforma.</div>';return}
 const proIds=[...new Set(convs.map(c=>c.professional_id).filter(Boolean))]
 const{data:pros}=await db.from('profiles').select('id,name').in('id',proIds.length?proIds:['00000000-0000-0000-0000-000000000000'])
@@ -953,7 +953,7 @@ card.classList.add('open')
 thread.classList.add('active')
 thread.innerHTML='<div style="color:var(--muted);font-size:12px">A carregar mensagens...</div>'
 const{data:msgs,error}=await db.from('messages').select('*').eq('conversation_id',convId).order('created_at',{ascending:true})
-if(error){thread.innerHTML=`<div style="color:var(--red);font-size:12px">Erro: ${error.message}</div>`;return}
+if(error){thread.innerHTML=`<div style="color:var(--red);font-size:12px">Erro: ${escapeHtml(error.message)}</div>`;return}
 if(!msgs||!msgs.length){thread.innerHTML='<div style="color:var(--muted);font-size:12px">Sem mensagens nesta conversa.</div>';return}
 thread.innerHTML=msgs.map(m=>{
 const isPro=m.sender_id===proId
@@ -1201,9 +1201,9 @@ const tbody=document.getElementById('verif-tbody')
 if(!rows.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Sem pedidos</td></tr>';return}
 tbody.innerHTML=rows.map(r=>{
 const docs=Array.isArray(r.documents)?r.documents:[]
-const docsHtml=docs.length?docs.map((d,i)=>`<button class="btn btn-outline btn-sm" onclick="viewVerificationDoc('${d.path}')">📄 ${escapeHtml(d.name||('Doc '+(i+1)))}</button>`).join(' '):'—'
+const docsHtml=docs.length?docs.map((d,i)=>`<button class="btn btn-outline btn-sm" data-path="${escapeHtml(d.path)}" onclick="viewVerificationDoc(this.dataset.path)">📄 ${escapeHtml(d.name||('Doc '+(i+1)))}</button>`).join(' '):'—'
 const isPending=r.status==='pending'
-const actions=isPending?`<button class="btn btn-primary btn-sm" onclick="resolveVerification('${r.id}','${r.profile_id}',true)">Aprovar</button> <button class="btn btn-sm" style="background:#fef2f2;color:#b91c1c;border:1px solid #fecaca" onclick="resolveVerification('${r.id}','${r.profile_id}',false)">Rejeitar</button>`:'—'
+const actions=isPending?`<button class="btn btn-primary btn-sm" onclick="resolveVerification('${escapeHtml(r.id)}','${escapeHtml(r.profile_id)}',true)">Aprovar</button> <button class="btn btn-sm" style="background:#fef2f2;color:#b91c1c;border:1px solid #fecaca" onclick="resolveVerification('${escapeHtml(r.id)}','${escapeHtml(r.profile_id)}',false)">Rejeitar</button>`:'—'
 return `<tr>
 <td><div class="td-name">${escapeHtml(r.accountName)}</div></td>
 <td>${new Date(r.created_at).toLocaleDateString('pt-PT')}</td>

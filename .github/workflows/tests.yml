@@ -1,9 +1,8 @@
-name: Testes automáticos (checkout / auth)
+name: Testes automáticos
 
-# Corre os testes unitários das funções Netlify e os testes E2E de
-# auth.html / pricing.html a cada push e pull request, para que uma
-# regressão nas funções de pagamento ou no login/registo seja apanhada
-# antes do deploy, não depois. Ver tests/README.md para correr localmente.
+# Corre a cada push e pull request: sintaxe de todo o JS, páginas de categoria
+# em dia, testes unitários das funções Netlify e testes E2E no browser.
+# Ver tests/README.md para correr localmente.
 on:
   push:
     branches: [main]
@@ -18,9 +17,22 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
 
       - name: Instalar dependências
         run: npm ci
+
+      - name: Sintaxe de todo o JavaScript (assets, functions e scripts inline)
+        run: npm run check
+
+      # As páginas de categoria (eletricistas.html, ...) são geradas a partir de
+      # templates/ + scripts/categories-data.json e o Netlify regenera-as no
+      # deploy. Se alguém editar uma delas à mão, ou o template sem regenerar,
+      # o repositório fica diferente do que vai para produção.
+      - name: Páginas de categoria em dia com o template
+        run: |
+          npm run build:categories
+          git diff --exit-code --ignore-cr-at-eol -- '*.html' || (echo "::error::Corre 'npm run build:categories' e faz commit das páginas geradas." && exit 1)
 
       - name: Testes unitários (netlify/functions)
         run: npm run test:unit
@@ -28,7 +40,7 @@ jobs:
       - name: Instalar navegador do Playwright
         run: npx playwright install --with-deps chromium
 
-      - name: Testes E2E (auth.html / pricing.html)
+      - name: Testes E2E
         run: npm run test:e2e
 
       - name: Guardar relatório do Playwright em caso de falha

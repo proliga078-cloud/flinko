@@ -2,7 +2,7 @@
 // profissionais (análise de mercado/UX: com 0 avaliações em toda a
 // plataforma, o selo de verificação manual era o único sinal de confiança
 // disponível, mas só aparecia como um ícone minúsculo no avatar — sem
-// texto — e só na secção "Porquê confiar na Proliga", nunca junto dos
+// texto — e só na secção "Porquê confiar na Flinko", nunca junto dos
 // próprios resultados de pesquisa, que é onde a decisão é tomada).
 //
 // Cobre: (1) a pill "Verificados à mão" que já existia nas páginas de

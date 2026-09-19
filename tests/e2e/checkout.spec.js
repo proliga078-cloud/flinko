@@ -38,7 +38,7 @@ test('sem sessão: clicar em "Mudar para Pro" manda para o login, nunca chega a 
   });
 
   await page.goto('/pricing.html');
-  await page.click('a.plan-cta.btn-solid:has-text("Mudar para Pro")');
+  await page.click('a.plan-cta:has-text("Mudar para Pro")');
   await page.waitForURL('**/auth.html?tab=login&redirect=pricing.html');
   expect(checkoutCalled).toBe(false);
 });
@@ -62,7 +62,7 @@ test('com sessão: clicar em "Mudar para Pro" chama create-checkout-session com 
   );
 
   await page.goto('/pricing.html');
-  await page.click('a.plan-cta.btn-solid:has-text("Mudar para Pro")');
+  await page.click('a.plan-cta:has-text("Mudar para Pro")');
 
   await page.waitForURL('**/fake-stripe-checkout.html');
   expect(capturedAuthHeader).toBe(`Bearer ${accessToken}`);

@@ -82,7 +82,7 @@ function makeFakeSupabaseAdmin(scenario) {
           eq: (col, val) => {
             scenario.updateCalls = scenario.updateCalls || [];
             scenario.updateCalls.push({ table, patch, col, val });
-            return Promise.resolve({ data: null, error: null });
+            return Promise.resolve({ data: null, error: scenario.updateError || null });
           },
         }),
       }),

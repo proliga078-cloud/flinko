@@ -1220,7 +1220,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
         <div data-reveal="d1"><div class="num" data-count="100" data-suffix="%">0%</div><div class="lbl">Perfis verificados</div></div>
         <div data-reveal="d2"><div class="num" data-count="0" data-suffix="%">0%</div><div class="lbl">De comissão</div></div>
         <div data-reveal="d3"><div class="num" data-count="24" data-suffix="h">0h</div><div class="lbl">Objetivo de resposta</div></div>
-        <div data-reveal="d4"><div class="num" data-count="9" data-suffix="">0</div><div class="lbl">Zonas com profissionais</div></div>
+        <div data-reveal="d4"><div class="num" id="stat-zonas" data-count="0" data-suffix="">0</div><div class="lbl" id="stat-zonas-label">Zonas com profissionais</div></div>
       </div>
       <div class="section-head center" style="max-width:680px" data-reveal>
         <span class="kicker">Confiança</span>
@@ -1303,7 +1303,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
       <div data-reveal>
         <span class="kicker">Cobertura</span>
         <h2>Profissionais <span class="hi-block mint">perto de ti</span></h2>
-        <p style="margin-top:16px;color:var(--muted);font-size:1.02rem;line-height:1.6">Já em 9 zonas de Portugal — cada ponto no mapa representa profissionais ativos na Flinko. A cobertura cresce todas as semanas à medida que mais profissionais se juntam à plataforma.</p>
+        <p style="margin-top:16px;color:var(--muted);font-size:1.02rem;line-height:1.6"><span id="zonas-intro">Ainda estamos a começar.</span> Cada ponto no mapa representa profissionais ativos na Flinko. A cobertura cresce todas as semanas à medida que mais profissionais se juntam à plataforma.</p>
         <p class="zone-note">Ainda não há profissionais na tua zona? <a href="/auth?tab=register" style="color:var(--orange-dark);font-weight:700">Regista-te</a> e sê o primeiro.</p>
       </div>
       <div class="map-card" data-reveal="d1" aria-label="Ilustração da rede de profissionais Flinko em Portugal">
@@ -1795,7 +1795,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
     return (parts[0][0] + (parts.length > 1 ? parts[parts.length-1][0] : '')).toUpperCase();
   }
   function profileHref(p){
-    return p.slug ? ('/' + encodeURIComponent(p.slug)) : ('/profile.html?u=' + encodeURIComponent(p.id));
+    return p.slug ? ('/' + encodeURIComponent(p.slug)) : ('/profile.html?id=' + encodeURIComponent(p.id));
   }
 
   function timeAgo(dateStr){
@@ -1867,22 +1867,32 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   // Contagem real de profissionais verificados (substitui o "23+" fixo) e
   // de distritos com pelo menos um profissional verificado (substitui o
   // "9" fixo no contador de zonas mais abaixo na pagina).
+  var DISTRITOS_PT = {};
+  ['Aveiro','Beja','Braga','Bragança','Castelo Branco','Coimbra','Évora','Faro','Guarda','Leiria','Lisboa','Portalegre','Porto','Santarém','Setúbal','Viana do Castelo','Vila Real','Viseu','Açores','Madeira'].forEach(function(d){ DISTRITOS_PT[normDistrict(d)] = true; });
+  function normDistrict(s){
+    return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+  }
   function loadRealCounts(){
     var avatarsText = document.getElementById('avatarsRowText');
     db.from('profiles').select('location').eq('account_type', 'professional').eq('verified', true).eq('is_demo', false).eq('suspended', false).eq('approved', true)
       .then(function(res){
         var rows = (res && res.data) || [];
         if(avatarsText) avatarsText.textContent = rows.length + (rows.length === 1 ? ' profissional verificado em Portugal' : ' profissionais verificados em Portugal');
+        // So conta distritos reconhecidos: texto livre ("Sítio desconhecido")
+        // nao pode inflacionar o numero de zonas com cobertura.
         var districts = {};
         rows.forEach(function(p){
-          var loc = (p.location || '').split('–')[0].trim();
-          if(loc) districts[loc] = true;
+          var loc = normDistrict((p.location || '').split('–')[0]);
+          if(DISTRITOS_PT[loc]) districts[loc] = true;
         });
-        var zoneEl = document.querySelector('.trust-stats [data-suffix=""]');
-        if(zoneEl){
-          var n = Object.keys(districts).length;
-          zoneEl.setAttribute('data-count', n);
-        }
+        var n = Object.keys(districts).length;
+        var zoneEl = document.getElementById('stat-zonas');
+        if(zoneEl){ zoneEl.setAttribute('data-count', n); if(zoneEl.classList.contains('counted')) zoneEl.textContent = n; }
+        var zoneLbl = document.getElementById('stat-zonas-label');
+        if(zoneLbl) zoneLbl.textContent = n === 1 ? 'Zona com profissionais' : 'Zonas com profissionais';
+        // Texto honesto: o numero vem da base de dados, nunca fixo no HTML.
+        var zoneIntro = document.getElementById('zonas-intro');
+        if(zoneIntro) zoneIntro.textContent = n === 0 ? 'Ainda estamos a começar.' : (n === 1 ? 'Já em 1 zona de Portugal.' : 'Já em ' + n + ' zonas de Portugal.');
       })
       .catch(function(){
         if(avatarsText) avatarsText.textContent = 'Profissionais verificados em Portugal';

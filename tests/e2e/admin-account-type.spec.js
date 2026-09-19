@@ -29,7 +29,7 @@ const accounts = [
 test.describe('admin.html separa contas de cliente e de profissional', () => {
   test('por omissão só mostra profissionais (registos antigos sem account_type contam como profissional)', async ({ page }) => {
     await withFakeSupabase(page, {
-      session: { access_token: 'admin-tok', user: { id: 'admin-1', email: 'davidscampos10@gmail.com' } },
+      session: { access_token: 'admin-tok', user: { id: 'admin-1', email: 'admin@example.com' } },
       rpcResults: { is_admin: true, admin_list_profiles: accounts },
       tableData: { profiles: { data: accounts }, profile_private: { data: [] } },
     });
@@ -46,7 +46,7 @@ test.describe('admin.html separa contas de cliente e de profissional', () => {
 
   test('filtro "Só clientes" mostra só clientes, e a conta cliente não tem o aviso "Sem categoria"', async ({ page }) => {
     await withFakeSupabase(page, {
-      session: { access_token: 'admin-tok', user: { id: 'admin-1', email: 'davidscampos10@gmail.com' } },
+      session: { access_token: 'admin-tok', user: { id: 'admin-1', email: 'admin@example.com' } },
       rpcResults: { is_admin: true, admin_list_profiles: accounts },
       tableData: { profiles: { data: accounts }, profile_private: { data: [] } },
     });
@@ -65,7 +65,7 @@ test.describe('admin.html separa contas de cliente e de profissional', () => {
 
   test('filtro "Todos" mostra as duas contas com o badge de Tipo correto', async ({ page }) => {
     await withFakeSupabase(page, {
-      session: { access_token: 'admin-tok', user: { id: 'admin-1', email: 'davidscampos10@gmail.com' } },
+      session: { access_token: 'admin-tok', user: { id: 'admin-1', email: 'admin@example.com' } },
       rpcResults: { is_admin: true, admin_list_profiles: accounts },
       tableData: { profiles: { data: accounts }, profile_private: { data: [] } },
     });

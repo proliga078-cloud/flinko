@@ -32,7 +32,7 @@ function resetScenario() {
 function baseEvent(overrides = {}) {
   return {
     httpMethod: 'POST',
-    headers: { authorization: 'Bearer valid-token', host: 'proliga.pt' },
+    headers: { authorization: 'Bearer valid-token', host: 'flinko.pt' },
     body: '{}',
     ...overrides,
   };
@@ -46,7 +46,7 @@ test('rejeita métodos que não sejam POST', async () => {
 
 test('rejeita pedido sem cabeçalho Authorization', async () => {
   resetScenario();
-  const res = await handler(baseEvent({ headers: { host: 'proliga.pt' } }));
+  const res = await handler(baseEvent({ headers: { host: 'flinko.pt' } }));
   assert.equal(res.statusCode, 401);
 });
 
@@ -88,7 +88,7 @@ test('usa SEMPRE o customerId do PRÓPRIO perfil (via userId da sessão), ignora
   // Um atacante autenticado como "victim" tenta, mesmo assim, mandar no
   // corpo o customerId de outra conta (ex: um valor visto nalgum lado).
   const res = await handler(baseEvent({
-    headers: { authorization: 'Bearer victim-token', host: 'proliga.pt' },
+    headers: { authorization: 'Bearer victim-token', host: 'flinko.pt' },
     body: JSON.stringify({ customerId: 'cus_OUTRA_CONTA_QUALQUER' }),
   }));
 

@@ -23,7 +23,7 @@ const{createClient}=require('@supabase/supabase-js')
 const stripe=Stripe(process.env.STRIPE_SECRET_KEY)
 const admin=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY)
 
-const ALLOWED_PLANS=['free','pro','premium']
+const ALLOWED_PLANS=['free','starter','pro','premium']
 
 exports.handler=async(event)=>{
   if(event.httpMethod!=='POST')return{statusCode:405,body:'Method Not Allowed'}

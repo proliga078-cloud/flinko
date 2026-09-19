@@ -54,13 +54,14 @@ test.describe('auth.html — login', () => {
     await page.waitForURL('**/dashboard.html');
   });
 
-  test('login do email admin redireciona para admin.html', async ({ page }) => {
+  test('login de conta admin (is_admin() = true no servidor) redireciona para admin.html', async ({ page }) => {
     await withFakeSupabase(page, {
-      loginUser: { id: 'admin-1', email: 'davidscampos10@gmail.com' },
-      loginSession: { access_token: 'tok-admin', user: { id: 'admin-1', email: 'davidscampos10@gmail.com' } },
+      loginUser: { id: 'admin-1', email: 'admin@example.com' },
+      loginSession: { access_token: 'tok-admin', user: { id: 'admin-1', email: 'admin@example.com' } },
+      rpcResults: { is_admin: true },
     });
     await page.goto('/auth.html');
-    await page.fill('#login-email', 'davidscampos10@gmail.com');
+    await page.fill('#login-email', 'admin@example.com');
     await page.fill('#login-password', 'adminpass');
     await page.click('#login-btn');
     await page.waitForURL('**/admin.html');

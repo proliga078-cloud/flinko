@@ -6,23 +6,25 @@
  <title>Reparações Tech em Portugal – Encontra e Contrata | Flinko</title>
  <meta name="description" content="Encontra e contrata reparações tech verificados em Portugal. Compara orçamentos, lê avaliações reais e contacta diretamente, sem intermediários."/>
  <meta name="robots" content="index, follow"/>
- <link rel="canonical" href="https://aproliga.pt/reparacoes-tech.html"/>
+ <link rel="canonical" href="https://flinko.pt/reparacoes-tech.html"/>
  <meta property="og:title" content="Reparações Tech em Portugal – Flinko"/>
  <meta property="og:description" content="Profissionais de reparações tech verificados manualmente em Portugal. Contacto direto pela plataforma."/>
  <meta property="og:type" content="website"/>
 
- <meta property="og:image" content="https://aproliga.pt/assets/og-image.png"/>
- <meta property="og:url" content="https://aproliga.pt/reparacoes-tech.html"/>
+ <meta property="og:image" content="https://flinko.pt/assets/og-image.png"/>
+ <meta property="og:url" content="https://flinko.pt/reparacoes-tech.html"/>
  <meta property="og:locale" content="pt_PT"/>
  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
  <link rel="shortcut icon" href="/favicon.ico"/>
 <link rel="manifest" href="/manifest.json"/>
-<meta name="theme-color" content="#0F1A33"/>
+<meta name="theme-color" content="#132420"/>
 <script src="/assets/pwa.js" defer></script>
+<script src="/assets/cookie-consent.js" defer></script>
 <script src="/assets/a11y-clickable.js" defer></script>
- <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet"/>
  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Fazem reparações ao domicílio ou só em loja?","acceptedAnswer":{"@type":"Answer","text":"Depende do profissional — muitos oferecem recolha e entrega, outros atendem por marcação. Confirma no perfil."}},{"@type":"Question","name":"Reparam telemóveis com ecrã partido?","acceptedAnswer":{"@type":"Answer","text":"Sim, é um dos serviços mais comuns nesta categoria. Pede orçamento com o modelo do aparelho para uma estimativa rápida."}}]}</script>
  <style>
 .ic{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;vertical-align:-3px}
@@ -31,11 +33,22 @@
 .cat-icon-badge .ic{width:26px;height:26px}
 
  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
- :root{--blue:#E8720A;--blue-dark:#C25A06;--blue-light:#FDECDD;--gold:#AF620A;--green:#1A8649;--green-light:#EAF7EE;--amber:#AF620A;--amber-light:#FFF3E4;--red:#C0362C;--red-light:#FBEAE8;--purple:#6B4FA0;--purple-light:#EDE8F4;--text:#14181F;--muted:#5B6270;--border:#ECECE9;--bg:#F7F8FA;--white:#fff}
+ :root{
+--ink:#132420;--ink-soft:#4E5C57;--ink-mute:#84918C;
+--paper:#FFFFFF;--surface:#F3FBF6;--line:#E1EEE6;--line-2:#CFE4D9;
+--accent:#E8720A;--accent-deep:#B85608;--accent-soft:#FFE7CE;
+--fresh:#0F8B5F;--fresh-deep:#0A6B49;--fresh-soft:#D7F5E4;--fresh-light:#6FE3B4;
+--gold:#AF620A;--gold-light:#FFF3E4;
+--red:#C0362C;--red-light:#FDECEA;
+--purple:#6B4FA0;--purple-light:#EDE8F4;
+--text:var(--ink);--muted:var(--ink-soft);--muted-2:var(--ink-mute);--border:var(--line);--bg:var(--surface);--white:var(--paper);
+--blue:var(--accent);--blue-dark:var(--accent-deep);--blue-light:var(--accent-soft);--green:var(--fresh);--green-light:var(--fresh-soft);--amber:var(--gold);--amber-light:var(--gold-light)
+}
+ h1,h2,h3,.logo,.faq-section h2,.mini-how h2,.sidebar-cta h3{font-family:'Plus Jakarta Sans',sans-serif}
  body{font-family:'Inter',sans-serif;color:var(--text);background:var(--bg)}
  a{text-decoration:none;color:inherit}
  nav{position:sticky;top:0;z-index:200;background:var(--white);border-bottom:1px solid var(--border);padding:0 5%;height:68px;display:flex;align-items:center;gap:16px}
- .logo{font-size:22px;font-weight:900;color:var(--blue);letter-spacing:-1px;white-space:nowrap}.logo span{color:var(--gold)}
+ .logo{font-size:22px;font-weight:900;color:var(--ink);letter-spacing:-1px;white-space:nowrap}.logo span{color:var(--accent)}
  .nav-search{flex:1;max-width:480px;position:relative}
  .nav-search input{width:100%;padding:9px 16px 9px 40px;border:1.5px solid var(--border);border-radius:99px;font-size:14px;font-family:inherit;outline:none;transition:border-color .2s}
  .nav-search input:focus{border-color:var(--blue)}
@@ -54,10 +67,13 @@
  .breadcrumb{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted-2);margin-bottom:8px}
  .breadcrumb a{color:var(--muted)}.breadcrumb a:hover{color:var(--ink)}
  .trust-pillrow{display:none}
- .stats-row{display:none!important}
+ .stats-row{display:none;gap:26px;margin:14px 0 2px;flex-wrap:wrap}
+ .stats-row .stat-item{display:flex;align-items:baseline;gap:7px}
+ .stats-row .stat-item strong{font-family:'Plus Jakarta Sans',sans-serif;font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
+ .stats-row .stat-item span{font-size:12.5px;color:var(--muted);font-weight:600}
  .toolbar{background:var(--white);padding:11px 5% 12px;display:flex;gap:9px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--border);margin-top:11px}
  .toolbar .tcount{font-size:12.5px;font-weight:800}
- .toolbar .tverif{font-size:11px;color:#146B3A;font-weight:700;background:#EAF5EE;padding:3px 10px;border-radius:99px;display:inline-flex;align-items:center;gap:5px}
+ .toolbar .tverif{font-size:11px;color:var(--fresh-deep);font-weight:700;background:var(--fresh-soft);padding:3px 10px;border-radius:99px;display:inline-flex;align-items:center;gap:5px}
  .toolbar .tverif .ic{width:12px;height:12px}
  .toolbar .tspacer{margin-left:auto}
  .catfoot{max-width:1400px;margin:0 auto;padding:0 5% 34px}
@@ -71,7 +87,8 @@
  .cat-chip.active{background:var(--blue);color:#fff;border-color:var(--blue)}
 
  .page-body{display:grid;grid-template-columns:260px minmax(0,1fr);gap:24px;padding:28px 5%;max-width:1400px;margin:0 auto}
- .mobile-filter-btn{display:none;align-items:center;gap:8px;background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text);margin-bottom:16px}
+ .mobile-filter-btn{display:none;align-items:center;gap:8px;background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text);margin-bottom:16px;transition:border-color .2s,color .2s}
+ .mobile-filter-btn:hover{border-color:var(--blue);color:var(--blue)}
  @media(max-width:900px){
  .page-body{grid-template-columns:1fr}
  .sidebar{display:none;position:fixed;top:0;left:0;width:min(320px,100vw);height:100vh;background:var(--white);z-index:500;overflow-y:auto;padding:20px;box-shadow:4px 0 24px rgba(0,0,0,.15)}
@@ -80,17 +97,24 @@
  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:499}
  .sidebar-overlay.open{display:block}
  }
+ @media(max-width:680px){
+ nav{flex-wrap:wrap;height:auto;padding:10px 4%;row-gap:8px}
+ .nav-search{order:3;flex:1 1 100%;max-width:none}
+ .nav-right{width:100%;justify-content:flex-end;flex-wrap:wrap;row-gap:8px}
+ .nav-right .btn{padding:7px 13px;font-size:12.5px}
+ }
  @media(max-width:600px){
  .pros-grid{grid-template-columns:1fr!important}
  .page-header{padding:20px 4% 16px}
  .page-body{padding:16px 4%}
- nav{padding:0 4%}
+ nav{padding:10px 4%}
  }
 
  .sidebar{position:sticky;top:88px;align-self:start}
  .sidebar-cta{border-radius:16px;padding:18px;margin-bottom:16px}
  .sidebar-cta a{display:inline-block;background:#fff;font-weight:700;padding:9px 18px;border-radius:8px;text-decoration:none;margin-top:2px}
- .filter-card{background:var(--white);border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid var(--border)}
+ .filter-card{background:var(--white);border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid var(--border);transition:border-color .2s,box-shadow .2s}
+ .filter-card:hover{border-color:var(--line-2);box-shadow:0 4px 16px rgba(19,36,32,.05)}
  .filter-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px}
  .filter-group{margin-bottom:8px}
  .filter-label{display:flex;align-items:center;gap:8px;font-size:14px;padding:8px 0;cursor:pointer;border-radius:8px;transition:background .15s}
@@ -112,19 +136,36 @@
  .sort-select:focus{border-color:var(--blue)}
 
  .pros-list{display:flex;flex-direction:column;gap:14px}
- .pro-card{background:linear-gradient(180deg,#fff,#FDFBF8);border:1px solid #F0F0EC;border-radius:18px;padding:22px 24px;display:flex;align-items:center;gap:20px;cursor:pointer;transition:all .2s;text-decoration:none;box-shadow:0 2px 4px rgba(15,26,51,.05),0 12px 28px rgba(15,26,51,.06)}
- .pro-card:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(15,26,51,.07),0 16px 34px rgba(15,26,51,.1)}
+ .pro-card{position:relative;isolation:isolate;overflow:hidden;background:linear-gradient(180deg,#fff,#FDFBF8);border:1px solid #F0F0EC;border-radius:18px;padding:22px 24px;display:flex;align-items:center;gap:20px;cursor:pointer;transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s cubic-bezier(.22,1,.36,1),border-color .2s;text-decoration:none;box-shadow:0 2px 4px rgba(15,26,51,.05),0 12px 28px rgba(15,26,51,.06)}
+ .pro-card::before{content:'';position:absolute;inset:0;background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(232,114,10,.09),transparent 72%);opacity:0;transition:opacity .3s;pointer-events:none;z-index:0}
+ .pro-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--fresh));transform:scaleX(0);transform-origin:left;transition:transform .35s cubic-bezier(.22,1,.36,1);z-index:2}
+ .pro-card>*{position:relative;z-index:1}
+ .pro-card:hover{transform:translateY(-3px);box-shadow:0 6px 14px rgba(15,26,51,.08),0 20px 40px rgba(15,26,51,.11)}
+ .pro-card:hover::before{opacity:1}
+ .pro-card:hover::after{transform:scaleX(1)}
  .pro-card.is-pro{border-color:#F5EFE6}
  .pro-avatar-wrap{position:relative;flex-shrink:0}
- .pro-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#0F1A33,#24365E);color:#fff;font-size:19px;font-weight:700;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 3px 10px rgba(15,26,51,.28);border:3px solid #F1EFE8}
+ .pro-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#132420,#1b4433);color:#fff;font-size:19px;font-weight:700;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 3px 10px rgba(19,36,32,.28);border:3px solid #F1EFE8}
  .pro-avatar img{width:100%;height:100%;object-fit:cover}
- .pro-verified-badge{position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-radius:50%;background:#1A8649;border:2.5px solid #fff;display:flex;align-items:center;justify-content:center}
+ .pro-verified-badge{position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-radius:50%;background:var(--fresh-deep);border:2.5px solid #fff;display:flex;align-items:center;justify-content:center}
  .pro-card-main{flex:1;min-width:0}
  .pro-card-name-row{display:flex;align-items:center;gap:9px;margin-bottom:6px}
  .pro-card-name{font-size:17.5px;font-weight:700;color:#14181F;letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
  .badge-pill{font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:99px;white-space:nowrap;flex-shrink:0}
  .badge-premium{background:linear-gradient(135deg,#D9A441,#AF620A);color:#fff;box-shadow:0 2px 6px rgba(175,98,10,.35)}
  .badge-pro{background:linear-gradient(135deg,#F2A55C,#E8720A);color:#fff;box-shadow:0 2px 6px rgba(232,114,10,.35)}
+
+ .sponsored-strip{margin-bottom:22px}
+ .sponsored-strip-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+ .sponsored-track{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+ .sponsored-card{flex:0 0 220px;height:165px;border-radius:16px;overflow:hidden;position:relative;text-decoration:none;background:var(--ink);box-shadow:0 4px 14px rgba(15,26,51,.14);display:block;transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s cubic-bezier(.22,1,.36,1)}
+ .sponsored-card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(15,26,51,.22)}
+ .sponsored-card img,.sponsored-card video{width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0}
+ .sponsored-card .sp-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,26,51,0) 42%,rgba(15,26,51,.82) 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:12px}
+ .sponsored-card .sp-tag{position:absolute;top:9px;left:9px;background:rgba(255,255,255,.94);color:var(--ink);font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;padding:3px 9px;border-radius:99px}
+ .sponsored-card .sp-name{color:#fff;font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .sponsored-card .sp-meta{color:rgba(255,255,255,.82);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ @media(max-width:600px){.sponsored-card{flex:0 0 172px;height:140px}}
  .pro-card-cat{display:flex;align-items:center;gap:6px;font-size:13.5px;color:#5B6270;margin-bottom:4px}
  .pro-rating{font-size:12.5px;color:var(--muted)}
  .pro-rating .stars{color:var(--gold)}
@@ -180,40 +221,24 @@
  
  .toolbar{background:var(--white);padding:11px 5% 12px;display:flex;gap:9px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--border);margin-top:11px}
  .toolbar .tcount{font-size:12.5px;font-weight:800}
- .toolbar .tverif{font-size:11px;color:#146B3A;font-weight:700;background:#EAF5EE;padding:3px 10px;border-radius:99px;display:inline-flex;align-items:center;gap:5px}
+ .toolbar .tverif{font-size:11px;color:var(--fresh-deep);font-weight:700;background:var(--fresh-soft);padding:3px 10px;border-radius:99px;display:inline-flex;align-items:center;gap:5px}
  .toolbar .tverif .ic{width:12px;height:12px}
  .toolbar .tspacer{margin-left:auto}
  .tfilters{background:var(--bg);border:1.5px solid var(--border);color:var(--ink);font-family:inherit;font-size:12px;font-weight:600;padding:6px 13px;border-radius:9px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
  .tfilters:hover{border-color:var(--blue);color:var(--blue)}
- .sidebar-cta{background:linear-gradient(135deg,#C25A06,#E8720A)!important}
- .sidebar-cta a{color:#E8720A!important}
- .pro-card-cover{background:linear-gradient(135deg,#FDECDD,#DCE6FA)!important}
+ .sidebar-cta{background:linear-gradient(135deg,var(--accent-deep),var(--accent))!important}
+ .sidebar-cta a{color:var(--accent)!important}
 
-/* === tema navy+laranja: nav === */
-nav{background:#0F1A33}
-nav a.logo{color:#fff}
-nav a.logo em,nav a.logo span{color:#F2A55C}
-.navlinks{color:#9AA6C3}
-.navlinks a:hover{color:#fff}
-.hamburger-btn{background:transparent;border-color:rgba(255,255,255,.25);color:#fff}
-.mobile-nav-panel{background:#fff}
-nav .btn-ghost{color:#fff}
-nav .btn-ghost:hover{background:rgba(255,255,255,.1)}
-nav .btn-line{color:#fff;border-color:rgba(255,255,255,.3)}
-nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
-.btn-ink{background:#E8720A;color:#fff}
-.btn-ink:hover{background:#C25A06}
-
-/* === tema navy+laranja: acento único de categoria === */
-.cat-icon-badge{background:#FDECDD;color:#E8720A}
-.pro-card:hover{border-color:#E8720A}
-.pro-card-cover{background:linear-gradient(135deg,#E8720A,#F2924A)}
-.faq-item.open{border-color:#E8720A}
-.faq-chevron{color:#E8720A}
-.mini-how-card:hover{border-color:#E8720A}
-.mini-how-num{background:#E8720A}
-.sidebar-cta{background:linear-gradient(135deg,#E8720A,#F2924A)}
-.sidebar-cta a{color:#E8720A}
+/* === acento único de categoria === */
+.cat-icon-badge{background:var(--accent-soft);color:var(--accent)}
+.pro-card:hover{border-color:var(--accent)}
+.pro-card-cover{background:linear-gradient(135deg,var(--accent),#F2924A)}
+.faq-item.open{border-color:var(--accent)}
+.faq-chevron{color:var(--accent)}
+.mini-how-card:hover{border-color:var(--accent)}
+.mini-how-num{background:var(--accent)}
+.sidebar-cta{background:linear-gradient(135deg,var(--accent),#F2924A)}
+.sidebar-cta a{color:var(--accent)}
 </style>
 <script type="application/ld+json">
 {
@@ -223,20 +248,20 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
  "provider": {
  "@type": "Organization",
  "name": "Flinko",
- "url": "https://aproliga.pt"
+ "url": "https://flinko.pt"
  },
  "areaServed": {
  "@type": "Country",
  "name": "Portugal"
  },
- "url": "https://aproliga.pt/reparacoes-tech.html"
+ "url": "https://flinko.pt/reparacoes-tech.html"
 }
 </script>
 </head>
 <body>
 
 <nav>
- <a href="index.html" class="logo">Pro<span>liga</span></a>
+ <a href="index.html" class="logo">Flink<span>o</span></a>
  <div class="nav-search">
  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
  <input type="text" id="nav-q" placeholder="Procurar profissional..." onkeydown="if(event.key==='Enter')applySearch()"/>
@@ -361,6 +386,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
  </aside>
 
  <main>
+ <div id="sponsored-container"></div>
  <div class="main-top">
  <div class="results-count" id="results-count" style="display:none"></div>
  <select class="sort-select" id="sort-select" onchange="loadPros()">
@@ -429,12 +455,12 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
  </div>
 </footer>
 
+<script src="/assets/escape-html.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
 const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
-function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 
 
 const params=new URLSearchParams(location.search)
@@ -460,6 +486,48 @@ async function init(){
  }
  loadPros()
  loadCatStats()
+ loadSponsored()
+}
+
+// Profissionais com um slot de destaque ativo (comprado com creditos no
+// dashboard, ver buy_ad_slot) para esta categoria. Mostrados sempre, mesmo
+// com filtros/paginacao aplicados na lista principal, porque e um espaco
+// pago a parte - nao concorre com a ordenacao normal.
+async function loadSponsored(){
+ const box=document.getElementById('sponsored-container')
+ if(!box)return
+ try{
+ const{data:slots}=await db.from('ad_slots').select('professional_id,media_url,media_type,ends_at').eq('status','ativo').gt('ends_at',new Date().toISOString())
+ if(!slots||!slots.length){box.innerHTML='';return}
+ const ids=[...new Set(slots.map(s=>s.professional_id))]
+ const{data:pros}=await db.from('profiles').select('id,name,category,location,photo_url,slug,verified').in('id',ids).ilike('category',`%${filters.cat}%`).eq('is_demo',false).eq('suspended',false).eq('approved',true)
+ if(!pros||!pros.length){box.innerHTML='';return}
+ const slotByPro={}
+ slots.forEach(s=>{ if(!slotByPro[s.professional_id])slotByPro[s.professional_id]=s })
+ // Baralhado a cada carregamento de pagina - varios profissionais podem
+ // ter anuncio ativo ao mesmo tempo e nenhum deve ficar sempre em ultimo.
+ const shuffled=pros.map(p=>p).sort(()=>Math.random()-0.5)
+ box.innerHTML=`<div class="sponsored-strip">
+ <div class="sponsored-strip-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg> Em destaque</div>
+ <div class="sponsored-track">${shuffled.map(pro=>{
+ const slot=slotByPro[pro.id]
+ const safeName=escapeHtml(pro.name)
+ const media=slot.media_url
+ ? (slot.media_type==='video'
+ ? `<video src="${escapeHtml(slot.media_url)}" muted autoplay loop playsinline></video>`
+ : `<img src="${escapeHtml(slot.media_url)}" alt="${safeName}" loading="lazy"/>`)
+ : (pro.photo_url?`<img src="${escapeHtml(pro.photo_url)}" alt="${safeName}" loading="lazy"/>`:'')
+ return `<a class="sponsored-card" href="${pro.slug?("/"+pro.slug):("profile.html?id="+pro.id)}">
+ ${media}
+ <span class="sp-tag">Patrocinado</span>
+ <div class="sp-overlay">
+ <div class="sp-name">${safeName}</div>
+ <div class="sp-meta">${escapeHtml(pro.category||'')}${pro.location?' · '+escapeHtml(pro.location):''}</div>
+ </div>
+ </a>`
+ }).join('')}</div>
+ </div>`
+ }catch(e){box.innerHTML=''}
 }
 
 function formatResponseMinutes(mins){
@@ -471,10 +539,11 @@ function formatResponseMinutes(mins){
 async function loadCatStats(){
  try{
  const{data:pros,count}=await db.from('profiles').select('id,avg_response_minutes,response_sample_count',{count:'exact'}).eq('is_demo',false).ilike('category',`%${filters.cat}%`)
- if(!pros)return
+ // Estado vazio honesto: sem profissionais nesta categoria ainda, não
+ // mostramos a barra de estatísticas em vez de exibir "0 profissionais".
+ if(!pros||!pros.length)return
  const row=document.getElementById('cat-stats-row')
  document.getElementById('stat-count').textContent=(count||pros.length)
- if(pros.length){
  const ids=pros.map(p=>p.id)
  const{data:revs}=await db.from('reviews').select('rating').in('professional_id',ids)
  if(revs&&revs.length){
@@ -496,7 +565,6 @@ async function loadCatStats(){
  if(totalN>=3){
  document.getElementById('stat-response').textContent=formatResponseMinutes(totalMin/totalN)
  document.getElementById('stat-response-item').style.display=''
- }
  }
  row.style.display='flex'
  }catch(e){}
@@ -526,7 +594,7 @@ async function loadPros(){
  q=q.range(from,from+filters.perPage-1)
 
  const{data,error,count}=await q
- if(error){container.innerHTML=`<p style="color:red;padding:20px">Erro: ${error.message}</p>`;return}
+ if(error){container.innerHTML=`<p style="color:red;padding:20px">Erro: ${escapeHtml(error.message)}</p>`;return}
 
  if(!data||!data.length){
  container.innerHTML=`<div class="pros-list"><div class="empty-state"><h3>Nenhum profissional encontrado ainda</h3><p>Ainda não há reparações tech nesta zona. Publica um pedido grátis e os profissionais desta categoria candidatam-se a ti, ou experimenta outro distrito.</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><a href="pedidos.html?cat=Repara%C3%A7%C3%B5es%20Tech" class="btn btn-solid">Publicar pedido grátis</a><a href="categoria.html" class="btn btn-outline">Ver todos os profissionais</a></div></div></div>`
@@ -643,6 +711,17 @@ const initials=pro.name.split(' ').map(n=>n[0]).slice(0,2).join('')
 }
 
 function goPage(p){filters.page=p;loadPros();window.scrollTo({top:0,behavior:'smooth'})}
+
+// Glow-spot que segue o cursor nos cartões de profissional (mesmo efeito
+// já usado na homepage). Delegado no container em vez de um listener por
+// cartão, porque a lista é reconstruída a cada loadPros()/filtro.
+document.getElementById('pros-container').addEventListener('mousemove',e=>{
+ const card=e.target.closest('.pro-card')
+ if(!card)return
+ const r=card.getBoundingClientRect()
+ card.style.setProperty('--mx',(e.clientX-r.left)+'px')
+ card.style.setProperty('--my',(e.clientY-r.top)+'px')
+})
 
 function openSidebar(){
  document.getElementById('sidebar-el').classList.add('open')
