@@ -160,7 +160,7 @@ function updateSidebar(){
 const name=profileData?.name||user.email
 document.getElementById('sb-name').textContent=name
 const plan=profileData?.plan||'free'
-document.getElementById('sb-plan').textContent=plan==='premium'?'Premium':plan==='pro'?'Pro':'Plano Grátis'
+document.getElementById('sb-plan').textContent=plan==='premium'?'Premium':plan==='pro'?'Pro':plan==='starter'?'Starter':'Plano Grátis'
 const initials=name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase()
 const av=document.getElementById('sb-avatar')
 if(profileData?.photo_url)av.innerHTML=`<img src="${escapeHtml(profileData.photo_url)}" alt="${escapeHtml(name)}"/>`

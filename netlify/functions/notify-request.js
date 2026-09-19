@@ -7,6 +7,22 @@ const SITE=process.env.URL||'https://flinko.pt'
 const admin=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY)
 
 const MAX_DESTINATARIOS=15
+// Limite por cliente: pedidos notificados por hora. Impede usar a plataforma
+// para enviar emails em massa criando pedidos em ciclo.
+const MAX_PEDIDOS_POR_HORA=5
+const PLANOS_PAGOS=['starter','pro','premium']
+
+// Escolhe quem avisar: primeiro quem trabalha na mesma zona do pedido, depois
+// quem tem plano pago, e so entao os restantes. Antes eram sempre os mesmos 15
+// (sem ordem), independentemente da localizacao.
+function ordenarPorRelevancia(pros,localPedido){
+  const local=String(localPedido||'').toLowerCase().trim()
+  const pontos=p=>{
+    const loc=String(p.location||'').toLowerCase()
+    return (local&&loc&&(loc.includes(local)||local.includes(loc))?2:0)+(PLANOS_PAGOS.includes(p.plan)?1:0)
+  }
+  return pros.slice().sort((a,b)=>pontos(b)-pontos(a))
+}
 
 function esc(s){
   return String(s==null?'':s)
@@ -44,13 +60,28 @@ exports.handler=async(event)=>{
     if(!pedido)return{statusCode:404,body:JSON.stringify({error:'Pedido nao encontrado.'})}
     if(pedido.client_id!==autorId)return{statusCode:403,body:JSON.stringify({error:'O pedido nao e teu.'})}
 
-    const{data:pros}=await admin.from('profiles')
-      .select('id,name,notify_email')
-      .eq('category',pedido.category)
-      .neq('id',autorId)
-      .limit(MAX_DESTINATARIOS)
+    // Limite por hora deste cliente.
+    const desde=new Date(Date.now()-3600000).toISOString()
+    const{count:recentes}=await admin.from('requests')
+      .select('id',{count:'exact',head:true})
+      .eq('client_id',autorId).gte('notified_at',desde)
+    if(recentes>=MAX_PEDIDOS_POR_HORA)return{statusCode:429,body:JSON.stringify({error:'Demasiados pedidos numa hora. Tenta mais tarde.'})}
 
-    const candidatos=(pros||[]).filter(p=>p.notify_email!==false)
+    // Reclama o pedido de forma atomica: so a primeira chamada passa. Chamadas
+    // repetidas com o mesmo requestId ficam sem efeito.
+    const{data:reclamado}=await admin.from('requests')
+      .update({notified_at:new Date().toISOString()})
+      .eq('id',requestId).is('notified_at',null).select('id')
+    if(!reclamado||!reclamado.length)return{statusCode:200,body:JSON.stringify({sent:0,skipped:true,reason:'pedido ja notificado'})}
+
+    const{data:pros}=await admin.from('profiles')
+      .select('id,name,notify_email,location,plan')
+      .eq('category',pedido.category)
+      .eq('approved',true).eq('suspended',false).eq('is_demo',false)
+      .neq('id',autorId)
+      .limit(200)
+
+    const candidatos=ordenarPorRelevancia((pros||[]).filter(p=>p.notify_email!==false),pedido.location).slice(0,MAX_DESTINATARIOS)
     if(!candidatos.length)return{statusCode:200,body:JSON.stringify({sent:0,reason:'ninguem nesta categoria'})}
 
     // Push nao depende de ter email: manda a todos os candidatos da categoria.

@@ -30,12 +30,18 @@ const email=userData.user.email
 const{plan,billing}=JSON.parse(event.body||'{}')
 const priceId=PRICE_MAP[`${plan}_${billing}`]
 if(!priceId)return{statusCode:400,body:JSON.stringify({error:'Plano ou periodicidade inválidos.'})}
+// Quem ja tem subscricao ativa nao pode abrir outro checkout: pagaria duas
+// vezes. Muda de plano ou cancela pelo portal de faturacao. O webhook e o
+// admin-set-plan limpam stripe_subscription_id quando a subscricao acaba.
+// Reaproveita tambem o cliente Stripe, em vez de criar um novo a cada checkout.
+const{data:perfil}=await admin.from('profiles').select('stripe_customer_id,stripe_subscription_id').eq('id',userId).maybeSingle()
+if(perfil&&perfil.stripe_subscription_id)return{statusCode:409,body:JSON.stringify({error:'Já tens uma subscrição ativa. Gere o teu plano no portal de faturação.'})}
 const siteUrl=process.env.URL||`https://${event.headers.host}`
 const session=await stripe.checkout.sessions.create({
 mode:'subscription',
 payment_method_types:['card'],
 line_items:[{price:priceId,quantity:1}],
-customer_email:email,
+...(perfil&&perfil.stripe_customer_id?{customer:perfil.stripe_customer_id}:{customer_email:email}),
 client_reference_id:userId,
 subscription_data:{metadata:{supabase_user_id:userId,plan}},
 // A Proliga esta no regime de isencao do artigo 53.o do CIVA, por isso

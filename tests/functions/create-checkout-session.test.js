@@ -29,12 +29,13 @@ function resetScenario() {
   scenario.getUser = undefined;
   scenario.checkoutSessionsCreate = undefined;
   scenario.checkoutSessionsCreateCalls = [];
+  scenario.selectMaybeSingle = async () => ({ data: { stripe_customer_id: null, stripe_subscription_id: null }, error: null });
 }
 
 function baseEvent(overrides = {}) {
   return {
     httpMethod: 'POST',
-    headers: { authorization: 'Bearer valid-token', host: 'proliga.pt' },
+    headers: { authorization: 'Bearer valid-token', host: 'flinko.pt' },
     body: JSON.stringify({ plan: 'pro', billing: 'monthly' }),
     ...overrides,
   };
@@ -48,7 +49,7 @@ test('rejeita métodos que não sejam POST', async () => {
 
 test('rejeita pedido sem cabeçalho Authorization', async () => {
   resetScenario();
-  const res = await handler(baseEvent({ headers: { host: 'proliga.pt' } }));
+  const res = await handler(baseEvent({ headers: { host: 'flinko.pt' } }));
   assert.equal(res.statusCode, 401);
   assert.match(JSON.parse(res.body).error, /Sem sessão/);
 });
@@ -96,7 +97,7 @@ test('usa SEMPRE o userId/email da sessão validada, mesmo que o corpo tente man
     email: 'victima@example.com',
   });
   const res = await handler(baseEvent({
-    headers: { authorization: 'Bearer attacker-own-valid-token', host: 'proliga.pt' },
+    headers: { authorization: 'Bearer attacker-own-valid-token', host: 'flinko.pt' },
     body: maliciousBody,
   }));
 
@@ -124,7 +125,7 @@ test('não liga automatic_tax (regime de isenção de IVA, art. 53.º CIVA)', as
   scenario.checkoutSessionsCreate = async (params) => { capturedParams = params; return { url: 'https://checkout.stripe.com/x' }; };
 
   await handler(baseEvent());
-  assert.equal(capturedParams.automatic_tax, undefined, 'automatic_tax não deve estar ligado enquanto a Proliga estiver isenta de IVA');
+  assert.equal(capturedParams.automatic_tax, undefined, 'automatic_tax não deve estar ligado enquanto a Flinko estiver isenta de IVA');
 });
 
 test('devolve 500 se o Stripe falhar', async () => {
@@ -134,4 +135,26 @@ test('devolve 500 se o Stripe falhar', async () => {
   const res = await handler(baseEvent());
   assert.equal(res.statusCode, 500);
   assert.match(JSON.parse(res.body).error, /indisponível/);
+});
+
+test('REGRESSÃO: quem já tem subscrição ativa recebe 409 e nunca chega ao Stripe (evita pagar duas vezes)', async () => {
+  resetScenario();
+  scenario.getUser = async () => ({ data: { user: { id: 'user-abc', email: 'a@example.com' } }, error: null });
+  scenario.selectMaybeSingle = async () => ({ data: { stripe_customer_id: 'cus_1', stripe_subscription_id: 'sub_1' }, error: null });
+  let created = false;
+  scenario.checkoutSessionsCreate = async () => { created = true; return { url: 'x' }; };
+  const res = await handler(baseEvent());
+  assert.equal(res.statusCode, 409);
+  assert.equal(created, false);
+});
+
+test('cliente Stripe já existente é reaproveitado (customer) em vez de customer_email', async () => {
+  resetScenario();
+  scenario.getUser = async () => ({ data: { user: { id: 'user-abc', email: 'a@example.com' } }, error: null });
+  scenario.selectMaybeSingle = async () => ({ data: { stripe_customer_id: 'cus_existente', stripe_subscription_id: null }, error: null });
+  let params = null;
+  scenario.checkoutSessionsCreate = async (p) => { params = p; return { url: 'https://checkout.stripe.com/x' }; };
+  await handler(baseEvent());
+  assert.equal(params.customer, 'cus_existente');
+  assert.equal(params.customer_email, undefined);
 });

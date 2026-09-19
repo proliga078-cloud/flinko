@@ -9,6 +9,8 @@ const { makeFakeStripe, makeFakeSupabaseAdmin } = require('./helpers/fakes');
 const { stubModule } = require('./helpers/stub-require');
 
 const scenario = {};
+process.env.STRIPE_PRICE_STARTER_MONTHLY = 'price_starter_m';
+process.env.STRIPE_PRICE_PRO_MONTHLY = 'price_pro_m';
 
 process.env.STRIPE_SECRET_KEY = 'sk_test_fake';
 process.env.STRIPE_WEBHOOK_SECRET = 'whsec_fake';
@@ -105,7 +107,7 @@ test('customer.subscription.updated: trialing -> também conta como pago', async
   assert.equal(scenario.updateCalls[0].patch.plan, 'pro', 'sem metadata.plan deve cair no default "pro"');
 });
 
-for (const badStatus of ['past_due', 'unpaid', 'canceled', 'incomplete_expired', 'paused']) {
+for (const badStatus of ['unpaid', 'canceled', 'incomplete_expired', 'paused']) {
   test(`customer.subscription.updated: ${badStatus} -> volta para "free"`, async () => {
     resetScenario();
     scenario.constructEvent = () => ({
@@ -196,4 +198,47 @@ test('erro a processar o evento -> 500', async () => {
   scenario.subscriptionsRetrieve = async () => { throw new Error('falha a consultar a subscrição'); };
   const res = await handler(baseEvent());
   assert.equal(res.statusCode, 500);
+});
+
+test('customer.subscription.updated: past_due -> mantém o plano pago (período de graça enquanto o Stripe repete a cobrança)', async () => {
+  resetScenario();
+  scenario.constructEvent = () => ({
+    type: 'customer.subscription.updated',
+    data: { object: { id: 'sub_pd', status: 'past_due', metadata: { plan: 'pro' } } },
+  });
+  await handler(baseEvent());
+  assert.equal(scenario.updateCalls[0].patch.plan, 'pro');
+});
+
+test('o plano vem do preço da subscrição (mudança Starter -> Pro no portal), não do metadata antigo', async () => {
+  resetScenario();
+  scenario.constructEvent = () => ({
+    type: 'customer.subscription.updated',
+    data: { object: { id: 'sub_up', status: 'active', metadata: { plan: 'starter' }, items: { data: [{ price: { id: 'price_pro_m' } }] } } },
+  });
+  await handler(baseEvent());
+  assert.equal(scenario.updateCalls[0].patch.plan, 'pro');
+});
+
+test('checkout.session.completed de Starter grava plan="starter"', async () => {
+  resetScenario();
+  scenario.constructEvent = () => ({
+    type: 'checkout.session.completed',
+    data: { object: { client_reference_id: 'user-7', customer: 'cus_7', subscription: 'sub_7' } },
+  });
+  scenario.subscriptionsRetrieve = async () => ({ metadata: {}, items: { data: [{ price: { id: 'price_starter_m' } }] } });
+  await handler(baseEvent());
+  assert.equal(scenario.updateCalls[0].patch.plan, 'starter');
+});
+
+test('REGRESSÃO: se a BD recusar a escrita, responde 500 para o Stripe repetir o evento (antes respondia 200 e o cliente ficava sem plano)', async () => {
+  resetScenario();
+  scenario.updateError = { message: 'connection reset' };
+  scenario.constructEvent = () => ({
+    type: 'customer.subscription.updated',
+    data: { object: { id: 'sub_err', status: 'active', metadata: { plan: 'pro' } } },
+  });
+  const res = await handler(baseEvent());
+  assert.equal(res.statusCode, 500);
+  assert.match(res.body, /connection reset/);
 });
