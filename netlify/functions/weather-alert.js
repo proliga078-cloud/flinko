@@ -52,9 +52,16 @@ const RAIN_THRESHOLD=60 // % de probabilidade a partir do qual vale a pena avisa
 // trabalho agendado nesse dia.
 exports.handler=async()=>{
   try{
-    const{data:pros}=await admin.from('profiles').select('id,name,category,location')
-      .eq('is_demo',false).in('category',OUTDOOR_CATEGORIES)
-    if(!pros||!pros.length)return{statusCode:200,body:JSON.stringify({checked:0,alerted:0})}
+    // O PostgREST corta a 1000 linhas por pedido: le por paginas.
+    const pros=[]
+    for(let de=0;;de+=1000){
+      const{data,error}=await admin.from('profiles').select('id,name,category,location')
+        .eq('is_demo',false).in('category',OUTDOOR_CATEGORIES).order('id').range(de,de+999)
+      if(error)throw new Error(error.message)
+      pros.push(...(data||[]))
+      if(!data||data.length<1000)break
+    }
+    if(!pros.length)return{statusCode:200,body:JSON.stringify({checked:0,alerted:0})}
 
     const targetDate=new Date(Date.now()+2*86400000)
     const targetStr=targetDate.toISOString().slice(0,10)
@@ -72,10 +79,16 @@ exports.handler=async()=>{
     const relevantProIds=Object.keys(placeByProId)
     if(!relevantProIds.length)return{statusCode:200,body:JSON.stringify({checked:pros.length,alerted:0})}
 
-    const{data:allJobs}=await admin.from('jobs').select('id,title,professional_id')
-      .in('professional_id',relevantProIds)
-      .gte('scheduled_at',dayStart).lte('scheduled_at',dayEnd)
-      .in('status',['novo','negociacao','orcamento_enviado','aceite','agendado'])
+    // Em lotes de 200 ids: um .in() com milhares de ids rebenta o limite do URL.
+    const allJobs=[]
+    for(let i=0;i<relevantProIds.length;i+=200){
+      const{data,error}=await admin.from('jobs').select('id,title,professional_id')
+        .in('professional_id',relevantProIds.slice(i,i+200))
+        .gte('scheduled_at',dayStart).lte('scheduled_at',dayEnd)
+        .in('status',['novo','negociacao','orcamento_enviado','aceite','agendado'])
+      if(error)throw new Error(error.message)
+      allJobs.push(...(data||[]))
+    }
     const jobsByProId={}
     ;(allJobs||[]).forEach(j=>{(jobsByProId[j.professional_id]=jobsByProId[j.professional_id]||[]).push(j)})
 

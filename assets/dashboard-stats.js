@@ -218,7 +218,7 @@ function renderInsights(){
     tips.push({type:'good',icon:'chart',text:`A maior parte dos teus trabalhos concluídos caem à ${dowNames[maxIdx]}.`})
   }
 
-  if(marketPriceCache&&marketPriceCache.category===profileData.category)tips.push({type:'good',icon:'coin',text:`Profissionais de ${profileData.category} na Flinko cobram, em média, entre €${marketPriceCache.lo.toFixed(0)} e €${marketPriceCache.hi.toFixed(0)}. Usa isto para ajustares os teus preços.`})
+  if(marketPriceCache&&marketPriceCache.category===profileData.category)tips.push({type:'good',icon:'coin',text:`Profissionais de ${escapeHtml(profileData.category)} na Flinko cobram, em média, entre €${marketPriceCache.lo.toFixed(0)} e €${marketPriceCache.hi.toFixed(0)}. Usa isto para ajustares os teus preços.`})
 
   const respN=profileData.response_sample_count||0
   const respM=profileData.avg_response_minutes

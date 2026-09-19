@@ -85,12 +85,13 @@ exports.handler=async(event)=>{
     if(!candidatos.length)return{statusCode:200,body:JSON.stringify({sent:0,reason:'ninguem nesta categoria'})}
 
     // Push nao depende de ter email: manda a todos os candidatos da categoria.
-    Promise.allSettled(candidatos.map(p=>sendPush(p.id,{
+    // (esperamos por eles: numa funcao serverless, o que fica por esperar pode nunca correr)
+    await Promise.allSettled(candidatos.map(p=>sendPush(p.id,{
       title:`Novo pedido em ${pedido.category}`,
       body:pedido.title,
       url:'/pedidos.html',
       tag:'request-'+pedido.id
-    }))).catch(()=>{})
+    })))
 
     // Os emails vem do auth, nao de profiles.
     const{data:enderecos}=await admin.rpc('emails_for',{ids:candidatos.map(p=>p.id)})

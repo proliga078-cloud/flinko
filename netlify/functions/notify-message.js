@@ -68,8 +68,10 @@ exports.handler=async(event)=>{
       .eq('conversation_id',conversationId).eq('recipient_id',destinatarioId).gte('sent_at',desde)
     if(recentes)return{statusCode:200,body:JSON.stringify({skipped:true,reason:'aviso recente enviado'})}
 
-    const nomeDe=esc((de&&de.name)||'Alguem')
-    const trecho=esc(String(preview||'').slice(0,300))
+    const nomeRaw=(de&&de.name)||'Alguem'
+    const previewRaw=String(preview||'').slice(0,300)
+    const nomeDe=esc(nomeRaw)
+    const trecho=esc(previewRaw)
     const link=SITE+'/messages'
 
     const html=`
@@ -86,14 +88,15 @@ exports.handler=async(event)=>{
     const resp=await fetch('https://api.resend.com/emails',{
       method:'POST',
       headers:{'Authorization':`Bearer ${RESEND_API_KEY}`,'Content-Type':'application/json'},
-      body:JSON.stringify({from:FROM,to:[emailPara],subject:`Nova mensagem de ${nomeDe} na Flinko`,html})
+      body:JSON.stringify({from:FROM,to:[emailPara],subject:`Nova mensagem de ${nomeRaw.replace(/\s+/g," ")} na Flinko`,html})
     })
     const data=await resp.json()
     if(!resp.ok){console.error('Resend error:',data);return{statusCode:resp.status,body:JSON.stringify(data)}}
 
     await admin.from('message_notices').insert({conversation_id:conversationId,recipient_id:destinatarioId})
 
-    sendPush(destinatarioId,{title:`Nova mensagem de ${nomeDe}`,body:trecho||'Enviou-te uma mensagem na Flinko.',url:'/messages.html',tag:'message-'+conversationId}).catch(()=>{})
+    // Esperar pelo push: numa funcao serverless, o que fica por esperar pode nunca chegar a correr.
+    await sendPush(destinatarioId,{title:`Nova mensagem de ${nomeRaw}`,body:previewRaw||'Enviou-te uma mensagem na Flinko.',url:'/messages.html',tag:'message-'+conversationId}).catch(()=>{})
 
     return{statusCode:200,body:JSON.stringify({sent:true})}
   }catch(err){

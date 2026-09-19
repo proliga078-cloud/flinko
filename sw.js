@@ -57,7 +57,7 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(redePrimeiro(req, '/index.html'));
     return;
   }
-  if (/.(js|css)$/.test(url.pathname)) {
+  if (/\.(js|css)$/.test(url.pathname)) {
     event.respondWith(redePrimeiro(req));
     return;
   }

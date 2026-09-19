@@ -79,7 +79,7 @@ async function searchReferralPros(){
   const myToken=++refSearchToken
   const q=document.getElementById('ref-search').value.trim()
   let query=db.from('profiles').select('id,name,category,location,photo_url').neq('id',profileId).eq('approved',true).eq('suspended',false).eq('is_demo',false).limit(8)
-  if(q)query=query.or(`name.ilike.%${q}%,category.ilike.%${q}%,location.ilike.%${q}%`)
+  if(q)query=(orSafe(q)?query=query.or(`name.ilike.%${orSafe(q)}%,category.ilike.%${orSafe(q)}%,location.ilike.%${orSafe(q)}%`):query)
   else if(profileData?.category)query=query.eq('category',profileData.category)
   const{data}=await query
   if(myToken!==refSearchToken)return
@@ -147,7 +147,7 @@ async function loadInvites(){
     }
     if(code){
       const url=location.origin+'/auth.html?tab=register&ref='+code
-      box.innerHTML=`<input type="text" readonly value="${url}" style="margin-bottom:8px;font-size:12.5px" onclick="this.select()"/>
+      box.innerHTML=`<input type="text" readonly value="${escapeHtml(url)}" style="margin-bottom:8px;font-size:12.5px" onclick="this.select()"/>
         <button class="btn btn-outline btn-sm" onclick="navigator.clipboard.writeText('${url}');showAlert('profile-success','Link copiado!')">Copiar link</button>`
     } else {
       box.innerHTML='<div class="empty">A gerar o teu link...</div>'

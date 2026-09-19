@@ -184,7 +184,7 @@ let myId=null,myName='Alguém',conversations=[],activeConvId=null,activeOther=nu
 async function init(){
 const{data:{session}}=await db.auth.getSession()
 if(!session){
-const withParam=new URLSearchParams(location.search).get('with')
+const withParam=(new URLSearchParams(location.search).get('with')||'').replace(/[^0-9a-fA-F-]/g,'')
 const redirect='messages.html'+(withParam?('?with='+withParam):'')
 location.href='auth.html?tab=login&redirect='+encodeURIComponent(redirect)
 return
@@ -194,7 +194,7 @@ const{data:myProf}=await db.from('profiles').select('name').eq('id',myId).single
 if(myProf)myName=myProf.name
 await loadConversations()
 
-const withId=new URLSearchParams(location.search).get('with')
+const withId=(new URLSearchParams(location.search).get('with')||'').replace(/[^0-9a-fA-F-]/g,'')
 if(withId && withId!==myId){
 await openOrCreateConversation(withId)
 }
