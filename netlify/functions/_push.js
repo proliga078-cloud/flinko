@@ -8,7 +8,9 @@ const VAPID_PRIVATE=process.env.VAPID_PRIVATE_KEY
 const admin=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY)
 
 if(VAPID_PUBLIC&&VAPID_PRIVATE){
-  webpush.setVapidDetails('mailto:avlistech2@gmail.com',VAPID_PUBLIC,VAPID_PRIVATE)
+  // O contacto do VAPID e enviado aos servicos de push (Google, Apple, Mozilla);
+  // configura VAPID_SUBJECT no Netlify com um email da Flinko.
+  webpush.setVapidDetails(process.env.VAPID_SUBJECT||'mailto:flinkogeral@gmail.com',VAPID_PUBLIC,VAPID_PRIVATE)
 }
 
 // Manda uma notificacao push a todos os dispositivos subscritos de um

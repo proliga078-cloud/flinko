@@ -622,17 +622,17 @@ function renderWeeklyScheduleBadge(pro){
 
 function renderSpecialties(pro){
   if(!pro.specialties||!pro.specialties.length)return ''
-  return `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">${pro.specialties.map(sp=>`<span class="spec-chip">${sp}</span>`).join('')}</div>`
+  return `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">${pro.specialties.map(sp=>`<span class="spec-chip">${escapeHtml(sp)}</span>`).join('')}</div>`
 }
 function renderCertifications(pro){
   if(!pro.certifications||!pro.certifications.length)return ''
   const svgCert='<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5L17 22l-5-3-5 3 1.5-8.5"/></svg>'
-  return `<div class="cert-strip">${pro.certifications.map(c=>`<div class="cert-item">${svgCert}<div><div class="cert-name">${escapeHtml(c.name||'')}</div>${c.year?`<div class="cert-year">${c.year}</div>`:''}</div></div>`).join('')}</div>`
+  return `<div class="cert-strip">${pro.certifications.map(c=>`<div class="cert-item">${svgCert}<div><div class="cert-name">${escapeHtml(c.name||'')}</div>${c.year?`<div class="cert-year">${escapeHtml(c.year)}</div>`:''}</div></div>`).join('')}</div>`
 }
 function renderAwards(pro){
   if(!pro.awards||!pro.awards.length)return ''
   const svgAward='<svg class="ic" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M5 4H3v2a4 4 0 0 0 4 4M19 4h2v2a4 4 0 0 1-4 4"/></svg>'
-  return `<div class="cert-strip">${pro.awards.map(a=>`<div class="cert-item">${svgAward}<div><div class="cert-name">${escapeHtml(a.title||'')}</div>${a.issuer||a.year?`<div class="cert-year">${[a.issuer?escapeHtml(a.issuer):'',a.year||''].filter(Boolean).join(' · ')}</div>`:''}</div></div>`).join('')}</div>`
+  return `<div class="cert-strip">${pro.awards.map(a=>`<div class="cert-item">${svgAward}<div><div class="cert-name">${escapeHtml(a.title||'')}</div>${a.issuer||a.year?`<div class="cert-year">${[a.issuer?escapeHtml(a.issuer):'',a.year?escapeHtml(a.year):''].filter(Boolean).join(' · ')}</div>`:''}</div></div>`).join('')}</div>`
 }
 function renderPromotions(pro){
   if(!pro.promotions||!pro.promotions.length)return ''
@@ -650,7 +650,7 @@ function renderHeader(pro){
   const initials=pro.name.split(' ').map(n=>n[0]).slice(0,2).join('')
   const safeName=escapeHtml(pro.name)
   const avatar=pro.photo_url?`<img src="${escapeHtml(pro.photo_url)}" alt="${safeName}"/>`:`${initials}`
-  if(pro.cover_url){document.getElementById('cover').style.backgroundImage=`url('${pro.cover_url}')`;document.body.classList.add('has-cover')}
+  if(pro.cover_url){document.getElementById('cover').style.backgroundImage=`url('${cssUrl(pro.cover_url)}')`;document.body.classList.add('has-cover')}
   const planBadge=pro.plan==='premium'?`<span class="plan-badge-wrap badge-premium"><svg class="ic" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="width:12px;height:12px"><path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10z"/></svg> Premium</span>`:pro.plan==='pro'?`<span class="plan-badge-wrap badge-pro"><svg class="ic" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg> Pro</span>`:''
   const verif=pro.verified?'<span class="verif-badge"><svg class="ic" viewBox="0 0 24 24" style="width:12px;height:12px;color:#fff"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg> Verificado</span>':''
   const fastResp=hasResponseData(pro)&&Number(pro.avg_response_minutes)<=RESP_FAST_MINUTES
@@ -663,7 +663,7 @@ function renderHeader(pro){
       <div class="profile-cat">
         <span class="cat-pill">${escapeHtml(pro.category||'Profissional')}</span>
         <span class="loc-text"><svg class="ic" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${escapeHtml(pro.location||'Portugal')}</span>
-        ${pro.experience_years?`<span class="exp-chip"><svg class="ic" viewBox="0 0 24 24" style="width:11px;height:11px;color:#fff"><path d="M12 20v-6M6 20V10M18 20V4"/></svg> ${pro.experience_years} anos de experiência</span>`:''}
+        ${pro.experience_years?`<span class="exp-chip"><svg class="ic" viewBox="0 0 24 24" style="width:11px;height:11px;color:#fff"><path d="M12 20v-6M6 20V10M18 20V4"/></svg> ${escapeHtml(pro.experience_years)} anos de experiência</span>`:''}
       </div>
       ${isUnavailable(pro)?`<div style="background:#FEF3E2;border:1px solid #FBCB9B;color:#96590C;font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:8px;margin-bottom:10px;display:inline-flex;align-items:center;gap:6px"><svg class="ic" viewBox="0 0 24 24" style="width:14px;height:14px"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Indisponível até ${new Date(pro.unavailable_until+'T00:00:00').toLocaleDateString('pt-PT')}${pro.unavailable_message?' — '+pro.unavailable_message:''}</div>`:''}
       <div class="rating-row" id="rating-row">
@@ -676,7 +676,7 @@ function renderHeader(pro){
       ${renderPromotions(pro)}
     </div>
     <div class="profile-actions">
-      ${pro.website?`<a href="${escapeHtml(pro.website)}" target="_blank" class="btn btn-outline"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Website</a>`:''}
+      ${safeUrl(pro.website)?`<a href="${escapeHtml(safeUrl(pro.website))}" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Website</a>`:''}
       <button class="btn btn-ghost" style="font-size:13px" onclick="showTab('avaliacoes');document.querySelector('#tab-avaliacoes').scrollIntoView({behavior:'smooth'})"><svg class="ic" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg> Avaliar</button>
     </div>`
 }
@@ -716,7 +716,7 @@ async function loadReviews(){
     ? `<div class="tstat"><svg class="ic" viewBox="0 0 24 24" style="color:var(--green)">${tIc.clock}</svg><strong>${formatResponseTime(proData.avg_response_minutes)}</strong><span>Tempo de resposta</span></div>`
     : ''
   const expStat=proData.experience_years
-    ? `<div class="tstat"><svg class="ic" viewBox="0 0 24 24" style="color:var(--blue)"><path d="M12 20v-6M6 20V10M18 20V4"/></svg><strong>${proData.experience_years}</strong><span>Anos de experiência</span></div>`
+    ? `<div class="tstat"><svg class="ic" viewBox="0 0 24 24" style="color:var(--blue)"><path d="M12 20v-6M6 20V10M18 20V4"/></svg><strong>${escapeHtml(proData.experience_years)}</strong><span>Anos de experiência</span></div>`
     : ''
   document.getElementById('trust-bar').style.display='grid'
   document.getElementById('trust-bar').innerHTML=`
@@ -826,7 +826,7 @@ function renderSidebar(pro){
   const svgWeb='<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>'
   const svgCal='<svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>'
   if(pro.location)items.push(`<div class="info-row"><span class="info-icon">${svgLoc}</span>${escapeHtml(pro.location)}</div>`)
-  if(pro.website)items.push(`<div class="info-row"><span class="info-icon">${svgWeb}</span><a href="${escapeHtml(pro.website)}" target="_blank" style="color:var(--blue)">Website</a></div>`)
+  if(safeUrl(pro.website))items.push(`<div class="info-row"><span class="info-icon">${svgWeb}</span><a href="${escapeHtml(safeUrl(pro.website))}" target="_blank" rel="noopener noreferrer" style="color:var(--blue)">Website</a></div>`)
   if(pro.social_links&&typeof pro.social_links==='object'){
     const svgSocial='<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>'
     const socialMeta={instagram:'Instagram',facebook:'Facebook',whatsapp:'WhatsApp',tiktok:'TikTok',youtube:'YouTube',linkedin:'LinkedIn'}
@@ -839,17 +839,18 @@ function renderSidebar(pro){
         else if((key==='instagram'||key==='tiktok')&&url.startsWith('@')){url=`https://www.${key==='instagram'?'instagram.com':'tiktok.com'}/${url.slice(1)}`}
         else if(url.includes('.')){url=`https://${url}`}
       }
-      items.push(`<div class="info-row"><span class="info-icon">${svgSocial}</span><a href="${escapeHtml(url)}" target="_blank" rel="noopener" style="color:var(--blue)">${socialMeta[key]}</a></div>`)
+      if(!safeUrl(url))continue
+      items.push(`<div class="info-row"><span class="info-icon">${svgSocial}</span><a href="${escapeHtml(safeUrl(url))}" target="_blank" rel="noopener noreferrer" style="color:var(--blue)">${socialMeta[key]}</a></div>`)
     }
   }
   const joined=new Date(pro.created_at).toLocaleDateString('pt-PT',{month:'long',year:'numeric'})
   items.push(`<div class="info-row"><span class="info-icon">${svgCal}</span>Membro desde ${joined}</div>`)
   document.getElementById('info-items').innerHTML=items.join('')
-  if(pro.plan&&pro.plan!=='free'){
+  if(pro.plan==='pro'||pro.plan==='premium'){
     document.getElementById('plan-card').style.display='block'
     const svgPremium='<svg class="ic" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="width:22px;height:22px"><path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10z"/></svg>'
     const svgPro='<svg class="ic" viewBox="0 0 24 24" style="width:22px;height:22px"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>'
-    const icon=pro.plan==='premium'?svgPremium:svgPro,label=pro.plan==='premium'?'Premium':'Pro',color=pro.plan==='premium'?'var(--gold)':'#7c3aed'
+    const icon=pro.plan==='premium'?svgPremium:svgPro,label=pro.plan==='premium'?'Premium':pro.plan==='starter'?'Starter':'Pro',color=pro.plan==='premium'?'var(--gold)':pro.plan==='starter'?'var(--muted)':'#7c3aed'
     document.getElementById('plan-info').innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:8px;background:${color}22;border-radius:10px;color:${color}">${icon}<div><div style="font-weight:700;color:${color}">${label}</div><div style="font-size:12px;color:var(--muted)">Profissional verificado</div></div></div>`
   }
 }
@@ -895,7 +896,7 @@ function renderZoneMap(pro){
   const places=matchAllPlaces(pro.location)
   if(!places.length||typeof L==='undefined')return
   document.getElementById('zone-card').style.display='block'
-  document.getElementById('zone-chips').innerHTML=places.map(n=>`<span class="zone-chip">${n}</span>`).join('')
+  document.getElementById('zone-chips').innerHTML=places.map(n=>`<span class="zone-chip">${escapeHtml(n)}</span>`).join('')
   const map=L.map('zone-map',{scrollWheelZoom:false,zoomControl:false,dragging:false,attributionControl:false}).setView(PT_PLACES[places[0]],places.length>1?9:11)
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19,subdomains:'abcd'}).addTo(map)
   const bounds=[]
@@ -921,8 +922,8 @@ function renderAvailGrid(pro){
 function renderExtraInfo(pro){
   const pills=[]
   const svg=p=>`<svg class="ic" viewBox="0 0 24 24">${p}</svg>`
-  if(pro.languages&&pro.languages.length)pills.push(`${svg('<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>')} ${pro.languages.join(' · ')}`)
-  if(pro.payment_methods&&pro.payment_methods.length)pills.push(`${svg('<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>')} ${pro.payment_methods.join(' · ')}`)
+  if(pro.languages&&pro.languages.length)pills.push(`${svg('<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>')} ${pro.languages.map(escapeHtml).join(' · ')}`)
+  if(pro.payment_methods&&pro.payment_methods.length)pills.push(`${svg('<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>')} ${pro.payment_methods.map(escapeHtml).join(' · ')}`)
   if(pro.has_insurance)pills.push(`${svg('<path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/>')} Seguro de responsabilidade civil`)
   if(!pills.length)return
   document.getElementById('extra-info-card').style.display='block'

@@ -363,7 +363,7 @@ q=q.or(`unavailable_until.is.null,unavailable_until.lt.${new Date().toISOString(
 if(filters.cat)q=q.ilike('category',`%${filters.cat}%`)
 if(filters.loc)q=q.ilike('location',`%${filters.loc}%`)
 if(filters.zona)q=q.ilike('location',`%${filters.zona}%`)
-if(filters.q)q=q.or(`name.ilike.%${filters.q}%,category.ilike.%${filters.q}%,bio.ilike.%${filters.q}%`)
+if(orSafe(filters.q)){const qs=orSafe(filters.q);q=q.or(`name.ilike.%${qs}%,category.ilike.%${qs}%,bio.ilike.%${qs}%`)}
 if(document.getElementById('f-verified')?.checked)q=q.eq('verified',true)
 
 // Sort
@@ -377,7 +377,7 @@ const from=(filters.page-1)*filters.perPage
 q=q.range(from,from+filters.perPage-1)
 
 const{data,error,count}=await q
-if(error){container.innerHTML=`<p style="color:red;padding:20px">Erro: ${error.message}</p>`;return}
+if(error){container.innerHTML=`<p style="color:red;padding:20px">Erro: ${escapeHtml(error.message)}</p>`;return}
 
 if(!data||!data.length){
 const reqUrl='pedidos.html'+(filters.cat?`?cat=${encodeURIComponent(filters.cat)}`:'')

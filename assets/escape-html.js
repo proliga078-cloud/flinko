@@ -18,3 +18,26 @@
 // que a chama, tal como o SDK do Supabase que é sempre carregado logo a
 // seguir a este.
 function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+
+// Devolve o URL só se for http(s) (ou mailto/tel quando pedido); caso contrário
+// devolve ''. Serve para hrefs/srcs vindos de dados de utilizador: escapeHtml()
+// sozinho NÃO impede "javascript:..." dentro de um href.
+function safeUrl(u,allowContact){
+  var s=String(u==null?'':u).trim()
+  if(/^https?:\/\//i.test(s))return s
+  if(allowContact&&/^(mailto|tel):/i.test(s))return s
+  return ''
+}
+
+// Escapa um valor para uso dentro de url('...') em CSS inline.
+function cssUrl(u){
+  var s=safeUrl(u)
+  return s.replace(/[\'"()\s]/g,function(c){return '%'+c.charCodeAt(0).toString(16).toUpperCase().padStart(2,'0')})
+}
+
+// Limpa texto de pesquisa antes de o meter numa string de filtro .or(...) do
+// PostgREST, onde vírgulas, parênteses e aspas separam/fecham condições. Sem
+// isto, "Lisboa, Porto" parte a pesquisa e dá para injetar filtros.
+function orSafe(s){
+  return String(s==null?'':s).replace(/[,()\\"%*:]/g,' ').replace(/\s+/g,' ').trim().slice(0,80)
+}

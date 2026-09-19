@@ -32,7 +32,7 @@ function jobCardHtml(j){
   const statusOpts=Object.keys(JOB_STATUS_LABELS).map(k=>`<option value="${k}" ${k===j.status?'selected':''}>${JOB_STATUS_LABELS[k]}</option>`).join('')
   return `<div class="job-card" data-id="${j.id}">
     <div class="jc-title">${escapeHtml(j.title)}</div>
-    <div class="jc-client">${j.client_name||'Cliente'}</div>
+    <div class="jc-client">${escapeHtml(j.client_name||'Cliente')}</div>
     <input type="number" min="0" placeholder="Valor (€)" value="${j.quote_amount??''}" style="width:100%;margin-bottom:6px" onchange="updateJobField('${j.id}','quote_amount',this.value?parseFloat(this.value):null)"/>
     <div class="jc-margin">
       <input type="number" min="0" placeholder="Material (€)" value="${j.material_cost??''}" title="Quanto gastaste em material" onchange="updateJobField('${j.id}','material_cost',this.value?parseFloat(this.value):null)"/>

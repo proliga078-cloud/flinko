@@ -1,4 +1,6 @@
-const CACHE_NAME = 'flinko-v1';
+// Sobe este numero sempre que o formato da cache mudar: o evento 'activate'
+// apaga as caches com outro nome.
+const CACHE_NAME = 'flinko-v2';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -25,27 +27,41 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Network-first for navigations (HTML), falling back to cache when offline.
-// Cache-first for everything else (icons, static assets).
+// Estrategia por tipo de pedido:
+//  - navegacoes (HTML) e ficheiros .js/.css do proprio site: rede primeiro, cache
+//    so se estiver offline. Assim, depois de um deploy, o HTML novo nunca corre
+//    com JS antigo (com stale-while-revalidate isto acontecia no 1.o carregamento).
+//  - imagens e restantes estaticos: cache primeiro, atualizada em segundo plano.
+//  - pedidos a outras origens (Supabase, CDNs, mapas): nao passam pelo SW.
+function redePrimeiro(req, fallbackUrl) {
+  return fetch(req)
+    .then((res) => {
+      if (res && res.status === 200 && res.type === 'basic') {
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(req, copy)).catch(() => {});
+      }
+      return res;
+    })
+    .catch(() => caches.match(req).then((res) => res || (fallbackUrl ? caches.match(fallbackUrl) : undefined)));
+}
+
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return;
+  // Funcoes Netlify (ex: sitemap dinamico) nunca devem vir de cache.
+  if (url.pathname.startsWith('/.netlify/')) return;
 
   if (req.mode === 'navigate') {
-    event.respondWith(
-      fetch(req)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(req, copy)).catch(() => {});
-          return res;
-        })
-        .catch(() => caches.match(req).then((res) => res || caches.match('/index.html')))
-    );
+    event.respondWith(redePrimeiro(req, '/index.html'));
+    return;
+  }
+  if (/.(js|css)$/.test(url.pathname)) {
+    event.respondWith(redePrimeiro(req));
     return;
   }
 
-  // Stale-while-revalidate: responde do cache logo (se existir) mas
-  // atualiza sempre em segundo plano, para nunca ficar preso a uma versao antiga.
   event.respondWith(
     caches.match(req).then((cached) => {
       const network = fetch(req)

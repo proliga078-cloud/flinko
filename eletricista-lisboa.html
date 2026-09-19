@@ -425,6 +425,7 @@ Filtros
 </div>
 </footer>
 
+<script src="/assets/escape-html.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
@@ -478,7 +479,7 @@ const from=(filters.page-1)*filters.perPage
 q=q.range(from,from+filters.perPage-1)
 
 const{data,error,count}=await q
-if(error){container.innerHTML=`<p style="color:red;padding:20px">Erro: ${error.message}</p>`;return}
+if(error){container.innerHTML=`<p style="color:red;padding:20px">Erro: ${escapeHtml(error.message)}</p>`;return}
 
 if(!data||!data.length){
 container.innerHTML=`<div class="pros-list"><div class="empty-state"><h3>Nenhum eletricista encontrado em Lisboa ainda</h3><p>Publica um pedido grátis e os profissionais desta categoria candidatam-se a ti, ou vê eletricistas de todo o país.</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><a href="pedidos.html?cat=Eletricistas&loc=Lisboa" class="btn btn-solid">Publicar pedido grátis</a><a href="eletricistas.html" class="btn btn-outline">Ver eletricistas em todo o país</a></div></div></div>`

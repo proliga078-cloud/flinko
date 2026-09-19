@@ -296,7 +296,9 @@ btn.textContent = 'Entrar na conta'
 return
 }
 
-if (data.user.email === 'davidscampos10@gmail.com') {
+// Admin decidido pelo servidor (função is_admin() da BD), nunca por um email escrito no código.
+const { data: isAdminLogin } = await db.rpc('is_admin')
+if (isAdminLogin === true) {
 showMsg('login-msg', 'Bem-vindo, admin! A redirecionar...', 'success')
 setTimeout(() => location.href = 'admin.html', 800)
 return
@@ -359,7 +361,8 @@ location.href = (pending.redirect && safeRedirect(pending.redirect)) || postAuth
 return
 }
 
-if (session.user.email === 'davidscampos10@gmail.com') { location.href = 'admin.html'; return }
+const { data: isAdminSession } = await db.rpc('is_admin')
+if (isAdminSession === true) { location.href = 'admin.html'; return }
 // Garante que existe sempre uma linha em profiles antes de avançar (fecha o buraco em que
 // alguém confirma o email, faz login, e nunca chega a ter perfil porque o insertProfile só
 // corria no signUp com sessão imediata). Idempotente (on conflict do nothing), por isso é

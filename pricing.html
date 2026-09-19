@@ -525,7 +525,7 @@ if(!info)return
 const priceTxt=isYearly?(info.yearly+'/mês, faturado '+info.yearlyTotal+'/ano'):(info.monthly+'/mês')
 title.textContent='Mudar para '+info.name
 desc.textContent='Não foi possível iniciar o pagamento automático agora (pode ser um problema de rede). Contacta-nos e ativamos o plano manualmente.'
-link.href='mailto:avlistech2@gmail.com?subject=Upgrade%20Flinko%20'+encodeURIComponent(info.name)+'&body='+encodeURIComponent('Olá, quero fazer upgrade para o plano '+info.name+' (€'+priceTxt+').')
+link.href='mailto:flinkogeral@gmail.com?subject=Upgrade%20Flinko%20'+encodeURIComponent(info.name)+'&body='+encodeURIComponent('Olá, quero fazer upgrade para o plano '+info.name+' (€'+priceTxt+').')
 modal.style.display='flex'
 }
 // Empresas nunca passa pelo checkout automático — é sempre um contacto
@@ -541,7 +541,7 @@ const info=PLAN_INFO.empresas
 const priceTxt=isYearly?(info.yearly+'/mês, faturado '+info.yearlyTotal+'/ano'):(info.monthly+'/mês')
 title.textContent='Mudar para '+info.name
 desc.textContent='O plano Empresas é novo — vamos falar contigo para perceber a tua equipa e ativar tudo à mão, incluindo o que ainda estamos a construir (vários técnicos, faturação da empresa).'
-link.href='mailto:avlistech2@gmail.com?subject=Upgrade%20Flinko%20'+encodeURIComponent(info.name)+'&body='+encodeURIComponent('Olá, quero fazer upgrade para o plano '+info.name+' (€'+priceTxt+').')
+link.href='mailto:flinkogeral@gmail.com?subject=Upgrade%20Flinko%20'+encodeURIComponent(info.name)+'&body='+encodeURIComponent('Olá, quero fazer upgrade para o plano '+info.name+' (€'+priceTxt+').')
 modal.style.display='flex'
 }
 function closeModal(){document.getElementById('upgrade-modal').style.display='none'}
