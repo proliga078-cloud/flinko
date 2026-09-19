@@ -27,7 +27,7 @@ function makeFakeSupabaseAdminQueryable() {
       from(table) {
         const calls = [];
         const builder = {};
-        ['select', 'eq', 'in', 'gte', 'lte'].forEach((method) => {
+        ['select', 'eq', 'in', 'gte', 'lte', 'order', 'range'].forEach((method) => {
           builder[method] = (...args) => { calls.push({ method, args }); return builder; };
         });
         builder.then = (resolve, reject) => {

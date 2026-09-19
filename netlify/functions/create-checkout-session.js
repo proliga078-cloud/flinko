@@ -44,7 +44,7 @@ line_items:[{price:priceId,quantity:1}],
 ...(perfil&&perfil.stripe_customer_id?{customer:perfil.stripe_customer_id}:{customer_email:email}),
 client_reference_id:userId,
 subscription_data:{metadata:{supabase_user_id:userId,plan}},
-// A Proliga esta no regime de isencao do artigo 53.o do CIVA, por isso
+// A Flinko esta no regime de isencao do artigo 53.o do CIVA, por isso
 // nao liquida IVA. O automatic_tax fica DESLIGADO de proposito: o preco
 // mostrado no site e o valor final que o cliente paga.
 // Se um dia o volume de negocios ultrapassar o limiar do art. 53.o,
