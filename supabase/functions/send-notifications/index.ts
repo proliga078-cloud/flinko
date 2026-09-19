@@ -5,11 +5,11 @@ import webpush from "npm:web-push@3.6.7"
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
 const HOOK_SECRET = Deno.env.get("PROLIGA_HOOK_SECRET")
-const SITE = "https://proliga.pt"
+const SITE = "https://flinko.pt"
 
 const VAPID_PUBLIC_KEY = Deno.env.get("VAPID_PUBLIC_KEY")
 const VAPID_PRIVATE_KEY = Deno.env.get("VAPID_PRIVATE_KEY")
-const VAPID_SUBJECT = Deno.env.get("VAPID_SUBJECT") ?? "mailto:equipa@proliga.pt"
+const VAPID_SUBJECT = Deno.env.get("VAPID_SUBJECT") ?? "mailto:equipa@flinko.pt"
 
 if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
   webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY)
@@ -24,7 +24,7 @@ function getResendKey(): string | undefined {
 }
 
 function getFrom(): string {
-  return Deno.env.get("PROLIGA_FROM_EMAIL") ?? Deno.env.get("FROM_EMAIL") ?? "Proliga <onboarding@resend.dev>"
+  return Deno.env.get("PROLIGA_FROM_EMAIL") ?? Deno.env.get("FROM_EMAIL") ?? "Flinko <onboarding@resend.dev>"
 }
 
 function esc(s: string) {
@@ -36,11 +36,11 @@ function esc(s: string) {
 function shell(inner: string) {
   return `<!DOCTYPE html><html lang="pt"><body style="margin:0;padding:0;background:#FAF8F4;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
 <div style="max-width:520px;margin:0 auto;padding:28px 20px">
-  <div style="font-size:20px;font-weight:800;color:#14181F;margin-bottom:22px">Pro<span style="color:#1E4FD6">liga</span></div>
+  <div style="font-size:20px;font-weight:800;color:#14181F;margin-bottom:22px">Flink<span style="color:#E8720A">o</span></div>
   <div style="background:#fff;border-radius:14px;padding:26px;box-shadow:0 2px 12px rgba(20,24,31,.06)">
     ${inner}
   </div>
-  <p style="font-size:12px;color:#707580;text-align:center;margin-top:20px;line-height:1.6">Recebeste este email porque tens uma conta na Proliga.<br/>Podes desligar estes avisos no teu <a href="${SITE}/dashboard.html" style="color:#1E4FD6">dashboard</a>.</p>
+  <p style="font-size:12px;color:#707580;text-align:center;margin-top:20px;line-height:1.6">Recebeste este email porque tens uma conta na Flinko.<br/>Podes desligar estes avisos no teu <a href="${SITE}/dashboard.html" style="color:#1E4FD6">dashboard</a>.</p>
 </div></body></html>`
 }
 
@@ -48,7 +48,7 @@ function templateNewMessage(name: string, sender: string, preview: string) {
   const saudacao = name ? `Olá ${esc(name.split(" ")[0])},` : "Olá,"
   return shell(`
     <p style="margin:0 0 14px;font-size:15px;color:#14181F">${saudacao}</p>
-    <p style="margin:0 0 18px;font-size:15px;color:#14181F;line-height:1.6">Tens uma nova mensagem de <strong>${esc(sender)}</strong> na Proliga.</p>
+    <p style="margin:0 0 18px;font-size:15px;color:#14181F;line-height:1.6">Tens uma nova mensagem de <strong>${esc(sender)}</strong> na Flinko.</p>
     <div style="background:#F7F8FA;border-radius:10px;padding:14px;font-size:14px;color:#5B6270;line-height:1.6;margin-bottom:22px">"${esc(preview)}"</div>
     <a href="${SITE}/messages.html" style="display:inline-block;background:#1E4FD6;color:#fff;font-size:15px;font-weight:700;text-decoration:none;padding:12px 24px;border-radius:9px">Ver e responder</a>
     <p style="margin:20px 0 0;font-size:13px;color:#707580;line-height:1.6">Responder rápido aumenta as tuas hipóteses de fechar o trabalho.</p>
@@ -59,7 +59,7 @@ function templateVerificationRequest(name: string, sender: string, preview: stri
   const saudacao = name ? `Olá ${esc(name.split(" ")[0])},` : "Olá,"
   return shell(`
     <p style="margin:0 0 14px;font-size:15px;color:#14181F">${saudacao}</p>
-    <p style="margin:0 0 18px;font-size:15px;color:#14181F;line-height:1.6"><strong>${esc(sender)}</strong> pediu verificação de perfil na Proliga.</p>
+    <p style="margin:0 0 18px;font-size:15px;color:#14181F;line-height:1.6"><strong>${esc(sender)}</strong> pediu verificação de perfil na Flinko.</p>
     <div style="background:#F7F8FA;border-radius:10px;padding:14px;font-size:14px;color:#5B6270;line-height:1.6;margin-bottom:22px">${esc(preview)}</div>
     <a href="${SITE}/admin" style="display:inline-block;background:#1E4FD6;color:#fff;font-size:15px;font-weight:700;text-decoration:none;padding:12px 24px;border-radius:9px">Rever pedido no admin</a>
     <p style="margin:20px 0 0;font-size:13px;color:#707580;line-height:1.6">Revê os documentos e aprova ou rejeita o pedido.</p>
@@ -74,7 +74,7 @@ function buildEmail(kind: string, name: string, sender: string, preview: string)
     }
   }
   return {
-    subject: `Nova mensagem de ${sender} na Proliga`,
+    subject: `Nova mensagem de ${sender} na Flinko`,
     html: templateNewMessage(name, sender, preview)
   }
 }
@@ -89,7 +89,7 @@ function buildPushPayload(kind: string, sender: string, preview: string) {
   }
   return JSON.stringify({
     title: `Nova mensagem de ${sender}`,
-    body: preview?.slice(0, 140) || "Tens uma nova mensagem na Proliga.",
+    body: preview?.slice(0, 140) || "Tens uma nova mensagem na Flinko.",
     url: `${SITE}/messages.html`
   })
 }
@@ -132,7 +132,8 @@ Deno.serve(async (req: Request) => {
 
   const url = new URL(req.url)
 
-  if (url.searchParams.get("diag") === "1") {
+  // O diagnóstico só existe quando há segredo configurado (senão qualquer um via os nomes das variáveis).
+  if (HOOK_SECRET && url.searchParams.get("diag") === "1") {
     const nomes = Object.keys(Deno.env.toObject())
       .filter((k) => /RESEND|EMAIL|SMTP|MAIL|SENDGRID|POSTMARK|HOOK|FROM|VAPID/i.test(k))
       .sort()

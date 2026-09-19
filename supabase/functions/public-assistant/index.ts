@@ -5,9 +5,33 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Limite por IP (em memória, por instância): a chave anon é pública, por isso sem isto
+// qualquer pessoa podia gastar créditos da Anthropic em ciclo. É um travão simples,
+// não substitui um limite persistente.
+const LIMITE_POR_HORA = 20;
+const pedidosPorIp = new Map<string, number[]>();
+function excedeuLimite(ip: string): boolean {
+  const agora = Date.now();
+  const recentes = (pedidosPorIp.get(ip) || []).filter((t) => agora - t < 3600_000);
+  recentes.push(agora);
+  pedidosPorIp.set(ip, recentes);
+  if (pedidosPorIp.size > 5000) {
+    for (const [k, v] of pedidosPorIp) if (!v.some((t) => agora - t < 3600_000)) pedidosPorIp.delete(k);
+  }
+  return recentes.length > LIMITE_POR_HORA;
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
+  }
+
+  const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || "desconhecido";
+  if (excedeuLimite(ip)) {
+    return new Response(JSON.stringify({ error: "rate_limited" }), {
+      status: 429,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 
   try {

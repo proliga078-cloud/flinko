@@ -28,16 +28,21 @@ A configuração `verify_jwt` de cada função (coluna JWT acima) tem de se mant
 `send-notifications` e `stripe-webhook-ai-builder` são chamadas sem sessão de
 utilizador, por isso usam `--no-verify-jwt`.
 
-## Problemas conhecidos (ainda por corrigir)
+## Alterações no repositório ainda por publicar
 
-- **`send-notifications` ainda usa a marca antiga.** O endereço `SITE` é
-  `https://proliga.pt` e o remetente/logótipo dizem "Proliga": os emails de
-  mensagens novas e de pedidos de verificação apontam para o domínio antigo.
-- **`public-assistant` e `ai-assistant` não têm limite de utilização.** Qualquer
-  pessoa com a chave anon (que é pública por desenho) pode chamar o
-  `public-assistant` em ciclo, e cada chamada gasta créditos da Anthropic.
-  Convém acrescentar um limite por IP/utilizador.
+O código desta pasta está **à frente da produção** nestes pontos. Publica com
+`supabase functions deploy send-notifications --no-verify-jwt --project-ref cdwinidhtfxfxowflize`
+e `supabase functions deploy public-assistant --project-ref cdwinidhtfxfxowflize`:
+
+- **`send-notifications`**: já usa a marca e o domínio Flinko (emails, remetente
+  por omissão, logótipo). O `?diag=1` só funciona quando `PROLIGA_HOOK_SECRET`
+  está definido (senão qualquer pessoa via os nomes das variáveis de ambiente).
+- **`public-assistant`**: limite de 20 pedidos por hora por IP (em memória, por
+  instância). Não substitui um limite persistente.
+
+## Problemas conhecidos
+
+- **`ai-assistant` não tem limite de utilização.** Exige sessão, mas um
+  utilizador autenticado pode chamá-lo em ciclo e gastar créditos da Anthropic.
 - **`send-notifications` fica aberta se `PROLIGA_HOOK_SECRET` não estiver
-  definido** (o trigger da BD não envia esse cabeçalho). É inofensivo (só
-  processa a fila) mas permite a qualquer um forçar o processamento e ver, com
-  `?diag=1`, os nomes das variáveis de ambiente.
+  definido** (o trigger da BD não envia esse cabeçalho). Só processa a fila.
