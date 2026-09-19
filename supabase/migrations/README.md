@@ -1,8 +1,16 @@
 # Migrations — fonte de verdade real da base de dados
 
-Esta pasta contém as **69 migrações que já estavam geridas ao vivo pelo
-Supabase** (tabela `supabase_migrations.schema_migrations`), extraídas em
-21 de agosto de 2026 e trazidas para o repositório pela primeira vez.
+Esta pasta contém **todas as migrações da produção** (tabela
+`supabase_migrations.schema_migrations`), extraídas em 21 de agosto de 2026 e
+sincronizadas de novo a 19 de setembro de 2026 (foram acrescentadas as 13 que
+se tinham aplicado diretamente no Supabase sem passar pelo repositório, e as
+versões dos ficheiros foram alinhadas com as da produção). Total: 93 migrações
+da produção + `20260919120000_plan_starter_limits.sql`, que foi executada à mão no
+editor SQL e por isso não consta na tabela de migrações do Supabase (é
+idempotente: `on conflict do nothing`).
+
+`npm run check` valida o formato dos nomes e que não há versões repetidas.
+As *edge functions* do Supabase estão em `supabase/functions/`.
 
 Antes de hoje, estas migrações existiam *apenas* dentro do projeto Supabase
 — nunca tinham sido versionadas em git. O `schema.sql` na raiz do repo era

@@ -14,7 +14,7 @@ Produção: <https://flinko.pt>
 | --- | --- |
 | Frontend | HTML/CSS/JS estático (sem framework nem bundler), PWA (`manifest.json` + `sw.js`) |
 | Backend de dados | [Supabase](https://supabase.com): Postgres com RLS, Auth, Storage (bucket `proliga-media`), Realtime |
-| Funções servidor | Netlify Functions (`netlify/functions/`), Node 22 |
+| Funções servidor | Netlify Functions (`netlify/functions/`), Node 22, e Edge Functions do Supabase (`supabase/functions/`, Deno) |
 | Pagamentos | Stripe (subscrições Starter/Pro, portal de faturação, reembolsos no admin) |
 | Email / push | Resend (email) e Web Push (VAPID) |
 | Testes | `node:test` (funções) e Playwright (browser) |
@@ -31,6 +31,7 @@ templates/             template das páginas de categoria
 scripts/               build-categories.js (gera as 16 páginas de categoria) e check-syntax.js
 netlify/functions/     checkout, webhook Stripe, admin, notificações, digest, sitemaps, páginas locais
 supabase/migrations/   histórico do esquema da base de dados (fonte de verdade)
+supabase/functions/    edge functions do Supabase (IA, notificações, pagamento do construtor de perfil)
 schema.sql             visão geral do esquema (para leitura; as migrações é que mandam)
 tests/                 functions/ (unitários) e e2e/ (Playwright)
 ```
