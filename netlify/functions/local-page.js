@@ -48,14 +48,16 @@ function cartao(p){
 </a>`
 }
 
-// O Netlify passa os valores no caminho (/.netlify/functions/local-page/:cat/:city);
-// a substituicao de :cat dentro de uma query string nao e fiavel, por isso nao
-// se usa. Os parametros ?cat=&city= continuam aceites (testes e chamadas diretas).
+// Num redirect (status 200) o Netlify entrega a esta function o caminho ORIGINAL
+// do pedido (/eletricistas/braga); numa chamada direta chega
+// /.netlify/functions/local-page/eletricistas/braga. Aceitamos os dois, e ainda
+// ?cat=&city= (testes e chamadas diretas). Nao se usa :cat na query string do
+// redirect porque a substituicao ai nao e fiavel.
 function lerParametros(event){
   const q=event.queryStringParameters||{}
   const partes=String(event.path||'').split('/').filter(Boolean)
   const i=partes.indexOf('local-page')
-  const doCaminho=i>=0?partes.slice(i+1):[]
+  const doCaminho=i>=0?partes.slice(i+1):partes.slice(-2)
   const dec=s=>{try{return decodeURIComponent(s||'')}catch(e){return ''}}
   return{cat:dec(doCaminho[0])||q.cat||'',city:dec(doCaminho[1])||q.city||''}
 }
