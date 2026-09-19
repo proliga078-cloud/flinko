@@ -30,6 +30,24 @@
   to = "/.netlify/functions/sitemap-profiles"
   status = 200
 
+# Sitemap das paginas locais (categoria x cidade), gerado a pedido — ver
+# netlify/functions/sitemap-local.js. So lista combinacoes com profissionais.
+[[redirects]]
+  from = "/sitemap-local.xml"
+  to = "/.netlify/functions/sitemap-local"
+  status = 200
+
+# Paginas locais para SEO: /eletricistas/braga, /pintores/porto, ...
+# (netlify/functions/local-page.js). Duas partes no caminho, por isso nao
+# colidem com os links dos profissionais (/o-nome-dele, uma so parte) e o
+# Netlify serve sempre primeiro os ficheiros reais (ex: /assets/x.js).
+# Tem de vir ANTES do redirect /:slug mais abaixo.
+[[redirects]]
+  from = "/:cat/:city"
+  to = "/.netlify/functions/local-page?cat=:cat&city=:city"
+  status = 200
+  force = false
+
 # O Blog foi renomeado para Academia (set/2026). Mantem vivos os links e
 # favoritos antigos em vez de dar 404.
 [[redirects]]

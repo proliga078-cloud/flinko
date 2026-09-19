@@ -29,11 +29,20 @@ Produção: <https://flinko.pt>
 assets/                JS/CSS partilhados (dashboard-*.js, escape-html.js, billing.js, ...)
 templates/             template das páginas de categoria
 scripts/               build-categories.js (gera as 16 páginas de categoria) e check-syntax.js
-netlify/functions/     checkout, webhook Stripe, admin, notificações, digest, sitemap
+netlify/functions/     checkout, webhook Stripe, admin, notificações, digest, sitemaps, páginas locais
 supabase/migrations/   histórico do esquema da base de dados (fonte de verdade)
 schema.sql             visão geral do esquema (para leitura; as migrações é que mandam)
 tests/                 functions/ (unitários) e e2e/ (Playwright)
 ```
+
+### Páginas locais (SEO)
+
+`/eletricistas/braga`, `/pintores/porto`, ... são geradas a pedido por
+`netlify/functions/local-page.js` com os profissionais reais dessa categoria e
+zona (regra `/:cat/:city` no `netlify.toml`). Só são indexáveis quando há pelo
+menos 1 profissional; sem ninguém abrem com `noindex`. O sitemap
+`/sitemap-local.xml` (`sitemap-local.js`) lista só as combinações com
+profissionais. Não precisa de manutenção: cresce com a base de dados.
 
 ### Páginas de categoria são geradas
 
