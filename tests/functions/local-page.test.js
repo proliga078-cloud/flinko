@@ -48,6 +48,16 @@ test('categoria e cidade com profissionais: 200, indexável, título e canonical
   assert.match(res.body, /1 profissional em Braga/);
 });
 
+test('REGRESSÃO: lê categoria e cidade do caminho (/.netlify/functions/local-page/:cat/:city), como o Netlify as passa', async () => {
+  reset([pro({ location: 'Braga – Braga' })]);
+  const res = await page({ path: '/.netlify/functions/local-page/eletricistas/braga' });
+  assert.equal(res.statusCode, 200);
+  assert.match(res.body, /Eletricistas em Braga/);
+  const com = await page({ path: '/.netlify/functions/local-page/eletricistas/viana%20do%20castelo' });
+  assert.equal(com.statusCode, 200);
+  assert.equal((await page({ path: '/.netlify/functions/local-page/%E0%A4%A/x' })).statusCode, 404);
+});
+
 test('só mostra profissionais da categoria pedida e da zona pedida', async () => {
   reset([
     pro({ name: 'Eletricista Braga', location: 'Braga – Braga' }),

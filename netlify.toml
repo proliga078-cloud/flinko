@@ -44,7 +44,7 @@
 # Tem de vir ANTES do redirect /:slug mais abaixo.
 [[redirects]]
   from = "/:cat/:city"
-  to = "/.netlify/functions/local-page?cat=:cat&city=:city"
+  to = "/.netlify/functions/local-page/:cat/:city"
   status = 200
   force = false
 

@@ -48,8 +48,20 @@ function cartao(p){
 </a>`
 }
 
-exports.handler=async(event)=>{
+// O Netlify passa os valores no caminho (/.netlify/functions/local-page/:cat/:city);
+// a substituicao de :cat dentro de uma query string nao e fiavel, por isso nao
+// se usa. Os parametros ?cat=&city= continuam aceites (testes e chamadas diretas).
+function lerParametros(event){
   const q=event.queryStringParameters||{}
+  const partes=String(event.path||'').split('/').filter(Boolean)
+  const i=partes.indexOf('local-page')
+  const doCaminho=i>=0?partes.slice(i+1):[]
+  const dec=s=>{try{return decodeURIComponent(s||'')}catch(e){return ''}}
+  return{cat:dec(doCaminho[0])||q.cat||'',city:dec(doCaminho[1])||q.city||''}
+}
+
+exports.handler=async(event)=>{
+  const q=lerParametros(event)
   const cat=categoryBySlug(String(q.cat||'').toLowerCase())
   const citySlug=slugify(q.city)
   if(!cat||!citySlug)return html404()
