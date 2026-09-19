@@ -6,7 +6,7 @@
 // e o resultado vem de scenario.queries[table](calls, log) — o teste decide o
 // que a "base de dados" responde e depois inspeciona os filtros usados.
 // Também suporta rpc() através de scenario.rpc[nome](args).
-const METHODS = ['select', 'eq', 'neq', 'in', 'gte', 'lte', 'lt', 'gt', 'is', 'order', 'range', 'limit', 'update', 'insert', 'delete', 'not'];
+const METHODS = ['select', 'eq', 'neq', 'in', 'gte', 'lte', 'lt', 'gt', 'is', 'order', 'range', 'limit', 'update', 'insert', 'delete', 'not', 'ilike', 'or'];
 
 function makeQueryableSupabase(scenario) {
   return function createClient() {

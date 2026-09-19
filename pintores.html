@@ -363,6 +363,7 @@
  <div class="filter-title">Plano / Destaque</div>
  <label class="filter-label"><input type="checkbox" id="f-premium" onchange="loadPros()"> <span> Premium</span></label>
  <label class="filter-label"><input type="checkbox" id="f-pro" onchange="loadPros()"> <span> Pro</span></label>
+<label class="filter-label"><input type="checkbox" id="f-fast" onchange="loadPros()"> <span>⚡ Responde em menos de 1h</span></label>
  <label class="filter-label"><input type="checkbox" id="f-verified" onchange="loadPros()"> <span> Verificados</span></label>
  </div>
 
@@ -392,6 +393,7 @@
  <select class="sort-select" id="sort-select" onchange="loadPros()">
  <option value="plan">Destaque primeiro</option>
  <option value="rating">Melhor avaliação</option>
+<option value="response">Responde mais depressa</option>
  <option value="price_asc">Menor preço</option>
  <option value="newest">Mais recentes</option>
  </select>
@@ -456,6 +458,7 @@
 </footer>
 
 <script src="/assets/escape-html.js"></script>
+<script src="/assets/pros-search.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
@@ -517,7 +520,7 @@ async function loadSponsored(){
  ? `<video src="${escapeHtml(slot.media_url)}" muted autoplay loop playsinline></video>`
  : `<img src="${escapeHtml(slot.media_url)}" alt="${safeName}" loading="lazy"/>`)
  : (pro.photo_url?`<img src="${escapeHtml(pro.photo_url)}" alt="${safeName}" loading="lazy"/>`:'')
- return `<a class="sponsored-card" href="${pro.slug?("/"+pro.slug):("profile.html?id="+pro.id)}">
+ return `<a class="sponsored-card" href="${pro.slug?("/"+encodeURIComponent(pro.slug)):("profile.html?id="+encodeURIComponent(pro.id))}">
  ${media}
  <span class="sp-tag">Patrocinado</span>
  <div class="sp-overlay">
@@ -578,22 +581,23 @@ async function loadPros(){
  const container=document.getElementById('pros-container')
  container.innerHTML=`<div class="loading-grid">${Array(6).fill(`<div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="width:60%"></div></div></div>`).join('')}</div>`
 
- let q=db.from('profiles').select('id,name,category,location,plan,photo_url,bio,verified,created_at,slug',{count:'exact'}).eq('is_demo',false)
- q=q.ilike('category',`%${filters.cat}%`)
- if(filters.loc)q=q.ilike('location',`%${filters.loc}%`)
- if(document.getElementById('f-verified')?.checked)q=q.eq('verified',true)
-
- const sort=document.getElementById('sort-select')?.value||'plan'
- // O plano Pro tem primeiro lugar nas listagens, seja qual for a ordenacao
- // escolhida. E um dos beneficios anunciados na pagina de precos.
- q=q.order('plan',{ascending:false})
- if(sort==='newest')q=q.order('created_at',{ascending:false})
- else q=q.order('created_at',{ascending:false})
-
- const from=(filters.page-1)*filters.perPage
- q=q.range(from,from+filters.perPage-1)
-
- const{data,error,count}=await q
+ const _verificado=!!document.getElementById('f-verified')?.checked
+ const _sort=document.getElementById('sort-select')?.value||'plan'
+ const _planos=[]
+ if(document.getElementById('f-premium')?.checked)_planos.push('premium')
+ if(document.getElementById('f-pro')?.checked)_planos.push('pro')
+ const _rapido=!!document.getElementById('f-fast')?.checked
+ const _pMin=document.getElementById('price-min')?.value,_pMax=document.getElementById('price-max')?.value
+ // Quando qualquer filtro/ordenacao muda, volta a pagina 1 (mudar so de pagina nao mexe nesta chave).
+ const _chave=JSON.stringify([filters.cat,filters.loc,filters.zona,filters.q,_verificado,_sort,_planos,_rapido,filters.minRating,_pMin,_pMax])
+ if(filters._chave!==_chave){filters.page=1;filters._chave=_chave}
+ // Filtros, ordenacao e paginacao sobre TODOS os resultados (ver assets/pros-search.js).
+ const _base=await ProsSearch.carregar(db,{cat:filters.cat,loc:filters.loc,zona:filters.zona,q:filters.q,verified:_verificado})
+ const _res=ProsSearch.consultar(_base,{sort:_sort,planos:_planos,minRating:filters.minRating,priceMin:_pMin,priceMax:_pMax,rapido:_rapido,page:filters.page,perPage:filters.perPage})
+ filters.page=_res.page
+ const data=_res.items,count=_res.total,error=_base.error,rMap=_base.rMap,pMap=_base.pMap
+ const sort=_sort
+ let filtered=data
  if(error){container.innerHTML=`<p style="color:red;padding:20px">Erro: ${escapeHtml(error.message)}</p>`;return}
 
  if(!data||!data.length){
@@ -602,56 +606,6 @@ async function loadPros(){
  const tb0=document.getElementById('tb-count'); if(tb0)tb0.textContent='0 profissionais'
  document.getElementById('pagination').innerHTML=''
  return
- }
-
- const ids=data.map(p=>p.id)
- const[{data:reviews},{data:services}]=await Promise.all([
- db.from('reviews').select('professional_id,rating').in('professional_id',ids),
- db.from('services').select('professional_id,price_from').in('professional_id',ids)
- ])
- const rMap={},pMap={}
- reviews&&reviews.forEach(r=>{if(!rMap[r.professional_id])rMap[r.professional_id]={s:0,c:0};rMap[r.professional_id].s+=r.rating;rMap[r.professional_id].c++})
- services&&services.forEach(s=>{if(s.price_from&&(!pMap[s.professional_id]||s.price_from<pMap[s.professional_id]))pMap[s.professional_id]=s.price_from})
-
- let filtered=data
- const fPrem=document.getElementById('f-premium')?.checked
- const fPro=document.getElementById('f-pro')?.checked
- if(fPrem||fPro){
- filtered=data.filter(p=>(fPrem&&p.plan==='premium')||(fPro&&p.plan==='pro'))
- }
-
- if(filters.minRating>0){
- filtered=filtered.filter(p=>{
- const r=rMap[p.id];if(!r)return false
- return(r.s/r.c)>=filters.minRating
- })
- }
-
- const pMin=parseFloat(document.getElementById('price-min')?.value)||0
- const pMax=parseFloat(document.getElementById('price-max')?.value)||99999
- if(pMin>0||pMax<99999){
- filtered=filtered.filter(p=>{
- const price=pMap[p.id]
- if(!price)return pMin===0
- return price>=pMin&&price<=pMax
- })
- }
-
- // Mesmo nas ordenacoes feitas aqui, o Pro fica a frente em caso de empate
- // de plano; dentro do mesmo plano vale o criterio escolhido.
- const rankPlano=p=>({pro:2,premium:2}[p&&p.plan]||0)
- if(sort==='rating'){
- filtered.sort((a,b)=>{
- const dp=rankPlano(b)-rankPlano(a); if(dp)return dp
- const ra=rMap[a.id];const rb=rMap[b.id]
- const avgA=ra?ra.s/ra.c:0;const avgB=rb?rb.s/rb.c:0
- return avgB-avgA
- })
- } else if(sort==='price_asc'){
- filtered.sort((a,b)=>{
- const dp=rankPlano(b)-rankPlano(a); if(dp)return dp
- return (pMap[a.id]||9999)-(pMap[b.id]||9999)
- })
  }
 
  const total=count||filtered.length
@@ -740,6 +694,7 @@ function clearFilters(){
  document.querySelectorAll('input[name="rating"]')[0].checked=true
  document.getElementById('f-premium').checked=false
  document.getElementById('f-pro').checked=false
+{const _ff=document.getElementById('f-fast');if(_ff)_ff.checked=false}
  document.getElementById('f-verified').checked=false
  document.getElementById('price-min').value=''
  document.getElementById('price-max').value=''
