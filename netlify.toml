@@ -30,6 +30,20 @@
   to = "/.netlify/functions/sitemap-profiles"
   status = 200
 
+# Pagina antiga para profissionais (fase de lancamento) — substituida por
+# /profissionais. Redirect permanente para nao perder links nem o Google.
+[[redirects]]
+  from = "/torna-te-profissional"
+  to = "/profissionais"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/torna-te-profissional.html"
+  to = "/profissionais"
+  status = 301
+  force = true
+
 # Sitemap das paginas locais (categoria x cidade), gerado a pedido — ver
 # netlify/functions/sitemap-local.js. So lista combinacoes com profissionais.
 [[redirects]]

@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Software grátis para profissionais – Agenda, orçamentos e clientes | Flinko</title>
-<meta name="description" content="Agenda, orçamentos em PDF e contas do trimestre — grátis para sempre. Recebe pedidos de clientes em Portugal sem pagar por contacto nem comissões."/>
+<title>Flinko para profissionais – Recebe pedidos e gere o teu negócio</title>
+<meta name="description" content="Perfil verificado, pedidos de clientes da tua zona e ferramentas para gerir trabalhos, orçamentos e contas. Começa grátis, sem pagar por contacto nem comissões."/>
 <meta name="robots" content="index, follow"/>
 <link rel="canonical" href="https://flinko.pt/profissionais.html"/>
-<meta property="og:title" content="Software grátis para profissionais | Flinko"/>
-<meta property="og:description" content="Agenda, orçamentos e clientes num só sítio. Sem pagar por contacto, sem comissões."/>
+<meta property="og:title" content="Flinko para profissionais – Recebe pedidos e gere o teu negócio"/>
+<meta property="og:description" content="Recebe pedidos de clientes e gere o teu negócio. Começa grátis, sem pagar por contacto e sem comissões."/>
 <meta property="og:type" content="website"/>
 <meta property="og:url" content="https://flinko.pt/profissionais.html"/>
 <meta property="og:locale" content="pt_PT"/>
@@ -19,7 +19,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
 <link rel="shortcut icon" href="/favicon.ico"/>
 <link rel="manifest" href="/manifest.json"/>
-<meta name="theme-color" content="#0F1A33"/>
+<meta name="theme-color" content="#132420"/>
 <script src="/assets/pwa.js" defer></script>
 <script src="/assets/cookie-consent.js" defer></script>
 <script src="/assets/public-chat-widget.js" defer></script>
@@ -27,10 +27,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
-{"@type":"Question","name":"Existem custos escondidos?","acceptedAnswer":{"@type":"Answer","text":"Não. O plano grátis é gratuito para sempre e não pede cartão de crédito. Os planos pagos têm o preço indicado na página de preços, sem extras."}},
+{"@type":"Question","name":"Existem custos escondidos?","acceptedAnswer":{"@type":"Answer","text":"Não. O plano grátis não pede cartão de crédito. Os planos pagos custam 9,99 € (Starter), 19,99 € (Pro) e 39,99 € (Empresas) por mês, isentos de IVA, sem extras nem comissões sobre o trabalho que fechas."}},
 {"@type":"Question","name":"Pago para responder a um cliente?","acceptedAnswer":{"@type":"Answer","text":"Nunca. Responder a mensagens está incluído em todos os planos, incluindo o grátis. Não usamos créditos por contacto."}},
-{"@type":"Question","name":"Existe contrato ou fidelização?","acceptedAnswer":{"@type":"Answer","text":"Não. Podes mudar de plano ou sair quando quiseres, sem período mínimo."}},
-{"@type":"Question","name":"O que preciso para me registar?","acceptedAnswer":{"@type":"Answer","text":"Nome, email e password. Depois preenches a tua área e a zona onde trabalhas, e a nossa equipa verifica o perfil antes de o publicar."}}
+{"@type":"Question","name":"Existe contrato ou fidelização?","acceptedAnswer":{"@type":"Answer","text":"Não. Podes mudar de plano ou cancelar quando quiseres, sem período mínimo."}},
+{"@type":"Question","name":"Qual a diferença entre Starter e Pro?","acceptedAnswer":{"@type":"Answer","text":"O Starter dá-te as ferramentas de gestão: agenda, trabalhos, orçamentos e portfólio ilimitados. O Pro acrescenta orçamentos com a tua marca, contas e exportação CSV, link próprio com código QR, 2 horas de avanço nos pedidos novos e primeiro lugar nas listagens da tua zona."}},
+{"@type":"Question","name":"O que preciso para me registar?","acceptedAnswer":{"@type":"Answer","text":"Nome, email e password. Depois preenches a tua área e a zona onde trabalhas, e a nossa equipa revê o perfil manualmente para atribuir o selo Verificado."}}
 ]}
 </script>
 <style>
@@ -113,8 +114,10 @@ h3{font-size:16.5px;font-weight:800;letter-spacing:-.012em}
 .stat b{display:block;font-size:21px;font-weight:800}
 .stat span{font-size:11px;color:rgba(255,255,255,.6)}
 
-.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-@media(max-width:860px){.plans{grid-template-columns:1fr}}
+.plans{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:1100px){.plans{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.plans{grid-template-columns:1fr}}
+.plan-note{display:inline-block;font-size:11px;font-weight:700;color:var(--blue-dark);background:var(--blue-light);padding:1px 8px;border-radius:99px;white-space:nowrap}
 .plan{background:var(--white);border-radius:16px;padding:22px;border:1.5px solid var(--border);position:relative}
 .plan.best{border:2px solid var(--blue)}
 .plan .tag{position:absolute;top:-9px;left:18px;background:var(--blue);color:#fff;font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:99px}
@@ -176,9 +179,9 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <section>
 <div class="hero-grid">
 <div>
-<span class="pill">GRÁTIS PARA SEMPRE</span>
-<h1 style="margin-top:15px">O software que gere<br/>o teu negócio — grátis</h1>
-<p class="lead" style="margin-top:13px;max-width:470px">Agenda, orçamentos em PDF e contas do trimestre. Os pedidos de clientes vêm por cima, sem pagares por contacto.</p>
+<span class="pill">COMEÇA GRÁTIS</span>
+<h1 style="margin-top:15px">Recebe pedidos.<br/>Gere o teu negócio.</h1>
+<p class="lead" style="margin-top:13px;max-width:470px">Perfil verificado, pedidos de clientes da tua zona e ferramentas para organizares trabalhos, orçamentos e contas. Começas grátis, sem pagar por contacto e sem comissões.</p>
 <div style="display:flex;gap:11px;margin-top:22px;flex-wrap:wrap">
 <a href="auth.html?tab=register" class="btn btn-blue btn-lg">Criar perfil grátis<svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
 <a href="#funcionalidades" class="btn btn-line btn-lg">Ver o que inclui</a>
@@ -190,7 +193,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 </div>
 </div>
 <div class="mock">
-<div class="mock-head"><span class="t">A tua semana</span><span class="live">&bull; Ao vivo</span></div>
+<div class="mock-head"><span class="t">A tua semana</span><span class="live">&bull; Exemplo</span></div>
 <div class="mock-row"><span class="dot" style="background:#5B8DEF"></span><span><span class="t">Quadro elétrico &mdash; Ana Costa</span><br/><span class="s">Segunda, 14:00 &middot; Braga</span></span></div>
 <div class="mock-row"><span class="dot" style="background:#FAC775"></span><span><span class="t">Orçamento enviado &mdash; &euro;450</span><br/><span class="s">Aguarda resposta há 2 dias</span></span></div>
 <div class="mock-row"><span class="dot" style="background:#4ADE80"></span><span><span class="t">Trabalho pago &mdash; &euro;280</span><br/><span class="s">Faturação do trimestre: &euro;730</span></span></div>
@@ -204,17 +207,32 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <div class="card">
 <div class="chip" style="background:var(--blue-light);color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
 <h3>Gerir</h3>
-<p>Agenda em tempo real, trabalhos do primeiro contacto até seres pago, e orçamentos em PDF com a tua marca.</p>
+<p>Agenda, trabalhos do primeiro contacto até seres pago, clientes e orçamentos em PDF. Com o Pro, os orçamentos levam a tua marca. <span class="plan-note">Starter e Pro</span></p>
 </div>
 <div class="card">
 <div class="chip" style="background:var(--green-light);color:var(--green)"><svg class="ic" viewBox="0 0 24 24"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg></div>
 <h3>Crescer</h3>
-<p>Perfil público verificado, pedidos de clientes da tua zona e recomendações de outros profissionais.</p>
+<p>Perfil público verificado, pedidos de clientes da tua zona (com 2 horas de avanço no Pro) e páginas por cidade que ajudam a apareceres no Google, como “canalizador em Braga”.</p>
 </div>
 <div class="card">
 <div class="chip" style="background:var(--amber-light);color:var(--amber)"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v12M15.5 9.5a2.5 2.5 0 0 0-2.5-2H11a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2.5 2.5 0 0 1-2.5-2"/></svg></div>
 <h3>Receber</h3>
-<p>Faturação por trimestre, projeção do que está por receber e exportação em CSV para o contabilista.</p>
+<p>Contas do trimestre, margem por trabalho, projeção do que está por receber e exportação em CSV para o contabilista. <span class="plan-note">Pro</span></p>
+</div>
+<div class="card">
+<div class="chip" style="background:var(--purple-light);color:var(--purple)"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg></div>
+<h3>Mostrar o teu trabalho</h3>
+<p>Portfólio, diário de trabalhos, vídeo de apresentação, prémios, promoções e avaliações de clientes, tudo no teu perfil público.</p>
+</div>
+<div class="card">
+<div class="chip" style="background:var(--blue-light);color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
+<h3>Não perder pedidos</h3>
+<p>Avisos por email e no telemóvel quando chega uma mensagem, resumo diário do que precisa de atenção e aviso de chuva nos trabalhos ao ar livre.</p>
+</div>
+<div class="card">
+<div class="chip" style="background:var(--green-light);color:var(--green)"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg></div>
+<h3>Assistente com IA</h3>
+<p>Um assistente no painel responde às tuas dúvidas e sugere melhorias ao perfil <span class="plan-note">Pro</span>. O construtor de perfil com IA é um pagamento único de 2,99&nbsp;&euro;.</p>
 </div>
 </div>
 </section>
@@ -235,7 +253,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <div class="col hi">
 <div class="lbl" style="color:var(--blue)">NA FLINKO</div>
 <ul style="color:var(--ink)">
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Respondes a quantos pedidos quiseres</li>
+<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Não pagas por proposta nem por contacto</li>
 <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Só investes se quiseres mais visibilidade</li>
 <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Sem comissão sobre o trabalho fechado</li>
 <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> O plano grátis nunca expira</li>
@@ -257,7 +275,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <div class="stat"><b>&euro;0</b><span>Por contacto</span></div>
 <div class="stat"><b>0%</b><span>De comissão</span></div>
 <div class="stat"><b>2 min</b><span>Para começar</span></div>
-<div class="stat"><b>Grátis</b><span>Para sempre</span></div>
+<div class="stat"><b>Grátis</b><span>Plano sem prazo</span></div>
 </div>
 </div>
 </section>
@@ -267,51 +285,72 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <h2>Preços fixos. Sem comissões.</h2>
 <p class="lead" style="margin-top:8px">Nunca cobramos sobre o trabalho que fechas. Começa grátis e muda só se precisares.</p>
 </div>
-<div class="plans" style="grid-template-columns:1fr 1.15fr;max-width:760px;margin:0 auto">
-<div class="plan best">
-<div class="tag">COMEÇA AQUI</div>
+<div class="plans">
+<div class="plan">
 <div class="nm">Grátis</div>
 <div class="pr">&euro;0<small>/sempre</small></div>
 <ul>
 <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Perfil público verificado</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Serviços ilimitados</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Mensagens de clientes</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Agenda e trabalhos</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>3 orçamentos por mês</li>
+<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Pedidos e mensagens de clientes</li>
+<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>3 orçamentos em PDF por mês</li>
+<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>3 fotos de portfólio</li>
 </ul>
 <a href="auth.html?tab=register" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:15px">Começar sem custos</a>
 </div>
-<div class="plan" style="border:2px solid var(--blue)">
-<div class="nm">Pro</div>
-<div class="pr">&euro;12,99<small>/mês</small></div>
+<div class="plan">
+<div class="nm">Starter</div>
+<div class="pr">&euro;9,99<small>/mês</small></div>
 <ul>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Orçamentos com a tua marca</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Link próprio e código QR</li>
+<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Serviços e mensagens sem limite</li>
+<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Agenda e gestão de trabalhos</li>
 <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Orçamentos e portfólio ilimitados</li>
+</ul>
+<a href="pricing.html" class="btn btn-line" style="width:100%;justify-content:center;margin-top:15px">Ver detalhes</a>
+</div>
+<div class="plan best">
+<div class="tag">RECOMENDADO</div>
+<div class="nm">Pro</div>
+<div class="pr">&euro;19,99<small>/mês</small></div>
+<ul>
+<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Tudo do Starter</li>
+<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Orçamentos com o teu logótipo</li>
 <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Contas, margens e CSV</li>
+<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Link próprio e código QR</li>
 <li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>2 horas de avanço nos pedidos</li>
+<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Primeiro lugar nas listagens da tua zona</li>
 </ul>
 <a href="pricing.html" class="btn btn-line" style="width:100%;justify-content:center;margin-top:15px;border-color:var(--blue);color:var(--blue)">Ver detalhes</a>
 </div>
+<div class="plan">
+<div class="nm">Empresas</div>
+<div class="pr">&euro;39,99<small>/mês</small></div>
+<ul>
+<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Tudo do Pro</li>
+<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Apoio prioritário e configuração acompanhada</li>
+<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Vários técnicos e faturação em nome da empresa (em breve)</li>
+</ul>
+<a href="pricing.html" class="btn btn-line" style="width:100%;justify-content:center;margin-top:15px">Falar connosco</a>
 </div>
-<p style="text-align:center;font-size:13px;color:var(--muted-2);margin-top:16px">Cancelas quando quiseres. Poupas 20% no plano anual. Preços finais, isentos de IVA (art. 53.º).</p>
+</div>
+<p style="text-align:center;font-size:13px;color:var(--muted-2);margin-top:16px">Cancelas quando quiseres. Poupas 20% no plano anual. Preços finais, isentos de IVA (art. 53.º). Os limites completos de cada plano estão na página de <a href="pricing.html" style="color:var(--blue);font-weight:600">Preços</a>.</p>
 </section>
 
 <section style="padding-top:8px">
 <div class="faq">
 <h2 style="margin-bottom:8px">Perguntas frequentes</h2>
-<div class="faq-item"><div class="faq-q" onclick="tog(this)">Existem custos escondidos?<span>+</span></div><div class="faq-a" style="display:none">Não. O plano grátis é gratuito para sempre e não pede cartão de crédito. Os planos pagos têm o preço indicado acima, sem extras.</div></div>
+<div class="faq-item"><div class="faq-q" onclick="tog(this)">Existem custos escondidos?<span>+</span></div><div class="faq-a" style="display:none">Não. O plano grátis não pede cartão de crédito. Os planos pagos custam &euro;9,99 (Starter), &euro;19,99 (Pro) e &euro;39,99 (Empresas) por mês, isentos de IVA, sem extras nem comissões sobre o trabalho que fechas.</div></div>
 <div class="faq-item"><div class="faq-q" onclick="tog(this)">Pago para responder a um cliente?<span>+</span></div><div class="faq-a" style="display:none">Nunca. Responder a mensagens está incluído em todos os planos, incluindo o grátis. Não usamos créditos por contacto.</div></div>
-<div class="faq-item"><div class="faq-q" onclick="tog(this)">Existe contrato ou fidelização?<span>+</span></div><div class="faq-a" style="display:none">Não. Podes mudar de plano ou sair quando quiseres, sem período mínimo.</div></div>
-<div class="faq-item"><div class="faq-q" onclick="tog(this)">O que preciso para me registar?<span>+</span></div><div class="faq-a" style="display:none">Nome, email e password. Depois preenches a tua área e a zona onde trabalhas, e a nossa equipa revê o perfil manualmente para atribuir o selo Verificado.</div></div>
-<div class="faq-item"><div class="faq-q" onclick="tog(this)">Vou mesmo receber clientes?<span>+</span></div><div class="faq-a" style="display:none">Somos uma plataforma nova — começámos no Porto e em Braga e já temos profissionais por todo o país, mas o volume de pedidos ainda está a crescer. É por isso que as ferramentas de gestão são grátis: valem por si só, mesmo antes de te chegarem pedidos.</div></div>
+<div class="faq-item"><div class="faq-q" onclick="tog(this)">Existe contrato ou fidelização?<span>+</span></div><div class="faq-a" style="display:none">Não. Podes mudar de plano ou cancelar quando quiseres, sem período mínimo. No Starter e no Pro cancelas tu mesmo no painel, em Gerir subscrição.</div></div>
+<div class="faq-item"><div class="faq-q" onclick="tog(this)">Qual a diferença entre Starter e Pro?<span>+</span></div><div class="faq-a" style="display:none">O Starter dá-te as ferramentas de gestão: agenda, trabalhos, orçamentos e portfólio ilimitados. O Pro acrescenta orçamentos com a tua marca, contas e exportação CSV, link próprio com código QR, 2 horas de avanço nos pedidos novos e primeiro lugar nas listagens da tua zona.</div></div>
+<div class="faq-item"><div class="faq-q" onclick="tog(this)">O que preciso para me registar?<span>+</span></div><div class="faq-a" style="display:none">Nome, email e password. Depois preenches a tua área e a zona onde trabalhas, e a nossa equipa revê o perfil manualmente para atribuir o selo Verificado. Para o selo, envias os teus documentos no painel, no separador Verificação.</div></div>
+<div class="faq-item"><div class="faq-q" onclick="tog(this)">Vou mesmo receber clientes?<span>+</span></div><div class="faq-a" style="display:none">Somos uma plataforma nova — começámos no Porto e em Braga e já temos profissionais por todo o país, mas o volume de pedidos ainda está a crescer. Por isso não pagas por contacto nem comissões: o plano grátis não te custa nada enquanto o teu perfil ganha visibilidade, e só pagas se quiseres mais ferramentas ou mais destaque.</div></div>
 </div>
 </section>
 
 <section style="padding-top:8px;padding-bottom:14px">
 <div class="dark" style="text-align:center">
 <h2 style="color:#fff">Começa hoje, sem pagar nada</h2>
-<p style="font-size:14px;color:rgba(255,255,255,.62);margin:9px auto 20px;max-width:430px">Cria o teu perfil em cerca de dois minutos e organiza os teus trabalhos já a partir de hoje.</p>
+<p style="font-size:14px;color:rgba(255,255,255,.62);margin:9px auto 20px;max-width:430px">Cria o teu perfil em cerca de dois minutos e começa a receber pedidos da tua zona.</p>
 <a href="auth.html?tab=register" class="btn btn-white btn-lg" style="font-weight:800">Criar perfil grátis</a>
 </div>
 </section>
@@ -329,7 +368,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <a href="como-funciona.html">Como funciona</a>
 <a href="porque-escolher.html">Porquê a Flinko</a>
 <a href="pricing.html">Preços</a>
-<a href="blog.html">Blog</a>
+<a href="academia.html">Academia</a>
 <a href="contacto.html">Contacto</a>
 </div>
 <div class="footer-col">
