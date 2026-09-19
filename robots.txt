@@ -7,3 +7,4 @@ Disallow: /auth.html
 
 Sitemap: https://flinko.pt/sitemap.xml
 Sitemap: https://flinko.pt/sitemap-profiles.xml
+Sitemap: https://flinko.pt/sitemap-local.xml
