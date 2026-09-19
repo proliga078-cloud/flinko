@@ -28,17 +28,15 @@ A configuração `verify_jwt` de cada função (coluna JWT acima) tem de se mant
 `send-notifications` e `stripe-webhook-ai-builder` são chamadas sem sessão de
 utilizador, por isso usam `--no-verify-jwt`.
 
-## Alterações no repositório ainda por publicar
+## Estado
 
-O código desta pasta está **à frente da produção** nestes pontos. Publica com
-`supabase functions deploy send-notifications --no-verify-jwt --project-ref cdwinidhtfxfxowflize`
-e `supabase functions deploy public-assistant --project-ref cdwinidhtfxfxowflize`:
+Todas as funções desta pasta coincidem com a produção (`send-notifications`
+v11 e `public-assistant` v6 publicadas a 19/09/2026):
 
-- **`send-notifications`**: já usa a marca e o domínio Flinko (emails, remetente
-  por omissão, logótipo). O `?diag=1` só funciona quando `PROLIGA_HOOK_SECRET`
-  está definido (senão qualquer pessoa via os nomes das variáveis de ambiente).
+- **`send-notifications`**: marca e domínio Flinko. O `?diag=1` só funciona
+  quando `PROLIGA_HOOK_SECRET` está definido.
 - **`public-assistant`**: limite de 20 pedidos por hora por IP (em memória, por
-  instância). Não substitui um limite persistente.
+  instância; não substitui um limite persistente).
 
 ## Problemas conhecidos
 
