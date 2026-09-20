@@ -4,6 +4,7 @@ Disallow: /admin.html
 Disallow: /dashboard.html
 Disallow: /messages.html
 Disallow: /auth.html
+Disallow: /cartaz.html
 
 Sitemap: https://flinko.pt/sitemap.xml
 Sitemap: https://flinko.pt/sitemap-profiles.xml

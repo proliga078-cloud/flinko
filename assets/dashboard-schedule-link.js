@@ -133,6 +133,7 @@ function downloadQr(){
 }
 
 function applySlugGate(){
+  if(typeof renderShare==='function')renderShare()
   const locked=document.getElementById('slug-locked')
   const body=document.getElementById('slug-body')
   if(!locked||!body)return
