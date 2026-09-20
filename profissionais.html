@@ -24,7 +24,7 @@
 <script src="/assets/cookie-consent.js" defer></script>
 <script src="/assets/public-chat-widget.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet"/>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"Existem custos escondidos?","acceptedAnswer":{"@type":"Answer","text":"Não. O plano grátis não pede cartão de crédito. Os planos pagos custam 9,99 € (Starter), 19,99 € (Pro) e 39,99 € (Empresas) por mês, isentos de IVA, sem extras nem comissões sobre o trabalho que fechas."}},
@@ -36,309 +36,318 @@
 </script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--ink:#14181F;--blue:#E8720A;--blue-dark:#C25A06;--blue-light:#FDECDD;--green:#1A8649;--green-light:#EAF7EE;--amber:#AF620A;--amber-light:#FFF3E4;--purple:#6B4FA0;--purple-light:#EDE8F4;--border:#ECECE9;--muted:#5B6270;--muted-2:#707580;--bg:#F7F8FA;--cream:#FAF8F4;--white:#FFFFFF;--shadow:0 4px 20px rgba(20,24,31,.06)}
+:root{--dark:#132420;--dark3:#1F4538;--orange:#E8720A;--orange-d:#B85608;--mint:#0F8B5F;--mint-d:#0A6B49;--ink:#14181F;--muted:#5B6270;--line:#E7E9E4;--cream:#F4F8F4}
 html{scroll-behavior:smooth}
-body{font-family:'Inter',sans-serif;color:var(--ink);background:var(--cream);line-height:1.55}
-a{text-decoration:none;color:inherit}
-.ic{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;vertical-align:-3px}
-:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-
-nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:0 5%;height:66px;display:flex;align-items:center}
-.logo{font-weight:800;font-size:20px;letter-spacing:-.01em;white-space:nowrap}
-.logo em{font-style:normal;color:var(--blue)}
-.nav-tag{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.04em;margin-left:8px}
-.navlinks{display:none;gap:24px;margin-left:40px;font-size:14px;font-weight:500;color:var(--muted)}
-.navlinks a:hover{color:var(--ink)}
-@media(min-width:900px){.navlinks{display:flex}}
-@media(max-width:560px){.nav-tag{display:none}.navcta{gap:6px}.navcta .btn{padding:8px 12px;font-size:13px;white-space:nowrap}}
-.navcta{margin-left:auto;display:flex;gap:10px;align-items:center}
-.btn{padding:9px 18px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid transparent;transition:all .15s;font-family:inherit;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
-.btn-line{background:transparent;color:var(--ink);border-color:var(--border)}.btn-line:hover{border-color:var(--muted-2)}
-.btn-blue{background:var(--blue);color:#fff;box-shadow:0 6px 16px rgba(232,114,10,.22)}.btn-blue:hover{background:var(--blue-dark)}
-.btn-white{background:#fff;color:var(--blue)}
-.btn-lg{padding:13px 24px;font-size:15px}
-
-.wrap{max-width:1120px;margin:0 auto;padding:0 5%}
-section{padding:40px 0}
-.eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.09em;color:var(--blue);text-transform:uppercase;margin-bottom:7px}
-h1{font-size:clamp(28px,4vw,38px);font-weight:800;line-height:1.1;letter-spacing:-.033em}
-h2{font-size:clamp(21px,2.6vw,26px);font-weight:800;letter-spacing:-.026em}
-h3{font-size:16.5px;font-weight:800;letter-spacing:-.012em}
-.lead{font-size:15.5px;color:var(--muted);line-height:1.65}
-.pill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:5px 12px;border-radius:99px;background:var(--blue-light);color:var(--blue-dark)}
-
-.hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:44px;align-items:center}
-@media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:28px}}
-.trustrow{display:flex;gap:18px;margin-top:16px;flex-wrap:wrap}
-.trustrow span{font-size:13px;color:var(--muted);font-weight:600}
-.trustrow .ic{width:15px;height:15px;color:var(--green)}
-
-.mock{background:#0F1218;border-radius:16px;padding:16px;box-shadow:0 18px 40px rgba(0,0,0,.26)}
-.mock-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}
-.mock-head .t{font-size:13px;font-weight:800;color:#fff}
-.mock-head .live{font-size:11px;color:#4ADE80;font-weight:700}
-.mock-row{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:rgba(255,255,255,.06);border-radius:10px;margin-bottom:8px}
-.mock-row .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
-.mock-row .t{font-size:12.5px;font-weight:600;color:#fff}
-.mock-row .s{font-size:11px;color:rgba(255,255,255,.52)}
-.mock-tip{background:rgba(255,255,255,.06);border-radius:10px;padding:12px;margin-top:10px}
-.mock-tip .lbl{font-size:10.5px;color:rgba(255,255,255,.5);margin-bottom:4px;letter-spacing:.05em}
-.mock-tip .txt{font-size:12.5px;color:#fff;line-height:1.5}
-
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-@media(max-width:860px){.grid3{grid-template-columns:1fr}}
-.card{background:var(--white);border-radius:16px;padding:22px;box-shadow:0 2px 12px rgba(20,24,31,.06)}
-.chip{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
-.chip .ic{width:20px;height:20px}
-.card p{font-size:13.5px;color:var(--muted);margin-top:7px;line-height:1.6}
-
-.compare{display:grid;grid-template-columns:1fr 1px 1fr;background:var(--white);border-radius:16px;box-shadow:0 2px 12px rgba(20,24,31,.06);overflow:hidden}
-@media(max-width:860px){.compare{grid-template-columns:1fr}}
-.compare .col{padding:24px}
-.compare .col.hi{background:#F7FAFF}
-.compare .divx{background:var(--border)}
-.compare .lbl{font-size:11.5px;font-weight:700;letter-spacing:.06em;margin-bottom:14px}
-.compare ul{list-style:none}
-.compare li{font-size:13.5px;color:var(--muted);margin-bottom:10px;line-height:1.5;display:flex;gap:9px;align-items:flex-start}
-.compare .minus{color:#D8573A;font-weight:800;flex-shrink:0}
-.compare .ic{width:15px;height:15px;color:var(--green);margin-top:3px}
-
-.dark{background:#0F1218;border-radius:18px;padding:30px;color:#fff;position:relative;overflow:hidden}
-.dark::after{content:'';position:absolute;top:-70px;right:-50px;width:230px;height:230px;border-radius:50%;background:rgba(232,114,10,.28)}
-.dark>*{position:relative}
-.dark-grid{display:grid;grid-template-columns:1.4fr .6fr;gap:20px;align-items:center}
-@media(max-width:700px){.dark-grid{grid-template-columns:1fr}}
-.statrow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:22px}
-@media(max-width:640px){.statrow{grid-template-columns:repeat(2,1fr)}}
-.stat{background:rgba(255,255,255,.08);border-radius:12px;padding:14px;text-align:center}
-.stat b{display:block;font-size:21px;font-weight:800}
-.stat span{font-size:11px;color:rgba(255,255,255,.6)}
-
-.plans{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-@media(max-width:1100px){.plans{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:640px){.plans{grid-template-columns:1fr}}
-.plan-note{display:inline-block;font-size:11px;font-weight:700;color:var(--blue-dark);background:var(--blue-light);padding:1px 8px;border-radius:99px;white-space:nowrap}
-.plan{background:var(--white);border-radius:16px;padding:22px;border:1.5px solid var(--border);position:relative}
-.plan.best{border:2px solid var(--blue)}
-.plan .tag{position:absolute;top:-9px;left:18px;background:var(--blue);color:#fff;font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:99px}
-.plan .nm{font-size:13.5px;font-weight:700;color:var(--muted);margin-top:3px}
-.plan .pr{font-size:30px;font-weight:800;letter-spacing:-.03em;margin:3px 0 10px}
-.plan .pr small{font-size:12.5px;font-weight:600;color:var(--muted)}
-.plan ul{list-style:none;font-size:13.5px;color:var(--muted);line-height:2}
-.plan ul .ic{width:14px;height:14px;color:var(--green);margin-right:6px}
-
-.faq{background:var(--white);border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(20,24,31,.06)}
-.faq-item{border-bottom:1px solid var(--border);padding:14px 0}
-.faq-item:last-child{border-bottom:none}
-.faq-q{font-size:14.5px;font-weight:700;display:flex;justify-content:space-between;align-items:center;cursor:pointer;gap:12px}
-.faq-a{font-size:13.5px;color:var(--muted);margin-top:8px;line-height:1.65}
-
-footer{background:#0F1218;color:rgba(255,255,255,.55);padding:34px 5% 22px;margin-top:34px}
-.footer-top{max-width:1120px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:26px;margin-bottom:20px}
-.footer-brand p{font-size:13px;line-height:1.7;max-width:270px;margin-top:10px}
-.footer-brand .logo{color:#fff}.footer-brand .logo em{color:#5B8DEF}
-.footer-links{display:flex;gap:40px;flex-wrap:wrap}
-.footer-col{display:flex;flex-direction:column;gap:9px;font-size:13px}
-.footer-col a:hover{color:#fff}
-.footer-bottom{max-width:1120px;margin:0 auto;border-top:1px solid rgba(255,255,255,.1);padding-top:16px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:12px;color:rgba(255,255,255,.5)}
-
-/* === tema navy+laranja: nav === */
-nav{background:#0F1A33}
-nav a.logo{color:#fff}
-nav a.logo em,nav a.logo span{color:#F2A55C}
-.navlinks{color:#9AA6C3}
-.navlinks a:hover{color:#fff}
-.hamburger-btn{background:transparent;border-color:rgba(255,255,255,.25);color:#fff}
-.mobile-nav-panel{background:#fff}
-nav .btn-ghost{color:#fff}
-nav .btn-ghost:hover{background:rgba(255,255,255,.1)}
-nav .btn-line{color:#fff;border-color:rgba(255,255,255,.3)}
-nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
-.btn-ink{background:#E8720A;color:#fff}
-.btn-ink:hover{background:#C25A06}
+body{font-family:'Inter',sans-serif;color:var(--ink);background:#fff;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,h5{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-weight:800;letter-spacing:-.02em;line-height:1.12}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-weight:700;font-size:15px;padding:13px 24px;border-radius:12px;border:0;cursor:pointer;transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn-o{background:var(--orange);color:#fff;box-shadow:0 8px 22px rgba(232,114,10,.3)}
+.btn-g{background:transparent;color:var(--ink);border:1.5px solid #D9CBB3}
+.btn-l{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.hi{display:inline-block;background:var(--orange);color:#fff;padding:0 12px;transform:skewX(-6deg)}
+.hi>span{display:inline-block;transform:skewX(6deg)}
+.hi.m{background:var(--mint-d)}
+.kick{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--orange-d);background:#FFE9D2;border-radius:99px;padding:6px 14px;margin-bottom:16px}
+.sec{padding:88px 0}
+.sec h2{font-size:clamp(28px,4vw,42px);text-align:center;margin-bottom:12px}
+.sec .sub{text-align:center;color:var(--muted);max-width:620px;margin:0 auto 44px}
+.center{text-align:center}
+.promo{background:linear-gradient(90deg,#DDF3E6,#EAF7EE);text-align:center;font-size:14px;font-weight:600;padding:10px 16px}
+.promo b{background:var(--orange);color:#fff;border-radius:99px;padding:3px 12px;margin:0 4px;font-size:13px}
+.promo a{text-decoration:underline}
+nav{position:sticky;top:0;z-index:50;background:var(--dark);border-bottom:3px solid var(--orange)}
+nav .wrap{display:flex;align-items:center;gap:28px;height:68px}
+.logo{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-weight:800;font-size:24px;color:#fff}.logo em{font-style:normal;color:var(--orange)}
+.ptag{font-size:11px;font-weight:800;color:var(--dark);background:var(--orange);letter-spacing:.06em;padding:5px 12px;border-radius:99px;white-space:nowrap}
+nav ul{display:flex;gap:26px;list-style:none;margin-left:12px;font-size:14.5px;font-weight:600;color:rgba(255,255,255,.8)}
+nav ul a:hover{color:#fff}
+nav ul .cli{color:#ffcf9f}
+nav .r{margin-left:auto;display:flex;gap:10px}
+.nb{padding:10px 18px;border-radius:99px;font-size:14px;font-weight:700;white-space:nowrap}
+.hero{background:#FBF4E8;position:relative;overflow:hidden;margin:18px 18px 0;border-radius:32px}
+.hero::before{content:'';position:absolute;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(232,114,10,.22),transparent 65%);right:-140px;top:-220px}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center;padding-top:72px;padding-bottom:72px}
+.hero h1{font-size:clamp(38px,5.4vw,64px);margin-bottom:20px}
+.hero h1 .g{color:var(--mint-d)}
+.hero p.l{font-size:18px;color:#4a5560;max-width:520px;margin-bottom:26px}
+.trades{margin:0 0 26px}
+.trades small{display:block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8a7f70;margin-bottom:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid #E2D6C2;background:#fff;color:var(--ink);font-family:inherit;font-size:14px;font-weight:600;padding:8px 16px;border-radius:99px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--dark);color:#fff;border-color:var(--dark)}
+.ctas{display:flex;gap:12px;flex-wrap:wrap}
+.ticks{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;font-size:13.5px;font-weight:600;color:#5b6570}
+.ticks span::before{content:'✓ ';color:var(--mint-d)}
+.shot{background:#0d1a17;border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:18px;box-shadow:0 30px 70px rgba(19,36,32,.28);position:relative}
+.shot .bar{display:flex;gap:6px;margin-bottom:14px}
+.shot .bar i{width:10px;height:10px;border-radius:50%;background:#33433d}
+.shot h4{font-size:13px;color:#fff;margin-bottom:10px;display:flex;justify-content:space-between}
+.shot h4 em{font-style:normal;color:#37c98d;font-size:11px}
+.row{background:#16221f;border-radius:12px;padding:12px 14px;margin-bottom:9px;font-size:13.5px}
+.row b{display:block;color:#fff}.row span{color:#93a39d;font-size:12px}
+.row.n{border-left:3px solid #6d8cff}.row.o{border-left:3px solid #f1b45a}.row.p{border-left:3px solid #37c98d}
+.sug{background:rgba(232,114,10,.12);border:1px solid rgba(232,114,10,.3);border-radius:12px;padding:12px 14px;font-size:13px;color:#ffd9b0}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;position:relative}
+.steps::before{content:'';position:absolute;top:34px;left:16%;right:16%;height:3px;background:repeating-linear-gradient(90deg,#cfd9d3 0 10px,transparent 10px 20px)}
+.step{text-align:center;position:relative}
+.num{width:68px;height:68px;border-radius:50%;background:var(--dark);color:#fff;font-family:'Plus Jakarta Sans','Inter',sans-serif;font-weight:800;font-size:26px;display:grid;place-items:center;margin:0 auto 18px;box-shadow:0 0 0 8px #fff;position:relative}
+.step:nth-child(2) .num{background:var(--orange)}.step:nth-child(3) .num{background:var(--mint-d)}
+.step h3{font-size:20px;margin-bottom:8px}.step p{color:var(--muted);font-size:15px;max-width:290px;margin:0 auto}
+.step .t{display:inline-block;margin-top:10px;font-size:12px;font-weight:700;color:var(--mint-d);background:#DDF3E6;border-radius:99px;padding:4px 12px}
+.bg2{background:var(--cream)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:26px;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(19,36,32,.09)}
+.ico{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font-size:22px;margin-bottom:16px}
+.card h3{font-size:19px;margin-bottom:6px}.card p{font-size:14.5px;color:var(--muted)}
+.pl{display:inline-block;margin-top:10px;font-size:11.5px;font-weight:700;color:var(--orange-d);background:#FFE9D2;border-radius:99px;padding:3px 10px}
+.div{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.div h2{text-align:left}.div .sub{text-align:left;margin:0 0 22px}
+.list{list-style:none;display:grid;gap:12px;margin-bottom:26px}
+.list li{display:flex;gap:12px;font-size:15.5px}.list li::before{content:'✓';flex:none;width:24px;height:24px;border-radius:50%;background:#DDF3E6;color:var(--mint-d);font-weight:800;display:grid;place-items:center;font-size:13px}
+.duo{position:relative;height:430px}
+.poster{position:absolute;left:8%;top:0;width:250px;height:354px;background:#fff;border-radius:14px;box-shadow:0 24px 60px rgba(19,36,32,.22);overflow:hidden;transform:rotate(-4deg);border:1px solid var(--line)}
+.poster .t{background:var(--dark);color:#fff;padding:16px 16px 14px;position:relative}
+.poster .t::after{content:'';position:absolute;left:0;right:0;bottom:0;height:4px;background:linear-gradient(90deg,var(--orange),var(--mint))}
+.poster .t b{font-size:12px}.poster .t b em{font-style:normal;color:var(--orange)}
+.poster .t h5{font-size:19px;line-height:1.1;margin-top:8px}.poster .t h5 span{color:var(--orange)}
+.poster .b{text-align:center;padding:14px 12px}
+.poster .b strong{display:block;font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:15px}
+.poster .b small{color:var(--muted);font-size:11px}
+.qr{width:112px;height:112px;margin:10px auto;background:conic-gradient(from 0deg,#111 0 25%,#fff 0 50%,#111 0 75%,#fff 0) 0 0/16px 16px;border:6px solid #fff;outline:2px solid var(--line);border-radius:6px}
+.poster .u{color:var(--orange);font-weight:800;font-size:11.5px}
+.phone{position:absolute;right:4%;top:60px;width:210px;background:#111;border-radius:30px;padding:9px;box-shadow:0 24px 60px rgba(19,36,32,.3);transform:rotate(3deg)}
+.phone .s{background:#ECE5DD;border-radius:22px;padding:14px 10px;min-height:290px}
+.msg{background:#DCF8C6;border-radius:12px 12px 2px 12px;padding:10px 12px;font-size:12px;line-height:1.45;margin-left:20px;box-shadow:0 1px 1px rgba(0,0,0,.1)}
+.msg u{color:#0a5bb5;overflow-wrap:anywhere}
+.msg small{display:block;text-align:right;font-size:10px;color:#667;margin-top:4px}
+.exemplo{display:block;text-align:center;font-size:12px;color:var(--muted);margin-top:8px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;border-radius:24px;overflow:hidden;border:1px solid var(--line)}
+.cmp>div{padding:34px}
+.cmp .a{background:#fff}.cmp .b{background:#F1F8F4}
+.cmp h4{font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px;color:var(--muted)}
+.cmp .b h4{color:var(--orange-d)}
+.cmp ul{list-style:none;display:grid;gap:12px;font-size:15.5px}
+.cmp .a li::before{content:'– ';color:#c0392b;font-weight:800}
+.cmp .b li::before{content:'✓ ';color:var(--mint-d);font-weight:800}
+.stats{background:var(--dark);border-radius:28px;color:#fff;padding:42px;margin-top:26px;display:grid;grid-template-columns:1.2fr repeat(4,1fr);gap:20px;align-items:center}
+.stats h3{color:#fff;font-size:24px}.stats p{color:rgba(255,255,255,.65);font-size:14px;margin-top:6px}
+.stats .s{text-align:center}.stats .s b{display:block;font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:32px}
+.stats .s:nth-child(2) b{color:#f6a35a}.stats .s:nth-child(3) b{color:#37c98d}
+.stats .s span{font-size:12px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+.prof{max-width:640px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:22px;padding:28px;box-shadow:0 18px 50px rgba(19,36,32,.08)}
+.prof .top{display:flex;gap:16px;align-items:center;margin-bottom:14px}
+.av{width:62px;height:62px;border-radius:50%;background:var(--dark);color:#fff;font-weight:800;display:grid;place-items:center;font-size:20px;flex:none}
+.prof h3{font-size:19px}.prof .m{font-size:13.5px;color:var(--muted)}
+.ver{display:inline-block;background:#DDF3E6;color:var(--mint-d);font-weight:700;font-size:12px;padding:3px 10px;border-radius:99px;margin:6px 8px 10px 0}
+.prof p{font-size:14.5px;color:var(--muted);margin-bottom:14px}
+.svc{display:grid;gap:8px;margin-bottom:6px}
+.svc div{display:flex;justify-content:space-between;gap:12px;background:var(--cream);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:600}
+.svc span{color:var(--orange-d);white-space:nowrap}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
+.plan{background:#fff;border:1.5px solid var(--line);border-radius:24px;padding:30px;display:flex;flex-direction:column;position:relative}
+.plan.rec{border-color:var(--orange);box-shadow:0 24px 60px rgba(232,114,10,.16)}
+.rb{position:absolute;top:-13px;left:26px;background:var(--orange);color:#fff;font-size:11.5px;font-weight:800;padding:4px 12px;border-radius:99px;letter-spacing:.04em}
+.plan .nm{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-weight:800;font-size:18px;color:var(--muted)}
+.price{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-weight:800;font-size:44px;margin:8px 0 2px}.price small{font-size:15px;color:var(--muted);font-weight:600}
+.plan ul{list-style:none;display:grid;gap:10px;margin:18px 0 24px;font-size:14.5px;flex:1}
+.plan li::before{content:'✓ ';color:var(--mint-d);font-weight:800}
+.plan .btn{justify-content:center}
+.team{margin-top:20px;background:#fff;border:1px dashed #b9cbc0;border-radius:16px;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;font-size:15px}
+.team .nm{display:inline;font-weight:800;color:var(--ink);font-size:15px}
+.team .price{display:inline;font-size:15px;margin:0;font-weight:800}
+.small{text-align:center;font-size:13px;color:var(--muted);margin-top:18px}
+.small a{color:var(--orange-d);font-weight:700}
+.faq{max-width:760px;margin:0 auto;display:grid;gap:10px}
+.faq-item{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.faq-q{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:18px 22px;font-weight:700;font-size:16px;cursor:pointer}
+.faq-q span{font-size:22px;color:var(--orange);line-height:1}
+.faq-a{padding:0 22px 18px;color:var(--muted);font-size:14.5px}
+.final{background:var(--dark);color:#fff;text-align:center;margin:0 18px 18px;border-radius:32px;padding:84px 24px;position:relative;overflow:hidden}
+.final::before{content:'';position:absolute;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(232,114,10,.35),transparent 65%);top:-260px;right:-120px}
+.final h2{color:#fff;font-size:clamp(30px,4.6vw,50px);margin-bottom:14px;position:relative}
+.final p{color:rgba(255,255,255,.75);margin-bottom:26px;position:relative}
+footer{background:var(--dark);color:rgba(255,255,255,.7);padding:48px 0 28px;font-size:14px}
+.ft{display:flex;justify-content:space-between;gap:32px;flex-wrap:wrap;padding-bottom:28px;border-bottom:1px solid rgba(255,255,255,.12)}
+.ft p{max-width:320px;margin-top:10px}
+.fl{display:flex;gap:56px;flex-wrap:wrap}
+.fc{display:grid;gap:8px;align-content:start}
+.fc a:hover{color:#fff}
+.fb{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:20px;font-size:13px}
+.sticky{display:none}
+@media(max-width:860px){
+  .hero .wrap,.div,.stats,.cmp,.grid3,.steps,.plans{grid-template-columns:1fr}
+  nav ul{display:none}
+  .steps::before{display:none}
+  .sec{padding:56px 0}
+  .hero{margin:10px;border-radius:24px}
+  .hero .wrap{padding:44px 20px}
+  .cmp>div,.stats{padding:24px}
+  .final{margin:0 10px 10px}
+}
+@media(max-width:700px){
+  .ptag{display:none}
+  nav .wrap{gap:12px}
+  .nb.l{display:none}
+  .duo{height:400px}
+  .poster{left:0;width:200px;height:284px}
+  .phone{width:170px;right:0}
+  .promo{font-size:12.5px}
+  body{padding-bottom:70px}
+  .sticky.on{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;background:#fff;border-top:1px solid var(--line);padding:10px 84px 10px 14px;box-shadow:0 -8px 24px rgba(0,0,0,.1)}
+  .sticky .btn{width:100%;justify-content:center}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
 
-<nav>
-<a href="index.html" class="logo">Flink<em>o</em></a><span class="nav-tag">PARA PROFISSIONAIS</span>
-<div class="navlinks">
-<a href="#funcionalidades">Funcionalidades</a>
-<a href="pricing.html">Preços</a>
-<a href="pedidos.html">Pedidos de clientes</a>
-<a href="index.html">Sou cliente</a>
+<div class="promo">Estás a ver a área para <b>profissionais</b> · Procuras um profissional? <a href="index.html">Vai para a página de clientes</a></div>
+<nav><div class="wrap">
+<a href="index.html" class="logo">Flink<em>o</em></a><span class="ptag">PARA PROFISSIONAIS</span>
+<ul>
+<li><a href="#funcionalidades">Funcionalidades</a></li>
+<li><a href="pricing.html">Preços</a></li>
+<li><a href="pedidos.html">Pedidos de clientes</a></li>
+<li><a href="index.html" class="cli">&larr; Sou cliente</a></li>
+</ul>
+<div class="r">
+<a href="auth.html?tab=login" class="nb l" id="nav-login" style="border:1.5px solid rgba(255,255,255,.3);color:#fff">Entrar</a>
+<a href="auth.html?tab=register" class="nb" style="background:var(--orange);color:#fff">Criar perfil grátis</a>
 </div>
-<div class="navcta">
-<a href="auth.html?tab=login" class="btn btn-line" id="nav-login">Entrar</a>
-<a href="auth.html?tab=register" class="btn btn-blue">Criar perfil grátis</a>
-</div>
-</nav>
+</div></nav>
 
+<header class="hero">
 <div class="wrap">
-
-<section>
-<div class="hero-grid">
 <div>
-<span class="pill">COMEÇA GRÁTIS</span>
-<h1 style="margin-top:15px">Recebe pedidos.<br/>Gere o teu negócio.</h1>
-<p class="lead" style="margin-top:13px;max-width:470px">Perfil verificado, pedidos de clientes da tua zona e ferramentas para organizares trabalhos, orçamentos e contas. Começas grátis, sem pagar por contacto e sem comissões.</p>
-<div style="display:flex;gap:11px;margin-top:22px;flex-wrap:wrap">
-<a href="auth.html?tab=register" class="btn btn-blue btn-lg">Criar perfil grátis<svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-<a href="#funcionalidades" class="btn btn-line btn-lg">Ver o que inclui</a>
+<span class="kick">&bull; Grátis para começar</span>
+<h1>Recebe <span class="hi"><span id="palavra">pedidos</span></span> de clientes <span class="g">da tua zona.</span></h1>
+<p class="l" id="sub">Perfil verificado, pedidos de clientes perto de ti e ferramentas para organizar trabalhos, orçamentos e contas. Sem pagar por contacto e sem comissões.</p>
+<div class="trades"><small>Qual é o teu ofício?</small>
+<div class="chips" id="chips">
+<button type="button" class="chip" aria-pressed="true" data-t="pedidos" data-s="Perfil verificado, pedidos de clientes perto de ti e ferramentas para organizar trabalhos, orçamentos e contas. Sem pagar por contacto e sem comissões.">Todos</button>
+<button type="button" class="chip" aria-pressed="false" data-t="instalações" data-s="Eletricistas: os clientes da tua zona pedem-te instalações, avarias e quadros. Tu envias o orçamento em PDF e ficas com o histórico.">Eletricista</button>
+<button type="button" class="chip" aria-pressed="false" data-t="reparações" data-s="Canalizadores: recebe pedidos de fugas e reparações perto de ti, responde depressa e mostra as avaliações dos teus clientes.">Canalizador</button>
+<button type="button" class="chip" aria-pressed="false" data-t="obras" data-s="Pintores: mostra antes e depois no portefólio, envia orçamentos em PDF e recebe pedidos com fotografias.">Pintor</button>
+<button type="button" class="chip" aria-pressed="false" data-t="projetos" data-s="Designers e programadores: portefólio, orçamentos em PDF e pedidos de clientes de todo o país.">Digital</button>
+</div></div>
+<div class="ctas"><a href="auth.html?tab=register" class="btn btn-o">Criar perfil grátis &rarr;</a><a href="#como-comecas" class="btn btn-g">Ver como funciona</a></div>
+<div class="ticks"><span>Sem cartão de crédito</span><span>Sem fidelização</span><span>Cerca de 2 minutos</span></div>
 </div>
-<div class="trustrow">
-<span><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Sem cartão de crédito</span>
-<span><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Sem fidelização</span>
-<span><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Cerca de 2 minutos</span>
+<div class="shot">
+<div class="bar"><i></i><i></i><i></i></div>
+<h4>A tua semana <em>&bull; Exemplo</em></h4>
+<div class="row n"><b>Quadro elétrico &mdash; Ana Costa</b><span>Segunda, 14:00 &middot; Braga</span></div>
+<div class="row o"><b>Orçamento enviado &mdash; &euro;450</b><span>Aguarda resposta há 2 dias</span></div>
+<div class="row p"><b>Trabalho pago &mdash; &euro;280</b><span>Faturação do trimestre: &euro;730</span></div>
+<div class="sug"><b>Sugestão</b> &middot; Tens 1 orçamento sem resposta há mais de 5 dias. Vale a pena fazer um seguimento.</div>
 </div>
 </div>
-<div class="mock">
-<div class="mock-head"><span class="t">A tua semana</span><span class="live">&bull; Exemplo</span></div>
-<div class="mock-row"><span class="dot" style="background:#5B8DEF"></span><span><span class="t">Quadro elétrico &mdash; Ana Costa</span><br/><span class="s">Segunda, 14:00 &middot; Braga</span></span></div>
-<div class="mock-row"><span class="dot" style="background:#FAC775"></span><span><span class="t">Orçamento enviado &mdash; &euro;450</span><br/><span class="s">Aguarda resposta há 2 dias</span></span></div>
-<div class="mock-row"><span class="dot" style="background:#4ADE80"></span><span><span class="t">Trabalho pago &mdash; &euro;280</span><br/><span class="s">Faturação do trimestre: &euro;730</span></span></div>
-<div class="mock-tip"><div class="lbl">SUGESTÃO</div><div class="txt">Tens 1 orçamento sem resposta há mais de 5 dias. Vale a pena fazer um seguimento.</div></div>
+</header>
+
+<section class="sec" id="como-comecas">
+<div class="wrap">
+<div class="center"><span class="kick">Como começas</span></div>
+<h2>Em <span class="hi m"><span>3 passos</span></span>, estás a receber pedidos</h2>
+<p class="sub">Sem formulários intermináveis. Se ficares preso, ajudamos-te a preencher.</p>
+<div class="steps">
+<div class="step"><div class="num">1</div><h3>Cria o teu perfil</h3><p>Nome, ofício, zona, uma foto e um serviço com preço &ldquo;a partir de&rdquo;.</p><span class="t">&asymp; 2 minutos</span></div>
+<div class="step"><div class="num">2</div><h3>A equipa verifica</h3><p>Confirmamos a tua identidade à mão antes de o perfil ficar visível.</p><span class="t">Verificação manual</span></div>
+<div class="step"><div class="num">3</div><h3>Recebe pedidos</h3><p>Clientes da tua zona pedem-te orçamento. Respondes e combinam entre vocês.</p><span class="t">Sem comissões</span></div>
 </div>
 </div>
 </section>
 
-<section id="funcionalidades" style="padding-top:8px">
+<section class="sec bg2" id="funcionalidades">
+<div class="wrap">
+<div class="center"><span class="kick">O que tens</span></div>
+<h2>Tudo num só sítio, <span class="hi"><span>sem complicar</span></span></h2>
+<p class="sub">Cada cartão numa frase. Os limites de cada plano estão na página de preços.</p>
 <div class="grid3">
-<div class="card">
-<div class="chip" style="background:var(--blue-light);color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
-<h3>Gerir</h3>
-<p>Agenda, trabalhos do primeiro contacto até seres pago, clientes e orçamentos em PDF. Com o Pro, os orçamentos levam a tua marca. <span class="plan-note">Starter e Pro</span></p>
-</div>
-<div class="card">
-<div class="chip" style="background:var(--green-light);color:var(--green)"><svg class="ic" viewBox="0 0 24 24"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg></div>
-<h3>Crescer</h3>
-<p>Perfil público verificado, pedidos de clientes da tua zona (com 2 horas de avanço no Pro) e páginas por cidade que ajudam a apareceres no Google, como “canalizador em Braga”.</p>
-</div>
-<div class="card">
-<div class="chip" style="background:var(--amber-light);color:var(--amber)"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v12M15.5 9.5a2.5 2.5 0 0 0-2.5-2H11a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2.5 2.5 0 0 1-2.5-2"/></svg></div>
-<h3>Receber</h3>
-<p>Contas do trimestre, margem por trabalho, projeção do que está por receber e exportação em CSV para o contabilista. <span class="plan-note">Pro</span></p>
-</div>
-<div class="card">
-<div class="chip" style="background:var(--purple-light);color:var(--purple)"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg></div>
-<h3>Mostrar o teu trabalho</h3>
-<p>Portfólio, diário de trabalhos, vídeo de apresentação, prémios, promoções e avaliações de clientes, tudo no teu perfil público.</p>
-</div>
-<div class="card">
-<div class="chip" style="background:var(--blue-light);color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
-<h3>Não perder pedidos</h3>
-<p>Avisos por email e no telemóvel quando chega uma mensagem, resumo diário do que precisa de atenção e aviso de chuva nos trabalhos ao ar livre.</p>
-</div>
-<div class="card">
-<div class="chip" style="background:var(--green-light);color:var(--green)"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg></div>
-<h3>Assistente com IA</h3>
-<p>Um assistente no painel responde às tuas dúvidas e sugere melhorias ao perfil <span class="plan-note">Pro</span>. O construtor de perfil com IA é um pagamento único de 2,99&nbsp;&euro;.</p>
+<div class="card"><div class="ico" style="background:#FFE9D2">&#128197;</div><h3>Gerir</h3><p>Agenda, trabalhos e orçamentos em PDF, do primeiro contacto ao pagamento.</p><span class="pl">Starter e Pro</span></div>
+<div class="card"><div class="ico" style="background:#DDF3E6">&#128200;</div><h3>Crescer</h3><p>Perfil público e páginas por cidade que te ajudam a aparecer no Google.</p></div>
+<div class="card"><div class="ico" style="background:#FFF2CC">&#128182;</div><h3>Receber</h3><p>Contas do trimestre, margem por trabalho e CSV para o contabilista.</p><span class="pl">Pro</span></div>
+<div class="card"><div class="ico" style="background:#E7E3FF">&#128444;&#65039;</div><h3>Mostrar o teu trabalho</h3><p>Portefólio, avaliações e vídeo de apresentação no teu perfil.</p></div>
+<div class="card"><div class="ico" style="background:#FFE3E3">&#128276;</div><h3>Não perder pedidos</h3><p>Avisos por email e no telemóvel quando chega uma mensagem ou um pedido.</p></div>
+<div class="card"><div class="ico" style="background:#DDF0FA">&#10024;</div><h3>Assistente com IA</h3><p>Responde às tuas dúvidas e sugere melhorias ao perfil.</p><span class="pl">Pro</span></div>
 </div>
 </div>
 </section>
 
-<section style="padding-top:8px">
-<h2 style="margin-bottom:16px">Aqui não pagas para falar com clientes</h2>
-<div class="compare">
-<div class="col">
-<div class="lbl" style="color:var(--muted-2)">PLATAFORMAS COM CRÉDITOS</div>
-<ul>
-<li><span class="minus">&minus;</span> Pagas por cada proposta que envias</li>
-<li><span class="minus">&minus;</span> Pagas mesmo se o cliente nunca responder</li>
-<li><span class="minus">&minus;</span> O mesmo pedido vai para vários de uma vez</li>
-<li><span class="minus">&minus;</span> Os créditos podem expirar sem uso</li>
-</ul>
-</div>
-<div class="divx"></div>
-<div class="col hi">
-<div class="lbl" style="color:var(--blue)">NA FLINKO</div>
-<ul style="color:var(--ink)">
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Não pagas por proposta nem por contacto</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Só investes se quiseres mais visibilidade</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Sem comissão sobre o trabalho fechado</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> O plano grátis nunca expira</li>
-</ul>
-</div>
-</div>
-</section>
-
-<section style="padding-top:8px">
-<div class="dark">
-<div class="dark-grid">
+<section class="sec">
+<div class="wrap div">
 <div>
-<h2 style="color:#fff">Quanto gastaste em créditos no mês passado?</h2>
-<p style="font-size:14px;color:rgba(255,255,255,.62);margin-top:9px;line-height:1.6;max-width:470px">Na Flinko esse número é zero, independentemente de quantos clientes contactares.</p>
+<span class="kick">Novo</span>
+<h2>Leva clientes <span class="hi m"><span>ao teu perfil</span></span></h2>
+<p class="sub">Quantos mais clientes chegarem ao teu perfil, mais pedidos recebes. Divulga sem esforço.</p>
+<ul class="list">
+<li><span><b>Link para o WhatsApp</b> com uma mensagem pronta, num clique.</span></li>
+<li><span><b>Cartaz A4 com QR code</b> para a carrinha, a loja ou a porta.</span></li>
+<li><span><b>Link próprio</b> (flinko.pt/o-teu-nome) no plano Pro.</span></li>
+</ul>
+<a href="auth.html?tab=register" class="btn btn-o">Criar perfil grátis &rarr;</a>
 </div>
-<div style="font-size:52px;font-weight:800;color:#5B8DEF;letter-spacing:-.04em;text-align:right">&euro;0</div>
+<div>
+<div class="duo" aria-hidden="true">
+<div class="poster"><div class="t"><b>Flink<em>o</em></b><h5>Precisas de <span>Eletricistas</span>?</h5></div>
+<div class="b"><strong>Ana Costa</strong><small>Eletricistas &middot; Porto</small><div class="qr"></div><small>Lê o código ou visita:</small><div class="u">flinko.pt/ana-eletricista</div></div></div>
+<div class="phone"><div class="s"><div class="msg">Olá! Podes ver o meu perfil e pedir-me orçamento grátis na Flinko: <u>flinko.pt/ana-eletricista</u><small>18:42 &#10003;&#10003;</small></div></div></div>
 </div>
-<div class="statrow">
-<div class="stat"><b>&euro;0</b><span>Por contacto</span></div>
-<div class="stat"><b>0%</b><span>De comissão</span></div>
-<div class="stat"><b>2 min</b><span>Para começar</span></div>
-<div class="stat"><b>Grátis</b><span>Plano sem prazo</span></div>
+<span class="exemplo">Exemplo ilustrativo</span>
 </div>
 </div>
 </section>
 
-<section style="padding-top:8px">
-<div style="text-align:center;margin-bottom:20px">
-<h2>Preços fixos. Sem comissões.</h2>
-<p class="lead" style="margin-top:8px">Nunca cobramos sobre o trabalho que fechas. Começa grátis e muda só se precisares.</p>
+<section class="sec bg2">
+<div class="wrap">
+<h2>Aqui não pagas <span class="hi"><span>para falar</span></span> com clientes</h2>
+<p class="sub">A diferença para as plataformas de créditos.</p>
+<div class="cmp">
+<div class="a"><h4>Plataformas com créditos</h4><ul><li>Pagas por cada proposta que envias</li><li>Pagas mesmo se o cliente nunca responder</li><li>O mesmo pedido vai para vários de uma vez</li><li>Os créditos podem expirar sem uso</li></ul></div>
+<div class="b"><h4>Na Flinko</h4><ul><li>Não pagas por proposta nem por contacto</li><li>Só investes se quiseres mais visibilidade</li><li>Sem comissão sobre o trabalho fechado</li><li>O plano grátis nunca expira</li></ul></div>
 </div>
+<div class="stats">
+<div><h3>Quanto gastaste em créditos no mês passado?</h3><p>Na Flinko esse número é zero, independentemente de quantos clientes contactares.</p></div>
+<div class="s"><b>&euro;0</b><span>Por contacto</span></div><div class="s"><b>0%</b><span>Comissão</span></div><div class="s"><b>2 min</b><span>Para começar</span></div><div class="s"><b>Grátis</b><span>Sem prazo</span></div>
+</div>
+</div>
+</section>
+
+<section class="sec">
+<div class="wrap">
+<h2>Vê como <span class="hi m"><span>fica o teu perfil</span></span></h2>
+<p class="sub">É isto que os clientes veem antes de te pedirem orçamento.</p>
+<div class="prof">
+<div class="top"><div class="av">AC</div><div><h3>Ana Costa</h3><div class="m">Eletricistas &middot; Braga</div></div></div>
+<span class="ver">&#10003; Verificado</span>
+<p>Instalações e reparações elétricas em casas e empresas. Quadros, tomadas, iluminação e diagnóstico de avarias.</p>
+<div class="svc"><div>Instalação elétrica simples<span>a partir de &euro;40</span></div><div>Substituição de quadro elétrico<span>a partir de &euro;250</span></div></div>
+</div>
+<span class="exemplo">Perfil de exemplo, com dados fictícios</span>
+</div>
+</section>
+
+<section class="sec bg2" id="precos">
+<div class="wrap">
+<h2>Preços fixos. <span class="hi"><span>Sem comissões.</span></span></h2>
+<p class="sub">Nunca cobramos sobre o trabalho que fechas. Começa grátis e muda só se precisares.</p>
 <div class="plans">
-<div class="plan">
-<div class="nm">Grátis</div>
-<div class="pr">&euro;0<small>/sempre</small></div>
-<ul>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Perfil público verificado</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Pedidos e mensagens de clientes</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>3 orçamentos em PDF por mês</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>3 fotos de portfólio</li>
-</ul>
-<a href="auth.html?tab=register" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:15px">Começar sem custos</a>
+<div class="plan"><div class="nm">Grátis</div><div class="price">&euro;0<small>/sempre</small></div><ul><li>Perfil público verificado</li><li>Pedidos e mensagens de clientes</li><li>3 orçamentos em PDF por mês</li><li>3 fotos de portefólio</li></ul><a href="auth.html?tab=register" class="btn btn-l">Começar sem custos</a></div>
+<div class="plan"><div class="nm">Starter</div><div class="price">&euro;9,99<small>/mês</small></div><ul><li>Serviços e mensagens sem limite</li><li>Agenda e gestão de trabalhos</li><li>Orçamentos e portfólio ilimitados</li></ul><a href="pricing.html" class="btn btn-l">Ver detalhes</a></div>
+<div class="plan rec"><span class="rb">RECOMENDADO</span><div class="nm">Pro</div><div class="price">&euro;19,99<small>/mês</small></div><ul><li>Tudo do Starter</li><li>Orçamentos com o teu logótipo</li><li>Contas, margens e CSV</li><li>Link próprio e código QR</li><li>2 horas de avanço nos pedidos</li><li>Primeiro lugar nas listagens da tua zona</li></ul><a href="pricing.html" class="btn btn-o">Ver detalhes</a></div>
 </div>
-<div class="plan">
-<div class="nm">Starter</div>
-<div class="pr">&euro;9,99<small>/mês</small></div>
-<ul>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Serviços e mensagens sem limite</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Agenda e gestão de trabalhos</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Orçamentos e portfólio ilimitados</li>
-</ul>
-<a href="pricing.html" class="btn btn-line" style="width:100%;justify-content:center;margin-top:15px">Ver detalhes</a>
+<div class="team"><div><b>Tens equipa?</b> O plano <div class="nm">Empresas</div> (<div class="price">&euro;39,99<small>/mês</small></div>) traz apoio prioritário e configuração acompanhada. Vários técnicos e faturação em nome da empresa: em breve.</div><a href="pricing.html" class="btn btn-l">Falar connosco</a></div>
+<p class="small">Cancelas quando quiseres. Poupas 20% no plano anual. Preços finais, isentos de IVA (art. 53.º). Os limites completos de cada plano estão na página de <a href="pricing.html">Preços</a>.</p>
 </div>
-<div class="plan best">
-<div class="tag">RECOMENDADO</div>
-<div class="nm">Pro</div>
-<div class="pr">&euro;19,99<small>/mês</small></div>
-<ul>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Tudo do Starter</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Orçamentos com o teu logótipo</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Contas, margens e CSV</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Link próprio e código QR</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>2 horas de avanço nos pedidos</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Primeiro lugar nas listagens da tua zona</li>
-</ul>
-<a href="pricing.html" class="btn btn-line" style="width:100%;justify-content:center;margin-top:15px;border-color:var(--blue);color:var(--blue)">Ver detalhes</a>
-</div>
-<div class="plan">
-<div class="nm">Empresas</div>
-<div class="pr">&euro;39,99<small>/mês</small></div>
-<ul>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Tudo do Pro</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Apoio prioritário e configuração acompanhada</li>
-<li><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Vários técnicos e faturação em nome da empresa (em breve)</li>
-</ul>
-<a href="pricing.html" class="btn btn-line" style="width:100%;justify-content:center;margin-top:15px">Falar connosco</a>
-</div>
-</div>
-<p style="text-align:center;font-size:13px;color:var(--muted-2);margin-top:16px">Cancelas quando quiseres. Poupas 20% no plano anual. Preços finais, isentos de IVA (art. 53.º). Os limites completos de cada plano estão na página de <a href="pricing.html" style="color:var(--blue);font-weight:600">Preços</a>.</p>
 </section>
 
-<section style="padding-top:8px">
+<section class="sec">
+<div class="wrap">
+<h2>Perguntas frequentes</h2><p class="sub">As dúvidas que mais aparecem.</p>
 <div class="faq">
-<h2 style="margin-bottom:8px">Perguntas frequentes</h2>
 <div class="faq-item"><div class="faq-q" onclick="tog(this)">Existem custos escondidos?<span>+</span></div><div class="faq-a" style="display:none">Não. O plano grátis não pede cartão de crédito. Os planos pagos custam &euro;9,99 (Starter), &euro;19,99 (Pro) e &euro;39,99 (Empresas) por mês, isentos de IVA, sem extras nem comissões sobre o trabalho que fechas.</div></div>
 <div class="faq-item"><div class="faq-q" onclick="tog(this)">Pago para responder a um cliente?<span>+</span></div><div class="faq-a" style="display:none">Nunca. Responder a mensagens está incluído em todos os planos, incluindo o grátis. Não usamos créditos por contacto.</div></div>
 <div class="faq-item"><div class="faq-q" onclick="tog(this)">Existe contrato ou fidelização?<span>+</span></div><div class="faq-a" style="display:none">Não. Podes mudar de plano ou cancelar quando quiseres, sem período mínimo. No Starter e no Pro cancelas tu mesmo no painel, em Gerir subscrição.</div></div>
@@ -346,44 +355,29 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <div class="faq-item"><div class="faq-q" onclick="tog(this)">O que preciso para me registar?<span>+</span></div><div class="faq-a" style="display:none">Nome, email e password. Depois preenches a tua área e a zona onde trabalhas, e a nossa equipa revê o perfil manualmente para atribuir o selo Verificado. Para o selo, envias os teus documentos no painel, no separador Verificação.</div></div>
 <div class="faq-item"><div class="faq-q" onclick="tog(this)">Vou mesmo receber clientes?<span>+</span></div><div class="faq-a" style="display:none">Somos uma plataforma nova — começámos no Porto e em Braga e já temos profissionais por todo o país, mas o volume de pedidos ainda está a crescer. Por isso não pagas por contacto nem comissões: o plano grátis não te custa nada enquanto o teu perfil ganha visibilidade, e só pagas se quiseres mais ferramentas ou mais destaque.</div></div>
 </div>
-</section>
-
-<section style="padding-top:8px;padding-bottom:14px">
-<div class="dark" style="text-align:center">
-<h2 style="color:#fff">Começa hoje, sem pagar nada</h2>
-<p style="font-size:14px;color:rgba(255,255,255,.62);margin:9px auto 20px;max-width:430px">Cria o teu perfil em cerca de dois minutos e começa a receber pedidos da tua zona.</p>
-<a href="auth.html?tab=register" class="btn btn-white btn-lg" style="font-weight:800">Criar perfil grátis</a>
 </div>
 </section>
 
-</div>
+<section class="final">
+<h2>Cria o teu perfil <span class="hi"><span>hoje</span></span></h2>
+<p>Demora cerca de 2 minutos. Grátis, sem cartão e sem comissões.</p>
+<a href="auth.html?tab=register" class="btn btn-o">Criar perfil grátis &rarr;</a>
+</section>
 
 <footer>
-<div class="footer-top">
-<div class="footer-brand">
-<a href="index.html" class="logo">Flink<em>o</em></a>
-<p>O marketplace de serviços profissionais em Portugal. Conectamos clientes a profissionais de confiança.</p>
-</div>
-<div class="footer-links">
-<div class="footer-col">
-<a href="como-funciona.html">Como funciona</a>
-<a href="porque-escolher.html">Porquê a Flinko</a>
-<a href="pricing.html">Preços</a>
-<a href="academia.html">Academia</a>
-<a href="contacto.html">Contacto</a>
-</div>
-<div class="footer-col">
-<a href="categoria.html">Todas as categorias</a>
-<a href="auth.html?tab=register">Registar profissional</a>
-<a href="mailto:flinkogeral@gmail.com">flinkogeral@gmail.com</a>
+<div class="wrap">
+<div class="ft">
+<div><a href="index.html" class="logo">Flink<em>o</em></a><p>O marketplace de serviços profissionais em Portugal. Conectamos clientes a profissionais de confiança.</p></div>
+<div class="fl">
+<div class="fc"><a href="como-funciona.html">Como funciona</a><a href="porque-escolher.html">Porquê a Flinko</a><a href="pricing.html">Preços</a><a href="academia.html">Academia</a><a href="contacto.html">Contacto</a></div>
+<div class="fc"><a href="categoria.html">Todas as categorias</a><a href="auth.html?tab=register">Registar profissional</a><a href="mailto:flinkogeral@gmail.com">flinkogeral@gmail.com</a></div>
 </div>
 </div>
-</div>
-<div class="footer-bottom">
-<span>&copy; 2026 Flinko &middot; Portugal</span>
-<span><a href="termos.html">Termos</a> &middot; <a href="privacidade.html">Privacidade</a> &middot; <a href="cookies.html">Cookies</a> &middot; <a href="rgpd.html">RGPD</a></span>
+<div class="fb"><span>&copy; 2026 Flinko &middot; Portugal</span><span><a href="termos.html">Termos</a> &middot; <a href="privacidade.html">Privacidade</a> &middot; <a href="cookies.html">Cookies</a> &middot; <a href="rgpd.html">RGPD</a></span></div>
 </div>
 </footer>
+
+<div class="sticky"><a href="auth.html?tab=register" class="btn btn-o">Criar perfil grátis &rarr;</a></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -397,6 +391,20 @@ const open=a.style.display!=='none'
 a.style.display=open?'none':'block'
 el.lastElementChild.textContent=open?'+':'−'
 }
+
+document.querySelectorAll('#chips .chip').forEach(function(c){
+c.addEventListener('click',function(){
+document.querySelectorAll('#chips .chip').forEach(function(x){x.setAttribute('aria-pressed','false')})
+c.setAttribute('aria-pressed','true')
+document.getElementById('palavra').textContent=c.dataset.t
+document.getElementById('sub').textContent=c.dataset.s
+})
+})
+
+window.addEventListener('scroll',function(){
+var st=document.querySelector('.sticky')
+if(st)st.classList.toggle('on',window.scrollY>520)
+},{passive:true})
 
 async function init(){
 try{
