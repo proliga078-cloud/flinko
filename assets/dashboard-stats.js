@@ -128,7 +128,7 @@ function renderSetup(){
     {t:'Escolher categoria',s:'Sem categoria não apareces em nenhuma pesquisa nem na homepage',ok:!!profileData.category,go:()=>showPage('profile')},
     {t:'Escolher zona',s:'Para apareceres nas pesquisas da tua zona',ok:!!profileData.location,go:()=>showPage('profile')},
     {t:'Acrescenta foto e descrição',s:'Perfis com foto recebem mais contactos',ok:!!(profileData.photo_url&&profileData.bio),go:()=>showPage('profile')},
-    {t:'Publica o primeiro serviço',s:'Sem serviços não apareces nas pesquisas',ok:servicesCount>0,go:()=>showPage('services')}
+    {t:'Publica o primeiro serviço',s:'Os clientes veem o que fazes e a partir de quanto',ok:servicesCount>0,go:()=>showPage('services')}
   ]
   const feitos=passos.filter(p=>p.ok).length
   if(feitos===passos.length){card.style.display='none';return}
