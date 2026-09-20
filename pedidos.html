@@ -243,7 +243,7 @@ nav{flex-wrap:wrap;height:auto;padding:10px 4%;row-gap:8px}
 <button class="btn btn-solid" onclick="openModal(prefillCat)">➕ Publicar um Pedido</button>
 <a href="#grid" class="btn btn-ghost-dark">Ver pedidos abertos</a>
 </div>
-<div class="hero-stat" id="hero-stat"><span class="dot"></span> <strong id="hero-stat-n">0</strong> pedidos abertos agora</div>
+<div class="hero-stat" id="hero-stat"><span class="dot"></span> <strong id="hero-stat-n">0</strong> <span id="hero-stat-txt">pedidos abertos agora</span></div>
 <div id="cat-context-note"></div>
 </div>
 </div>
@@ -452,6 +452,7 @@ const statEl=document.getElementById('hero-stat')
 if(allRequests.length){
 statEl.style.display='inline-flex'
 animateCount(document.getElementById('hero-stat-n'),allRequests.length)
+{const _t=document.getElementById('hero-stat-txt');if(_t)_t.textContent=allRequests.length===1?'pedido aberto agora':'pedidos abertos agora'}
 }else{
 statEl.style.display='none'
 }
