@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Cartaz do perfil – Flinko</title>
+<meta name="robots" content="noindex, nofollow"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--orange:#E8720A;--dark:#132420;--mint:#0F7B55;--muted:#5B6270;--bg:#F7F8FA}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
+.btn{font-family:inherit;font-size:15px;font-weight:700;padding:12px 22px;border-radius:10px;border:0;cursor:pointer;text-decoration:none}
+.btn-p{background:var(--orange);color:#fff}
+.btn-l{background:#fff;color:var(--dark);border:1.5px solid #E3E5E8}
+.hint{font-size:13px;color:var(--muted);text-align:center;max-width:420px;margin-bottom:18px}
+.poster{width:100%;max-width:560px;aspect-ratio:210/297;background:#fff;border-radius:18px;box-shadow:0 10px 40px rgba(19,36,32,.15);display:flex;flex-direction:column;overflow:hidden}
+.top{background:var(--dark);color:#fff;padding:7% 8% 6%;position:relative}
+.top::after{content:'';position:absolute;left:0;right:0;bottom:0;height:6px;background:linear-gradient(90deg,var(--orange),var(--mint))}
+.logo{font-weight:800;font-size:clamp(18px,4vw,26px);margin-bottom:5%}
+.logo em{font-style:normal;color:var(--orange)}
+.top h1{font-size:clamp(22px,6vw,40px);line-height:1.1;font-weight:800;letter-spacing:-.02em}
+.top h1 span{color:var(--orange)}
+.body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5% 8%;gap:3%}
+.nome{font-size:clamp(20px,5.2vw,34px);font-weight:800;letter-spacing:-.02em;overflow-wrap:anywhere}
+.meta{font-size:clamp(13px,3vw,18px);color:var(--muted)}
+#qr{background:#fff;padding:10px;border:2px solid #ECECE9;border-radius:14px;line-height:0}
+#qr img,#qr canvas{width:min(46vw,220px)!important;height:auto!important}
+.scan{font-size:clamp(12px,2.8vw,16px);color:var(--muted)}
+.url{font-size:clamp(14px,3.6vw,22px);font-weight:800;color:var(--orange);overflow-wrap:anywhere}
+.foot{background:var(--bg);text-align:center;font-size:clamp(11px,2.4vw,14px);color:var(--muted);padding:3.5% 6%}
+.err{color:#b42318;text-align:center;font-weight:600}
+@media print{
+  @page{size:A4;margin:0}
+  body{background:#fff;padding:0;display:block}
+  .bar,.hint{display:none}
+  .poster{max-width:none;width:210mm;height:297mm;aspect-ratio:auto;border-radius:0;box-shadow:none}
+  #qr img,#qr canvas{width:70mm!important}
+  .top,.foot{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="bar">
+  <button class="btn btn-p" onclick="window.print()">Imprimir / guardar em PDF</button>
+  <a class="btn btn-l" href="dashboard.html">Voltar ao dashboard</a>
+</div>
+<p class="hint">Imprime em A4 e afixa na carrinha, na loja ou à porta. Quem ler o código vai direto ao teu perfil.</p>
+<div id="poster" class="poster"><p class="err" style="margin:auto">A carregar…</p></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="/assets/escape-html.js"></script>
+<script>
+const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
+const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
+const box=document.getElementById('poster')
+function erro(msg){box.innerHTML='<p class="err" style="margin:auto;padding:24px">'+escapeHtml(msg)+'</p>'}
+async function init(){
+  const id=new URLSearchParams(location.search).get('id')||''
+  if(!/^[0-9a-fA-F-]{20,40}$/.test(id))return erro('Perfil não encontrado. Abre o cartaz a partir do teu dashboard.')
+  const{data,error}=await db.from('profiles').select('id,name,category,location,slug').eq('id',id).limit(1)
+  const p=data&&data[0]
+  if(error||!p)return erro('Perfil não encontrado. Abre o cartaz a partir do teu dashboard.')
+  const url=location.origin+(p.slug?'/'+encodeURIComponent(p.slug):'/profile.html?id='+encodeURIComponent(p.id))
+  const cat=p.category?escapeHtml(p.category):'um profissional'
+  box.innerHTML=
+    '<div class="top"><div class="logo">Flink<em>o</em></div><h1>Precisas de <span>'+cat+'</span>?</h1></div>'+
+    '<div class="body">'+
+      '<div class="nome">'+escapeHtml(p.name||'')+'</div>'+
+      '<div class="meta">'+escapeHtml([p.category,p.location].filter(Boolean).join(' · '))+'</div>'+
+      '<div id="qr"></div>'+
+      '<div class="scan">Lê o código com a câmara do telemóvel ou visita:</div>'+
+      '<div class="url">'+escapeHtml(url.replace(/^https?:\/\//,''))+'</div>'+
+    '</div>'+
+    '<div class="foot">Pede orçamento grátis · Perfil verificado na Flinko · 0% de comissões</div>'
+  const qr=document.getElementById('qr')
+  if(typeof QRCode==='undefined'){qr.innerHTML='<div class="scan" style="padding:20px">QR indisponível — usa o endereço abaixo.</div>'}
+  else new QRCode(qr,{text:url,width:240,height:240,correctLevel:QRCode.CorrectLevel.M})
+  document.title='Cartaz – '+(p.name||'Flinko')
+}
+init()
+</script>
+</body>
+</html>
