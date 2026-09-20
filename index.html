@@ -1835,7 +1835,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
     var dotsWrap = document.getElementById('liveFeedDots');
     var dot = document.getElementById('liveDot');
     if(!feed) return;
-    db.from('requests').select('title,category,location,created_at').eq('status','open').order('created_at', {ascending:false}).limit(3)
+    db.from('requests').select('title,category,location,created_at').eq('status','open').gte('created_at', new Date(Date.now() - 14*24*60*60*1000).toISOString()).order('created_at', {ascending:false}).limit(3)
       .then(function(res){
         var items = (res && res.data) || [];
         if(!items.length){
@@ -1918,6 +1918,9 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
           if(n > 0){
             var descEl = tile.querySelector('.desc');
             if(descEl) descEl.textContent = n + (n === 1 ? ' profissional' : ' profissionais');
+          } else {
+            var descVazio = tile.querySelector('.desc');
+            if(descVazio) descVazio.textContent = 'Em breve';
           }
         });
       })
@@ -1953,7 +1956,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
         '</div>' +
         '<div class="pro-bio-wrap">' +
           (p.verified ? '<span class="verified">✓ Verificado</span>' : '') +
-          (p.bio ? ('<p class="bio">' + esc(p.bio.length > 140 ? p.bio.slice(0,137) + '…' : p.bio) + '</p>') : '') +
+          '<p class="bio">' + (p.bio ? esc(p.bio.length > 140 ? p.bio.slice(0,137) + '…' : p.bio) : 'Perfil verificado pela equipa da Flinko. Vê os serviços e contacta diretamente.') + '</p>' +
           statsHtml(p) +
         '</div>' +
         '<a href="' + profileHref(p) + '" class="btn btn-ghost">Ver perfil</a>' +
