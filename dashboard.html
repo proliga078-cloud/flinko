@@ -45,6 +45,7 @@
 
 <div class="nav-label" data-audience="pro">Negócio</div>
 <div class="nav-item" data-page="profile" data-audience="pro" onclick="showPage('profile')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></span> O Meu Perfil</div>
+<div class="nav-item" data-page="services" data-audience="pro" onclick="showPage('services')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></span> Serviços</div>
 <div class="nav-item" data-page="financas" data-audience="pro" onclick="showPage('financas')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v12M15.5 9.5a2.5 2.5 0 0 0-2.5-2H11a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2.5 2.5 0 0 1-2.5-2"/></svg></span> Finanças</div>
 <div class="nav-item" data-page="mercado" data-audience="pro" onclick="showPage('mercado')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-5 3 3 5-7"/></svg></span> Mercado</div>
   <div class="nav-item" data-page="verificacao" data-audience="pro" onclick="showPage('verificacao')"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/><path d="m9 12 2 2 4-4"/></svg></span> Verificação</div>
@@ -83,6 +84,7 @@
 </div>
 <a href="index.html" class="nav-item"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7"/><path d="M9 22V12h6v10"/></svg></span> Voltar ao site</a>
 <div class="nav-divider"></div>
+<div class="nav-item" data-audience="pro" onclick="showPage('services');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></span> Serviços</div>
 <div class="nav-item" data-audience="pro" onclick="showPage('clientes');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Clientes</div>
 <div class="nav-item" data-audience="pro" onclick="showPage('financas');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v12M15.5 9.5a2.5 2.5 0 0 0-2.5-2H11a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2.5 2.5 0 0 1-2.5-2"/></svg></span> Finanças</div>
 <div class="nav-item" data-audience="pro" onclick="showPage('mercado');toggleMobileMenu(false)"><span class="icon"><svg class="ic" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-5 3 3 5-7"/></svg></span> Mercado</div>
@@ -184,6 +186,18 @@ panel.classList.toggle('open', open);
 </div>
 <button class='btn btn-primary btn-sm' onclick="showPage('verificacao')">Pedir verificação</button>
 </div>
+</div>
+
+<div class="form-section" id="quick-service" style="display:none">
+<div class="form-title">Publica o teu primeiro serviço</div>
+<p style="color:var(--muted);font-size:13px;margin:-8px 0 16px;max-width:520px">Diz o que fazes e a partir de quanto. Demora 30 segundos e podes editar depois. Os clientes escolhem quem contactar a ver o que cada profissional faz.</p>
+<div class="alert error" id="qs-error"></div>
+<div class="form-grid">
+<div class="form-group full"><label>O que fazes? *</label><input id="qs-title" type="text" maxlength="120" placeholder="Ex: Instalação elétrica"/></div>
+<div class="form-group"><label>A partir de (€)</label><input id="qs-price" type="number" min="0" placeholder="Ex: 40"/></div>
+<div class="form-group"><label>Por</label><select id="qs-unit"><option value="trabalho">Trabalho</option><option value="hora">Hora</option><option value="dia">Dia</option><option value="m²">m²</option></select></div>
+</div>
+<button class="btn btn-primary" id="qs-btn" onclick="quickService()">Publicar serviço</button>
 </div>
 
 <div class="form-section" id="setup-card" style="display:none">

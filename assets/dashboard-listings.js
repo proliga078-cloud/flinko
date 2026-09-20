@@ -32,6 +32,8 @@ price_unit:document.getElementById('srv-unit').value
 })
 if(error){showAlert('srv-error','Erro: '+error.message,'error');return}
 showAlert('srv-success','Serviço adicionado!')
+servicesCount=(servicesCount||0)+1
+if(typeof renderSetup==='function')renderSetup()
 ;['srv-title','srv-desc','srv-pmin','srv-pmax'].forEach(id=>document.getElementById(id).value='')
 loadServices()
 }
@@ -235,7 +237,7 @@ document.getElementById(`page-${name}`).classList.add('active')
 const grupoPerfil=['profile','services','portfolio','diario','faq']
 document.querySelectorAll('.nav-item[data-page]').forEach(n=>{
 const alvo=n.dataset.page
-n.classList.toggle('active', alvo===name || (alvo==='profile'&&grupoPerfil.includes(name)))
+n.classList.toggle('active', alvo===name || (alvo==='profile'&&grupoPerfil.includes(name)&&name!=='services'))
 })
 if(profileData?.account_type!=='client'){
 document.querySelectorAll('.mob-item').forEach((m,i)=>{
@@ -263,4 +265,33 @@ if(name==='verificacao')loadVerificationStatus()
   if(name==='saved-pros')loadSavedPros()
 if(name==='client-jobs')loadClientJobs()
 if(name==='client-reviews')loadClientReviews()
+}
+
+// Publicação rápida do primeiro serviço, no Resumo (cartão #quick-service).
+async function quickService(){
+const erro=document.getElementById('qs-error')
+const mostrar=m=>{erro.textContent=m;erro.style.display='block'}
+erro.style.display='none'
+if(!profileId){mostrar('Erro: perfil não carregado. Recarrega a página.');return}
+const title=document.getElementById('qs-title').value.trim()
+if(!title){mostrar('Diz o que fazes (o nome do serviço é obrigatório).');return}
+const preco=parseFloat(document.getElementById('qs-price').value)
+const btn=document.getElementById('qs-btn')
+btn.disabled=true
+const{error}=await db.from('services').insert({
+professional_id:profileId,title,
+price_from:preco>0?preco:null,
+price_unit:document.getElementById('qs-unit').value
+})
+btn.disabled=false
+if(error){mostrar('Não foi possível publicar: '+error.message);return}
+document.getElementById('qs-title').value='';document.getElementById('qs-price').value=''
+servicesCount=(servicesCount||0)+1
+renderSetup()
+const t=document.createElement('div')
+t.textContent='Serviço publicado! Já aparece no teu perfil.'
+t.setAttribute('role','status')
+t.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#132420;color:#fff;padding:12px 20px;border-radius:12px;font-weight:600;font-size:14px;z-index:9999;box-shadow:0 10px 30px rgba(0,0,0,.25)'
+document.body.appendChild(t)
+setTimeout(()=>t.remove(),3500)
 }
