@@ -17,8 +17,8 @@ el.innerHTML=data.map(s=>`
 async function addService(){
 if(!profileId){showAlert('srv-error','Erro: perfil não carregado. Recarrega a página.','error');return}
 const plan=(profileData&&profileData.plan)||'free'
-const svcLimits={free:2,pro:10,premium:Infinity}
-const svcMax=svcLimits[plan]!==undefined?svcLimits[plan]:2
+// Igual ao trigger enforce_service_limit da base de dados: Grátis 2; planos pagos sem limite.
+const svcMax=['starter','pro','empresas','premium'].includes(plan)?Infinity:2
 const{count:svcCount}=await db.from('services').select('*',{count:'exact',head:true}).eq('professional_id',profileId)
 if(svcCount>=svcMax){showAlert('srv-error','Atingiste o limite de '+svcMax+' serviços do plano '+plan.toUpperCase()+'. Faz upgrade para adicionares mais.','error');return}
 const title=document.getElementById('srv-title').value.trim()
