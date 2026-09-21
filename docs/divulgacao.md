@@ -54,3 +54,22 @@ verificado à mão pela equipa. Não prometas número de clientes.
 - [ ] Pelo menos 5 a 10 profissionais com perfil completo (foto, bio e 1 serviço) na cidade e categoria escolhidas.
 - [ ] Testaste tu o percurso completo: criar perfil, publicar pedido, receber aviso.
 - [ ] Sabes responder a "quanto custa?" (grátis; Starter €9,99, Pro €19,99, Empresas €39,99, ver a página de preços).
+
+## 7. Profissionais que criaram perfil e pararam
+
+Para quem já se registou mas não publicou serviço nem escolheu categoria.
+Manda em privado (WhatsApp ou email), um a um, com o nome da pessoa.
+
+> Olá [Nome], aqui é [o teu nome], da Flinko. Vi que já criaste o teu perfil,
+> obrigado! Só faltam 2 coisas para apareceres nas pesquisas dos clientes:
+> escolher a tua área e publicar 1 serviço com preço "a partir de". Agora
+> tudo isto está logo no Resumo, demora cerca de 30 segundos:
+> https://flinko.pt/dashboard
+> Se preferires, faço isto contigo por chamada. Diz-me a que horas te dá jeito.
+
+Versão para quem já publicou serviço e falta o selo:
+
+> Olá [Nome], o teu perfil na Flinko já está bem composto. Se pedires a
+> verificação ganhas o selo de verificado, que passa confiança a quem escolhe
+> profissional. Basta uma foto do cartão de cidadão tirada com o telemóvel; só
+> a equipa a vê. Está em "Verificação" no menu do dashboard.

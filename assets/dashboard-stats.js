@@ -120,6 +120,12 @@ function renderSetup(){
   if(!card||!profileData)return
   const qs=document.getElementById('quick-service')
   if(qs)qs.style.display=(profileData.account_type!=='client'&&profileData.category&&servicesCount===0)?'block':'none'
+  const qcat=document.getElementById('quick-category')
+  if(qcat){
+    const falta=profileData.account_type!=='client'&&(!profileData.category||!profileData.location)
+    qcat.style.display=falta?'block':'none'
+    if(falta)fillQuickCategory()
+  }
   if(profileData.account_type==='client'){card.style.display='none';return}
   const passos=[
     {t:'Criar conta',s:'',ok:true},

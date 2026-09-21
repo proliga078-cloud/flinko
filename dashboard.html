@@ -177,12 +177,23 @@ panel.classList.toggle('open', open);
 </div>
 </div>
 
+<div class="form-section" id="quick-category" style="display:none">
+<div class="form-title">Escolhe a tua área para apareceres nas pesquisas</div>
+<p style="color:var(--muted);font-size:13px;margin:-8px 0 16px;max-width:520px">Sem categoria e zona, o teu perfil não aparece em nenhuma pesquisa. Demora 10 segundos e podes mudar depois no teu perfil.</p>
+<div class="alert error" id="qcat-error"></div>
+<div class="form-grid">
+<div class="form-group"><label>O que fazes? *</label><select id="qcat-cat"><option value="">Escolhe uma categoria</option></select></div>
+<div class="form-group"><label>Onde trabalhas? *</label><select id="qcat-district"><option value="">Escolhe o distrito</option></select></div>
+</div>
+<button class="btn btn-primary" id="qcat-btn" onclick="quickCategory()">Guardar e aparecer nas pesquisas</button>
+</div>
+
 <div class='form-section' id='verif-nudge-card' style='display:none;border:1.5px solid var(--blue);background:var(--blue-light)'>
 <div style='display:flex;align-items:center;gap:14px;flex-wrap:wrap'>
 <div style='font-size:26px'>🛡️</div>
 <div style='flex:1;min-width:200px'>
 <div style='font-weight:700;font-size:14px;margin-bottom:2px'>Fica com o selo de verificado</div>
-<div style='font-size:12.5px;color:var(--muted)'>Perfis verificados passam mais confiança a quem procura profissionais. Basta enviares um documento de identificação.</div>
+<div style='font-size:12.5px;color:var(--muted)'>Perfis verificados passam mais confiança a quem procura profissionais. Basta uma foto do cartão de cidadão tirada com o telemóvel. Só a equipa Flinko vê o ficheiro.</div>
 </div>
 <button class='btn btn-primary btn-sm' onclick="showPage('verificacao')">Pedir verificação</button>
 </div>
@@ -1224,10 +1235,10 @@ Podes pedir uma cópia dos teus dados ou a eliminação da tua conta diretamente
 
 <div class="form-section" id="verif-form-box">
 <div class="form-title">Pedir verificação</div>
-<p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px;line-height:1.6">Envia um documento de identificação (cartão de cidadão, carta de condução ou passaporte) e, se tiveres, um comprovativo da atividade (certidão de atividade, recibo verde ou seguro de responsabilidade civil). Aceitamos JPG, PNG ou PDF, até 10MB por ficheiro.</p>
+<p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px;line-height:1.6">Basta <strong>1 documento de identificação</strong> (cartão de cidadão, carta de condução ou passaporte). Podes tirar a foto agora com o telemóvel, demora 1 minuto. Um comprovativo da atividade (recibo verde, certidão ou seguro) é opcional e ajuda na aprovação. Os ficheiros ficam num espaço privado: só tu e a equipa Flinko os conseguem abrir, nunca aparecem no teu perfil. Aceitamos JPG, PNG ou PDF, até 10MB por ficheiro.</p>
 
 <div class="form-group full">
-<label>Documentos *</label>
+<label>Documento de identificação *</label>
 <div id="verif-doc-list"></div>
 <label for="verif-doc-file" style="background:var(--blue-light);color:var(--blue);border:1.5px dashed var(--blue);border-radius:8px;padding:10px 16px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;display:inline-block;margin-top:6px">
 <svg class="ic" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg> Carregar documento
