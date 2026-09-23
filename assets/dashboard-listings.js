@@ -268,6 +268,36 @@ if(name==='client-reviews')loadClientReviews()
 }
 
 // Publicação rápida do primeiro serviço, no Resumo (cartão #quick-service).
+// Cartão do Resumo para profissionais sem categoria ou zona: sem isso o perfil
+// não aparece em nenhuma pesquisa. Copia as opções dos selects do formulário
+// do perfil, para não haver duas listas de categorias/distritos a manter.
+function fillQuickCategory(){
+const cat=document.getElementById('qcat-cat'),dist=document.getElementById('qcat-district')
+if(!cat||!dist)return
+const copiar=(de,para)=>{if(para.options.length>1)return;[...document.getElementById(de).options].forEach(o=>{if(o.value||o.text&&!o.text.startsWith('Escolhe'))para.add(new Option(o.text,o.value||o.text))})}
+copiar('p-cat',cat);copiar('p-district',dist)
+if(profileData?.category)cat.value=profileData.category
+}
+async function quickCategory(){
+const erro=document.getElementById('qcat-error')
+const mostrar=m=>{erro.textContent=m;erro.style.display='block'}
+erro.style.display='none'
+if(!profileId){mostrar('Erro: perfil não carregado. Recarrega a página.');return}
+const category=document.getElementById('qcat-cat').value
+const district=document.getElementById('qcat-district').value
+if(!category||!district){mostrar('Escolhe a categoria e o distrito.');return}
+const btn=document.getElementById('qcat-btn')
+btn.disabled=true
+const updates={category,location:district,updated_at:new Date().toISOString()}
+const{error}=await db.from('profiles').update(updates).eq('id',profileId)
+btn.disabled=false
+if(error){mostrar('Não foi possível guardar: '+error.message);return}
+profileData={...profileData,...updates}
+document.getElementById('p-cat').value=category
+document.getElementById('p-district').value=district
+renderSetup()
+if(typeof updateSidebar==='function')updateSidebar()
+}
 async function quickService(){
 const erro=document.getElementById('qs-error')
 const mostrar=m=>{erro.textContent=m;erro.style.display='block'}
