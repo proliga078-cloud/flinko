@@ -1,4 +1,4 @@
-// Teste E2E: a tabela "Todas as Contas" em admin.html misturava profissionais
+// Teste E2E: a tabela "Todas as Contas" em admin-classico.html misturava profissionais
 // e clientes sem qualquer distinção — um cliente que só queria pedir um
 // serviço aparecia com o mesmo aviso "⚠️ Sem categoria" de um profissional
 // que se esqueceu de preencher a categoria, tornando impossível ao admin
@@ -26,7 +26,7 @@ const accounts = [
   { id: 'p3', name: 'Profissional Antigo', category: 'Jardineiros', location: 'Aveiro', plan: 'free', approved: true, credits: 0 }, // sem account_type = registo antigo, era o default
 ];
 
-test.describe('admin.html separa contas de cliente e de profissional', () => {
+test.describe('admin-classico.html separa contas de cliente e de profissional', () => {
   test('por omissão só mostra profissionais (registos antigos sem account_type contam como profissional)', async ({ page }) => {
     await withFakeSupabase(page, {
       session: { access_token: 'admin-tok', user: { id: 'admin-1', email: 'admin@example.com' } },
@@ -34,7 +34,7 @@ test.describe('admin.html separa contas de cliente e de profissional', () => {
       tableData: { profiles: { data: accounts }, profile_private: { data: [] } },
     });
 
-    await page.goto('/admin.html');
+    await page.goto('/admin-classico.html');
     await page.waitForSelector('#admin-panel', { state: 'visible' });
     await page.click('text=👤 Profissionais');
 
@@ -51,7 +51,7 @@ test.describe('admin.html separa contas de cliente e de profissional', () => {
       tableData: { profiles: { data: accounts }, profile_private: { data: [] } },
     });
 
-    await page.goto('/admin.html');
+    await page.goto('/admin-classico.html');
     await page.waitForSelector('#admin-panel', { state: 'visible' });
     await page.click('text=👤 Profissionais');
     await page.selectOption('#pros-type-filter', 'client');
@@ -70,7 +70,7 @@ test.describe('admin.html separa contas de cliente e de profissional', () => {
       tableData: { profiles: { data: accounts }, profile_private: { data: [] } },
     });
 
-    await page.goto('/admin.html');
+    await page.goto('/admin-classico.html');
     await page.waitForSelector('#admin-panel', { state: 'visible' });
     await page.click('text=👤 Profissionais');
     await page.selectOption('#pros-type-filter', '');
