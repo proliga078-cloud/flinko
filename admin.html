@@ -141,7 +141,6 @@ svg text{fill:var(--mut);font-size:10px}
       <div class="err" id="lerr"></div>
       <div class="row" style="margin-top:8px">
         <button class="btn" type="submit">Entrar</button>
-        <button class="btn sec" type="button" id="demoBtn">Ver demonstração</button>
       </div>
     </form>
   </div>
@@ -1600,10 +1599,8 @@ $("#lf").onsubmit = async e => {
     $("#pw").value = ""; await start();
   } catch (err) { $("#lerr").textContent = err.message; }
 };
-$("#demoBtn").onclick = () => { DEMO = true; start(); };
 $("#logout").onclick = () => { session = null; ls.set("fk_session", null); location.reload(); };
 (async () => {
-  if (new URLSearchParams(location.search).has("demo")) { DEMO = true; return start(); }
   if (session?.access_token) { try { const me = await api("profiles?select=is_admin&id=eq." + session.user.id); if (me[0]?.is_admin) return start(); } catch (e) { } }
 })();
 </script>
