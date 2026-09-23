@@ -1,4 +1,4 @@
-// Teste E2E do separador "Profissionais" em admin.html: quando
+// Teste E2E do separador "Profissionais" em admin-classico.html: quando
 // stripe-webhook.js marca profiles.suspended=true por causa de uma
 // contestação de pagamento (charge.dispute.created), o admin tem de
 // conseguir VER isso (badge "🚩 Disputado", distinto do badge normal de
@@ -31,7 +31,7 @@ test('perfil marcado suspended=true (por disputa) mostra o badge "Disputado" e p
   });
   page.on('dialog', (dialog) => dialog.accept());
 
-  await page.goto('/admin.html');
+  await page.goto('/admin-classico.html');
   await page.waitForSelector('#admin-panel', { state: 'visible' });
   await page.click('text=👤 Profissionais');
 

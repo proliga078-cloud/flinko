@@ -1,4 +1,4 @@
-// Testes E2E do fix de reconciliação plano/Stripe em admin.html.
+// Testes E2E do fix de reconciliação plano/Stripe em admin-classico.html.
 //
 // Bug de auditoria: "Reverter para Free" (e as outras edições de plano no
 // admin) escreviam profiles.plan diretamente do browser sem tocar em
@@ -43,7 +43,7 @@ test('perfil COM subscrição Stripe: "Reverter para Free" chama admin-set-plan 
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true, stripeCancelled: true }) });
   });
 
-  await page.goto('/admin.html');
+  await page.goto('/admin-classico.html');
   await page.waitForSelector('#admin-panel', { state: 'visible' });
   await page.click('text=💳 Subscrições');
   await page.click('button:has-text("✏️ Gerir")');
@@ -70,7 +70,7 @@ test('perfil SEM subscrição Stripe: "Reverter para Free" atualiza o perfil dir
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true }) });
   });
 
-  await page.goto('/admin.html');
+  await page.goto('/admin-classico.html');
   await page.waitForSelector('#admin-panel', { state: 'visible' });
   await page.click('text=💳 Subscrições');
   await page.click('button:has-text("✏️ Gerir")');
@@ -96,7 +96,7 @@ test('se admin-set-plan falhar, o admin vê o erro e o perfil não é tocado', a
     route.fulfill({ status: 502, contentType: 'application/json', body: JSON.stringify({ error: 'Não foi possível cancelar no Stripe' }) });
   });
 
-  await page.goto('/admin.html');
+  await page.goto('/admin-classico.html');
   await page.waitForSelector('#admin-panel', { state: 'visible' });
   await page.click('text=💳 Subscrições');
   await page.click('button:has-text("✏️ Gerir")');

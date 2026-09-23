@@ -41,7 +41,7 @@ test('perfil sem stripe_customer_id: mostra que não há pagamentos, sem chamar 
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ charges: [] }) });
   });
 
-  await page.goto('/admin.html');
+  await page.goto('/admin-classico.html');
   await page.waitForSelector('#admin-panel', { state: 'visible' });
   await page.click('text=💳 Subscrições');
   await page.click('button:has-text("✏️ Gerir")');
@@ -73,7 +73,7 @@ test('perfil com pagamentos: lista os charges e reembolsar chama a função com 
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true, refund: { id: 're_1', amount: 2900, status: 'succeeded' } }) });
   });
 
-  await page.goto('/admin.html');
+  await page.goto('/admin-classico.html');
   await page.waitForSelector('#admin-panel', { state: 'visible' });
   await page.click('text=💳 Subscrições');
   await page.click('button:has-text("✏️ Gerir")');
@@ -116,7 +116,7 @@ test('pagamento já reembolsado mostra o badge e não tem botão de reembolso', 
     });
   });
 
-  await page.goto('/admin.html');
+  await page.goto('/admin-classico.html');
   await page.waitForSelector('#admin-panel', { state: 'visible' });
   await page.click('text=💳 Subscrições');
   await page.click('button:has-text("✏️ Gerir")');

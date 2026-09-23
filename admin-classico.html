@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Admin – Flinko</title>
+<meta name="robots" content="noindex, nofollow"/>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
+<link rel="shortcut icon" href="/favicon.ico"/>
+<link rel="manifest" href="/manifest.json"/>
+<meta name="theme-color" content="#0F1A33"/>
+<script src="/assets/pwa.js" defer></script>
+<script src="/assets/cookie-consent.js" defer></script>
+<script src="/assets/a11y-clickable.js" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#E8720A;--blue-dark:#C25A06;--blue-light:#FDECDD;--gold:#AF620A;--green:#1A8649;--red:#C0362C;--purple:#7c3aed;--purple-light:#f3e8ff;--amber:#b45309;--text:#14181F;--muted:#5B6270;--border:#ECECE9;--bg:#F7F8FA;--white:#fff;--shadow-sm:0 1px 3px rgba(20,24,31,.05);--shadow-md:0 6px 20px rgba(20,24,31,.08);--shadow-lg:0 20px 60px rgba(20,24,31,.22)}
+body{font-family:'Inter',sans-serif;color:var(--text);background:linear-gradient(180deg,#F8F9FB 0%,#F2F3F7 100%);min-height:100vh}
+a{text-decoration:none;color:inherit}
+
+/* LOGIN */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-box{background:var(--white);border-radius:20px;padding:40px;width:100%;max-width:400px;box-shadow:var(--shadow-lg);border:1px solid var(--border)}
+.login-logo{font-size:28px;font-weight:900;color:var(--blue);letter-spacing:-1px;margin-bottom:6px}.login-logo span{color:var(--gold)}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+.login-title{font-size:20px;font-weight:800;margin-bottom:20px}
+.form-group{margin-bottom:16px}
+label{display:block;font-size:13px;font-weight:600;color:#475569;margin-bottom:5px}
+input,textarea,select{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:inherit;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-light)}
+.btn-login{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;margin-top:4px;box-shadow:0 2px 10px rgba(232,114,10,.25)}
+.btn-login:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 4px 14px rgba(232,114,10,.32)}
+.btn-login:disabled{background:#93c5fd;cursor:not-allowed;transform:none}
+.login-error{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none}
+
+/* ADMIN LAYOUT */
+#admin-panel{display:none;flex-direction:column;min-height:100vh}
+.admin-topbar{background:linear-gradient(120deg,var(--blue-dark),#12296e);color:#fff;padding:0 28px;height:60px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 14px rgba(10,20,50,.25)}
+.admin-logo{font-size:20px;font-weight:900;letter-spacing:-0.5px}.admin-logo span{color:var(--gold)}
+.admin-badge{background:rgba(255,255,255,.15);font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;letter-spacing:.5px}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.topbar-email{font-size:12px;color:rgba(255,255,255,.7)}
+.btn-signout{padding:7px 14px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.2);border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn-signout:hover{background:rgba(255,255,255,.2);color:#fff}
+
+.admin-tabs{background:var(--white);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;gap:6px;overflow-x:auto;box-shadow:0 1px 4px rgba(20,24,31,.03)}
+.atab{padding:9px 16px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;border-radius:10px;transition:all .15s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.atab:hover{color:var(--text);background:#f4f5f9}
+.atab.active{color:var(--blue);background:var(--blue-light)}
+
+.admin-body{padding:28px;flex:1}
+.page-section{display:none}.page-section.active{display:block;animation:fadein .18s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--white);border-radius:14px;padding:22px;border:1px solid var(--border);border-left:4px solid var(--border);display:flex;align-items:center;gap:16px;transition:transform .15s,box-shadow .15s}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.stat-card.accent-blue{border-left-color:var(--blue)}
+.stat-card.accent-purple{border-left-color:var(--purple)}
+.stat-card.accent-gold{border-left-color:var(--gold)}
+.stat-card.accent-green{border-left-color:var(--green)}
+.stat-card.accent-red{border-left-color:var(--red)}
+.stat-icon{font-size:28px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:var(--blue-light);flex-shrink:0}
+.stat-val{font-size:28px;font-weight:900;color:var(--text);line-height:1}
+.stat-lbl{font-size:13px;color:var(--muted);margin-top:2px}
+
+/* TABLES */
+.table-wrap{background:var(--white);border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:24px}
+.table-head{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px}
+.table-title{font-size:15px;font-weight:700}
+table{width:100%;border-collapse:collapse}
+th{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);background:#fafbfc}
+td{font-size:13px;padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f8f9fc}
+.btn{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s;display:inline-flex;align-items:center;gap:4px}
+.btn:hover{transform:translateY(-1px)}
+.btn-approve{background:#dcfce7;color:#166534}.btn-approve:hover{background:#bbf7d0}
+.btn-unapprove{background:#fef9c3;color:#854d0e}.btn-unapprove:hover{background:#fef08a}
+.btn-delete{background:#fef2f2;color:var(--red);border:1px solid #fecaca}.btn-delete:hover{background:#fee2e2}
+.btn-view{background:var(--blue-light);color:var(--blue)}.btn-view:hover{background:#bfdbfe}
+.btn-edit{background:var(--purple-light);color:#6b21a8}.btn-edit:hover{background:#e9d5ff}
+.badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;display:inline-block;letter-spacing:.3px}
+.badge-approved{background:#dcfce7;color:#166534}
+.badge-pending{background:#fef9c3;color:#854d0e}
+.badge-premium{background:var(--gold);color:#fff}
+.badge-pro{background:var(--purple);color:#fff}
+.badge-starter{background:var(--muted);color:#fff}
+.badge-free{background:var(--border);color:var(--muted)}
+.badge-demo{background:#fee2e2;color:#991b1b;margin-left:6px}
+.badge-acc-pro{background:#dbeafe;color:#1e40af}
+.badge-acc-client{background:#ede9fe;color:#5b21b6}
+.pro-avatar{width:34px;height:34px;border-radius:50%;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--blue);overflow:hidden;flex-shrink:0}
+.pro-avatar img{width:100%;height:100%;object-fit:cover}
+.td-flex{display:flex;align-items:center;gap:10px}
+.td-name{font-weight:600;display:flex;align-items:center;flex-wrap:wrap}
+.td-sub{font-size:11px;color:var(--muted)}
+.search-box{padding:8px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:inherit;outline:none;width:220px;transition:border-color .2s,box-shadow .2s}
+.search-box:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-light)}
+.empty-row td{text-align:center;padding:32px;color:var(--muted)}
+.msg-preview{max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted)}
+.unread-dot{width:8px;height:8px;background:var(--blue);border-radius:50%;display:inline-block;margin-right:4px}
+.overview-grids{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:900px){.overview-grids{grid-template-columns:1fr}}
+@media(max-width:768px){.admin-body{padding:16px}.stats-grid{grid-template-columns:repeat(2,1fr)}.table-wrap{overflow-x:auto}table{min-width:580px}}
+
+/* CONVERSATIONS */
+.conv-list{display:flex;flex-direction:column;gap:10px}
+.conv-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s}
+.conv-card:hover{border-color:var(--blue);box-shadow:var(--shadow-sm)}
+.conv-card.open{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-light)}
+.conv-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.conv-title{font-size:13.5px;font-weight:700}
+.conv-date{font-size:11px;color:var(--muted)}
+.conv-last{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conv-thread{margin-top:14px;background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px;display:none}
+.conv-thread.active{display:block}
+.msg-bubble{max-width:70%;padding:9px 13px;border-radius:12px;font-size:13px;margin-bottom:8px;line-height:1.5}
+.msg-pro{background:var(--blue-light);color:var(--text);margin-right:auto}
+.msg-client{background:var(--bg);border:1px solid var(--border);color:var(--text);margin-left:auto}
+.msg-meta{font-size:10.5px;color:var(--muted-2,#707580);margin-bottom:2px}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(20,24,31,.5);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal-bg.active{display:flex}
+.modal-box{background:#fff;border-radius:18px;padding:26px;width:100%;max-width:440px;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg);position:relative}
+.modal-title{font-size:17px;font-weight:800;margin-bottom:18px}
+.modal-actions{display:flex;gap:10px;margin-top:20px}
+.btn-save{flex:1;padding:11px;background:var(--blue);color:#fff;border:none;border-radius:9px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:all .15s;box-shadow:0 2px 10px rgba(232,114,10,.22)}
+.btn-save:hover{background:var(--blue-dark);transform:translateY(-1px)}
+.btn-cancel{flex:1;padding:11px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:9px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-cancel:hover{background:#eceef3}
+
+/* SUBSCRIPTIONS */
+.sub-quick-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.sub-origin-box{font-size:13px;color:var(--muted);padding:10px 14px;background:var(--bg);border-radius:9px;border:1px solid var(--border)}
+.credits-stepper{display:flex;gap:8px;align-items:center}
+.credits-stepper input{text-align:center}
+.btn-revert-free{width:100%;margin-top:12px;justify-content:center;padding:10px;font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+<div class="login-box">
+<div class="login-logo">Flink<span>o</span></div>
+<div class="login-sub">Área restrita — apenas administradores</div>
+<div class="login-title">🔐 Acesso Admin</div>
+<div class="login-error" id="login-error"></div>
+<div class="form-group">
+<label>Email</label>
+<input id="admin-email" type="email" placeholder="admin@flinko.pt" autocomplete="username"/>
+</div>
+<div class="form-group">
+<label>Palavra-passe</label>
+<input id="admin-pass" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')adminLogin()"/>
+</div>
+<button class="btn-login" id="login-btn" onclick="adminLogin()">Entrar no painel</button>
+</div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel">
+<div class="admin-topbar">
+<div class="admin-logo">Flink<span>o</span></div>
+<div class="admin-badge">ADMIN</div>
+<div class="topbar-right">
+<div class="topbar-email" id="topbar-email"></div>
+<button class="btn-signout" onclick="adminSignOut()">Sair</button>
+</div>
+</div>
+<div class="admin-tabs">
+<div class="atab active" onclick="showAdminPage('overview')">📊 Visão Geral</div>
+<div class="atab" onclick="showAdminPage('profiles')">👤 Profissionais</div>
+<div class="atab" onclick="showAdminPage('subscricoes')">💳 Subscrições</div>
+<div class="atab" onclick="showAdminPage('conversations')">🗨️ Conversas</div>
+<div class="atab" onclick="showAdminPage('messages')">📋 Contactos (Formulário)</div>
+<div class="atab" onclick="showAdminPage('reviews')">⭐ Avaliações</div>
+<div class="atab" onclick="showAdminPage('services')">🛠️ Serviços</div>
+<div class="atab" onclick="showAdminPage('portfolio')">🖼️ Portfólio</div>
+<div class="atab" onclick="showAdminPage('stats')">📈 Estatísticas</div>
+<div class="atab" onclick="showAdminPage('gdpr')">🔒 RGPD</div>
+<div class="atab" onclick="showAdminPage('verificacao')">✅ Verificação</div>
+</div>
+<div class="admin-body">
+
+<!-- OVERVIEW -->
+<div id="page-overview" class="page-section active">
+<div class="stats-grid">
+<div class="stat-card accent-blue"><div class="stat-icon">👤</div><div><div class="stat-val" id="s-pros">—</div><div class="stat-lbl">Profissionais</div></div></div>
+<div class="stat-card accent-purple"><div class="stat-icon">🙋</div><div><div class="stat-val" id="s-clients">—</div><div class="stat-lbl">Clientes</div></div></div>
+<div class="stat-card accent-purple"><div class="stat-icon">🗨️</div><div><div class="stat-val" id="s-conv">—</div><div class="stat-lbl">Conversas</div></div></div>
+<div class="stat-card accent-gold"><div class="stat-icon">⭐</div><div><div class="stat-val" id="s-revs">—</div><div class="stat-lbl">Avaliações</div></div></div>
+<div class="stat-card accent-green"><div class="stat-icon">🛠️</div><div><div class="stat-val" id="s-srvs">—</div><div class="stat-lbl">Serviços</div></div></div>
+</div>
+<div class="overview-grids">
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">👤 Últimos Profissionais</div></div>
+<table><thead><tr><th>Nome</th><th>Categoria</th><th>Plano</th></tr></thead>
+<tbody id="recent-pros"></tbody></table>
+</div>
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">🗨️ Últimas Conversas</div></div>
+<table><thead><tr><th>Última mensagem</th><th>Quando</th></tr></thead>
+<tbody id="recent-conv-tbl"></tbody></table>
+</div>
+</div>
+</div>
+
+<!-- PROFILES -->
+<div id="page-profiles" class="page-section">
+<div class="table-wrap">
+<div class="table-head">
+<div class="table-title">👤 Todas as Contas <span id="pros-count" style="font-weight:400;color:var(--muted);font-size:13px"></span></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<select class="search-box" id="pros-type-filter" style="width:170px" onchange="filterPros(document.getElementById('pros-search').value)">
+<option value="">Todos (profissionais + clientes)</option>
+<option value="professional" selected>Só profissionais</option>
+<option value="client">Só clientes</option>
+</select>
+<input class="search-box" id="pros-search" type="search" placeholder="🔍 Pesquisar nome, categoria..." oninput="filterPros(this.value)"/>
+</div>
+</div>
+<table>
+<thead><tr><th>Conta</th><th>Tipo</th><th>Categoria</th><th>Localização</th><th>Plano</th><th>Estado</th><th>Ações</th></tr></thead>
+<tbody id="pros-tbody"></tbody>
+</table>
+</div>
+</div>
+
+<!-- SUBSCRIPTIONS -->
+<div id="page-subscricoes" class="page-section">
+<div class="stats-grid">
+<div class="stat-card accent-blue"><div class="stat-icon">🆓</div><div><div class="stat-val" id="sub-free">—</div><div class="stat-lbl">Free</div></div></div>
+<div class="stat-card accent-purple"><div class="stat-icon">💼</div><div><div class="stat-val" id="sub-pro">—</div><div class="stat-lbl">Pro</div></div></div>
+<div class="stat-card accent-gold"><div class="stat-icon">👑</div><div><div class="stat-val" id="sub-premium">—</div><div class="stat-lbl">Premium (legado)</div></div></div>
+<div class="stat-card accent-green"><div class="stat-icon">💶</div><div><div class="stat-val" id="sub-mrr">—</div><div class="stat-lbl">Receita mensal estimada</div></div></div>
+<div class="stat-card accent-red"><div class="stat-icon">⏳</div><div><div class="stat-val" id="sub-expiring">—</div><div class="stat-lbl">A expirar em 7 dias</div></div></div>
+</div>
+<div class="table-wrap">
+<div class="table-head">
+<div class="table-title">💳 Subscrições <span id="subs-count" style="font-weight:400;color:var(--muted);font-size:13px"></span></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<select class="search-box" id="sub-filter" style="width:170px" onchange="filterSubs()">
+<option value="">Todos os planos</option>
+<option value="free">Free</option>
+<option value="starter">Starter</option>
+<option value="pro">Pro</option>
+<option value="premium">Premium</option>
+<option value="expiring">A expirar em breve</option>
+</select>
+<input class="search-box" type="search" placeholder="🔍 Pesquisar nome..." oninput="filterSubs()" id="sub-search"/>
+</div>
+</div>
+<table>
+<thead><tr><th>Profissional</th><th>Plano</th><th>Validade</th><th>Origem</th><th>Créditos</th><th>Ações</th></tr></thead>
+<tbody id="subs-tbody"></tbody>
+</table>
+</div>
+</div>
+
+<!-- CONVERSATIONS (real chat) -->
+<div id="page-conversations" class="page-section">
+<div class="table-wrap" style="padding:20px">
+<div class="table-title" style="margin-bottom:14px">🗨️ Conversas entre profissionais e clientes <span style="font-weight:400;color:var(--muted);font-size:13px">— visível apenas para administradores</span></div>
+<div class="conv-list" id="conv-list"></div>
+</div>
+</div>
+
+<!-- LEGACY CONTACT FORM MESSAGES -->
+<div id="page-messages" class="page-section">
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">📋 Mensagens do formulário de contacto</div></div>
+<table>
+<thead><tr><th>De</th><th>Para</th><th>Assunto</th><th>Mensagem</th><th>Data</th><th>Lida</th></tr></thead>
+<tbody id="msgs-tbody"></tbody>
+</table>
+</div>
+</div>
+
+<!-- REVIEWS -->
+<div id="page-reviews" class="page-section">
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">⭐ Todas as Avaliações</div></div>
+<table>
+<thead><tr><th>Avaliador</th><th>Profissional</th><th>Nota</th><th>Comentário</th><th>Data</th><th>Ações</th></tr></thead>
+<tbody id="revs-tbody"></tbody>
+</table>
+</div>
+</div>
+
+<!-- SERVICES -->
+<div id="page-services" class="page-section">
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">🛠️ Todos os Serviços</div></div>
+<table>
+<thead><tr><th>Serviço</th><th>Profissional</th><th>Preço</th><th>Data</th><th>Ações</th></tr></thead>
+<tbody id="srvs-tbody"></tbody>
+</table>
+</div>
+</div>
+
+<!-- PORTFOLIO -->
+<div id="page-portfolio" class="page-section">
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">🖼️ Todos os itens de portfólio</div></div>
+<table>
+<thead><tr><th>Foto</th><th>Legenda</th><th>Profissional</th><th>Data</th><th>Ações</th></tr></thead>
+<tbody id="port-tbody"></tbody>
+</table>
+</div>
+</div>
+
+<!-- STATS -->
+<div id="page-stats" class="page-section">
+<div class="stats-grid">
+<div class="stat-card accent-blue"><div class="stat-icon">📝</div><div><div class="stat-val" id="st-total">—</div><div class="stat-lbl">Total de registos</div></div></div>
+<div class="stat-card accent-purple"><div class="stat-icon">🛠️</div><div><div class="stat-val" id="st-pros">—</div><div class="stat-lbl">Profissionais</div></div></div>
+<div class="stat-card accent-gold"><div class="stat-icon">🙋</div><div><div class="stat-val" id="st-clients">—</div><div class="stat-lbl">Clientes</div></div></div>
+<div class="stat-card accent-red"><div class="stat-icon">⏳</div><div><div class="stat-val" id="st-noprofile">—</div><div class="stat-lbl">Sem perfil</div></div></div>
+<div class="stat-card accent-green"><div class="stat-icon">👀</div><div><div class="stat-val" id="st-visits">—</div><div class="stat-lbl">Visitas (30 dias)</div></div></div>
+<div class="stat-card accent-blue"><div class="stat-icon">👥</div><div><div class="stat-val" id="st-visitors">—</div><div class="stat-lbl">Visitantes (30 dias)</div></div></div>
+</div>
+<div class="overview-grids">
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">📝 Registos por dia</div></div>
+<table><thead><tr><th>Dia</th><th>Total</th><th>Profissionais</th><th>Clientes</th></tr></thead>
+<tbody id="signups-tbody"></tbody></table>
+</div>
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">👀 Visitas por dia</div></div>
+<table><thead><tr><th>Dia</th><th>Visitas</th><th>Únicos</th></tr></thead>
+<tbody id="visits-tbody"></tbody></table>
+</div>
+</div>
+</div>
+
+<!-- GDPR -->
+<div id="page-gdpr" class="page-section">
+<div class="stats-grid">
+<div class="stat-card accent-red"><div class="stat-icon">⏳</div><div><div class="stat-val" id="gdpr-pending-count">—</div><div class="stat-lbl">Pendentes</div></div></div>
+<div class="stat-card accent-gold"><div class="stat-icon">⚠️</div><div><div class="stat-val" id="gdpr-urgent-count">—</div><div class="stat-lbl">A aproximar-se dos 30 dias</div></div></div>
+</div>
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">🔒 Pedidos RGPD (acesso / eliminação) <span id="gdpr-count" style="font-weight:400;color:var(--muted);font-size:13px"></span></div>
+<select class="search-box" id="gdpr-filter" style="width:190px" onchange="renderGdprTable()">
+<option value="open">Pendentes + em tratamento</option>
+<option value="">Todos os estados</option>
+<option value="pending">Pendente</option>
+<option value="in_progress">Em tratamento</option>
+<option value="completed">Concluído</option>
+<option value="cancelled">Cancelado</option>
+</select>
+</div>
+<table>
+<thead><tr><th>Conta</th><th>Tipo</th><th>Pedido em</th><th>Dias em aberto</th><th>Estado</th><th>Ações</th></tr></thead>
+<tbody id="gdpr-tbody"></tbody>
+</table>
+</div>
+</div>
+
+
+<!-- VERIFICATION -->
+<div id="page-verificacao" class="page-section">
+<div class="stats-grid">
+<div class="stat-card accent-blue"><div class="stat-icon">✅</div><div class="stat-val" id="verif-pending-count">—</div><div class="stat-lbl">Pendentes</div></div>
+</div>
+<div class="table-wrap">
+<div class="table-head"><div class="table-title">✅ Pedidos de Verificação <span id="verif-count" style="font-weight:400;color:var(--muted);font-size:13px"></span></div>
+<select class="search-box" id="verif-filter" style="width:190px" onchange="renderVerificationTable()">
+<option value="pending">Pendentes</option>
+<option value="">Todos os estados</option>
+<option value="approved">Aprovados</option>
+<option value="rejected">Rejeitados</option>
+<option value="cancelled">Cancelados</option>
+</select>
+</div>
+<table>
+<thead><tr><th>Profissional</th><th>Pedido em</th><th>Documentos</th><th>Notas</th><th>Estado</th><th>Ações</th></tr></thead>
+<tbody id="verif-tbody"></tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+<!-- EDIT PROFILE MODAL -->
+<div class="modal-bg" id="edit-modal">
+<div class="modal-box">
+<div class="modal-title">✏️ Editar profissional</div>
+<div class="form-group"><label>Nome</label><input id="ed-name"/></div>
+<div class="form-group"><label>Categoria</label><input id="ed-category"/></div>
+<div class="form-group"><label>Localização</label><input id="ed-location"/></div>
+<div class="form-group"><label>Plano</label>
+<select id="ed-plan"><option value="free">Free</option><option value="starter">Starter</option><option value="pro">Pro</option><option value="premium" disabled>Premium (legado — já não é vendido)</option></select>
+</div>
+<div class="form-group"><label>Bio</label><textarea id="ed-bio" rows="4"></textarea></div>
+<div class="modal-actions">
+<button class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
+<button class="btn-save" onclick="saveProfileEdit()">Guardar alterações</button>
+</div>
+</div>
+</div>
+
+<!-- EDIT SERVICE MODAL -->
+<div class="modal-bg" id="edit-service-modal">
+<div class="modal-box">
+<div class="modal-title">✏️ Editar serviço</div>
+<div class="form-group"><label>Título</label><input id="es-title"/></div>
+<div class="form-group"><label>Descrição</label><textarea id="es-desc" rows="3"></textarea></div>
+<div class="form-group"><label>Preço desde (€)</label><input id="es-from" type="number"/></div>
+<div class="form-group"><label>Preço até (€)</label><input id="es-to" type="number"/></div>
+<div class="modal-actions">
+<button class="btn-cancel" onclick="closeEditServiceModal()">Cancelar</button>
+<button class="btn-save" onclick="saveServiceEdit()">Guardar alterações</button>
+</div>
+</div>
+</div>
+
+<!-- EDIT SUBSCRIPTION MODAL -->
+<div class="modal-bg" id="edit-sub-modal">
+<div class="modal-box">
+<div class="modal-title">💳 Gerir subscrição</div>
+<div id="sub-modal-name" style="font-size:14px;font-weight:700;color:var(--muted);margin-bottom:16px"></div>
+<div class="form-group">
+<label>Plano</label>
+<select id="sub-plan"><option value="free">Free</option><option value="starter">Starter</option><option value="pro">Pro</option><option value="premium" disabled>Premium (legado — já não é vendido)</option></select>
+<div style="font-size:11.5px;color:var(--muted);margin-top:5px">Só o Pro está à venda atualmente. Premium é um plano legado — só aparece aqui se o profissional já o tiver.</div>
+</div>
+<div class="form-group">
+<label>Validade do plano</label>
+<input id="sub-expires" type="date"/>
+<div class="sub-quick-row">
+<button type="button" class="btn btn-view" onclick="extendSub(7)">+7 dias</button>
+<button type="button" class="btn btn-view" onclick="extendSub(30)">+30 dias</button>
+<button type="button" class="btn btn-view" onclick="extendSub(90)">+90 dias</button>
+<button type="button" class="btn btn-edit" onclick="document.getElementById('sub-expires').value=''">Sem validade</button>
+</div>
+<div style="font-size:11.5px;color:var(--muted);margin-top:6px">Ao passar esta data, o plano volta a Free automaticamente (verificação diária às 3h). Não se aplica a subscrições Stripe — essas são geridas pelos pagamentos.</div>
+</div>
+<div class="form-group">
+<label>Créditos</label>
+<div class="credits-stepper">
+<button type="button" class="btn btn-view" onclick="bumpCredits(-10)">−10</button>
+<input id="sub-credits" type="number" min="0"/>
+<button type="button" class="btn btn-view" onclick="bumpCredits(10)">+10</button>
+</div>
+</div>
+<div class="form-group">
+<label>Origem</label>
+<div class="sub-origin-box" id="sub-origin"></div>
+</div>
+<div class="form-group">
+<label>💰 Pagamentos Stripe</label>
+<div id="sub-charges-list" style="display:flex;flex-direction:column;gap:8px"></div>
+<div style="font-size:11.5px;color:var(--muted);margin-top:5px">Reembolsar não cancela a subscrição — se também quiseres parar de cobrar, muda o plano para Free acima ou usa "Reverter para Free agora".</div>
+</div>
+<div class="modal-actions">
+<button class="btn-cancel" onclick="closeSubModal()">Cancelar</button>
+<button class="btn-save" onclick="saveSubEdit()">Guardar alterações</button>
+</div>
+<button class="btn btn-delete btn-revert-free" onclick="revertToFreePlan()">↩️ Reverter para Free agora</button>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/escape-html.js"></script>
+<script>
+const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
+const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
+const PRO_MONTHLY_PRICE=12.99
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
+function escAttrJs(s){return escapeHtml(String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"))}
+let allPros=[]
+let editingProId=null
+let editingServiceId=null
+let allSubs=[]
+let editingSubId=null
+
+async function init(){
+try{
+const{data:{session}}=await db.auth.getSession()
+if(!session)return
+// is_admin já não é uma coluna legível diretamente (só o próprio dono podia
+// lê-la de qualquer forma) — usa-se a função is_admin(), que verifica
+// sempre a sessão de quem pede.
+const{data:isAdminFlag}=await db.rpc('is_admin')
+if(isAdminFlag===true)showAdmin(session.user)
+}catch(e){console.error('init:',e)}
+}
+
+async function adminLogin(){
+const email=document.getElementById('admin-email').value.trim()
+const pass=document.getElementById('admin-pass').value
+const btn=document.getElementById('login-btn')
+const errEl=document.getElementById('login-error')
+errEl.style.display='none'
+if(!email||!pass){showLoginError('Preenche email e palavra-passe.');return}
+btn.disabled=true;btn.textContent='A verificar...'
+const{data,error}=await db.auth.signInWithPassword({email,password:pass})
+if(error){showLoginError('Credenciais inválidas.');btn.disabled=false;btn.textContent='Entrar no painel';return}
+const{data:isAdminFlag2}=await db.rpc('is_admin')
+if(isAdminFlag2!==true){
+await db.auth.signOut()
+showLoginError('Acesso negado. Esta conta não tem permissões de administrador.')
+btn.disabled=false;btn.textContent='Entrar no painel';return
+}
+showAdmin(data.user)
+}
+
+function showLoginError(msg){const el=document.getElementById('login-error');el.textContent=msg;el.style.display='block'}
+
+function showAdmin(user){
+document.getElementById('login-screen').style.display='none'
+const p=document.getElementById('admin-panel')
+p.style.display='flex';p.style.flexDirection='column'
+document.getElementById('topbar-email').textContent=user.email
+// loadProfiles() primeiro (é a fonte privilegiada dos dados que loadOverview
+// também precisa) para não disparar a mesma busca duas vezes em paralelo.
+loadProfiles().then(loadOverview)
+}
+
+async function adminSignOut(){await db.auth.signOut();location.reload()}
+
+function demoBadge(p){return p&&p.is_demo?'<span class="badge badge-demo">🧪 DEMO</span>':''}
+
+// OVERVIEW
+async function loadOverview(){
+// account_type é uma coluna revogada a "authenticated" (migration
+// 20260815171632, para impedir ler o account_type de OUTROS perfis) — o
+// mesmo bug que partiu a homepage partia também aqui: uma query direta à
+// tabela filtrada por account_type falha sempre em silêncio para qualquer
+// admin com sessão, e os cartões "Profissionais"/"Clientes" ficavam sempre
+// a "0" (confirmado ao vivo em flinko.pt/admin.html). Corrigido usando os
+// dados já privilegiados de admin_list_profiles() (via loadProfiles/allPros)
+// em vez de uma segunda query direta à tabela.
+const[{count:cc},{count:rc},{count:sc}]=await Promise.all([
+db.from('conversations').select('*',{count:'exact',head:true}),
+db.from('reviews').select('*',{count:'exact',head:true}),
+db.from('services').select('*',{count:'exact',head:true})
+])
+document.getElementById('s-conv').textContent=cc||0
+document.getElementById('s-revs').textContent=rc||0
+document.getElementById('s-srvs').textContent=sc||0
+if(!allPros.length)await loadProfiles()
+const pc=allPros.filter(p=>p.account_type!=='client').length
+const clc=allPros.filter(p=>p.account_type==='client').length
+document.getElementById('s-pros').textContent=pc||0
+document.getElementById('s-clients').textContent=clc||0
+// Só profissionais aqui — é o que o título "Últimos Profissionais" promete.
+// Contas cliente (sem categoria por natureza, não por lapso) ficam de fora.
+const pros=allPros.filter(p=>p.account_type!=='client').sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,5)
+document.getElementById('recent-pros').innerHTML=(pros||[]).map(p=>`
+<tr><td><div class="td-name">${escapeHtml(p.name||'—')}${demoBadge(p)}</div></td>
+<td>${escapeHtml(p.category||'—')}</td>
+<td><span class="badge badge-${p.plan||'free'}">${p.plan||'free'}</span></td></tr>`).join('')||'<tr class="empty-row"><td colspan="3">Sem registos</td></tr>'
+const{data:convs}=await db.from('conversations').select('last_message,last_message_at').order('last_message_at',{ascending:false}).limit(5)
+document.getElementById('recent-conv-tbl').innerHTML=(convs||[]).map(c=>`
+<tr><td class="msg-preview">${escapeHtml(c.last_message||'(sem mensagens)')}</td>
+<td>${c.last_message_at?new Date(c.last_message_at).toLocaleDateString('pt-PT'):'—'}</td></tr>`).join('')||'<tr class="empty-row"><td colspan="2">Sem conversas</td></tr>'
+}
+
+// PROFILES
+async function loadProfiles(){
+// A listagem de admin precisa de TODAS as colunas de TODOS os perfis
+// (créditos, planos, stripe, is_admin) — isso já não é possível por
+// leitura direta da tabela (só o próprio dono ou um admin, e o Postgres
+// não distingue isso por linha ao nível das colunas). admin_list_profiles()
+// é uma função dedicada que confirma is_admin() antes de devolver tudo.
+const{data}=await db.rpc('admin_list_profiles')
+allPros=(data||[]).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))
+const ids=allPros.map(p=>p.id)
+if(ids.length){
+const{data:priv}=await db.from('profile_private').select('profile_id,phone').in('profile_id',ids)
+const phoneMap={}
+;(priv||[]).forEach(r=>phoneMap[r.profile_id]=r.phone)
+allPros.forEach(p=>p.phone=phoneMap[p.id]||'')
+}
+filterPros(document.getElementById('pros-search').value)
+}
+
+function renderPros(pros){
+document.getElementById('pros-count').textContent=`(${pros.length})`
+const tbody=document.getElementById('pros-tbody')
+if(!pros.length){tbody.innerHTML='<tr class="empty-row"><td colspan="7">Nenhuma conta encontrada</td></tr>';return}
+tbody.innerHTML=pros.map(p=>{
+const approved=p.approved!==false
+const isPro=p.account_type!=='client' // registos antigos sem account_type contam como profissional (era o default)
+const av=p.photo_url?`<img src="${escapeHtml(p.photo_url)}" alt="${escapeHtml(p.name||'')}"/>`:((p.name||'?').split(' ').map(n=>n[0]).slice(0,2).join(''))
+// "Sem categoria" só é um problema real para quem É profissional (não aparece
+// nas pesquisas). Numa conta cliente é o estado normal e esperado — não é aviso.
+const catCell=isPro
+?(p.category?escapeHtml(p.category):'<span class="badge badge-pending" title="Sem categoria: não aparece em nenhuma pesquisa por categoria nem na grelha da homepage">⚠️ Sem categoria</span>')
+:'<span style="color:var(--muted)">—</span>'
+return`<tr>
+<td><div class="td-flex"><div class="pro-avatar">${av}</div>
+<div><div class="td-name">${escapeHtml(p.name||'—')}${demoBadge(p)}</div><div class="td-sub">${escapeHtml(p.phone||'')}</div></div></div></td>
+<td><span class="badge ${isPro?'badge-acc-pro':'badge-acc-client'}">${isPro?'Profissional':'Cliente'}</span></td>
+<td>${catCell}</td>
+<td>${escapeHtml(p.location||'—')}</td>
+<td><span class="badge badge-${p.plan||'free'}">${p.plan||'free'}</span></td>
+<td><span class="badge ${approved?'badge-approved':'badge-pending'}">${approved?'Ativo':'Pendente'}</span>${p.suspended?' <span class="badge badge-demo" title="Marcado automaticamente pelo webhook do Stripe quando há uma contestação de pagamento (chargeback) em aberto para este perfil">🚩 Disputado</span>':''}</td>
+<td><div style="display:flex;gap:6px;flex-wrap:wrap">
+<button class="btn btn-edit" onclick="openEditModal('${p.id}')">✏️ Editar</button>
+<button class="btn btn-approve" onclick="toggleAdmin('${p.id}',!p.is_admin)" title="${p.is_admin?'Remover admin':'Tornar admin'}">${p.is_admin?'👑':'⬆️'}</button>
+<button class="btn btn-view" onclick="window.open('profile.html?id=${p.id}','_blank')">👁 Ver</button>
+${approved
+?`<button class="btn btn-unapprove" onclick="toggleApprove('${p.id}',false)">⏸ Suspender</button>`
+:`<button class="btn btn-approve" onclick="toggleApprove('${p.id}',true)">✅ Aprovar</button>`}
+${p.suspended?`<button class="btn btn-approve" onclick="toggleSuspended('${p.id}',false)" title="Marcar a contestação como resolvida">🚩 Resolver disputa</button>`:''}
+${p.verified?`<button class="btn btn-unapprove" onclick="toggleVerified('${p.id}',false)">✔️ Verificado</button>`:`<button class="btn btn-approve" onclick="toggleVerified('${p.id}',true)">☆ Verificar</button>`}
+<button class="btn btn-delete" onclick="deletePro('${p.id}','${escAttrJs(p.name||'')}')">🗑</button>
+</div></td></tr>`
+}).join('')
+}
+
+function filterPros(q){
+const lq=q.toLowerCase()
+const typeFilter=document.getElementById('pros-type-filter').value
+renderPros(allPros
+.filter(p=>!typeFilter||(typeFilter==='client'?p.account_type==='client':p.account_type!=='client'))
+.filter(p=>(p.name||'').toLowerCase().includes(lq)||(p.category||'').toLowerCase().includes(lq)||(p.location||'').toLowerCase().includes(lq)))
+}
+
+async function toggleAdmin(id,isAdmin){
+await db.from('profiles').update({is_admin:isAdmin}).eq('id',id)
+loadProfiles()
+}
+
+async function toggleApprove(id,approved){
+await db.from('profiles').update({approved}).eq('id',id);loadProfiles()
+}
+
+async function toggleVerified(id,verified){
+await db.from('profiles').update({verified}).eq('id',id);loadProfiles()
+}
+
+// 'suspended' fica true automaticamente quando stripe-webhook.js recebe
+// charge.dispute.created para este perfil (ver esse ficheiro). Isto limpa a
+// marca depois de a equipa rever o caso — não confundir com o botão
+// "Suspender" acima, que mexe em 'approved' (moderação normal), não nesta
+// flag.
+async function toggleSuspended(id,suspended){
+if(suspended===false&&!confirm('Marcar esta contestação de pagamento como resolvida e voltar a mostrar o perfil?'))return
+await db.from('profiles').update({suspended}).eq('id',id);loadProfiles()
+}
+
+async function deletePro(id,name){
+if(!confirm(`Eliminar "${name}"? Esta acção é irreversível.`))return
+await db.from('profiles').delete().eq('id',id)
+allPros=allPros.filter(p=>p.id!==id);filterPros(document.getElementById('pros-search').value);loadOverview()
+}
+
+// EDIT PROFILE MODAL
+function openEditModal(id){
+const p=allPros.find(x=>x.id===id)
+if(!p)return
+editingProId=id
+document.getElementById('ed-name').value=p.name||''
+document.getElementById('ed-category').value=p.category||''
+document.getElementById('ed-location').value=p.location||''
+document.getElementById('ed-plan').value=p.plan||'free'
+document.getElementById('ed-bio').value=p.bio||''
+document.getElementById('edit-modal').classList.add('active')
+}
+function closeEditModal(){document.getElementById('edit-modal').classList.remove('active');editingProId=null}
+// Muda o plano de um perfil a partir do admin de forma segura para quem já
+// tem uma subscrição Stripe real: em vez de escrever profiles.plan
+// diretamente do browser (o que deixava o cliente a ser cobrado por um
+// plano que já não tinha, e o próximo webhook do Stripe repunha sozinho o
+// plano antigo — bug real encontrado em auditoria), passa sempre por
+// admin-set-plan.js, que cancela a subscrição no Stripe primeiro quando
+// existe uma.
+async function adminChangePlanViaServer(profileId,plan){
+const{data:{session}}=await db.auth.getSession()
+try{
+const res=await fetch('/.netlify/functions/admin-set-plan',{
+method:'POST',
+headers:{'Content-Type':'application/json',Authorization:'Bearer '+(session&&session.access_token)},
+body:JSON.stringify({targetProfileId:profileId,plan})
+})
+const out=await res.json().catch(()=>({}))
+if(!res.ok){alert('Erro ao mudar o plano: '+(out.error||'erro desconhecido'));return false}
+return true
+}catch(e){console.error('adminChangePlanViaServer:',e);alert('Erro de rede ao mudar o plano.');return false}
+}
+
+async function saveProfileEdit(){
+if(!editingProId)return
+const p=allPros.find(x=>x.id===editingProId)
+const newPlan=document.getElementById('ed-plan').value
+const updates={
+name:document.getElementById('ed-name').value.trim(),
+category:document.getElementById('ed-category').value.trim(),
+location:document.getElementById('ed-location').value.trim(),
+bio:document.getElementById('ed-bio').value.trim()
+}
+const planChanged=p&&newPlan!==(p.plan||'free')
+if(planChanged&&p&&p.stripe_subscription_id){
+const ok=await adminChangePlanViaServer(editingProId,newPlan)
+if(!ok)return
+}else{
+updates.plan=newPlan
+}
+const{error}=await db.from('profiles').update(updates).eq('id',editingProId)
+if(error){alert('Erro ao guardar: '+error.message);return}
+closeEditModal();loadProfiles();loadOverview()
+}
+
+// SUBSCRIPTIONS
+async function loadSubscriptions(){
+const{data,error}=await db.rpc('admin_list_profiles')
+if(error){document.getElementById('subs-tbody').innerHTML=`<tr class="empty-row"><td colspan="6">Erro a carregar: ${escapeHtml(error.message)}</td></tr>`;return}
+allSubs=(data||[]).sort((a,b)=>(a.name||'').localeCompare(b.name||''))
+renderSubStats(allSubs)
+filterSubs()
+}
+
+function renderSubStats(subs){
+const free=subs.filter(s=>(s.plan||'free')==='free').length
+const pro=subs.filter(s=>s.plan==='pro').length
+const premium=subs.filter(s=>s.plan==='premium').length
+const mrr=pro*PRO_MONTHLY_PRICE
+const now=Date.now(),soon=now+7*86400000
+const expiring=subs.filter(s=>s.plan_expires_at&&new Date(s.plan_expires_at).getTime()<=soon&&new Date(s.plan_expires_at).getTime()>=now).length
+document.getElementById('sub-free').textContent=free
+document.getElementById('sub-pro').textContent=pro
+document.getElementById('sub-premium').textContent=premium
+document.getElementById('sub-mrr').textContent='€'+mrr.toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})
+document.getElementById('sub-expiring').textContent=expiring
+}
+
+function subStatusInfo(s){
+const plan=s.plan||'free'
+const now=Date.now()
+let expLabel='—',expStyle=''
+if(s.plan_expires_at){
+const t=new Date(s.plan_expires_at).getTime()
+expLabel=new Date(s.plan_expires_at).toLocaleDateString('pt-PT')
+if(t<now){expLabel+=' (expirado)';expStyle='color:var(--red);font-weight:700'}
+else if(t<=now+7*86400000){expStyle='color:var(--amber);font-weight:700'}
+}else if(plan!=='free'){
+expLabel='Sem validade'
+}
+const origin=s.stripe_subscription_id?'💳 Stripe':(plan==='free'?'—':'✋ Manual')
+return{plan,expLabel,expStyle,origin}
+}
+
+function renderSubs(subs){
+document.getElementById('subs-count').textContent=`(${subs.length})`
+const tbody=document.getElementById('subs-tbody')
+if(!subs.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Nenhuma subscrição encontrada</td></tr>';return}
+tbody.innerHTML=subs.map(s=>{
+const info=subStatusInfo(s)
+return`<tr>
+<td class="td-name">${escapeHtml(s.name||'—')}</td>
+<td><span class="badge badge-${info.plan}">${info.plan}</span></td>
+<td style="${info.expStyle}">${info.expLabel}</td>
+<td>${info.origin}</td>
+<td>${s.credits||0}</td>
+<td><button class="btn btn-edit" onclick="openSubModal('${s.id}')">✏️ Gerir</button></td>
+</tr>`
+}).join('')
+}
+
+function filterSubs(){
+const q=(document.getElementById('sub-search').value||'').toLowerCase()
+const f=document.getElementById('sub-filter').value
+let list=allSubs.filter(s=>(s.name||'').toLowerCase().includes(q))
+if(f==='expiring'){
+const now=Date.now(),soon=now+7*86400000
+list=list.filter(s=>s.plan_expires_at&&new Date(s.plan_expires_at).getTime()<=soon&&new Date(s.plan_expires_at).getTime()>=now)
+}else if(f){
+list=list.filter(s=>(s.plan||'free')===f)
+}
+renderSubs(list)
+}
+
+function openSubModal(id){
+const s=allSubs.find(x=>x.id===id)
+if(!s)return
+editingSubId=id
+document.getElementById('sub-modal-name').textContent=s.name||'—'
+document.getElementById('sub-plan').value=s.plan||'free'
+document.getElementById('sub-expires').value=s.plan_expires_at?s.plan_expires_at.slice(0,10):''
+document.getElementById('sub-credits').value=s.credits||0
+document.getElementById('sub-origin').textContent=s.stripe_subscription_id?`Pago via Stripe (subscrição: ${s.stripe_subscription_id})`:'Atribuído manualmente pela administração'
+document.getElementById('edit-sub-modal').classList.add('active')
+loadSubCharges(id)
+}
+function closeSubModal(){document.getElementById('edit-sub-modal').classList.remove('active');editingSubId=null}
+
+// Lista os últimos pagamentos Stripe do cliente associado a este perfil,
+// com um botão de reembolso por cada um que ainda não foi totalmente
+// reembolsado. Ver netlify/functions/admin-refund.js — é lá que a chave
+// secreta do Stripe é usada; aqui só se pede/mostra o resultado.
+async function loadSubCharges(profileId){
+const box=document.getElementById('sub-charges-list')
+box.innerHTML='<div style="color:var(--muted);font-size:12.5px">A carregar pagamentos...</div>'
+const{data:{session}}=await db.auth.getSession()
+try{
+const res=await fetch('/.netlify/functions/admin-refund',{
+method:'POST',
+headers:{'Content-Type':'application/json',Authorization:'Bearer '+(session&&session.access_token)},
+body:JSON.stringify({action:'list',targetProfileId:profileId})
+})
+const json=await res.json()
+if(editingSubId!==profileId)return // modal já foi fechado/trocado entretanto
+if(!res.ok){box.innerHTML=`<div style="color:var(--red);font-size:12.5px">Erro a carregar pagamentos: ${escapeHtml(json.error||'falhou')}</div>`;return}
+const charges=json.charges||[]
+if(!charges.length){box.innerHTML='<div style="color:var(--muted);font-size:12.5px">Sem pagamentos Stripe para este perfil.</div>';return}
+box.innerHTML=charges.map(c=>{
+const amountLabel=formatCents(c.amount,c.currency)
+const dateLabel=new Date(c.created*1000).toLocaleDateString('pt-PT')
+const remaining=c.amount-c.amount_refunded
+const desc=c.description?` — ${escapeHtml(c.description)}`:''
+if(!c.paid||remaining<=0){
+const label=c.refunded?'Reembolsado':(c.paid?'—':'Não pago')
+return`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px"><span>${dateLabel} — ${amountLabel}${desc}</span><span class="badge ${c.refunded?'badge-approved':'badge-free'}">${label}</span></div>`
+}
+const remainingLabel=formatCents(remaining,c.currency)
+const partialNote=c.amount_refunded?` (já reembolsado: ${formatCents(c.amount_refunded,c.currency)})`:''
+return`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px">
+<span>${dateLabel} — ${amountLabel}${desc}${partialNote}</span>
+<span style="display:flex;gap:6px;align-items:center">
+<input id="refund-amt-${c.id}" type="number" step="0.01" min="0.01" max="${(remaining/100).toFixed(2)}" value="${(remaining/100).toFixed(2)}" style="width:72px;padding:4px 6px;border:1px solid var(--border);border-radius:6px"/>
+<button class="btn btn-delete" onclick="refundCharge('${profileId}','${c.id}',${remaining},'${c.currency}')" title="Máximo: ${remainingLabel}">💰 Reembolsar</button>
+</span>
+</div>`
+}).join('')
+}catch(e){
+if(editingSubId!==profileId)return
+box.innerHTML=`<div style="color:var(--red);font-size:12.5px">Erro a carregar pagamentos: ${escapeHtml(e.message)}</div>`
+}
+}
+
+function formatCents(cents,currency){
+// A Flinko só cobra em EUR (create-checkout-session.js só cria sessões
+// em EUR) — sinaliza-se a moeda só para o caso raro de aparecer outra.
+const symbol=(currency||'eur').toLowerCase()==='eur'?'€':(currency||'').toUpperCase()+' '
+return symbol+((cents||0)/100).toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})
+}
+
+async function refundCharge(profileId,chargeId,maxCents,currency){
+const input=document.getElementById('refund-amt-'+chargeId)
+const euros=Number(input&&input.value)
+if(!euros||euros<=0){alert('Indica um valor de reembolso válido.');return}
+const cents=Math.round(euros*100)
+if(cents>maxCents){alert('Esse valor é superior ao que ainda pode ser reembolsado neste pagamento.');return}
+const isPartial=cents<maxCents
+const confirmMsg=`Reembolsar ${formatCents(cents,currency)}${isPartial?' (reembolso parcial)':''}? Esta ação devolve mesmo o dinheiro ao cliente através do Stripe e não pode ser desfeita.`
+if(!confirm(confirmMsg))return
+const{data:{session}}=await db.auth.getSession()
+try{
+const res=await fetch('/.netlify/functions/admin-refund',{
+method:'POST',
+headers:{'Content-Type':'application/json',Authorization:'Bearer '+(session&&session.access_token)},
+body:JSON.stringify({action:'refund',targetProfileId:profileId,chargeId,amount:cents})
+})
+const json=await res.json()
+if(!res.ok){alert('Erro ao reembolsar: '+(json.error||'falhou'));return}
+loadSubCharges(profileId)
+}catch(e){alert('Erro ao reembolsar: '+e.message)}
+}
+
+function extendSub(days){
+const el=document.getElementById('sub-expires')
+const current=el.value?new Date(el.value+'T00:00:00'):null
+const base=(current&&current.getTime()>Date.now())?current:new Date()
+base.setDate(base.getDate()+days)
+el.value=base.toISOString().slice(0,10)
+}
+
+function bumpCredits(n){
+const el=document.getElementById('sub-credits')
+el.value=Math.max(0,(Number(el.value)||0)+n)
+}
+
+async function saveSubEdit(){
+if(!editingSubId)return
+const s=allSubs.find(x=>x.id===editingSubId)
+const newPlan=document.getElementById('sub-plan').value
+const expiresVal=document.getElementById('sub-expires').value
+const rest={
+plan_expires_at:expiresVal?new Date(expiresVal+'T23:59:59').toISOString():null,
+credits:Number(document.getElementById('sub-credits').value)||0
+}
+const planChanged=s&&newPlan!==(s.plan||'free')
+if(planChanged&&s&&s.stripe_subscription_id){
+const ok=await adminChangePlanViaServer(editingSubId,newPlan)
+if(!ok)return
+}else{
+rest.plan=newPlan
+}
+const{error}=await db.from('profiles').update(rest).eq('id',editingSubId)
+if(error){alert('Erro ao guardar: '+error.message);return}
+closeSubModal();loadSubscriptions();loadProfiles()
+}
+
+async function revertToFreePlan(){
+if(!editingSubId)return
+const s=allSubs.find(x=>x.id===editingSubId)
+const hasStripe=!!(s&&s.stripe_subscription_id)
+const confirmMsg=hasStripe
+?'Reverter esta subscrição para Free imediatamente? A subscrição no Stripe também vai ser cancelada agora — o cliente deixa de ser cobrado.'
+:'Reverter esta subscrição para Free imediatamente?'
+if(!confirm(confirmMsg))return
+if(hasStripe){
+const ok=await adminChangePlanViaServer(editingSubId,'free')
+if(!ok)return
+const{error}=await db.from('profiles').update({plan_expires_at:null}).eq('id',editingSubId)
+if(error){alert('Erro: '+error.message);return}
+}else{
+const{error}=await db.from('profiles').update({plan:'free',plan_expires_at:null}).eq('id',editingSubId)
+if(error){alert('Erro: '+error.message);return}
+}
+closeSubModal();loadSubscriptions();loadProfiles()
+}
+
+// CONVERSATIONS (real chat between professionals and clients)
+async function loadConversations(){
+const list=document.getElementById('conv-list')
+list.innerHTML='<div style="padding:20px;color:var(--muted)">A carregar...</div>'
+const{data:convs,error}=await db.from('conversations').select('*').order('last_message_at',{ascending:false})
+if(error){list.innerHTML=`<div style="padding:20px;color:var(--red)">Erro a carregar conversas: ${escapeHtml(error.message)}</div>`;return}
+if(!convs||!convs.length){list.innerHTML='<div style="padding:20px;color:var(--muted)">Ainda não há conversas na plataforma.</div>';return}
+const proIds=[...new Set(convs.map(c=>c.professional_id).filter(Boolean))]
+const{data:pros}=await db.from('profiles').select('id,name').in('id',proIds.length?proIds:['00000000-0000-0000-0000-000000000000'])
+const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
+list.innerHTML=convs.map(c=>{
+const proName=escapeHtml(pm[c.professional_id]||'Profissional')
+return`<div class="conv-card" id="conv-${c.id}" onclick="toggleThread('${c.id}','${c.professional_id}')">
+<div class="conv-top"><div class="conv-title">${proName} ↔ cliente</div><div class="conv-date">${c.last_message_at?new Date(c.last_message_at).toLocaleString('pt-PT'):''}</div></div>
+<div class="conv-last">${escapeHtml(c.last_message||'(sem mensagens)')}</div>
+<div class="conv-thread" id="thread-${c.id}"></div>
+</div>`
+}).join('')
+}
+
+async function toggleThread(convId,proId){
+const card=document.getElementById(`conv-${convId}`)
+const thread=document.getElementById(`thread-${convId}`)
+const isOpen=thread.classList.contains('active')
+document.querySelectorAll('.conv-thread.active').forEach(t=>t.classList.remove('active'))
+document.querySelectorAll('.conv-card.open').forEach(c=>c.classList.remove('open'))
+if(isOpen)return
+card.classList.add('open')
+thread.classList.add('active')
+thread.innerHTML='<div style="color:var(--muted);font-size:12px">A carregar mensagens...</div>'
+const{data:msgs,error}=await db.from('messages').select('*').eq('conversation_id',convId).order('created_at',{ascending:true})
+if(error){thread.innerHTML=`<div style="color:var(--red);font-size:12px">Erro: ${escapeHtml(error.message)}</div>`;return}
+if(!msgs||!msgs.length){thread.innerHTML='<div style="color:var(--muted);font-size:12px">Sem mensagens nesta conversa.</div>';return}
+thread.innerHTML=msgs.map(m=>{
+const isPro=m.sender_id===proId
+return`<div class="msg-bubble ${isPro?'msg-pro':'msg-client'}">
+<div class="msg-meta">${isPro?'Profissional':'Cliente'} · ${m.created_at?new Date(m.created_at).toLocaleString('pt-PT'):''}</div>
+${escapeHtml(m.content||'')}
+</div>`
+}).join('')
+}
+
+// LEGACY CONTACT FORM MESSAGES
+async function loadMessages(){
+const[{data:msgs},{data:pros}]=await Promise.all([
+db.from('messages_legacy_contact_form').select('*').order('created_at',{ascending:false}),
+db.from('profiles').select('id,name')
+])
+const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
+const tbody=document.getElementById('msgs-tbody')
+if(!msgs||!msgs.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Sem mensagens</td></tr>';return}
+tbody.innerHTML=msgs.map(m=>`
+<tr>
+<td><div class="td-name">${escapeHtml(m.sender_name)}</div><div class="td-sub">${escapeHtml(m.sender_email)}</div></td>
+<td>${escapeHtml(pm[m.professional_id]||'—')}</td>
+<td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(m.subject)}</td>
+<td class="msg-preview">${escapeHtml(m.content)}</td>
+<td>${new Date(m.created_at).toLocaleDateString('pt-PT')}</td>
+<td>${m.read?'✅':'<span class="unread-dot"></span>Não lida'}</td></tr>`).join('')
+}
+
+// REVIEWS
+async function loadReviews(){
+const[{data:revs},{data:pros}]=await Promise.all([
+db.from('reviews').select('*').order('created_at',{ascending:false}),
+db.from('profiles').select('id,name')
+])
+const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
+const tbody=document.getElementById('revs-tbody')
+if(!revs||!revs.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Sem avaliações</td></tr>';return}
+tbody.innerHTML=revs.map(r=>`
+<tr>
+<td><div class="td-name">${escapeHtml(r.reviewer_name)}</div><div class="td-sub">${escapeHtml(r.reviewer_email)}</div></td>
+<td>${escapeHtml(pm[r.professional_id]||'—')}</td>
+<td><span style="color:var(--gold)">${'★'.repeat(r.rating)+'☆'.repeat(5-r.rating)}</span></td>
+<td class="msg-preview">${escapeHtml(r.comment||'(sem comentário)')}</td>
+<td>${new Date(r.created_at).toLocaleDateString('pt-PT')}</td>
+<td><button class="btn btn-delete" onclick="deleteReview('${r.id}')">🗑</button></td></tr>`).join('')
+}
+
+async function deleteReview(id){
+if(!confirm('Eliminar esta avaliação?'))return
+await db.from('reviews').delete().eq('id',id);loadReviews()
+}
+
+// SERVICES
+let allServices=[]
+async function loadServices(){
+const[{data:srvs},{data:pros}]=await Promise.all([
+db.from('services').select('*').order('created_at',{ascending:false}),
+db.from('profiles').select('id,name')
+])
+allServices=srvs||[]
+const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
+const tbody=document.getElementById('srvs-tbody')
+if(!srvs||!srvs.length){tbody.innerHTML='<tr class="empty-row"><td colspan="5">Sem serviços</td></tr>';return}
+tbody.innerHTML=srvs.map(s=>`
+<tr>
+<td><div class="td-name">${escapeHtml(s.title)}</div><div class="td-sub msg-preview">${escapeHtml(s.description||'')}</div></td>
+<td>${escapeHtml(pm[s.professional_id]||'—')}</td>
+<td>${s.price_from?`€${s.price_from}${s.price_to?'–€'+s.price_to:''} / ${s.price_unit||'hora'}`:'—'}</td>
+<td>${new Date(s.created_at).toLocaleDateString('pt-PT')}</td>
+<td><div style="display:flex;gap:6px">
+<button class="btn btn-edit" onclick="openEditServiceModal('${s.id}')">✏️</button>
+<button class="btn btn-delete" onclick="deleteService('${s.id}')">🗑</button>
+</div></td></tr>`).join('')
+}
+
+function openEditServiceModal(id){
+const s=allServices.find(x=>x.id===id)
+if(!s)return
+editingServiceId=id
+document.getElementById('es-title').value=s.title||''
+document.getElementById('es-desc').value=s.description||''
+document.getElementById('es-from').value=s.price_from||''
+document.getElementById('es-to').value=s.price_to||''
+document.getElementById('edit-service-modal').classList.add('active')
+}
+function closeEditServiceModal(){document.getElementById('edit-service-modal').classList.remove('active');editingServiceId=null}
+async function saveServiceEdit(){
+if(!editingServiceId)return
+const updates={
+title:document.getElementById('es-title').value.trim(),
+description:document.getElementById('es-desc').value.trim(),
+price_from:document.getElementById('es-from').value?Number(document.getElementById('es-from').value):null,
+price_to:document.getElementById('es-to').value?Number(document.getElementById('es-to').value):null
+}
+const{error}=await db.from('services').update(updates).eq('id',editingServiceId)
+if(error){alert('Erro ao guardar: '+error.message);return}
+closeEditServiceModal();loadServices()
+}
+
+async function deleteService(id){
+if(!confirm('Eliminar este serviço?'))return
+await db.from('services').delete().eq('id',id);loadServices()
+}
+
+// PORTFOLIO
+async function loadPortfolio(){
+const[{data:items},{data:pros}]=await Promise.all([
+db.from('portfolio_items').select('*').order('created_at',{ascending:false}),
+db.from('profiles').select('id,name')
+])
+const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
+const tbody=document.getElementById('port-tbody')
+if(!items||!items.length){tbody.innerHTML='<tr class="empty-row"><td colspan="5">Sem itens de portfólio</td></tr>';return}
+tbody.innerHTML=items.map(it=>`
+<tr>
+<td><img src="${escapeHtml(it.photo_url)}" alt="${escapeHtml(it.caption||('Foto de portfólio de '+(pm[it.professional_id]||'profissional')))}" style="width:52px;height:52px;object-fit:cover;border-radius:8px"/></td>
+<td class="msg-preview">${escapeHtml(it.caption||'—')}</td>
+<td>${escapeHtml(pm[it.professional_id]||'—')}</td>
+<td>${it.created_at?new Date(it.created_at).toLocaleDateString('pt-PT'):'—'}</td>
+<td><button class="btn btn-delete" onclick="deletePortfolioItem('${it.id}')">🗑</button></td></tr>`).join('')
+}
+
+async function deletePortfolioItem(id){
+if(!confirm('Eliminar este item do portfólio?'))return
+await db.from('portfolio_items').delete().eq('id',id);loadPortfolio()
+}
+
+// STATS
+async function loadSiteStats(){
+const[{data:signups,error:e1},{data:visits,error:e2}]=await Promise.all([
+db.rpc('admin_get_signups_daily'),
+db.rpc('admin_get_site_visits_daily')
+])
+if(e1)console.error('signups:',e1)
+if(e2)console.error('visits:',e2)
+const s=signups||[]
+const totalReg=s.reduce((a,d)=>a+Number(d.total_registos||0),0)
+const totalPros=s.reduce((a,d)=>a+Number(d.profissionais||0),0)
+const totalClients=s.reduce((a,d)=>a+Number(d.clientes||0),0)
+const totalNoProfile=s.reduce((a,d)=>a+Number(d.sem_perfil||0),0)
+document.getElementById('st-total').textContent=totalReg
+document.getElementById('st-pros').textContent=totalPros
+document.getElementById('st-clients').textContent=totalClients
+document.getElementById('st-noprofile').textContent=totalNoProfile
+const last30Signups=s.slice(-30).slice().reverse()
+document.getElementById('signups-tbody').innerHTML=last30Signups.map(d=>`
+<tr><td>${new Date(d.dia).toLocaleDateString('pt-PT')}</td><td>${d.total_registos}</td><td>${d.profissionais}</td><td>${d.clientes}</td></tr>`).join('')||'<tr class="empty-row"><td colspan="4">Sem dados</td></tr>'
+const v=visits||[]
+const last30Visits=v.slice(-30)
+const totalVisits=last30Visits.reduce((a,d)=>a+Number(d.visitas||0),0)
+const totalVisitors=last30Visits.reduce((a,d)=>a+Number(d.visitantes_unicos||0),0)
+document.getElementById('st-visits').textContent=totalVisits
+document.getElementById('st-visitors').textContent=totalVisitors
+document.getElementById('visits-tbody').innerHTML=last30Visits.slice().reverse().map(d=>`
+<tr><td>${new Date(d.dia).toLocaleDateString('pt-PT')}</td><td>${d.visitas}</td><td>${d.visitantes_unicos}</td></tr>`).join('')||'<tr class="empty-row"><td colspan="3">Sem visitas registadas ainda</td></tr>'
+}
+
+// GDPR
+// Pedidos de exportação/eliminação criados pelos utilizadores em
+// dashboard.html (tabela gdpr_requests). Prazo legal (RGPD Art. 12.º/3) é de
+// 30 dias — por isso mostramos os dias em aberto e um alerta a partir dos 25.
+const GDPR_STATUS_LABELS={pending:'Pendente',in_progress:'Em tratamento',completed:'Concluído',cancelled:'Cancelado'}
+const GDPR_TYPE_LABELS={export:'Exportação de dados',delete:'Eliminação da conta'}
+let allGdprRequests=[]
+
+function gdprDaysOpen(r){
+return Math.floor((Date.now()-new Date(r.created_at).getTime())/86400000)
+}
+
+async function loadGdprAdmin(){
+const[{data:reqs,error},{data:pros}]=await Promise.all([
+db.from('gdpr_requests').select('*').order('created_at',{ascending:false}),
+db.from('profiles').select('id,name')
+])
+if(error)console.error('gdpr_requests:',error)
+const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
+allGdprRequests=(reqs||[]).map(r=>({...r,accountName:pm[r.profile_id]||'—'}))
+const openOnes=allGdprRequests.filter(r=>r.status==='pending'||r.status==='in_progress')
+document.getElementById('gdpr-pending-count').textContent=allGdprRequests.filter(r=>r.status==='pending').length
+document.getElementById('gdpr-urgent-count').textContent=openOnes.filter(r=>gdprDaysOpen(r)>=25).length
+renderGdprTable()
+}
+
+function renderGdprTable(){
+const filter=document.getElementById('gdpr-filter').value
+let rows=allGdprRequests
+if(filter==='open')rows=rows.filter(r=>r.status==='pending'||r.status==='in_progress')
+else if(filter)rows=rows.filter(r=>r.status===filter)
+document.getElementById('gdpr-count').textContent=rows.length?`(${rows.length})`:''
+const tbody=document.getElementById('gdpr-tbody')
+if(!rows.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Sem pedidos</td></tr>';return}
+tbody.innerHTML=rows.map(r=>{
+const days=gdprDaysOpen(r)
+const isOpen=r.status==='pending'||r.status==='in_progress'
+const urgent=isOpen&&days>=25
+const daysLabel=`${days} ${days===1?'dia':'dias'}${urgent?' ⚠️':''}`
+const statusOpts=Object.keys(GDPR_STATUS_LABELS).map(k=>`<option value="${k}" ${k===r.status?'selected':''}>${GDPR_STATUS_LABELS[k]}</option>`).join('')
+return `<tr>
+<td><div class="td-name">${escapeHtml(r.accountName)}</div></td>
+<td>${escapeHtml(GDPR_TYPE_LABELS[r.request_type]||r.request_type)}</td>
+<td>${new Date(r.created_at).toLocaleDateString('pt-PT')}</td>
+<td style="${urgent?'color:var(--red);font-weight:700':''}">${daysLabel}</td>
+<td><span class="badge ${isOpen?'badge-pending':'badge-approved'}">${escapeHtml(GDPR_STATUS_LABELS[r.status]||r.status)}</span></td>
+<td><select class="search-box" style="width:150px;padding:5px 8px;font-size:12px" onchange="updateGdprStatus('${r.id}',this.value)">${statusOpts}</select></td>
+</tr>`
+}).join('')
+}
+
+async function updateGdprStatus(id,status){
+const patch={status}
+if(status==='completed'||status==='cancelled')patch.resolved_at=new Date().toISOString()
+else patch.resolved_at=null
+const{error}=await db.from('gdpr_requests').update(patch).eq('id',id)
+if(error){console.error('gdpr update error:',error);alert('Não foi possível atualizar o pedido: '+(error.message||'erro desconhecido'));return}
+loadGdprAdmin()
+}
+
+// VERIFICAÇÃO
+// Pedidos de verificação criados pelos profissionais em dashboard.html
+// (tabela verification_requests), com documentos num bucket privado
+// (verification-docs, path <profile_id>/<ficheiro>). Aprovar marca
+// profiles.verified = true, tal como o botão manual em toggleVerified.
+const VERIF_STATUS_LABELS={pending:'Pendente',approved:'Aprovado',rejected:'Rejeitado',cancelled:'Cancelado'}
+let allVerificationRequests=[]
+
+async function loadVerificationAdmin(){
+const[{data:reqs,error},{data:pros}]=await Promise.all([
+db.from('verification_requests').select('*').order('created_at',{ascending:false}),
+db.from('profiles').select('id,name')
+])
+if(error)console.error('verification_requests:',error)
+const pm={};(pros||[]).forEach(p=>pm[p.id]=p.name)
+allVerificationRequests=(reqs||[]).map(r=>({...r,accountName:pm[r.profile_id]||'—'}))
+document.getElementById('verif-pending-count').textContent=allVerificationRequests.filter(r=>r.status==='pending').length
+renderVerificationTable()
+}
+
+function renderVerificationTable(){
+const filter=document.getElementById('verif-filter').value
+let rows=allVerificationRequests
+if(filter)rows=rows.filter(r=>r.status===filter)
+document.getElementById('verif-count').textContent=rows.length?`(${rows.length})`:''
+const tbody=document.getElementById('verif-tbody')
+if(!rows.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">Sem pedidos</td></tr>';return}
+tbody.innerHTML=rows.map(r=>{
+const docs=Array.isArray(r.documents)?r.documents:[]
+const docsHtml=docs.length?docs.map((d,i)=>`<button class="btn btn-outline btn-sm" data-path="${escapeHtml(d.path)}" onclick="viewVerificationDoc(this.dataset.path)">📄 ${escapeHtml(d.name||('Doc '+(i+1)))}</button>`).join(' '):'—'
+const isPending=r.status==='pending'
+const actions=isPending?`<button class="btn btn-primary btn-sm" onclick="resolveVerification('${escapeHtml(r.id)}','${escapeHtml(r.profile_id)}',true)">Aprovar</button> <button class="btn btn-sm" style="background:#fef2f2;color:#b91c1c;border:1px solid #fecaca" onclick="resolveVerification('${escapeHtml(r.id)}','${escapeHtml(r.profile_id)}',false)">Rejeitar</button>`:'—'
+return `<tr>
+<td><div class="td-name">${escapeHtml(r.accountName)}</div></td>
+<td>${new Date(r.created_at).toLocaleDateString('pt-PT')}</td>
+<td>${docsHtml}</td>
+<td>${escapeHtml(r.notes||'—')}</td>
+<td><span class="badge ${isPending?'badge-pending':'badge-approved'}">${escapeHtml(VERIF_STATUS_LABELS[r.status]||r.status)}</span></td>
+<td>${actions}</td>
+</tr>`
+}).join('')
+}
+
+async function viewVerificationDoc(path){
+const{data,error}=await db.storage.from('verification-docs').createSignedUrl(path,300)
+if(error){alert('Não foi possível abrir o documento: '+(error.message||'erro desconhecido'));return}
+window.open(data.signedUrl,'_blank')
+}
+
+async function resolveVerification(id,profileId,approve){
+if(!confirm(approve?'Aprovar esta verificação? O perfil fica marcado como verificado.':'Rejeitar este pedido?'))return
+const{error}=await db.from('verification_requests').update({status:approve?'approved':'rejected',resolved_at:new Date().toISOString()}).eq('id',id)
+if(error){alert('Não foi possível atualizar o pedido: '+(error.message||'erro desconhecido'));return}
+if(approve)await db.from('profiles').update({verified:true}).eq('id',profileId)
+loadVerificationAdmin()
+if(typeof loadProfiles==='function')loadProfiles()
+}
+
+
+// NAVIGATION
+function showAdminPage(name){
+document.querySelectorAll('.page-section').forEach(p=>p.classList.remove('active'))
+document.getElementById(`page-${name}`).classList.add('active')
+const names=['overview','profiles','subscricoes','conversations','messages','reviews','services','portfolio','stats','gdpr','verificacao']
+document.querySelectorAll('.atab').forEach((t,i)=>t.classList.toggle('active',names[i]===name))
+if(name==='subscricoes')loadSubscriptions()
+if(name==='conversations')loadConversations()
+if(name==='messages')loadMessages()
+if(name==='reviews')loadReviews()
+if(name==='services')loadServices()
+if(name==='portfolio')loadPortfolio()
+if(name==='stats')loadSiteStats()
+if(name==='gdpr')loadGdprAdmin()
+if(name==='verificacao')loadVerificationAdmin()
+}
+
+init()
+</script>
+</body>
+</html>
