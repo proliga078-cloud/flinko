@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flinko · Gestão</title>
+<style>
+:root{
+  --bg:#f4f5f8;--card:#fff;--ink:#1c2033;--mut:#6b7186;--line:#e6e8ef;
+  --side:#161a2b;--side-ink:#aab0c6;--acc:#f26a1b;--acc2:#fff1e8;
+  --ok:#16a34a;--warn:#d97706;--bad:#dc2626;--blue:#2563eb;--pur:#7c3aed;--teal:#0d9488;
+  --r:14px;--sh:0 1px 2px rgba(20,24,40,.05),0 4px 14px rgba(20,24,40,.05);
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0f1220;--card:#181c30;--ink:#eceef7;--mut:#8e94ad;--line:#262b44;--side:#0a0d19;--acc2:#2b1d14;--sh:0 1px 2px rgba(0,0,0,.3)}
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{margin:0}
+a{color:var(--acc)}
+.hidden{display:none!important}
+/* login */
+#login{min-height:100vh;display:grid;place-items:center;padding:16px}
+.lbox{background:var(--card);border-radius:18px;box-shadow:var(--sh);padding:30px;width:100%;max-width:380px}
+.logo{font-weight:800;font-size:22px;letter-spacing:-.5px}
+.logo b{color:var(--acc)}
+.lbox p{color:var(--mut);margin:6px 0 18px}
+label.f{display:block;font-size:12px;color:var(--mut);margin:12px 0 4px;font-weight:600}
+input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:9px 15px;font-weight:600;cursor:pointer}
+.btn:hover{filter:brightness(1.07)}
+.btn.sec{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.sm{padding:5px 10px;font-size:12px;border-radius:8px}
+.btn.bad{background:var(--bad)}
+.err{color:var(--bad);font-size:13px;margin-top:10px;min-height:18px}
+/* layout */
+#app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+aside{background:var(--side);color:var(--side-ink);padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:2px}
+aside .logo{color:#fff;padding:4px 10px 16px}
+aside nav{display:flex;flex-direction:column;gap:2px;flex:1;overflow:auto}
+.nv{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:10px;cursor:pointer;border:0;background:none;color:inherit;text-align:left}
+.nv:hover{background:rgba(255,255,255,.06)}
+.nv.on{background:var(--acc);color:#fff}
+.nv .ic{width:20px;text-align:center}
+.nv .bd{margin-left:auto;background:var(--bad);color:#fff;border-radius:99px;font-size:11px;padding:0 7px;font-weight:700}
+aside .btn.sec{color:var(--side-ink);border-color:rgba(255,255,255,.2)}
+.ng{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#6b7391;padding:12px 11px 4px;font-weight:700}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal .cd{background:var(--card);border-radius:8px;min-height:88px;padding:4px 6px;font-size:11px;overflow:hidden;cursor:pointer}
+.cal .cd.o{opacity:.35;cursor:default}.cal .cd.t{outline:2px solid var(--acc)}
+.ev{display:block;border-radius:4px;padding:1px 4px;margin-top:2px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+details summary{list-style:revert}
+.who{font-size:12px;padding:10px;border-top:1px solid rgba(255,255,255,.08);word-break:break-all}
+main{padding:24px 28px 60px;min-width:0}
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.top h1{font-size:22px;letter-spacing:-.3px}
+.top .sub{color:var(--mut)}
+.top .sp{flex:1}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;background:var(--bg);color:var(--mut);border:1px solid var(--line)}
+.pill.ok{background:#dcfce7;color:#166534;border-color:#bbf7d0}
+.pill.warn{background:#fef3c7;color:#92400e;border-color:#fde68a}
+.pill.bad{background:#fee2e2;color:#991b1b;border-color:#fecaca}
+.pill.acc{background:var(--acc2);color:var(--acc);border-color:transparent}
+.grid{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:16px 18px;min-width:0}
+.card h3{font-size:14px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card h3 .sp{flex:1}
+.kpi .lb{color:var(--mut);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.kpi .v{font-size:28px;font-weight:800;letter-spacing:-.8px;margin:2px 0}
+.kpi .d{font-size:12px;color:var(--mut)}
+.up{color:var(--ok)}.dn{color:var(--bad)}
+.sec{margin:26px 0 12px;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--mut);font-weight:700}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--mut);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr.clk{cursor:pointer}
+tr.clk:hover td{background:var(--bg)}
+.tw{overflow:auto;max-width:100%}
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--acc);border-radius:99px}
+.bar.ok>i{background:var(--ok)}.bar.warn>i{background:var(--warn)}.bar.bad>i{background:var(--bad)}
+.fun{display:grid;grid-template-columns:150px 1fr 90px;gap:10px;align-items:center;padding:6px 0}
+.fun .fb{height:26px;background:var(--acc2);border-radius:8px;overflow:hidden}
+.fun .fb i{display:block;height:100%;background:var(--acc);border-radius:8px;min-width:2px}
+.fun .n{text-align:right;font-variant-numeric:tabular-nums}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tools input,.tools select{width:auto;min-width:150px}
+.sug{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.sug:last-child{border:0}
+.sug .t{flex:1}
+.kb{display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:12px}
+.kb .col{background:var(--bg);border-radius:12px;padding:10px;min-height:120px}
+.kb h4{margin:0 0 8px;font-size:12px;text-transform:uppercase;color:var(--mut);letter-spacing:.5px}
+.tk{background:var(--card);border-radius:10px;padding:10px;margin-bottom:8px;box-shadow:var(--sh)}
+.tk .tt{font-weight:600}
+.tk .mt{font-size:12px;color:var(--mut);margin:4px 0 8px}
+.tk .ac{display:flex;gap:6px;flex-wrap:wrap}
+svg text{fill:var(--mut);font-size:10px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-top:6px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
+/* drawer + modal */
+#ov{position:fixed;inset:0;background:rgba(10,12,25,.5);z-index:40}
+#drawer{position:fixed;top:0;right:0;bottom:0;width:min(460px,100%);background:var(--card);z-index:41;padding:22px;overflow:auto;box-shadow:-10px 0 40px rgba(0,0,0,.25)}
+#modal{position:fixed;inset:0;display:grid;place-items:center;z-index:60;background:rgba(10,12,25,.55);padding:16px}
+#modal .mb{background:var(--card);border-radius:16px;padding:22px;max-width:420px;width:100%}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:6px 10px;margin:12px 0}
+.kv span:nth-child(odd){color:var(--mut)}
+.note{background:var(--acc2);color:var(--ink);border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:14px}
+.mut{color:var(--mut)}
+.mob{display:none}
+@media print{aside,.tools,.btn,.mob,#ov,#drawer{display:none!important}#app{display:block}main{padding:0}body{background:#fff}.card{box-shadow:none;border:1px solid #ddd}}
+@media (max-width:860px){
+  .cal .cd{min-height:56px}.ev{font-size:0;height:6px;padding:0}
+  #app{grid-template-columns:1fr}
+  aside{position:fixed;left:0;top:0;bottom:0;width:230px;z-index:30;transform:translateX(-100%);transition:transform .2s}
+  aside.open{transform:none}
+  main{padding:16px 14px 60px}
+  .mob{display:inline-block}
+  .kb{grid-template-columns:1fr}
+  .fun{grid-template-columns:110px 1fr 70px}
+}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="lbox">
+    <div class="logo">Flin<b>ko</b> · Gestão</div>
+    <p>Entra com a conta de administrador do Flinko.</p>
+    <form id="lf">
+      <label class="f">Email</label><input id="em" type="email" autocomplete="username" required>
+      <label class="f">Palavra-passe</label><input id="pw" type="password" autocomplete="current-password" required>
+      <div class="err" id="lerr"></div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn" type="submit">Entrar</button>
+        <button class="btn sec" type="button" id="demoBtn">Ver demonstração</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <aside id="side">
+    <div class="logo">Flin<b>ko</b> · Gestão</div>
+    <button class="btn sec sm" onclick="openSearch()" style="margin:0 6px 8px">🔍 Pesquisar · Ctrl+K</button>
+    <nav id="nav"></nav>
+    <div class="who"><div id="whoami"></div><button class="btn sec sm" id="logout" style="margin-top:8px">Sair</button></div>
+  </aside>
+  <main id="main"></main>
+</div>
+
+<div id="ov" class="hidden"></div>
+<div id="drawer" class="hidden"></div>
+<div id="modal" class="hidden"></div>
+
+<script>
+"use strict";
+/* ============ CONFIG ============ */
+const SB_URL = "https://cdwinidhtfxfxowflize.supabase.co";
+const SB_KEY = "sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk"; // chave pública (anon)
+const DAY = 864e5;
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const eur = v => (v || 0).toLocaleString("pt-PT", { style: "currency", currency: "EUR", maximumFractionDigits: v % 1 ? 2 : 0 });
+const num = v => (v || 0).toLocaleString("pt-PT");
+const pct = (a, b) => b ? Math.round(a / b * 100) : 0;
+const now = () => Date.now();
+const dkey = d => { const x = new Date(d); return x.getFullYear() + "-" + String(x.getMonth() + 1).padStart(2, "0") + "-" + String(x.getDate()).padStart(2, "0"); };
+const fdate = d => d ? new Date(d).toLocaleDateString("pt-PT", { day: "2-digit", month: "2-digit", year: "numeric" }) : "—";
+const ago = d => { if (!d) return "—"; const n = Math.floor((now() - new Date(d)) / DAY); return n <= 0 ? "hoje" : n === 1 ? "ontem" : "há " + n + " dias"; };
+const ls = { get(k, f) { if (k !== "fk_session" && DEMO) return f; try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch (e) { return f; } }, set(k, v) { if (k !== "fk_session" && DEMO) return; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } } };
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now());
+
+/* ============ AUTH + API ============ */
+let session = ls.get("fk_session", null);
+let DEMO = false;
+
+async function authFetch(path, body) {
+  const r = await fetch(SB_URL + "/auth/v1/" + path, { method: "POST", headers: { apikey: SB_KEY, "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error_description || j.msg || j.message || "Falha no início de sessão");
+  return j;
+}
+async function refresh() {
+  if (!session?.refresh_token) throw new Error("Sessão expirada");
+  const j = await authFetch("token?grant_type=refresh_token", { refresh_token: session.refresh_token });
+  session = { access_token: j.access_token, refresh_token: j.refresh_token, user: j.user };
+  ls.set("fk_session", session);
+}
+async function api(path, opt = {}, retry = true) {
+  if (DEMO) return demoApi(path, opt);
+  const r = await fetch(SB_URL + "/rest/v1/" + path, {
+    method: opt.method || "GET",
+    headers: Object.assign({ apikey: SB_KEY, Authorization: "Bearer " + session.access_token, "Content-Type": "application/json", Prefer: "return=representation" }, opt.headers || {}),
+    body: opt.body ? JSON.stringify(opt.body) : undefined
+  });
+  if (r.status === 401 && retry) { await refresh(); return api(path, opt, false); }
+  const t = await r.text();
+  if (!r.ok) { let m = t; try { m = JSON.parse(t).message || t; } catch (e) { } const e = new Error(m); e.status = r.status; throw e; }
+  return t ? JSON.parse(t) : [];
+}
+
+/* ============ STORAGE (tarefas, CRM, definições) ============ */
+const store = { cloud: false, tasks: [], crm: {}, settings: {} };
+const DEFAULTS = {
+  prices: { starter: 9.99, pro: 19.99, premium: 29.99 },
+  aiFee: 2.99,
+  costs: [{ name: "Domínio flinko.pt", amount: 0 }, { name: "Supabase", amount: 0 }, { name: "Netlify", amount: 0 }, { name: "Email / outros", amount: 0 }],
+  goals: { pros: 100, clients: 50, reviews: 20, mrr: 100 },
+  proj: { newPros: 10, conv: 5, growth: 5, avgPrice: 19.99 }
+};
+async function loadStore() {
+  if (DEMO && store._init) return;
+  store._init = true;
+  try {
+    const [t, c, s] = await Promise.all([api("admin_tasks?select=*&order=created_at.desc"), api("admin_crm?select=*"), api("admin_settings?select=*")]);
+    store.tasks = t; store.crm = Object.fromEntries(c.map(x => [x.profile_id, x]));
+    store.settings = Object.fromEntries(s.map(x => [x.key, x.value]));
+    if (!(await loadItems())) throw new Error("admin_items em falta");
+    store.cloud = true;
+  } catch (e) {
+    store.cloud = false;
+    store.tasks = ls.get("fk_tasks", []); store.crm = ls.get("fk_crm", {}); store.settings = ls.get("fk_settings", {}); store.items = ls.get("fk_items", {});
+  }
+}
+const setting = k => store.settings[k] ?? DEFAULTS[k];
+async function saveSetting(k, v) {
+  store.settings[k] = v;
+  if (store.cloud) await api("admin_settings", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=minimal" }, body: { key: k, value: v } });
+  else ls.set("fk_settings", store.settings);
+}
+async function saveTask(t) {
+  const i = store.tasks.findIndex(x => x.id === t.id);
+  if (i >= 0) store.tasks[i] = t; else store.tasks.unshift(t);
+  if (store.cloud) await api("admin_tasks", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=minimal" }, body: t });
+  else ls.set("fk_tasks", store.tasks);
+}
+async function delTask(id) {
+  store.tasks = store.tasks.filter(x => x.id !== id);
+  if (store.cloud) await api("admin_tasks?id=eq." + id, { method: "DELETE", headers: { Prefer: "return=minimal" } });
+  else ls.set("fk_tasks", store.tasks);
+}
+async function saveCrm(pid, patch) {
+  const cur = store.crm[pid] || { profile_id: pid, stage: "novo", notes: "", next_contact: null };
+  const nv = Object.assign({}, cur, patch, { profile_id: pid, updated_at: new Date().toISOString() });
+  store.crm[pid] = nv;
+  if (store.cloud) await api("admin_crm", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=minimal" }, body: nv });
+  else ls.set("fk_crm", store.crm);
+}
+
+/* ============ CARREGAR DADOS ============ */
+let D = {}, M = {}, LOADERR = [];
+const TABLES = {
+  profiles: "profiles?select=id,name,category,location,plan,plan_expires_at,verified,approved,suspended,is_admin,is_demo,created_at,account_type,bio,photo_url,cover_url,slug,stripe_subscription_id,ai_profile_builder_unlocked,ai_profile_builder_paid_at,credits,avg_response_minutes&order=created_at.desc&limit=5000",
+  private: "profile_private?select=profile_id,phone&limit=5000",
+  services: "services?select=id,professional_id,price_from,price_to,created_at&limit=5000",
+  portfolio: "portfolio_items?select=id,professional_id,created_at&limit=5000",
+  reviews: "reviews?select=id,professional_id,rating,created_at&limit=5000",
+  conversations: "conversations?select=id,professional_id,client_id,last_message,last_message_at,created_at&order=last_message_at.desc&limit=5000",
+  messages: "messages?select=id,conversation_id,sender_id,read,created_at&limit=10000",
+  requests: "requests?select=id,client_id,title,category,location,status,is_urgent,budget_from,budget_to,created_at&order=created_at.desc&limit=5000",
+  offers: "request_offers?select=id,request_id,professional_id,created_at&limit=5000",
+  jobs: "jobs?select=id,professional_id,status,quote_amount,paid_amount,paid_at,created_at&limit=5000",
+  visits: "site_visits?select=visitor_id,user_id,path,referrer,created_at&order=created_at.desc&limit=20000",
+  pviews: "profile_views?select=profile_id,viewed_at&limit=20000",
+  gdpr: "gdpr_requests?select=id,profile_id,request_type,status,created_at,resolved_at&order=created_at.desc&limit=500",
+  verif: "verification_requests?select=id,profile_id,status,created_at,resolved_at&order=created_at.desc&limit=500",
+  ads: "ad_slots?select=id,professional_id,credits_spent,status,starts_at,ends_at&limit=1000",
+  notif: "notification_queue?select=id,status,kind,created_at&limit=5000",
+  push: "push_subscriptions?select=id,profile_id&limit=5000",
+  saved: "saved_professionals?select=id&limit=5000",
+  referrals: "signup_referrals?select=id&limit=5000"
+};
+async function loadAll() {
+  LOADERR = [];
+  const keys = Object.keys(TABLES);
+  const res = await Promise.all(keys.map(k => api(TABLES[k]).catch(e => { LOADERR.push(k + ": " + e.message); return []; })));
+  D = Object.fromEntries(keys.map((k, i) => [k, res[i]]));
+  await loadStore();
+  compute();
+  takeSnapshot().catch(() => { });
+}
+
+/* ============ CÁLCULOS ============ */
+function compute() {
+  const t = now(), d7 = t - 7 * DAY, d14 = t - 14 * DAY, d30 = t - 30 * DAY;
+  const P = D.profiles.filter(p => !p.is_demo && !p.is_admin);           // contas reais
+  const ignoreIds = new Set(D.profiles.filter(p => p.is_demo || p.is_admin).map(p => p.id));
+  const pros = P.filter(p => p.account_type !== "client");
+  const clients = P.filter(p => p.account_type === "client");
+  const phone = Object.fromEntries(D.private.map(x => [x.profile_id, x.phone]));
+  const cnt = (arr, key) => arr.reduce((m, x) => (m[x[key]] = (m[x[key]] || 0) + 1, m), {});
+  const svc = cnt(D.services, "professional_id"), port = cnt(D.portfolio, "professional_id"), rev = cnt(D.reviews, "professional_id");
+  const convByPro = cnt(D.conversations, "professional_id"), offByPro = cnt(D.offers, "professional_id");
+  const viewsByPro = cnt(D.pviews, "profile_id");
+
+  /* completude do perfil (0-100) */
+  const chk = p => [
+    ["Categoria", 15, !!p.category], ["Localização", 10, !!p.location], ["Bio", 15, !!(p.bio && p.bio.trim())],
+    ["Foto", 15, !!p.photo_url], ["Capa", 5, !!p.cover_url], ["Serviço", 15, !!svc[p.id]],
+    ["Portfólio", 10, !!port[p.id]], ["Verificado", 10, !!p.verified], ["Telemóvel", 5, !!phone[p.id]]
+  ];
+  pros.forEach(p => { p._chk = chk(p); p._score = p._chk.reduce((s, c) => s + (c[2] ? c[1] : 0), 0); p._missing = p._chk.filter(c => !c[2]).map(c => c[0]); p._phone = phone[p.id] || ""; p._views = viewsByPro[p.id] || 0; p._conv = convByPro[p.id] || 0; p._svc = svc[p.id] || 0; });
+
+  /* tráfego sem as visitas do admin/demo */
+  const V = D.visits.filter(v => !(v.user_id && ignoreIds.has(v.user_id)));
+  const inWin = (arr, f, a, b) => arr.filter(x => { const q = new Date(x[f]).getTime(); return q >= a && q < b; });
+  const uniq = arr => new Set(arr.map(v => v.visitor_id)).size;
+  const v7 = inWin(V, "created_at", d7, t + DAY), vp7 = inWin(V, "created_at", d14, d7), v30 = inWin(V, "created_at", d30, t + DAY);
+  const su7 = inWin(P, "created_at", d7, t + DAY).length, sup7 = inWin(P, "created_at", d14, d7).length;
+
+  /* pagamentos */
+  const prices = setting("prices");
+  const activePaid = P.filter(p => p.plan && p.plan !== "free" && (!p.plan_expires_at || new Date(p.plan_expires_at) > t));
+  const mrr = activePaid.reduce((s, p) => s + (prices[p.plan] || 0), 0);
+  const aiUnlocked = P.filter(p => p.ai_profile_builder_unlocked);
+  const aiRev = aiUnlocked.length * setting("aiFee");
+  const adCredits = D.ads.reduce((s, a) => s + (+a.credits_spent || 0), 0);
+  const gmv = D.jobs.reduce((s, j) => s + (+j.paid_amount || 0), 0);
+
+  /* funil */
+  const conProIds = new Set(D.conversations.map(c => c.professional_id));
+  const funnel = [
+    ["Registados (profissionais)", pros.length],
+    ["Com categoria e localização", pros.filter(p => p.category && p.location).length],
+    ["Com bio e foto", pros.filter(p => p.bio && p.bio.trim() && p.photo_url).length],
+    ["Com pelo menos 1 serviço", pros.filter(p => svc[p.id]).length],
+    ["Verificados", pros.filter(p => p.verified).length],
+    ["Receberam conversa", pros.filter(p => conProIds.has(p.id)).length],
+    ["Com trabalho registado", new Set(D.jobs.map(j => j.professional_id)).size],
+    ["Com avaliação", pros.filter(p => rev[p.id]).length]
+  ];
+
+  /* oferta vs procura por categoria */
+  const cat = {};
+  pros.forEach(p => { const c = p.category || "—"; (cat[c] = cat[c] || { c, pros: 0, ver: 0, req: 0, off: 0 }).pros++; if (p.verified) cat[c].ver++; });
+  D.requests.forEach(r => { const c = r.category || "—"; (cat[c] = cat[c] || { c, pros: 0, ver: 0, req: 0, off: 0 }).req++; });
+  const reqCat = Object.fromEntries(D.requests.map(r => [r.id, r.category || "—"]));
+  D.offers.forEach(o => { const c = reqCat[o.request_id]; if (c && cat[c]) cat[c].off++; });
+  const loc = {};
+  pros.forEach(p => { const l = (p.location || "—").split("–")[0].trim(); loc[l] = (loc[l] || 0) + 1; });
+
+  /* séries temporais */
+  const days = n => Array.from({ length: n }, (_, i) => dkey(t - (n - 1 - i) * DAY));
+  const bucket = (arr, f, keys, filt) => { const m = Object.fromEntries(keys.map(k => [k, 0])); arr.forEach(x => { if (filt && !filt(x)) return; const k = dkey(x[f]); if (k in m) m[k]++; }); return keys.map(k => ({ x: k, y: m[k] })); };
+  const d30k = days(30);
+  const uv = keys => { const m = Object.fromEntries(keys.map(k => [k, new Set()])); V.forEach(v => { const k = dkey(v.created_at); if (k in m) m[k].add(v.visitor_id); }); return keys.map(k => ({ x: k, y: m[k].size })); };
+  const weeks = 12, wk = Array.from({ length: weeks }, (_, i) => { const a = t - (weeks - i) * 7 * DAY, b = a + 7 * DAY; return { a, b, x: new Date(b - DAY).toLocaleDateString("pt-PT", { day: "2-digit", month: "2-digit" }) }; });
+  const wser = (arr, f, filt) => wk.map(w => ({ x: w.x, y: arr.filter(r => { const q = new Date(r[f]).getTime(); return q >= w.a && q < w.b && (!filt || filt(r)); }).length }));
+
+  /* alertas */
+  const alerts = [];
+  const gp = D.gdpr.filter(g => g.status === "pending" || g.status === "in_progress");
+  gp.forEach(g => { const dias = Math.floor((t - new Date(g.created_at)) / DAY); alerts.push({ lvl: dias > 20 ? "bad" : "warn", txt: `Pedido RGPD (${g.request_type === "delete" ? "eliminação" : "exportação"}) em aberto há ${dias} dias — prazo legal de 30 dias`, go: "ops" }); });
+  const vp = D.verif.filter(v => v.status === "pending"); if (vp.length) alerts.push({ lvl: "warn", txt: `${vp.length} pedido(s) de verificação por tratar`, go: "ops" });
+  const nv = pros.filter(p => !p.verified); if (nv.length) alerts.push({ lvl: "warn", txt: `${nv.length} profissional(is) por verificar`, go: "pros" });
+  const nc = pros.filter(p => !p.category); if (nc.length) alerts.push({ lvl: "warn", txt: `${nc.length} profissionais sem categoria (invisíveis nas pesquisas)`, go: "pros" });
+  const failedN = D.notif.filter(n => n.status === "failed").length; if (failedN) alerts.push({ lvl: "bad", txt: `${failedN} notificações falharam o envio`, go: "ops" });
+  const openReq = D.requests.filter(r => r.status === "open" && !D.offers.some(o => o.request_id === r.id)); if (openReq.length) alerts.push({ lvl: "bad", txt: `${openReq.length} pedido(s) de clientes abertos sem nenhuma proposta`, go: "demand" });
+  const expiring = activePaid.filter(p => p.plan_expires_at && new Date(p.plan_expires_at) < t + 7 * DAY); if (expiring.length) alerts.push({ lvl: "warn", txt: `${expiring.length} subscrição(ões) a expirar em 7 dias`, go: "fin" });
+
+  M = {
+    P, pros, clients, phone, mrr, activePaid, aiUnlocked, aiRev, adCredits, gmv, funnel, cat: Object.values(cat).sort((a, b) => (b.req + b.pros) - (a.req + a.pros)), loc: Object.entries(loc).sort((a, b) => b[1] - a[1]),
+    su7, sup7, v7: v7.length, vp7: vp7.length, u7: uniq(v7), up7: uniq(vp7), v30: v30.length, u30: uniq(v30),
+    avgScore: pros.length ? Math.round(pros.reduce((s, p) => s + p._score, 0) / pros.length) : 0,
+    complete: pros.filter(p => p._score >= 80).length,
+    visits30: bucket(V, "created_at", d30k), uvis30: uv(d30k),
+    signWeeks: wser(P, "created_at"), proWeeks: wser(P, "created_at", p => p.account_type !== "client"), cliWeeks: wser(P, "created_at", p => p.account_type === "client"),
+    reqWeeks: wser(D.requests, "created_at"), convWeeks: wser(D.conversations, "created_at"),
+    alerts, gp, vp, rev: D.reviews.length, avgRating: D.reviews.length ? D.reviews.reduce((s, r) => s + r.rating, 0) / D.reviews.length : 0,
+    openReq, msgs: D.messages.length, ignored: ignoreIds.size, weeks: wk
+  };
+  computeExtra();
+}
+
+/* ============ DADOS DE DEMONSTRAÇÃO (fictícios) ============ */
+let _demo = null;
+function demoApi(path, opt) {
+  const table = path.split("?")[0];
+  if (table.startsWith("admin_")) { const e = new Error("relation does not exist"); e.status = 404; throw e; }
+  if (opt.method && opt.method !== "GET") return [];
+  if (path.startsWith("profiles?select=is_admin")) return [{ is_admin: true }];
+  if (!_demo) _demo = genDemo();
+  const map = { profiles: "profiles", profile_private: "private", services: "services", portfolio_items: "portfolio", reviews: "reviews", conversations: "conversations", messages: "messages", requests: "requests", request_offers: "offers", jobs: "jobs", site_visits: "visits", profile_views: "pviews", gdpr_requests: "gdpr", verification_requests: "verif", ad_slots: "ads", notification_queue: "notif", push_subscriptions: "push", saved_professionals: "saved", signup_referrals: "referrals" };
+  return JSON.parse(JSON.stringify(_demo[map[table]] || []));
+}
+function genDemo() {
+  let s = 42; const r = () => (s = (s * 16807) % 2147483647) / 2147483647, pick = a => a[Math.floor(r() * a.length)];
+  const iso = d => new Date(d).toISOString(), t = Date.now(), id = () => uid();
+  const cats = ["Eletricistas", "Canalizadores", "Pintores", "Limpeza", "Designers", "Programadores", "Pedreiros"];
+  const locs = ["Porto – Porto", "Lisboa – Lisboa", "Braga – Guimarães", "Aveiro – Aveiro", "Faro – Faro", "Coimbra – Coimbra"];
+  const names = ["Rui Alves", "Marta Sousa", "Tiago Reis", "Inês Faria", "Paulo Neves", "Sara Lopes", "Hugo Melo", "Ana Pinto", "Bruno Costa", "Célia Matos", "Nuno Dias", "Rita Gomes", "Jorge Vaz", "Sofia Cruz", "Diogo Leite", "Vera Cunha", "Ivo Borges", "Luís Pires", "Marco Silva", "Elsa Brito", "Filipe Rocha", "Joana Teles", "Carlos Viana", "Patrícia Reis", "Rafael Moura", "Teresa Ramos"];
+  const P = [], priv = [], svc = [], port = [], rev = [];
+  const admin = { id: id(), name: "Admin", account_type: "professional", is_admin: true, plan: "free", verified: true, created_at: iso(t - 120 * DAY) }; P.push(admin);
+  names.forEach((n, i) => {
+    const full = r() > .3, created = t - Math.floor(r() * 110) * DAY, pid = id();
+    P.push({ id: pid, name: n, account_type: "professional", category: full || r() > .5 ? pick(cats) : null, location: full ? pick(locs) : null, bio: full ? "Profissional com experiência." : null, photo_url: full && r() > .3 ? "x" : null, cover_url: null, verified: r() > .12, plan: i === 3 ? "pro" : "free", plan_expires_at: i === 3 ? iso(t + 5 * DAY) : null, suspended: false, is_demo: false, is_admin: false, created_at: iso(created), slug: null, credits: 0, ai_profile_builder_unlocked: i % 9 === 0, avg_response_minutes: r() > .6 ? Math.round(10 + r() * 90) : null });
+    if (full) { priv.push({ profile_id: pid, phone: "9" + String(10000000 + Math.floor(r() * 8999999)) }); if (r() > .4) svc.push({ id: id(), professional_id: pid, price_from: 20, price_to: 60, created_at: iso(created) }); if (r() > .8) port.push({ id: id(), professional_id: pid, created_at: iso(created) }); }
+  });
+  const cl = []; for (let i = 0; i < 5; i++) { const c = { id: id(), name: "Cliente " + (i + 1), account_type: "client", plan: "free", verified: false, is_demo: false, is_admin: false, created_at: iso(t - Math.floor(r() * 60) * DAY) }; P.push(c); cl.push(c); }
+  const pros = P.filter(p => p.account_type === "professional" && !p.is_admin);
+  const conv = [], msgs = [];
+  for (let i = 0; i < 7; i++) { const pr = pick(pros), c = pick(cl), cid = id(), at = t - Math.floor(r() * 40) * DAY; conv.push({ id: cid, professional_id: pr.id, client_id: c.id, last_message: r() > .3 ? "Olá, preciso de um orçamento" : null, last_message_at: iso(at), created_at: iso(at) }); msgs.push({ id: id(), conversation_id: cid, sender_id: c.id, read: true, created_at: iso(at) }); if (r() > .5) msgs.push({ id: id(), conversation_id: cid, sender_id: pr.id, read: true, created_at: iso(at + 3600e3) }); }
+  const reqs = [], offs = []; for (let i = 0; i < 3; i++) { const q = { id: id(), client_id: pick(cl).id, title: pick(["Reparar canalização", "Pintar apartamento T2", "Instalação elétrica"]), category: pick(cats), location: pick(locs), status: "open", is_urgent: r() > .7, created_at: iso(t - Math.floor(r() * 20) * DAY) }; reqs.push(q); if (i === 0) offs.push({ id: id(), request_id: q.id, professional_id: pick(pros).id, created_at: iso(t) }); }
+  const vis = []; const vids = Array.from({ length: 40 }, () => id());
+  for (let i = 0; i < 700; i++) vis.push({ visitor_id: pick(vids), user_id: r() > .93 ? admin.id : (r() > .6 ? pick(pros).id : null), path: pick(["/", "/", "/profissionais", "/entrar", "/p/rui-alves", "/registar"]), referrer: pick([null, null, "https://www.google.com/", "https://l.instagram.com/", "https://facebook.com/"]), created_at: iso(t - Math.floor(r() * 30) * DAY - r() * DAY) });
+  const pv = []; for (let i = 0; i < 80; i++) pv.push({ profile_id: pick(pros).id, viewed_at: dkey(t - Math.floor(r() * 30) * DAY) });
+  return { profiles: P, private: priv, services: svc, portfolio: port, reviews: rev, conversations: conv, messages: msgs, requests: reqs, offers: offs, jobs: [], visits: vis, pviews: pv, gdpr: [{ id: id(), profile_id: pick(pros).id, request_type: "delete", status: "pending", created_at: iso(t - 22 * DAY) }], verif: [], ads: [], notif: [{ id: id(), status: "sent", kind: "new_message", created_at: iso(t) }], push: [{ id: id(), profile_id: pros[0].id }], saved: [], referrals: [] };
+}
+
+
+/* ============ ARMAZENAMENTO GENÉRICO (admin_items) ============ */
+store.items = {};
+const items = k => store.items[k] || [];
+async function loadItems() {
+  try {
+    const rows = await api("admin_items?select=*&limit=5000");
+    store.items = {}; rows.forEach(r => { (store.items[r.kind] = store.items[r.kind] || []).push(Object.assign({}, r.data, { id: r.id })); });
+    return true;
+  } catch (e) { store.items = ls.get("fk_items", {}); return false; }
+}
+async function saveItem(kind, it) {
+  if (!it.id) it.id = uid();
+  const arr = items(kind).slice(), i = arr.findIndex(x => x.id === it.id);
+  if (i >= 0) arr[i] = it; else arr.unshift(it);
+  store.items[kind] = arr;
+  if (store.cloud) await api("admin_items", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=minimal" }, body: { id: it.id, kind, data: it } });
+  else ls.set("fk_items", store.items);
+  return it;
+}
+async function delItem(kind, id) {
+  store.items[kind] = items(kind).filter(x => x.id !== id);
+  if (store.cloud) await api("admin_items?id=eq." + id, { method: "DELETE", headers: { Prefer: "return=minimal" } });
+  else ls.set("fk_items", store.items);
+}
+
+/* ============ FORMULÁRIO GENÉRICO ============ */
+function form(title, fields, vals = {}, ok = "Guardar") {
+  return new Promise(res => {
+    const m = $("#modal"); m.classList.remove("hidden");
+    m.innerHTML = `<div class="mb" style="max-height:92vh;overflow:auto"><h3 style="font-size:17px;margin-bottom:6px">${esc(title)}</h3>${fields.map(f => {
+      const v = vals[f.k] ?? f.def ?? "", id = "ff_" + f.k;
+      const inp = f.type === "select" ? `<select id="${id}">${f.opts.map(o => { const [ov, ol] = Array.isArray(o) ? o : [o, o]; return `<option value="${esc(ov)}" ${String(v) === String(ov) ? "selected" : ""}>${esc(ol)}</option>`; }).join("")}</select>`
+        : f.type === "textarea" ? `<textarea id="${id}" rows="${f.rows || 3}" placeholder="${esc(f.ph || "")}">${esc(v)}</textarea>`
+          : `<input id="${id}" type="${f.type || "text"}" value="${esc(v)}" placeholder="${esc(f.ph || "")}" ${f.type === "number" ? 'step="any"' : ""}>`;
+      return `<label class="f">${esc(f.label)}${f.req ? " *" : ""}</label>${inp}`;
+    }).join("")}<div class="row" style="justify-content:flex-end;margin-top:16px"><button class="btn sec" id="mno">Cancelar</button><button class="btn" id="myes">${esc(ok)}</button></div></div>`;
+    const done = v => { m.classList.add("hidden"); m.innerHTML = ""; res(v); };
+    $("#mno").onclick = () => done(null);
+    $("#myes").onclick = () => {
+      const out = {};
+      for (const f of fields) { let v = $("#ff_" + f.k).value.trim(); if (f.req && !v) { $("#ff_" + f.k).focus(); return; } out[f.k] = f.type === "number" ? (v === "" ? 0 : +v) : v; }
+      done(out);
+    };
+    const first = $("#ff_" + fields[0].k); if (first) first.focus();
+  });
+}
+const today = () => dkey(now());
+const d9 = s => String(s || "").replace(/\D/g, "").slice(-9);
+const confirmDel = async (kind, id, what = "este registo") => { if (await ask("Apagar", `Vais apagar ${what}. Não pode ser desfeito.`, "Apagar", true)) { await delItem(kind, id); render(); } };
+
+/* ============ CÁLCULOS EXTRA (atividade, coortes, qualidade) ============ */
+function computeExtra() {
+  const t = now(), users = M.P;
+  const act = {}; D.visits.forEach(v => { if (v.user_id) (act[v.user_id] = act[v.user_id] || []).push(new Date(v.created_at).getTime()); });
+  users.forEach(p => { const a = act[p.id] || []; p._last = a.length ? Math.max(...a) : null; p._nv = a.length; p._act = a; });
+  const active = d => users.filter(p => p._last && p._last > t - d * DAY).length;
+  M.dau = active(1); M.wau = active(7); M.mau = active(30);
+  M.stick = M.mau ? Math.round(M.wau / M.mau * 100) : 0;
+  const created = p => new Date(p.created_at).getTime();
+  M.neverBack = M.pros.filter(p => t - created(p) > 3 * DAY && !p._act.some(x => x - created(p) > DAY));
+  M.dormant = M.pros.filter(p => p._last && t - p._last > 30 * DAY);
+  M.atRisk = M.pros.filter(p => p._last && t - p._last > 14 * DAY && t - p._last <= 30 * DAY);
+  /* coortes semanais (últimas 8 semanas) */
+  M.cohorts = [];
+  const convPros = new Set(D.conversations.map(c => c.professional_id));
+  for (let w = 7; w >= 0; w--) {
+    const a = t - (w + 1) * 7 * DAY, b = a + 7 * DAY, us = M.pros.filter(p => created(p) >= a && created(p) < b);
+    const ret = k => { const el = us.filter(p => created(p) + (k + 1) * 7 * DAY <= t); return { n: el.length, k: el.filter(p => p._act.some(x => x >= created(p) + k * 7 * DAY && x < created(p) + (k + 1) * 7 * DAY)).length }; };
+    M.cohorts.push({ label: new Date(a).toLocaleDateString("pt-PT", { day: "2-digit", month: "2-digit" }), n: us.length, act: us.filter(p => p._score >= 60).length, conv: us.filter(p => convPros.has(p.id)).length, r1: ret(1), r2: ret(2), r4: ret(4) });
+  }
+  /* qualidade / suspeitos */
+  const dup = {}; M.pros.forEach(p => { const k = d9(p._phone); if (k.length === 9) dup[k] = (dup[k] || 0) + 1; });
+  M.susp = [];
+  M.pros.forEach(p => {
+    const why = [], days = Math.floor((t - created(p)) / DAY);
+    if (/^(test|teste|asd|xxx|demo|aaa)/i.test(p.name.trim()) || p.name.trim().length < 3) why.push("nome suspeito");
+    if (dup[d9(p._phone)] > 1) why.push("telemóvel repetido");
+    if (!p.category && !p.bio && !p.photo_url && days > 14) why.push(`conta vazia há ${days} dias`);
+    if (p.verified && p._score < 40) why.push("verificado com perfil muito incompleto");
+    if (why.length) M.susp.push({ p, why });
+  });
+  const BAD = /(fuder|foder|merda|puta|caralho|porra|cabr[aã]o|idiota|burro|estúpido|estupido|filho da)/i, LINK = /(https?:\/\/|www\.)/i, PH = /(\+?351)?\s?9\d[\s.-]?\d{3}[\s.-]?\d{3}/;
+  M.flags = [];
+  D.conversations.forEach(c => { const m = c.last_message || ""; if (!m) return; const why = BAD.test(m) ? "linguagem ofensiva" : LINK.test(m) ? "contém ligação externa" : PH.test(m) ? "partilha de contacto fora da plataforma" : ""; if (why) M.flags.push({ c, why }); });
+  const topOf = arr => { const o = {}; arr.forEach(x => o[x] = (o[x] || 0) + 1); const e = Object.entries(o).sort((a, b) => b[1] - a[1])[0]; return e ? { k: e[0], n: e[1], p: pct(e[1], arr.length) } : { k: "—", n: 0, p: 0 }; };
+  M.topCat = topOf(M.pros.filter(p => p.category).map(p => p.category));
+  M.topLoc = topOf(M.pros.filter(p => p.location).map(p => p.location.split("–")[0].trim()));
+  M.regPhones = new Set(M.pros.map(p => d9(p._phone)).filter(x => x.length === 9));
+}
+/* ledger */
+function ledgerStats() {
+  const L = items("ledger"), t = new Date(), month = (d, off = 0) => { const x = new Date(d); return new Date(x.getFullYear(), x.getMonth() + off, 1); };
+  const key = d => dkey(d).slice(0, 7);
+  const by = {}; L.forEach(e => { const k = String(e.date).slice(0, 7); by[k] = by[k] || { r: 0, d: 0 }; if (e.type === "receita") by[k].r += +e.amount || 0; else by[k].d += +e.amount || 0; });
+  const months = Array.from({ length: 6 }, (_, i) => key(month(t, i - 5)));
+  const cash0 = +setting("cash0") || 0, all = L.reduce((s, e) => s + (e.type === "receita" ? 1 : -1) * (+e.amount || 0), 0), cash = cash0 + all;
+  const last3 = Array.from({ length: 3 }, (_, i) => key(month(t, -i - 1))), burn = last3.reduce((s, k) => s + ((by[k]?.d || 0) - (by[k]?.r || 0)), 0) / 3;
+  const d90 = L.filter(e => e.type === "despesa" && /marketing|anúnc|anunc/i.test(e.category) && now() - new Date(e.date) < 90 * DAY).reduce((s, e) => s + (+e.amount || 0), 0);
+  const new90 = M.pros.filter(p => now() - new Date(p.created_at) < 90 * DAY).length;
+  return { by, months, cash, cash0, burn, runway: burn > 0 ? cash / burn : null, cac: new90 ? d90 / new90 : 0, mkt90: d90, new90, n: L.length };
+}
+
+/* ============ AQUISIÇÃO (LEADS) ============ */
+const LST = { novo: "Por contactar", contactado: "Contactado", interessado: "Interessado", registado: "Registado", perdido: "Perdido" };
+const LSRC = ["Telefone", "WhatsApp", "Instagram", "Facebook", "Indicação", "Presencial", "Google", "Outro"];
+const lstage = l => (M.regPhones && l.phone && M.regPhones.has(d9(l.phone))) ? "registado" : l.stage;
+const DEFAULT_TPL = [
+  { id: "d1", name: "Primeiro contacto", text: "Olá {nome}, sou o David do Flinko (flinko.pt), uma plataforma gratuita para profissionais em Portugal, sem comissões. Posso explicar-lhe em 2 minutos como criar o seu perfil de {categoria}?", std: 1 },
+  { id: "d2", name: "Completar perfil", text: "Olá {nome}, já tem conta no Flinko. Para aparecer nas pesquisas falta completar: {falta}. Precisa de ajuda com isso?", std: 1 },
+  { id: "d3", name: "Reativação", text: "Olá {nome}, já há algum tempo que não o vemos no Flinko. Quer que o ajude a atualizar o perfil e a ver se há pedidos na sua zona?", std: 1 }
+];
+const tpls = () => items("template").concat(DEFAULT_TPL);
+const fillTpl = (txt, o) => txt.replace(/\{nome\}/g, (o.name || "").split(" ")[0] || "").replace(/\{categoria\}/g, (o.category || "a sua área").toLowerCase()).replace(/\{falta\}/g, (o.missing || []).slice(0, 3).join(", ") || "alguns detalhes");
+const waOpen = (phone, text) => { const d = String(phone || "").replace(/\D/g, ""); if (!d) { toast("Sem telemóvel"); return; } window.open("https://wa.me/" + (d.length === 9 ? "351" + d : d) + "?text=" + encodeURIComponent(text), "_blank", "noopener"); };
+async function waChoose(o, phone) {
+  const r = await form("Mensagem de WhatsApp", [{ k: "t", label: "Modelo", type: "select", opts: tpls().map(t => [t.id, t.name]) }], {}, "Abrir WhatsApp");
+  if (!r) return; const t = tpls().find(x => x.id === r.t); waOpen(phone, fillTpl(t.text, o));
+}
+const waPro = id => { const p = D.profiles.find(x => x.id === id); waChoose({ name: p.name, category: p.category, missing: p._missing }, M.phone[id]); };
+const waLead = id => { const l = items("lead").find(x => x.id === id); waChoose({ name: l.name, category: l.category }, l.phone); };
+const LFIELDS = [
+  { k: "name", label: "Nome", req: 1 }, { k: "phone", label: "Telemóvel" }, { k: "category", label: "Categoria", ph: "Eletricistas, Pintores…" }, { k: "zone", label: "Zona" },
+  { k: "source", label: "Origem", type: "select", opts: LSRC }, { k: "stage", label: "Fase", type: "select", opts: Object.entries(LST) }, { k: "next", label: "Próximo contacto", type: "date" }, { k: "notes", label: "Notas", type: "textarea" }
+];
+async function addLead() { const r = await form("Novo lead", LFIELDS, { stage: "novo", source: "Telefone" }); if (r) { r.created = new Date().toISOString(); r.log = []; await saveItem("lead", r); render(); } }
+async function editLead(id) { const l = items("lead").find(x => x.id === id), r = await form("Editar lead", LFIELDS, l); if (r) { await saveItem("lead", Object.assign({}, l, r)); render(); } }
+async function importLeads() {
+  const r = await form("Importar lista de leads", [{ k: "txt", label: "Uma pessoa por linha: nome;telemóvel;categoria;zona", type: "textarea", rows: 8, ph: "Rui Alves;912345678;Eletricistas;Braga", req: 1 }, { k: "source", label: "Origem", type: "select", opts: LSRC }], {}, "Importar");
+  if (!r) return; let n = 0;
+  for (const line of r.txt.split(/\n+/)) { const [name, phone, category, zone] = line.split(/[;\t]/).map(x => (x || "").trim()); if (!name) continue; await saveItem("lead", { name, phone, category, zone, source: r.source, stage: "novo", next: "", notes: "", log: [], created: new Date().toISOString() }); n++; }
+  toast(n + " leads importados"); render();
+}
+async function logLead(id) {
+  const l = items("lead").find(x => x.id === id), r = await form("Registar contacto", [{ k: "txt", label: "O que ficou combinado?", type: "textarea" }, { k: "stage", label: "Nova fase", type: "select", opts: Object.entries(LST) }, { k: "next", label: "Próximo contacto", type: "date", def: dkey(now() + 3 * DAY) }], { stage: l.stage === "novo" ? "contactado" : l.stage }, "Registar");
+  if (!r) return; await saveItem("lead", Object.assign({}, l, { stage: r.stage, next: r.next, log: [{ at: new Date().toISOString(), txt: r.txt || "Contacto" }].concat(l.log || []) })); render();
+}
+const setLeadStage = async (id, st) => { const l = items("lead").find(x => x.id === id); await saveItem("lead", Object.assign({}, l, { stage: st })); render(); };
+async function editTpl(id) { const cur = items("template").find(x => x.id === id), r = await form(cur ? "Editar modelo" : "Novo modelo", [{ k: "name", label: "Nome", req: 1 }, { k: "text", label: "Texto (usa {nome}, {categoria}, {falta})", type: "textarea", rows: 5, req: 1 }], cur || {}); if (r) { await saveItem("template", Object.assign({}, cur || {}, r)); render(); } }
+const vLeads = () => {
+  const L = items("lead"), td = today(), eff = L.map(l => Object.assign({}, l, { _s: lstage(l) }));
+  const open = eff.filter(l => !["registado", "perdido"].includes(l._s));
+  const due = open.filter(l => (l._s === "novo" && !l.next) || (l.next && l.next <= td));
+  const wk = L.reduce((n, l) => n + (l.log || []).filter(g => now() - new Date(g.at) < 7 * DAY).length, 0);
+  const reg = eff.filter(l => l._s === "registado").length, src = {};
+  eff.forEach(l => { const s = l.source || "Outro"; src[s] = src[s] || { n: 0, r: 0 }; src[s].n++; if (l._s === "registado") src[s].r++; });
+  return head("Aquisição (leads)", "O teu canal principal: contactos diretos com profissionais que ainda não estão no Flinko", `<button class="btn sec sm" onclick="importLeads()">⬆ Importar lista</button><button class="btn sm" onclick="addLead()">+ Novo lead</button>`) +
+    `<div class="grid g4">${kpi("Leads no total", L.length, `${open.length} em aberto`)}${kpi("Para contactar hoje", due.length, "sem contacto ou com data vencida")}${kpi("Contactos esta semana", wk, "registados no histórico")}${kpi("Conversão lead → registo", pct(reg, L.length) + "%", `${reg} de ${L.length} (o telemóvel do lead é comparado com os registos)`)}</div>
+    <div class="grid g2" style="margin-top:14px"><div class="card"><h3>📞 Contactar hoje (${due.length})</h3>${due.slice(0, 8).map(l => `<div class="sug"><span class="t"><b>${esc(l.name)}</b> <span class="mut">${esc(l.category || "")} ${esc(l.zone || "")}</span><br><span class="mut">${l.next ? "data: " + fdate(l.next) : "ainda sem contacto"}</span></span><button class="btn sm" onclick="logLead('${l.id}')">Registar</button><button class="btn sec sm" onclick="waLead('${l.id}')">WhatsApp</button></div>`).join("") || `<span class="mut">Ninguém para contactar hoje.</span>`}</div>
+    <div class="card"><h3>Conversão por origem</h3><div class="tw"><table><tr><th>Origem</th><th>Leads</th><th>Registados</th><th>Conversão</th></tr>${Object.entries(src).sort((a, b) => b[1].n - a[1].n).map(([k, v]) => `<tr><td>${esc(k)}</td><td>${v.n}</td><td>${v.r}</td><td>${pct(v.r, v.n)}%</td></tr>`).join("") || `<tr><td colspan="4" class="mut">Sem leads ainda.</td></tr>`}</table></div></div></div>
+    <div class="card" style="margin-top:14px"><h3>Todos os leads</h3><div class="tw"><table><tr><th>Nome</th><th>Categoria / zona</th><th>Origem</th><th>Fase</th><th>Próximo</th><th>Último contacto</th><th></th></tr>${eff.map(l => `<tr><td><b>${esc(l.name)}</b><br><span class="mut">${esc(l.phone || "")}</span></td><td>${esc(l.category || "—")}<br><span class="mut">${esc(l.zone || "")}</span></td><td>${esc(l.source || "")}</td><td>${l._s === "registado" && l.stage !== "registado" ? `<span class="pill ok">Registado (automático)</span>` : `<select onchange="setLeadStage('${l.id}',this.value)" style="min-width:130px">${Object.entries(LST).map(([k, v]) => `<option value="${k}" ${l.stage === k ? "selected" : ""}>${v}</option>`).join("")}</select>`}</td><td>${l.next ? fdate(l.next) : "—"}</td><td class="mut">${(l.log || [])[0] ? ago(l.log[0].at) : "—"}</td><td style="white-space:nowrap"><button class="btn sec sm" onclick="logLead('${l.id}')">Registar</button> <button class="btn sec sm" onclick="waLead('${l.id}')">WA</button> <button class="btn sec sm" onclick="editLead('${l.id}')">✎</button> <button class="btn sec sm" onclick="confirmDel('lead','${l.id}','este lead')">✕</button></td></tr>`).join("") || `<tr><td colspan="7" class="mut">Ainda não tens leads. Usa “Importar lista” para colar os contactos que já tens.</td></tr>`}</table></div></div>
+    <div class="card" style="margin-top:14px"><h3>Modelos de mensagem <button class="btn sec sm" onclick="editTpl()">+ Novo modelo</button></h3>${tpls().map(t => `<div class="sug"><span class="t"><b>${esc(t.name)}</b>${t.std ? ` <span class="pill">padrão</span>` : ""}<br><span class="mut">${esc(t.text)}</span></span>${t.std ? "" : `<button class="btn sec sm" onclick="editTpl('${t.id}')">✎</button><button class="btn sec sm" onclick="confirmDel('template','${t.id}','este modelo')">✕</button>`}</div>`).join("")}</div>`;
+};
+
+/* ============ RETENÇÃO ============ */
+const rcell = r => r.n ? `<td style="background:rgba(242,106,27,${(0.08 + 0.6 * r.k / r.n).toFixed(2)})">${pct(r.k, r.n)}% <span class="mut">(${r.k}/${r.n})</span></td>` : `<td class="mut">—</td>`;
+const vRetention = () => {
+  const list = (arr, why) => arr.slice(0, 10).map(p => `<div class="sug"><span class="t"><b>${esc(p.name)}</b> <span class="mut">${esc(p.category || "sem categoria")}</span><br><span class="mut">${why(p)}</span></span><button class="btn sec sm" onclick="waPro('${p.id}')">WhatsApp</button><button class="btn sec sm" onclick="openPro('${p.id}')">Ficha</button></div>`).join("") || `<span class="mut">Ninguém.</span>`;
+  return head("Retenção e atividade", "Quem volta ao Flinko depois de se registar (contas com sessão iniciada)") +
+    `<div class="grid g4">${kpi("Ativos hoje", M.dau, "utilizadores com sessão")}${kpi("Ativos (7 dias)", M.wau, `${pct(M.wau, M.P.length)}% das contas`)}${kpi("Ativos (30 dias)", M.mau, `${pct(M.mau, M.P.length)}% das contas`)}${kpi("Stickiness (semanal/mensal)", M.stick + "%", "acima de 20% é bom sinal")}
+    ${kpi("Nunca voltaram", M.neverBack.length, `${pct(M.neverBack.length, M.pros.length)}% dos profissionais`)}${kpi("Em risco (14–30 dias)", M.atRisk.length, "estiveram ativos e sumiram")}${kpi("Dormentes (+30 dias)", M.dormant.length, "provável abandono")}</div>
+    <div class="card" style="margin-top:14px"><h3>Coortes semanais de profissionais</h3><p class="mut" style="margin:0 0 10px">Cada linha é o grupo que se registou nessa semana. As colunas de retenção mostram quantos voltaram ao site na semana 1, 2 e 4 depois do registo.</p><div class="tw"><table><tr><th>Semana de</th><th>Registos</th><th>Perfil ≥60</th><th>Com conversa</th><th>Voltou sem. 1</th><th>Voltou sem. 2</th><th>Voltou sem. 4</th></tr>${M.cohorts.map(c => `<tr><td>${c.label}</td><td>${c.n}</td><td>${c.n ? pct(c.act, c.n) + "%" : "—"}</td><td>${c.n ? pct(c.conv, c.n) + "%" : "—"}</td>${rcell(c.r1)}${rcell(c.r2)}${rcell(c.r4)}</tr>`).join("")}</table></div></div>
+    <div class="grid g2" style="margin-top:14px"><div class="card"><h3>Nunca voltaram (${M.neverBack.length})</h3>${list(M.neverBack, p => "registado " + ago(p.created_at))}</div>
+    <div class="card"><h3>Em risco e dormentes (${M.atRisk.length + M.dormant.length})</h3>${list(M.atRisk.concat(M.dormant), p => "visto pela última vez " + ago(new Date(p._last)))}</div></div>`;
+};
+
+/* ============ QUALIDADE E RISCO ============ */
+const vQuality = () => {
+  const cSusp = M.susp.length, cFlag = M.flags.length;
+  return head("Qualidade e risco", "Contas suspeitas, conteúdo a moderar e concentração de risco") +
+    `<div class="grid g4">${kpi("Contas suspeitas", cSusp, "para rever manualmente")}${kpi("Mensagens a moderar", cFlag, "linguagem, links ou contactos")}${kpi("Categoria dominante", M.topCat.p + "%", esc(M.topCat.k))}${kpi("Zona dominante", M.topLoc.p + "%", esc(M.topLoc.k))}</div>
+    ${M.topCat.p > 40 || M.topLoc.p > 40 ? `<div class="note" style="margin-top:14px">Concentração alta: uma categoria ou zona representa mais de 40% dos profissionais. Isso limita a utilidade para clientes fora dela.</div>` : ""}
+    <div class="grid g2" style="margin-top:14px"><div class="card"><h3>Contas suspeitas</h3>${M.susp.map(s => `<div class="sug"><span class="t"><b>${esc(s.p.name)}</b><br><span class="mut">${esc(s.why.join(" · "))}</span></span><button class="btn sec sm" onclick="openPro('${s.p.id}')">Ficha</button></div>`).join("") || `<span class="pill ok">Nenhuma detetada</span>`}</div>
+    <div class="card"><h3>Mensagens a moderar</h3>${M.flags.map(f => `<div class="sug"><span class="t"><b>${esc(nameOf(f.c.professional_id))}</b> ↔ ${esc(nameOf(f.c.client_id))}<br><span class="mut">“${esc((f.c.last_message || "").slice(0, 80))}” · ${esc(f.why)} · ${ago(f.c.last_message_at)}</span></span><button class="btn sec sm" onclick="openPro('${f.c.professional_id}')">Ficha</button></div>`).join("") || `<span class="pill ok">Nada a assinalar</span>`}<p class="mut" style="margin:10px 0 0">A deteção é automática e simples (palavras ofensivas, ligações e números de telemóvel). Só analisa a última mensagem de cada conversa.</p></div></div>
+    <div class="card" style="margin-top:14px"><h3>Verificação: cobertura</h3><div class="row"><span>Verificados: <b>${M.pros.filter(p => p.verified).length}</b> de ${M.pros.length}</span><span>Verificados com perfil incompleto (&lt;60): <b>${M.pros.filter(p => p.verified && p._score < 60).length}</b></span></div><p class="mut" style="margin:8px 0 0">A promessa do Flinko é “profissionais verificados manualmente”. Perfis verificados mas vazios enfraquecem essa promessa.</p></div>`;
+};
+
+/* ============ FINANÇAS: extra (movimentos, caixa, CAC/LTV) ============ */
+const LCAT = ["Subscrições", "Construtor IA", "Anúncios (receita)", "Marketing", "Software / infraestrutura", "Legal e contabilidade", "Deslocações", "Impostos", "Outros"];
+const LEDF = [{ k: "date", label: "Data", type: "date", req: 1, def: dkey(now()) }, { k: "type", label: "Tipo", type: "select", opts: [["despesa", "Despesa"], ["receita", "Receita"]] }, { k: "category", label: "Categoria", type: "select", opts: LCAT }, { k: "desc", label: "Descrição", req: 1 }, { k: "amount", label: "Valor (€)", type: "number", req: 1 }, { k: "ref", label: "Nº fatura / referência" }];
+const addLedger = async () => { const r = await form("Novo movimento", LEDF); if (r) { await saveItem("ledger", r); render(); } };
+const editLedger = async id => { const e = items("ledger").find(x => x.id === id), r = await form("Editar movimento", LEDF, e); if (r) { await saveItem("ledger", Object.assign({}, e, r)); render(); } };
+function finExtra() {
+  const S = ledgerStats(), paying = M.activePaid.length, arpu = paying ? M.mrr / paying : (Object.assign({}, DEFAULTS.proj, setting("proj")).avgPrice), churn = (+setting("churn") || 5) / 100, ltv = churn ? arpu / churn : 0;
+  const mrows = S.months.map(k => ({ x: k.slice(5) + "/" + k.slice(2, 4), r: S.by[k]?.r || 0, d: S.by[k]?.d || 0 }));
+  return `<div class="sec">Caixa, movimentos reais e unidade económica</div>
+    <div class="grid g4">${kpi("Caixa atual", eur(S.cash), `saldo inicial ${eur(S.cash0)} + movimentos`)}${kpi("Consumo mensal (3 meses)", S.burn > 0 ? eur(S.burn) : "—", S.burn > 0 ? "despesas − receitas" : "sem consumo de caixa")}${kpi("Runway", S.runway ? S.runway.toFixed(1) + " meses" : S.n ? "sem risco" : "—", S.runway ? "com o consumo atual" : "cash-flow positivo ou sem dados")}${kpi("CAC (custo por profissional)", S.new90 ? eur(S.cac) : "—", `${eur(S.mkt90)} de marketing / ${S.new90} novos (90 dias)`)}
+    ${kpi("Valor por cliente (LTV)", eur(ltv), `${eur(arpu)}/mês ÷ churn ${(churn * 100).toFixed(0)}%/mês`)}${kpi("LTV / CAC", S.cac ? (ltv / S.cac).toFixed(1) + "×" : "—", "acima de 3× é saudável")}</div>
+    <div class="grid g2" style="margin-top:14px"><div class="card"><h3>Receitas vs despesas (6 meses)</h3>${lineChart([{ name: "Receitas", data: mrows.map(m => ({ x: m.x, y: Math.round(m.r) })), color: COL[2] }, { name: "Despesas", data: mrows.map(m => ({ x: m.x, y: Math.round(m.d) })), color: "#dc2626" }])}</div>
+    <div class="card"><h3>Pressupostos</h3><div class="grid g3"><div><label class="f">Saldo inicial (€)</label><input type="number" step="0.01" value="${S.cash0}" onchange="saveSetting('cash0',+this.value).then(render)"></div><div><label class="f">Churn mensal (%)</label><input type="number" step="0.1" min="0" value="${(churn * 100)}" onchange="saveSetting('churn',+this.value).then(render)"></div></div><p class="mut" style="margin:12px 0 0">O CAC só conta despesas com categoria “Marketing”. O LTV é uma estimativa: preço mensal médio ÷ churn mensal.</p></div></div>
+    <div class="card" style="margin-top:14px"><h3>Livro de movimentos <button class="btn sm" onclick="addLedger()">+ Movimento</button></h3><div class="tw"><table><tr><th>Data</th><th>Tipo</th><th>Categoria</th><th>Descrição</th><th>Ref.</th><th>Valor</th><th></th></tr>${items("ledger").sort((a, b) => a.date < b.date ? 1 : -1).slice(0, 40).map(e => `<tr><td>${fdate(e.date)}</td><td><span class="pill ${e.type === "receita" ? "ok" : "bad"}">${e.type}</span></td><td>${esc(e.category)}</td><td>${esc(e.desc)}</td><td class="mut">${esc(e.ref || "")}</td><td><b>${e.type === "receita" ? "+" : "−"}${eur(+e.amount)}</b></td><td style="white-space:nowrap"><button class="btn sec sm" onclick="editLedger('${e.id}')">✎</button> <button class="btn sec sm" onclick="confirmDel('ledger','${e.id}','este movimento')">✕</button></td></tr>`).join("") || `<tr><td colspan="7" class="mut">Sem movimentos. Regista aqui cada despesa e receita real (domínio, publicidade, faturas) para teres caixa, runway e CAC verdadeiros.</td></tr>`}</table></div></div>`;
+}
+
+/* ============ ESTRATÉGIA ============ */
+const BACKLOG_SEEDS = [
+  ["Onboarding guiado para completar o perfil", "Cerca de um terço dos profissionais não tem categoria", 5, 2],
+  ["Pedir avaliação ao cliente depois do serviço", "0 avaliações: falta prova social", 5, 3],
+  ["Páginas de SEO por categoria e cidade", "Atrair clientes sem custo de anúncios", 4, 3],
+  ["Notificações de novos pedidos por WhatsApp/email", "Aumentar a resposta dos profissionais", 4, 2],
+  ["Programa de indicação de profissionais", "Crescer com o que já tens", 3, 2]
+];
+const BS = { ideia: "Ideia", planeado: "Planeado", curso: "Em curso", feito: "Feito" };
+const RISK_SEEDS = [["Poucos clientes: marketplace com oferta sem procura", 5, 5], ["Dependência de uma só pessoa (fundador)", 4, 5], ["Profissionais e clientes combinam fora da plataforma", 4, 3], ["Conteúdo abusivo ou perfis falsos", 3, 4], ["Dependência de Supabase/Netlify (falha ou custo)", 2, 4], ["Incumprimento do RGPD (pedidos fora de prazo)", 2, 5]];
+const KRMETRICS = [["pros", "Profissionais"], ["clients", "Clientes"], ["verified", "Verificados"], ["reviews", "Avaliações"], ["conv", "Conversas"], ["requests", "Pedidos de clientes"], ["mrr", "MRR (€)"], ["wau", "Ativos (7 dias)"], ["leads", "Leads registados"], ["manual", "Manual"]];
+function metricVal(kr) {
+  switch (kr.metric) {
+    case "pros": return M.pros.length; case "clients": return M.clients.length; case "verified": return M.pros.filter(p => p.verified).length; case "reviews": return M.rev; case "conv": return D.conversations.length;
+    case "requests": return D.requests.length; case "mrr": return M.mrr; case "wau": return M.wau; case "leads": return items("lead").filter(l => lstage(l) === "registado").length; default: return +kr.manual || 0;
+  }
+}
+const okrPct = o => { const k = o.krs || []; return k.length ? Math.round(k.reduce((s, x) => s + Math.min(1, x.target ? metricVal(x) / x.target : 0), 0) / k.length * 100) : 0; };
+const addOkr = async () => { const r = await form("Novo objetivo (OKR)", [{ k: "objective", label: "Objetivo", req: 1, ph: "Provar que há procura de clientes" }, { k: "quarter", label: "Período", def: "T4 2026" }]); if (r) { r.krs = []; await saveItem("okr", r); render(); } };
+const addKr = async id => { const o = items("okr").find(x => x.id === id), r = await form("Novo resultado-chave", [{ k: "text", label: "Resultado-chave", req: 1, ph: "Chegar a 50 clientes registados" }, { k: "metric", label: "Métrica", type: "select", opts: KRMETRICS }, { k: "target", label: "Meta", type: "number", req: 1 }, { k: "manual", label: "Valor atual (só se a métrica for manual)", type: "number" }]); if (r) { r.id = uid(); await saveItem("okr", Object.assign({}, o, { krs: (o.krs || []).concat([r]) })); render(); } };
+const delKr = async (id, kid) => { const o = items("okr").find(x => x.id === id); await saveItem("okr", Object.assign({}, o, { krs: o.krs.filter(k => k.id !== kid) })); render(); };
+const BLF = [{ k: "title", label: "Ideia / funcionalidade", req: 1 }, { k: "why", label: "Porquê?", type: "textarea" }, { k: "impact", label: "Impacto (1–5)", type: "number", def: 3 }, { k: "effort", label: "Esforço (1–5)", type: "number", def: 3 }, { k: "status", label: "Estado", type: "select", opts: Object.entries(BS) }];
+const addBl = async () => { const r = await form("Novo item de roadmap", BLF, { status: "ideia" }); if (r) { await saveItem("backlog", r); render(); } };
+const editBl = async id => { const b = items("backlog").find(x => x.id === id), r = await form("Editar item", BLF, b); if (r) { await saveItem("backlog", Object.assign({}, b, r)); render(); } };
+const setBl = async (id, st) => { const b = items("backlog").find(x => x.id === id); await saveItem("backlog", Object.assign({}, b, { status: st })); render(); };
+const seedBl = async i => { const s = BACKLOG_SEEDS[i]; await saveItem("backlog", { title: s[0], why: s[1], impact: s[2], effort: s[3], status: "ideia" }); render(); };
+const CF = [{ k: "name", label: "Concorrente", req: 1, ph: "ex.: Zaask, Habitissimo, OLX Serviços" }, { k: "url", label: "Site" }, { k: "pricing", label: "Modelo de preço", ph: "comissão, leads pagos, subscrição…" }, { k: "strengths", label: "Pontos fortes", type: "textarea" }, { k: "weaknesses", label: "Pontos fracos", type: "textarea" }];
+const addComp = async () => { const r = await form("Novo concorrente", CF); if (r) { await saveItem("competitor", r); render(); } };
+const editComp = async id => { const c = items("competitor").find(x => x.id === id), r = await form("Editar concorrente", CF, c); if (r) { await saveItem("competitor", Object.assign({}, c, r)); render(); } };
+const DF = [{ k: "date", label: "Data", type: "date", def: dkey(now()) }, { k: "title", label: "Decisão", req: 1 }, { k: "why", label: "Porquê (contexto e alternativas)", type: "textarea" }, { k: "review", label: "Rever em", type: "date" }];
+const addDec = async () => { const r = await form("Nova decisão", DF); if (r) { await saveItem("decision", r); render(); } };
+const vStrategy = () => {
+  const O = items("okr"), B = items("backlog").map(b => Object.assign({ _v: b.effort ? (b.impact / b.effort) : 0 }, b)).sort((a, b) => (a.status === "feito") - (b.status === "feito") || b._v - a._v), C = items("competitor"), Dc = items("decision").sort((a, b) => a.date < b.date ? 1 : -1);
+  return head("Estratégia", "Objetivos, roadmap, concorrência e registo de decisões") +
+    `<div class="card"><h3>🎯 Objetivos e resultados-chave (OKR) <span class="sp"></span><button class="btn sm" onclick="addOkr()">+ Objetivo</button></h3>${O.map(o => `<div style="margin-bottom:18px"><div class="row" style="justify-content:space-between"><b>${esc(o.objective)}</b><span class="mut">${esc(o.quarter || "")} · <b>${okrPct(o)}%</b> <button class="btn sec sm" onclick="addKr('${o.id}')">+ KR</button> <button class="btn sec sm" onclick="confirmDel('okr','${o.id}','este objetivo')">✕</button></span></div>${bar(okrPct(o), 100, okrPct(o) >= 70 ? "ok" : okrPct(o) >= 30 ? "warn" : "bad")}${(o.krs || []).map(k => `<div class="row" style="justify-content:space-between;margin-top:8px"><span>${esc(k.text)}</span><span class="mut">${num(metricVal(k))} / ${num(k.target)} · ${pct(metricVal(k), k.target)}% <button class="btn sec sm" onclick="delKr('${o.id}','${k.id}')">✕</button></span></div>${bar(metricVal(k), k.target, metricVal(k) >= k.target ? "ok" : "")}`).join("") || `<p class="mut" style="margin:8px 0 0">Sem resultados-chave. As métricas ligadas aos dados atualizam-se sozinhas.</p>`}</div>`).join("") || `<p class="mut">Define 1 a 3 objetivos por trimestre e liga cada resultado-chave a uma métrica real do painel.</p>`}</div>
+    <div class="card" style="margin-top:14px"><h3>🛣️ Roadmap de produto <span class="sp"></span><button class="btn sm" onclick="addBl()">+ Item</button></h3><div class="tw"><table><tr><th>Item</th><th>Impacto</th><th>Esforço</th><th>Valor/esforço</th><th>Estado</th><th></th></tr>${B.map(b => `<tr><td><b>${esc(b.title)}</b><br><span class="mut">${esc(b.why || "")}</span></td><td>${b.impact}</td><td>${b.effort}</td><td><b>${b._v.toFixed(1)}</b></td><td><select onchange="setBl('${b.id}',this.value)">${Object.entries(BS).map(([k, v]) => `<option value="${k}" ${b.status === k ? "selected" : ""}>${v}</option>`).join("")}</select></td><td style="white-space:nowrap"><button class="btn sec sm" onclick="editBl('${b.id}')">✎</button> <button class="btn sec sm" onclick="confirmDel('backlog','${b.id}','este item')">✕</button></td></tr>`).join("") || `<tr><td colspan="6" class="mut">Sem itens.</td></tr>`}</table></div>
+      <h4 style="margin:14px 0 6px" class="mut">Ideias sugeridas a partir dos teus números</h4>${BACKLOG_SEEDS.map((s, i) => items("backlog").some(b => b.title === s[0]) ? "" : `<div class="sug"><span class="t"><b>${esc(s[0])}</b><br><span class="mut">${esc(s[1])}</span></span><button class="btn sec sm" onclick="seedBl(${i})">+ Adicionar</button></div>`).join("")}</div>
+    <div class="grid g2" style="margin-top:14px"><div class="card"><h3>🏁 Concorrência <span class="sp"></span><button class="btn sm" onclick="addComp()">+ Concorrente</button></h3>${C.map(c => `<div class="sug"><span class="t"><b>${esc(c.name)}</b> ${c.url ? `<a target="_blank" rel="noopener" href="${esc(/^https?:/.test(c.url) ? c.url : "https://" + c.url)}">↗</a>` : ""}<br><span class="mut">Preço: ${esc(c.pricing || "—")}</span><br><span class="up">+ ${esc(c.strengths || "—")}</span><br><span class="dn">− ${esc(c.weaknesses || "—")}</span></span><button class="btn sec sm" onclick="editComp('${c.id}')">✎</button><button class="btn sec sm" onclick="confirmDel('competitor','${c.id}','este concorrente')">✕</button></div>`).join("") || `<span class="mut">Regista 3 a 5 concorrentes e como cobram. É o que define o teu preço e o teu posicionamento.</span>`}</div>
+    <div class="card"><h3>📝 Registo de decisões <span class="sp"></span><button class="btn sm" onclick="addDec()">+ Decisão</button></h3>${Dc.map(d => `<div class="sug"><span class="t"><b>${esc(d.title)}</b> <span class="mut">${fdate(d.date)}</span><br><span class="mut">${esc(d.why || "")}</span>${d.review ? `<br><span class="${d.review <= today() ? "dn" : "mut"}">rever em ${fdate(d.review)}</span>` : ""}</span><button class="btn sec sm" onclick="confirmDel('decision','${d.id}','esta decisão')">✕</button></div>`).join("") || `<span class="mut">Escreve aqui as decisões importantes e porquê. Daqui a 6 meses vais agradecer.</span>`}</div></div>`;
+};
+
+/* ============ CONFORMIDADE E RISCOS ============ */
+const CHECKS = [
+  ["RGPD", [["Política de privacidade publicada e atualizada"], ["Termos e condições publicados"], ["Aviso de cookies conforme (recusar tão fácil como aceitar)"], ["Procedimento para responder a pedidos RGPD em 30 dias"], ["Registo das atividades de tratamento de dados"], ["Acordos de tratamento de dados com subcontratantes (Supabase, Netlify, Stripe)"], ["Procedimento para violação de dados (notificar a CNPD em 72 h)"]]],
+  ["Empresa e finanças", [["Atividade aberta nas Finanças / forma jurídica definida"], ["Enquadramento de IVA definido com o contabilista"], ["Faturação a cumprir os requisitos legais"], ["Seguro de responsabilidade civil avaliado"], ["Marca registada (INPI) avaliada"], ["Livro de Reclamações Eletrónico (confirmar se se aplica)"], ["Email e domínios em nome do projeto, com renovação automática"]]],
+  ["Segurança", [["2FA ativo em Supabase, Netlify, Stripe, GitHub e email"], ["Backups da base de dados verificados e testados"], ["Políticas de acesso (RLS) revistas"], ["Chaves secretas fora do código e rodadas se expostas"], ["Segundo administrador ou plano se perderes acesso à conta"]]],
+  ["Operação", [["Email dedicado ao Flinko para suporte"], ["Processo de verificação de profissionais escrito"], ["Resposta a reclamações e suporte definida (prazos)"], ["Regras de moderação de conteúdo definidas"]]]
+];
+const checkKey = (g, i) => g + ":" + i;
+const toggleCheck = async k => { const c = Object.assign({}, setting("checks") || {}); if (c[k]) delete c[k]; else c[k] = new Date().toISOString(); await saveSetting("checks", c); render(); };
+const RF = [{ k: "title", label: "Risco", req: 1 }, { k: "prob", label: "Probabilidade (1–5)", type: "number", def: 3 }, { k: "impact", label: "Impacto (1–5)", type: "number", def: 3 }, { k: "mitig", label: "O que vais fazer para reduzir", type: "textarea" }, { k: "status", label: "Estado", type: "select", opts: [["aberto", "Aberto"], ["mitigado", "Mitigado"], ["aceite", "Aceite"]] }];
+const addRisk = async () => { const r = await form("Novo risco", RF, { status: "aberto" }); if (r) { await saveItem("risk", r); render(); } };
+const editRisk = async id => { const x = items("risk").find(y => y.id === id), r = await form("Editar risco", RF, x); if (r) { await saveItem("risk", Object.assign({}, x, r)); render(); } };
+const seedRisk = async i => { const s = RISK_SEEDS[i]; await saveItem("risk", { title: s[0], prob: s[1], impact: s[2], mitig: "", status: "aberto" }); render(); };
+const vCompliance = () => {
+  const ck = setting("checks") || {}; let tot = 0, done = 0; CHECKS.forEach(([g, L]) => L.forEach((_, i) => { tot++; if (ck[checkKey(g, i)]) done++; }));
+  const R = items("risk").map(r => Object.assign({ _s: r.prob * r.impact }, r)).sort((a, b) => b._s - a._s), col = s => s >= 15 ? "bad" : s >= 8 ? "warn" : "ok";
+  const auto = [];
+  if (M.clients.length < 10) auto.push(["Muito poucos clientes para o número de profissionais", 20]);
+  if (M.topCat.p > 40) auto.push([`Concentração numa categoria (${M.topCat.k}: ${M.topCat.p}%)`, 8]);
+  if (M.gp.length) auto.push(["Pedidos RGPD por concluir", 15]);
+  if (M.flags.length) auto.push([`${M.flags.length} conversa(s) com conteúdo a moderar`, 9]);
+  if (!M.rev) auto.push(["Sem nenhuma avaliação (falta prova social)", 12]);
+  return head("Conformidade e riscos", `${done} de ${tot} pontos de verificação feitos`) +
+    `<div class="note">Lista de apoio, não é aconselhamento jurídico. Confirma cada ponto com o teu contabilista ou advogado.</div>
+    <div class="grid g2"><div class="card"><h3>Lista de verificação <span class="sp"></span><span class="pill ${done === tot ? "ok" : "acc"}">${pct(done, tot)}%</span></h3>${bar(done, tot, done === tot ? "ok" : "")}${CHECKS.map(([g, L]) => `<h4 style="margin:14px 0 4px" class="mut">${g}</h4>${L.map((c, i) => `<label class="sug" style="cursor:pointer"><input type="checkbox" style="width:auto" ${ck[checkKey(g, i)] ? "checked" : ""} onchange="toggleCheck('${checkKey(g, i)}')"><span class="t" style="${ck[checkKey(g, i)] ? "text-decoration:line-through;opacity:.6" : ""}">${esc(c[0])}</span></label>`).join("")}`).join("")}</div>
+    <div><div class="card"><h3>Alertas automáticos a partir dos dados</h3>${auto.sort((a, b) => b[1] - a[1]).map(a => `<div class="sug"><span class="pill ${col(a[1])}">${a[1] >= 15 ? "alto" : a[1] >= 8 ? "médio" : "baixo"}</span><span class="t">${esc(a[0])}</span></div>`).join("") || `<span class="pill ok">Sem alertas</span>`}</div>
+    <div class="card" style="margin-top:14px"><h3>Registo de riscos <span class="sp"></span><button class="btn sm" onclick="addRisk()">+ Risco</button></h3>${R.map(r => `<div class="sug"><span class="pill ${col(r._s)}">${r._s}</span><span class="t"><b>${esc(r.title)}</b> <span class="mut">(prob. ${r.prob} × impacto ${r.impact} · ${esc(r.status)})</span><br><span class="mut">${esc(r.mitig || "sem plano de mitigação")}</span></span><button class="btn sec sm" onclick="editRisk('${r.id}')">✎</button><button class="btn sec sm" onclick="confirmDel('risk','${r.id}','este risco')">✕</button></div>`).join("") || `<span class="mut">Sem riscos registados.</span>`}
+      <h4 style="margin:14px 0 6px" class="mut">Riscos habituais em marketplaces</h4>${RISK_SEEDS.map((s, i) => items("risk").some(r => r.title === s[0]) ? "" : `<div class="sug"><span class="t">${esc(s[0])}</span><button class="btn sec sm" onclick="seedRisk(${i})">+ Adicionar</button></div>`).join("")}</div></div></div>`;
+};
+
+/* ============ RELATÓRIOS ============ */
+let repDays = 7;
+function reportText(days) {
+  const t = now(), a = t - days * DAY, b = t - 2 * days * DAY;
+  const inR = (arr, f, x, y) => arr.filter(r => { const q = new Date(r[f]).getTime(); return q >= x && q < y; }).length;
+  const cmp = (c, p) => `${c} (${c - p >= 0 ? "+" : ""}${c - p} vs período anterior)`;
+  const V = D.visits.filter(v => !(v.user_id && M.P.every(p => p.id !== v.user_id) && D.profiles.some(p => p.id === v.user_id && (p.is_admin || p.is_demo))));
+  const uv = (x, y) => new Set(V.filter(v => { const q = new Date(v.created_at).getTime(); return q >= x && q < y; }).map(v => v.visitor_id)).size;
+  const np = inR(M.pros, "created_at", a, t + DAY), npp = inR(M.pros, "created_at", b, a), nc = inR(M.clients, "created_at", a, t + DAY), ncp = inR(M.clients, "created_at", b, a);
+  const cv = inR(D.conversations, "created_at", a, t + DAY), cvp = inR(D.conversations, "created_at", b, a), rq = inR(D.requests, "created_at", a, t + DAY), rqp = inR(D.requests, "created_at", b, a);
+  const L = items("lead"), lc = L.reduce((n, l) => n + (l.log || []).filter(g => { const q = new Date(g.at).getTime(); return q >= a; }).length, 0);
+  const S = ledgerStats(), led = items("ledger").filter(e => new Date(e.date).getTime() >= a), lr = led.filter(e => e.type === "receita").reduce((s, e) => s + +e.amount, 0), ld = led.filter(e => e.type === "despesa").reduce((s, e) => s + +e.amount, 0);
+  const late = store.tasks.filter(x => x.status !== "done" && x.due_date && new Date(x.due_date) < t - DAY), hi = [], lo = [];
+  if (np > npp) hi.push(`Registos de profissionais a subir: ${np} (anterior: ${npp})`); else if (np < npp) lo.push(`Registos de profissionais a descer: ${np} (anterior: ${npp})`);
+  if (nc > 0) hi.push(`${nc} novo(s) cliente(s)`); else lo.push("Nenhum cliente novo no período");
+  if (cv > 0) hi.push(`${cv} nova(s) conversa(s)`); else lo.push("Nenhuma conversa nova entre clientes e profissionais");
+  if (M.openReq.length) lo.push(`${M.openReq.length} pedido(s) de clientes sem nenhuma proposta`);
+  if (M.gp.length) lo.push(`${M.gp.length} pedido(s) RGPD em aberto`);
+  if (late.length) lo.push(`${late.length} tarefa(s) em atraso`);
+  if (S.runway && S.runway < 6) lo.push(`Runway de ${S.runway.toFixed(1)} meses`);
+  if (M.flags.length) lo.push(`${M.flags.length} conversa(s) com conteúdo a moderar`);
+  const top = suggestions().slice(0, 5), R = items("risk").map(r => [r.prob * r.impact, r.title]).sort((x, y) => y[0] - x[0]).slice(0, 3);
+  return `RELATÓRIO FLINKO · últimos ${days} dias · ${new Date().toLocaleDateString("pt-PT")}
+
+DESTAQUES
+${hi.map(x => "+ " + x).join("\n") || "—"}
+
+PONTOS DE ATENÇÃO
+${lo.map(x => "- " + x).join("\n") || "—"}
+
+NÚMEROS
+Profissionais registados: ${cmp(np, npp)} · total ${M.pros.length}
+Clientes registados: ${cmp(nc, ncp)} · total ${M.clients.length}
+Visitantes únicos: ${cmp(uv(a, t + DAY), uv(b, a))}
+Conversas novas: ${cmp(cv, cvp)}
+Pedidos de clientes: ${cmp(rq, rqp)}
+Ativos (7 dias): ${M.wau} · Ativos (30 dias): ${M.mau}
+Qualidade média dos perfis: ${M.avgScore}/100 · Verificados: ${M.pros.filter(p => p.verified).length}/${M.pros.length}
+Avaliações: ${M.rev}
+
+AQUISIÇÃO
+Leads no total: ${L.length} · contactos feitos no período: ${lc} · registados: ${L.filter(l => lstage(l) === "registado").length}
+
+FINANÇAS
+MRR: ${eur(M.mrr)} · Receitas registadas no período: ${eur(lr)} · Despesas: ${eur(ld)}
+Caixa: ${eur(S.cash)}${S.runway ? " · Runway: " + S.runway.toFixed(1) + " meses" : ""}
+
+PRIORIDADES PARA A PRÓXIMA SEMANA
+${top.map((x, i) => `${i + 1}. ${x}`).join("\n") || "—"}
+
+PRINCIPAIS RISCOS
+${R.map(r => `- ${r[1]} (pontuação ${r[0]})`).join("\n") || "—"}
+`;
+}
+const vReports = () => head("Relatórios", "Resumo pronto para copiar, enviar a sócios ou guardar em PDF") +
+  `<div class="tools"><select onchange="repDays=+this.value;render()"><option value="7" ${repDays === 7 ? "selected" : ""}>Últimos 7 dias</option><option value="30" ${repDays === 30 ? "selected" : ""}>Últimos 30 dias</option><option value="90" ${repDays === 90 ? "selected" : ""}>Últimos 90 dias</option></select><button class="btn" onclick="navigator.clipboard.writeText($('#rep').value).then(()=>toast('Copiado'))">Copiar texto</button><button class="btn sec" onclick="window.print()">Imprimir / guardar PDF</button></div>
+  <div class="card"><textarea id="rep" rows="34" readonly style="font:13px/1.6 ui-monospace,Menlo,monospace;white-space:pre">${esc(reportText(repDays))}</textarea></div>`;
+
+const leadsDue = () => { const td = today(); return items("lead").filter(l => { const s = lstage(l); return !["registado", "perdido"].includes(s) && ((s === "novo" && !l.next) || (l.next && l.next <= td)); }); };
+function todayCard() {
+  const td = today(), ld = leadsDue(), tk = store.tasks.filter(t => t.status !== "done" && t.due_date && t.due_date <= td), cr = M.pros.filter(p => store.crm[p.id]?.next_contact && String(store.crm[p.id].next_contact).slice(0, 10) <= td), dr = items("decision").filter(d => d.review && d.review <= td);
+  const row = (n, txt, to) => n ? `<div class="sug"><span class="pill acc">${n}</span><span class="t">${txt}</span><button class="btn sec sm" onclick="go('${to}')">Abrir</button></div>` : "";
+  const html = row(ld.length, "leads para contactar", "leads") + row(tk.length, "tarefas com prazo hoje ou em atraso", "tasks") + row(cr.length, "profissionais com contacto agendado (CRM)", "pros") + row(dr.length, "decisões para rever", "strategy");
+  return `<div class="card" style="margin-bottom:14px"><h3>☀️ Para fazer hoje</h3>${html || `<span class="pill ok">Nada agendado para hoje</span>`}</div>`;
+}
+
+
+/* ============ CALENDÁRIO UNIFICADO ============ */
+const EVC = { task: ["#f26a1b", "Tarefa"], lead: ["#2563eb", "Lead"], crm: ["#0d9488", "CRM"], decision: ["#7c3aed", "Decisão"], gdpr: ["#dc2626", "RGPD"], plan: ["#d97706", "Plano"], invoice: ["#16a34a", "Fatura"], post: ["#db2777", "Publicação"], ticket: ["#64748b", "Apoio"] };
+const EVGO = { task: "tasks", lead: "leads", crm: "pros", decision: "company", gdpr: "ops", plan: "fin", invoice: "invoices", post: "marketing", ticket: "support" };
+function events() {
+  const E = [], add = (date, type, label) => { if (date) E.push({ date: String(date).slice(0, 10), type, label }); };
+  store.tasks.filter(t => t.status !== "done").forEach(t => add(t.due_date, "task", t.title));
+  items("lead").forEach(l => { if (!["registado", "perdido"].includes(lstage(l))) add(l.next, "lead", "Contactar " + l.name); });
+  M.pros.forEach(p => { const c = store.crm[p.id]; if (c && c.next_contact) add(c.next_contact, "crm", "Contactar " + p.name); });
+  items("decision").forEach(d => add(d.review, "decision", "Rever: " + d.title));
+  D.gdpr.filter(g => g.status !== "completed" && g.status !== "cancelled").forEach(g => add(dkey(new Date(g.created_at).getTime() + 30 * DAY), "gdpr", "Prazo RGPD · " + nameOf(g.profile_id)));
+  M.activePaid.forEach(p => add(p.plan_expires_at, "plan", "Expira plano " + p.plan + " · " + p.name));
+  items("invoice").filter(i => i.status === "emitida").forEach(i => add(i.due, "invoice", "Vence " + i.number + " · " + i.client));
+  items("post").filter(p => p.status !== "publicado").forEach(p => add(p.date, "post", "Publicar: " + (p.text || "").slice(0, 32)));
+  items("ticket").filter(t => t.status !== "resolvido").forEach(t => add(dkey(new Date(t.date).getTime() + 2 * DAY), "ticket", "Responder (48 h): " + t.subject));
+  return E;
+}
+let calOff = 0, calDay = null;
+const vCal = () => {
+  const E = events(), td = today(), base = new Date(new Date().getFullYear(), new Date().getMonth() + calOff, 1);
+  const first = (base.getDay() + 6) % 7, dim = new Date(base.getFullYear(), base.getMonth() + 1, 0).getDate();
+  const cells = []; for (let i = 0; i < first; i++) cells.push(null); for (let d = 1; d <= dim; d++) cells.push(dkey(new Date(base.getFullYear(), base.getMonth(), d)));
+  while (cells.length % 7) cells.push(null);
+  const by = {}; E.forEach(e => (by[e.date] = by[e.date] || []).push(e));
+  const late = E.filter(e => e.date < td).sort((a, b) => a.date < b.date ? -1 : 1), next = E.filter(e => e.date >= td && e.date <= dkey(now() + 14 * DAY)).sort((a, b) => a.date < b.date ? -1 : 1);
+  const li = e => `<div class="sug"><span class="pill" style="background:${EVC[e.type][0]};color:#fff;border-color:transparent">${EVC[e.type][1]}</span><span class="t">${esc(e.label)}<br><span class="mut">${fdate(e.date)}</span></span><button class="btn sec sm" onclick="go('${EVGO[e.type]}')">Abrir</button></div>`;
+  const sel = calDay ? (by[calDay] || []) : [];
+  return head("Calendário", "Tudo o que tem data: tarefas, contactos, prazos legais, faturas e publicações") +
+    `<div class="row" style="margin-bottom:12px"><button class="btn sec sm" onclick="calOff--;render()">◀</button><b style="min-width:150px;text-align:center;text-transform:capitalize">${base.toLocaleDateString("pt-PT", { month: "long", year: "numeric" })}</b><button class="btn sec sm" onclick="calOff++;render()">▶</button><button class="btn sec sm" onclick="calOff=0;calDay=null;render()">Hoje</button></div>
+    <div class="cal" style="margin-bottom:4px">${["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"].map(x => `<div class="mut" style="text-align:center;font-size:11px">${x}</div>`).join("")}</div>
+    <div class="cal">${cells.map(k => k ? `<div class="cd ${k === td ? "t" : ""}" onclick="calDay='${k}';render()"><b>${+k.slice(8)}</b>${(by[k] || []).slice(0, 3).map(e => `<span class="ev" style="background:${EVC[e.type][0]}" title="${esc(e.label)}">${esc(e.label)}</span>`).join("")}${(by[k] || []).length > 3 ? `<span class="mut">+${by[k].length - 3}</span>` : ""}</div>` : `<div class="cd o"></div>`).join("")}</div>
+    <div class="legend" style="margin-top:10px">${Object.values(EVC).map(v => `<span><i style="background:${v[0]}"></i>${v[1]}</span>`).join("")}</div>
+    ${calDay ? `<div class="card" style="margin-top:14px"><h3>${fdate(calDay)}</h3>${sel.map(li).join("") || `<span class="mut">Sem eventos neste dia.</span>`}</div>` : ""}
+    <div class="grid g2" style="margin-top:14px"><div class="card"><h3>Em atraso (${late.length})</h3>${late.slice(0, 12).map(li).join("") || `<span class="pill ok">Nada em atraso</span>`}</div><div class="card"><h3>Próximos 14 dias (${next.length})</h3>${next.slice(0, 15).map(li).join("") || `<span class="mut">Nada agendado.</span>`}</div></div>`;
+};
+
+/* ============ HISTÓRICO ============ */
+async function takeSnapshot() {
+  if (DEMO) { if (!items("snapshot").length) { const a = []; for (let i = 30; i >= 0; i--) { const k = 30 - i; a.push({ id: uid(), date: dkey(now() - i * DAY), pros: 10 + Math.round(k * .6), clients: 1 + Math.round(k * .1), wau: 3 + Math.round(k * .5), mau: 6 + Math.round(k * .7), mrr: k > 20 ? 20 : 0, leads: 5 + k, score: 40 + Math.round(k / 3), cash: 500 - k * 4 }); } store.items.snapshot = a; } return; }
+  const td = today(); if (items("snapshot").some(s => s.date === td)) return;
+  const S = ledgerStats();
+  await saveItem("snapshot", { date: td, pros: M.pros.length, clients: M.clients.length, verified: M.pros.filter(p => p.verified).length, wau: M.wau, mau: M.mau, convs: D.conversations.length, requests: D.requests.length, reviews: M.rev, mrr: M.mrr, leads: items("lead").length, score: M.avgScore, cash: S.cash });
+}
+const DERIV = { pros: ["Profissionais", () => M.pros], clients: ["Clientes", () => M.clients], convs: ["Conversas", () => D.conversations], requests: ["Pedidos", () => D.requests], reviews: ["Avaliações", () => D.reviews], services: ["Serviços publicados", () => D.services] };
+const SNAPM = { wau: "Ativos (7 dias)", mau: "Ativos (30 dias)", mrr: "MRR (€)", leads: "Leads", score: "Qualidade média dos perfis", cash: "Caixa (€)" };
+let hMetric = "pros", hDays = 90;
+function cumSeries(arr, days) {
+  const t = new Date(); t.setHours(23, 59, 59, 999); const ts = arr.map(x => new Date(x.created_at).getTime()).sort((a, b) => a - b);
+  return Array.from({ length: days }, (_, i) => { const end = t.getTime() - (days - 1 - i) * DAY; let n = 0; while (n < ts.length && ts[n] <= end) n++; return { x: dkey(end), y: n }; });
+}
+const vHistory = () => {
+  const d = DERIV[hMetric], snaps = items("snapshot").sort((a, b) => a.date < b.date ? -1 : 1);
+  const at = (arr, ago) => { const a = arr; return a.length ? a[Math.max(0, a.length - 1 - ago)].y : 0; };
+  const growth = Object.entries(DERIV).map(([k, [l, f]]) => { const s = cumSeries(f(), 31), n = s[30].y, w = s[23].y, m = s[0].y; return `<tr><td>${l}</td><td><b>${n}</b></td><td>${w}</td><td>${m}</td><td class="${n - w >= 0 ? "up" : "dn"}">${n - w >= 0 ? "+" : ""}${n - w} (${w ? pct(n - w, w) : "—"}${w ? "%" : ""})</td><td class="${n - m >= 0 ? "up" : "dn"}">${n - m >= 0 ? "+" : ""}${n - m} (${m ? pct(n - m, m) : "—"}${m ? "%" : ""})</td></tr>`; }).join("");
+  const chart = d ? lineChart([{ name: d[0], data: cumSeries(d[1](), hDays), color: COL[0] }], { area: true, fmtX: x => x.slice(8) + "/" + x.slice(5, 7) })
+    : (snaps.length >= 2 ? lineChart([{ name: SNAPM[hMetric], data: snaps.map(s => ({ x: s.date, y: +s[hMetric] || 0 })), color: COL[1] }], { area: true, fmtX: x => x.slice(8) + "/" + x.slice(5, 7) }) : `<p class="mut">Ainda só há ${snaps.length} registo(s) diário(s). O painel guarda uma fotografia dos números cada dia em que o abres; volta amanhã para veres a linha.</p>`);
+  return head("Histórico", "Evolução real dos números ao longo do tempo") +
+    `<div class="card"><h3>Evolução <span class="sp"></span></h3><div class="tools"><select onchange="hMetric=this.value;render()"><optgroup label="Reconstruído a partir das datas de criação">${Object.entries(DERIV).map(([k, v]) => `<option value="${k}" ${hMetric === k ? "selected" : ""}>${v[0]}</option>`).join("")}</optgroup><optgroup label="Fotografias diárias do painel">${Object.entries(SNAPM).map(([k, v]) => `<option value="${k}" ${hMetric === k ? "selected" : ""}>${v}</option>`).join("")}</optgroup></select>${DERIV[hMetric] ? `<select onchange="hDays=+this.value;render()">${[30, 90, 180, 365].map(n => `<option value="${n}" ${hDays === n ? "selected" : ""}>${n} dias</option>`).join("")}</select>` : ""}</div>${chart}</div>
+    <div class="card" style="margin-top:14px"><h3>Crescimento</h3><div class="tw"><table><tr><th>Métrica</th><th>Hoje</th><th>Há 7 dias</th><th>Há 30 dias</th><th>Δ 7 dias</th><th>Δ 30 dias</th></tr>${growth}</table></div><p class="mut" style="margin:10px 0 0">Os totais históricos são recalculados a partir da data de criação de cada registo. Não contam contas entretanto apagadas.</p></div>`;
+};
+
+/* ============ MARKETING ============ */
+const CHAN = ["Instagram", "Facebook", "Google Ads", "Cartazes / flyers", "Presencial", "WhatsApp", "Email", "Parceria", "Outro"];
+const CAMPF = [{ k: "name", label: "Campanha", req: 1 }, { k: "channel", label: "Canal", type: "select", opts: CHAN }, { k: "start", label: "Início", type: "date", def: dkey(now()) }, { k: "end", label: "Fim", type: "date" }, { k: "spend", label: "Gasto (€)", type: "number" }, { k: "signups", label: "Registos atribuídos", type: "number" }, { k: "status", label: "Estado", type: "select", opts: [["planeada", "Planeada"], ["ativa", "Ativa"], ["terminada", "Terminada"]] }, { k: "notes", label: "Notas", type: "textarea" }];
+const addCamp = async () => { const r = await form("Nova campanha", CAMPF, { status: "ativa" }); if (r) { await saveItem("campaign", r); render(); } };
+const editCamp = async id => { const c = items("campaign").find(x => x.id === id), r = await form("Editar campanha", CAMPF, c); if (r) { await saveItem("campaign", Object.assign({}, c, r)); render(); } };
+const POSTF = [{ k: "date", label: "Data", type: "date", def: dkey(now()) }, { k: "channel", label: "Canal", type: "select", opts: CHAN }, { k: "text", label: "Texto / ideia", type: "textarea", req: 1 }, { k: "status", label: "Estado", type: "select", opts: [["ideia", "Ideia"], ["agendado", "Agendado"], ["publicado", "Publicado"]] }];
+const addPost = async () => { const r = await form("Nova publicação", POSTF, { status: "ideia" }); if (r) { await saveItem("post", r); render(); } };
+const setPost = async (id, st) => { const p = items("post").find(x => x.id === id); await saveItem("post", Object.assign({}, p, { status: st })); render(); };
+function utm() { const g = id => encodeURIComponent(($("#u_" + id).value || "").trim().toLowerCase().replace(/\s+/g, "-")); let b = ($("#u_base").value || "https://flinko.pt").trim(); const p = []; ["source", "medium", "campaign"].forEach(k => { if (g(k)) p.push("utm_" + k + "=" + g(k)); }); $("#u_out").value = b + (p.length ? (b.includes("?") ? "&" : "?") + p.join("&") : ""); }
+const vMarketing = () => {
+  const C = items("campaign"), tot = C.reduce((s, c) => s + (+c.spend || 0), 0), su = C.reduce((s, c) => s + (+c.signups || 0), 0), ch = {};
+  C.forEach(c => { const k = c.channel || "Outro"; ch[k] = ch[k] || { spend: 0, su: 0, n: 0 }; ch[k].spend += +c.spend || 0; ch[k].su += +c.signups || 0; ch[k].n++; });
+  const best = Object.entries(ch).filter(([, v]) => v.su && v.spend).sort((a, b) => a[1].spend / a[1].su - b[1].spend / b[1].su)[0];
+  const P = items("post").sort((a, b) => a.date < b.date ? -1 : 1);
+  return head("Marketing", "Campanhas, custo por registo e calendário de conteúdos") +
+    `<div class="grid g4">${kpi("Campanhas", C.length, `${C.filter(c => c.status === "ativa").length} ativas`)}${kpi("Gasto total", eur(tot), "soma das campanhas")}${kpi("Registos atribuídos", su, "os que indicaste nas campanhas")}${kpi("Custo por registo", su ? eur(tot / su) : "—", best ? `melhor canal: ${esc(best[0])}` : "regista gasto e registos")}</div>
+    <div class="grid g2" style="margin-top:14px"><div class="card"><h3>Campanhas <span class="sp"></span><button class="btn sm" onclick="addCamp()">+ Campanha</button></h3><div class="tw"><table><tr><th>Campanha</th><th>Canal</th><th>Gasto</th><th>Registos</th><th>Custo/registo</th><th></th></tr>${C.map(c => `<tr><td><b>${esc(c.name)}</b><br><span class="mut">${esc(c.status)} · ${fdate(c.start)}</span></td><td>${esc(c.channel)}</td><td>${eur(+c.spend || 0)}</td><td>${c.signups || 0}</td><td>${+c.signups ? eur((+c.spend || 0) / c.signups) : "—"}</td><td style="white-space:nowrap"><button class="btn sec sm" onclick="editCamp('${c.id}')">✎</button> <button class="btn sec sm" onclick="confirmDel('campaign','${c.id}','esta campanha')">✕</button></td></tr>`).join("") || `<tr><td colspan="6" class="mut">Regista aqui cada ação de divulgação, mesmo as gratuitas (gasto 0 €), para saberes o que funciona.</td></tr>`}</table></div></div>
+    <div class="card"><h3>Por canal</h3><div class="tw"><table><tr><th>Canal</th><th>Campanhas</th><th>Gasto</th><th>Registos</th><th>Custo/registo</th></tr>${Object.entries(ch).map(([k, v]) => `<tr><td>${esc(k)}</td><td>${v.n}</td><td>${eur(v.spend)}</td><td>${v.su}</td><td>${v.su ? eur(v.spend / v.su) : "—"}</td></tr>`).join("") || `<tr><td colspan="5" class="mut">Sem dados.</td></tr>`}</table></div></div></div>
+    <div class="grid g2" style="margin-top:14px"><div class="card"><h3>Calendário de conteúdos <span class="sp"></span><button class="btn sm" onclick="addPost()">+ Publicação</button></h3>${P.map(p => `<div class="sug"><span class="t"><b>${fdate(p.date)}</b> · ${esc(p.channel)}<br><span class="mut">${esc(p.text)}</span></span><select onchange="setPost('${p.id}',this.value)" style="width:auto">${[["ideia", "Ideia"], ["agendado", "Agendado"], ["publicado", "Publicado"]].map(o => `<option value="${o[0]}" ${p.status === o[0] ? "selected" : ""}>${o[1]}</option>`).join("")}</select><button class="btn sec sm" onclick="confirmDel('post','${p.id}','esta publicação')">✕</button></div>`).join("") || `<span class="mut">Planeia o que vais publicar e quando.</span>`}</div>
+    <div class="card"><h3>Gerador de ligações com UTM</h3><p class="mut" style="margin:0 0 6px">Usa ligações diferentes em cada canal para saberes de onde vêm as visitas. A origem aparece depois em “Crescimento e funil”.</p><label class="f">Endereço</label><input id="u_base" value="https://flinko.pt" oninput="utm()"><div class="grid g3"><div><label class="f">Origem</label><input id="u_source" placeholder="instagram" oninput="utm()"></div><div><label class="f">Meio</label><input id="u_medium" placeholder="social" oninput="utm()"></div><div><label class="f">Campanha</label><input id="u_campaign" placeholder="pintores-braga" oninput="utm()"></div></div><label class="f">Ligação final</label><div class="row"><input id="u_out" readonly value="https://flinko.pt" style="flex:1"><button class="btn sm" onclick="navigator.clipboard.writeText($('#u_out').value).then(()=>toast('Copiado'))">Copiar</button></div></div></div>`;
+};
+
+/* ============ APOIO A CLIENTES ============ */
+const TKF = [{ k: "date", label: "Data", type: "date", def: dkey(now()) }, { k: "from", label: "Quem pediu", req: 1 }, { k: "contact", label: "Contacto (email / telemóvel)" }, { k: "channel", label: "Canal", type: "select", opts: ["Email", "WhatsApp", "Telefone", "Formulário", "Redes sociais", "Outro"] }, { k: "subject", label: "Assunto", req: 1 }, { k: "priority", label: "Prioridade", type: "select", opts: [["media", "Média"], ["alta", "Alta"], ["baixa", "Baixa"]] }, { k: "notes", label: "Notas / resposta", type: "textarea" }, { k: "status", label: "Estado", type: "select", opts: [["aberto", "Aberto"], ["curso", "Em curso"], ["resolvido", "Resolvido"]] }];
+const addTicket = async () => { const r = await form("Novo pedido de apoio", TKF, { status: "aberto" }); if (r) { await saveItem("ticket", r); render(); } };
+const editTicket = async id => { const t = items("ticket").find(x => x.id === id), r = await form("Editar pedido", TKF, t); if (r) { if (r.status === "resolvido" && !t.resolved_at) r.resolved_at = new Date().toISOString(); await saveItem("ticket", Object.assign({}, t, r)); render(); } };
+const setTicket = async (id, st) => { const t = items("ticket").find(x => x.id === id); await saveItem("ticket", Object.assign({}, t, { status: st, resolved_at: st === "resolvido" ? (t.resolved_at || new Date().toISOString()) : null })); render(); };
+const vSupport = () => {
+  const T = items("ticket").slice().sort((a, b) => a.date < b.date ? 1 : -1), open = T.filter(t => t.status !== "resolvido"), late = open.filter(t => now() - new Date(t.date) > 2 * DAY);
+  const done = T.filter(t => t.resolved_at), avg = done.length ? done.reduce((s, t) => s + (new Date(t.resolved_at) - new Date(t.date)), 0) / done.length / 36e5 : 0;
+  return head("Apoio a clientes", "Pedidos de ajuda, dúvidas e reclamações de profissionais e clientes", `<button class="btn sm" onclick="addTicket()">+ Novo pedido</button>`) +
+    `<div class="grid g4">${kpi("Em aberto", open.length, `${T.length} no total`)}${kpi("Fora do prazo (48 h)", late.length, late.length ? "responde primeiro a estes" : "tudo dentro do prazo")}${kpi("Tempo médio de resolução", done.length ? (avg < 48 ? avg.toFixed(1) + " h" : (avg / 24).toFixed(1) + " dias") : "—", `${done.length} resolvidos`)}${kpi("RGPD em aberto", M.gp.length, "ver Operações")}</div>
+    <div class="card" style="margin-top:14px"><h3>Pedidos</h3><div class="tw"><table><tr><th>Data</th><th>Quem</th><th>Assunto</th><th>Canal</th><th>Prioridade</th><th>Estado</th><th></th></tr>${T.map(t => `<tr><td>${fdate(t.date)}${t.status !== "resolvido" && now() - new Date(t.date) > 2 * DAY ? `<br><span class="pill bad">+48 h</span>` : ""}</td><td><b>${esc(t.from)}</b><br><span class="mut">${esc(t.contact || "")}</span></td><td>${esc(t.subject)}<br><span class="mut">${esc((t.notes || "").slice(0, 80))}</span></td><td>${esc(t.channel)}</td><td><span class="pill ${t.priority === "alta" ? "bad" : t.priority === "baixa" ? "" : "warn"}">${esc(t.priority)}</span></td><td><select onchange="setTicket('${t.id}',this.value)">${[["aberto", "Aberto"], ["curso", "Em curso"], ["resolvido", "Resolvido"]].map(o => `<option value="${o[0]}" ${t.status === o[0] ? "selected" : ""}>${o[1]}</option>`).join("")}</select></td><td style="white-space:nowrap"><button class="btn sec sm" onclick="editTicket('${t.id}')">✎</button> <button class="btn sec sm" onclick="confirmDel('ticket','${t.id}','este pedido')">✕</button></td></tr>`).join("") || `<tr><td colspan="7" class="mut">Ainda sem pedidos. Regista aqui tudo o que chegar por email, WhatsApp ou telefone, para nada se perder.</td></tr>`}</table></div></div>`;
+};
+
+/* ============ FATURAÇÃO ============ */
+const nextInvNo = () => { const y = new Date().getFullYear(), n = items("invoice").filter(i => String(i.number).includes(y + "/")).length + 1; return `FT ${y}/${String(n).padStart(3, "0")}`; };
+const INVF = () => [{ k: "number", label: "Número", req: 1 }, { k: "date", label: "Data de emissão", type: "date", def: dkey(now()) }, { k: "due", label: "Vencimento", type: "date", def: dkey(now() + 15 * DAY) }, { k: "client", label: "Cliente", req: 1 }, { k: "description", label: "Descrição", req: 1 }, { k: "net", label: "Valor sem IVA (€)", type: "number", req: 1 }, { k: "vat", label: "IVA (%)", type: "number", def: 23 }, { k: "status", label: "Estado", type: "select", opts: [["rascunho", "Rascunho"], ["emitida", "Emitida"], ["paga", "Paga"], ["anulada", "Anulada"]] }];
+const gross = i => (+i.net || 0) * (1 + (+i.vat || 0) / 100);
+const addInv = async () => { const r = await form("Nova fatura", INVF(), { number: nextInvNo(), status: "emitida", vat: 23 }); if (r) { await saveItem("invoice", r); render(); } };
+const editInv = async id => { const i = items("invoice").find(x => x.id === id), r = await form("Editar fatura", INVF(), i); if (r) { await saveItem("invoice", Object.assign({}, i, r)); render(); } };
+const payInv = async id => {
+  const i = items("invoice").find(x => x.id === id);
+  if (!await ask("Marcar como paga", `${i.number} passa a paga e é criada uma receita de ${eur(+i.net)} (sem IVA) no livro de movimentos.`)) return;
+  await saveItem("invoice", Object.assign({}, i, { status: "paga", paid_at: today() })); await saveItem("ledger", { date: today(), type: "receita", category: "Subscrições", desc: `${i.number} · ${i.client}`, amount: +i.net, ref: i.number }); render();
+};
+const vInvoices = () => {
+  const I = items("invoice").slice().sort((a, b) => a.date < b.date ? 1 : -1), td = today(), live = I.filter(i => i.status !== "anulada" && i.status !== "rascunho");
+  const m = td.slice(0, 7), q = Math.floor(new Date().getMonth() / 3), inQ = i => { const d = new Date(i.date); return d.getFullYear() === new Date().getFullYear() && Math.floor(d.getMonth() / 3) === q; };
+  const recv = live.filter(i => i.status === "emitida"), late = recv.filter(i => i.due && i.due < td), vat = live.filter(inQ).reduce((s, i) => s + (+i.net || 0) * (+i.vat || 0) / 100, 0);
+  return head("Faturação", "Controlo das faturas que emites e do IVA liquidado", `<button class="btn sm" onclick="addInv()">+ Nova fatura</button>`) +
+    `<div class="note">Isto é um controlo interno. As faturas legais têm de ser emitidas em software certificado pela Autoridade Tributária. Confirma o enquadramento de IVA e os prazos com o teu contabilista.</div>
+    <div class="grid g4">${kpi("Emitido este mês", eur(live.filter(i => String(i.date).slice(0, 7) === m).reduce((s, i) => s + (+i.net || 0), 0)), "sem IVA")}${kpi("Por receber", eur(recv.reduce((s, i) => s + gross(i), 0)), `${recv.length} faturas`)}${kpi("Em atraso", late.length, eur(late.reduce((s, i) => s + gross(i), 0)))}${kpi("IVA liquidado (trimestre)", eur(vat), "a confirmar com o contabilista")}</div>
+    <div class="card" style="margin-top:14px"><h3>Faturas</h3><div class="tw"><table><tr><th>Nº</th><th>Data</th><th>Cliente</th><th>Descrição</th><th>Sem IVA</th><th>Total</th><th>Estado</th><th></th></tr>${I.map(i => `<tr><td><b>${esc(i.number)}</b></td><td>${fdate(i.date)}<br><span class="mut">vence ${fdate(i.due)}</span></td><td>${esc(i.client)}</td><td>${esc(i.description)}</td><td>${eur(+i.net)}</td><td><b>${eur(gross(i))}</b></td><td><span class="pill ${i.status === "paga" ? "ok" : i.status === "anulada" ? "" : late.includes(i) ? "bad" : "warn"}">${late.includes(i) ? "em atraso" : i.status}</span></td><td style="white-space:nowrap">${i.status === "emitida" ? `<button class="btn sm" onclick="payInv('${i.id}')">Paga</button> ` : ""}<button class="btn sec sm" onclick="editInv('${i.id}')">✎</button> <button class="btn sec sm" onclick="confirmDel('invoice','${i.id}','esta fatura')">✕</button></td></tr>`).join("") || `<tr><td colspan="8" class="mut">Sem faturas.</td></tr>`}</table></div></div>`;
+};
+
+/* ============ EMPRESA: contactos, processos, notas ============ */
+const ROLES = ["Contabilista", "Advogado", "Parceiro", "Fornecedor", "Mentor", "Investidor", "Cliente-chave", "Outro"];
+const CTF = [{ k: "name", label: "Nome", req: 1 }, { k: "role", label: "Função", type: "select", opts: ROLES }, { k: "org", label: "Empresa / entidade" }, { k: "phone", label: "Telemóvel" }, { k: "email", label: "Email", type: "email" }, { k: "notes", label: "Notas", type: "textarea" }];
+const addCt = async () => { const r = await form("Novo contacto", CTF); if (r) { await saveItem("contact", r); render(); } };
+const editCt = async id => { const c = items("contact").find(x => x.id === id), r = await form("Editar contacto", CTF, c); if (r) { await saveItem("contact", Object.assign({}, c, r)); render(); } };
+const SOPS = [
+  ["Como verificar um profissional", "1. Confirmar a identidade (documento com fotografia) numa chamada ou videochamada.\n2. Confirmar o telemóvel ligando para o número registado.\n3. Confirmar a atividade e as certificações exigidas para a profissão (por exemplo licenças ou inscrições, quando existam).\n4. Pedir uma referência ou um trabalho anterior.\n5. Guardar as notas na ficha do CRM.\n6. Marcar como verificado no painel e avisar o profissional."],
+  ["Como tratar um pedido RGPD", "1. Receber o pedido e registar a data (o prazo para responder é de 1 mês).\n2. Confirmar a identidade de quem pede.\n3. Exportação: reunir os dados da conta e enviar de forma segura. Eliminação: apagar a conta e os dados associados.\n4. Confirmar por escrito à pessoa.\n5. Marcar como concluído na tabela de pedidos RGPD.\nValida este processo com um advogado ou consultor de proteção de dados."],
+  ["Onboarding de um novo profissional (chamada)", "1. Apresentar o Flinko: gratuito, sem comissões, profissionais verificados.\n2. Criar ou completar a conta em conjunto: categoria, zona, foto e bio.\n3. Acrescentar pelo menos 3 serviços com preço indicativo.\n4. Pedir fotografias de trabalhos para o portfólio.\n5. Pedir que peça avaliação aos últimos clientes.\n6. Registar tudo no CRM e agendar novo contacto daqui a 2 semanas."],
+  ["Moderação de conteúdo", "1. Rever semanalmente as mensagens assinaladas em Qualidade e risco.\n2. Ofensas ou assédio: avisar por escrito; em caso de repetição, suspender a conta.\n3. Partilha de contactos para sair da plataforma: recordar as regras.\n4. Perfis falsos: pedir prova de identidade; se não houver resposta em 7 dias, suspender.\n5. Registar cada decisão em Estratégia > Registo de decisões."]
+];
+const SOPF = [{ k: "title", label: "Título", req: 1 }, { k: "text", label: "Passos", type: "textarea", rows: 10, req: 1 }];
+const addSop = async () => { const r = await form("Novo processo", SOPF); if (r) { await saveItem("sop", r); render(); } };
+const editSop = async id => { const s = items("sop").find(x => x.id === id), r = await form("Editar processo", SOPF, s); if (r) { await saveItem("sop", Object.assign({}, s, r)); render(); } };
+const seedSop = async i => { await saveItem("sop", { title: SOPS[i][0], text: SOPS[i][1] }); render(); };
+const NTF = [{ k: "date", label: "Data", type: "date", def: dkey(now()) }, { k: "title", label: "Reunião / assunto", req: 1 }, { k: "text", label: "Notas", type: "textarea", rows: 5 }, { k: "actions", label: "Ações (uma por linha)", type: "textarea", ph: "Enviar proposta ao João\nMarcar reunião com o contabilista" }];
+const addNote = async () => { const r = await form("Nova nota de reunião", NTF); if (r) { await saveItem("note", r); render(); } };
+const noteTasks = async id => {
+  const n = items("note").find(x => x.id === id), L = (n.actions || "").split(/\n+/).map(x => x.trim()).filter(Boolean);
+  for (const t of L) await saveTask({ id: uid(), title: t, status: "todo", priority: "media", due_date: null, profile_id: null, created_at: new Date().toISOString() });
+  await saveItem("note", Object.assign({}, n, { tasksDone: true })); toast(L.length + " tarefas criadas"); render();
+};
+const vCompany = () => {
+  const C = items("contact"), S = items("sop"), N = items("note").slice().sort((a, b) => a.date < b.date ? 1 : -1);
+  return head("Empresa", "Contactos úteis, processos escritos e notas de reunião") +
+    `<div class="grid g2"><div class="card"><h3>Contactos úteis <span class="sp"></span><button class="btn sm" onclick="addCt()">+ Contacto</button></h3>${C.map(c => `<div class="sug"><span class="t"><b>${esc(c.name)}</b> <span class="pill">${esc(c.role)}</span> <span class="mut">${esc(c.org || "")}</span><br>${c.phone ? `<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a> ` : ""}${c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : ""}<br><span class="mut">${esc(c.notes || "")}</span></span><button class="btn sec sm" onclick="editCt('${c.id}')">✎</button><button class="btn sec sm" onclick="confirmDel('contact','${c.id}','este contacto')">✕</button></div>`).join("") || `<span class="mut">Guarda aqui o contabilista, o advogado, parceiros e fornecedores.</span>`}</div>
+    <div class="card"><h3>Notas de reunião <span class="sp"></span><button class="btn sm" onclick="addNote()">+ Nota</button></h3>${N.map(n => `<div class="sug"><span class="t"><b>${esc(n.title)}</b> <span class="mut">${fdate(n.date)}</span><br><span class="mut" style="white-space:pre-wrap">${esc(n.text || "")}</span>${n.actions ? `<br><b>Ações:</b><span style="white-space:pre-wrap"> ${esc(n.actions)}</span>` : ""}</span>${n.actions && !n.tasksDone ? `<button class="btn sm" onclick="noteTasks('${n.id}')">→ Tarefas</button>` : ""}<button class="btn sec sm" onclick="confirmDel('note','${n.id}','esta nota')">✕</button></div>`).join("") || `<span class="mut">Escreve o que ficou decidido e transforma as ações em tarefas com um clique.</span>`}</div></div>
+    <div class="card" style="margin-top:14px"><h3>Processos (como se faz cada coisa) <span class="sp"></span><button class="btn sm" onclick="addSop()">+ Processo</button></h3>${S.map(s => `<details style="border-bottom:1px solid var(--line);padding:8px 0"><summary style="cursor:pointer;font-weight:600">${esc(s.title)}</summary><div style="white-space:pre-wrap;margin:8px 0" class="mut">${esc(s.text)}</div><button class="btn sec sm" onclick="editSop('${s.id}')">✎ Editar</button> <button class="btn sec sm" onclick="confirmDel('sop','${s.id}','este processo')">✕</button></details>`).join("") || `<span class="mut">Ainda sem processos escritos.</span>`}
+    <h4 style="margin:14px 0 6px" class="mut">Modelos sugeridos</h4>${SOPS.map((s, i) => S.some(x => x.title === s[0]) ? "" : `<div class="sug"><span class="t">${esc(s[0])}</span><button class="btn sec sm" onclick="seedSop(${i})">+ Adicionar</button></div>`).join("")}</div>`;
+};
+
+/* ============ INVESTIDORES ============ */
+const setTam = (k, v) => { const t = Object.assign({ n: 0, sam: 0, som: 0, arpu: 0 }, setting("tam")); t[k] = +v || 0; saveSetting("tam", t).then(render); };
+function investorText() {
+  const S = ledgerStats(), g = cumSeries(M.pros, 31), gm = g[0].y ? pct(g[30].y - g[0].y, g[0].y) : 0;
+  return `FLINKO · RESUMO DE MÉTRICAS · ${new Date().toLocaleDateString("pt-PT")}
+Profissionais: ${M.pros.length} (${M.pros.filter(p => p.verified).length} verificados) · Clientes: ${M.clients.length}
+Crescimento de profissionais (30 dias): ${gm}%
+Ativos (7 dias): ${M.wau} · Ativos (30 dias): ${M.mau} · Stickiness: ${M.stick}%
+Perfis com qualidade ≥80: ${M.complete} de ${M.pros.length}
+Conversas: ${D.conversations.length} · Pedidos: ${D.requests.length} · Avaliações: ${M.rev}
+MRR: ${eur(M.mrr)} · ARR: ${eur(M.mrr * 12)}
+Caixa: ${eur(S.cash)}${S.runway ? " · Runway: " + S.runway.toFixed(1) + " meses" : ""}
+CAC: ${S.new90 ? eur(S.cac) : "n/d"}`;
+}
+const vInvestor = () => {
+  const S = ledgerStats(), t = Object.assign({ n: 0, sam: 0, som: 0, arpu: 0 }, setting("tam")), tam = t.n * t.arpu * 12, sam = tam * t.sam / 100, som = sam * t.som / 100, g = cumSeries(M.pros, 31), gm = g[0].y ? pct(g[30].y - g[0].y, g[0].y) : 0;
+  return head("Investidores", "As métricas que qualquer investidor ou parceiro vai pedir") +
+    `<div class="grid g4">${kpi("Crescimento de profissionais", gm + "%", "últimos 30 dias")}${kpi("Stickiness", M.stick + "%", "ativos 7 dias ÷ ativos 30 dias")}${kpi("ARR", eur(M.mrr * 12), `MRR ${eur(M.mrr)}`)}${kpi("Runway", S.runway ? S.runway.toFixed(1) + " meses" : "—", `caixa ${eur(S.cash)}`)}${kpi("Profissionais verificados", M.pros.filter(p => p.verified).length, `${pct(M.pros.filter(p => p.verified).length, M.pros.length)}% do total`)}${kpi("Pedidos e conversas", D.requests.length + " / " + D.conversations.length, "prova de procura")}${kpi("CAC", S.new90 ? eur(S.cac) : "—", "custo por profissional novo")}${kpi("Avaliações", M.rev, "prova social")}</div>
+    <div class="grid g2" style="margin-top:14px"><div class="card"><h3>Dimensão do mercado (TAM / SAM / SOM)</h3><p class="mut" style="margin:0 0 8px">Preenche com números de fontes fiáveis (por exemplo INE ou associações do setor). Não inventes: um investidor vai perguntar de onde vêm.</p><div class="grid g3"><div><label class="f">Profissionais no mercado</label><input type="number" min="0" value="${t.n}" onchange="setTam('n',this.value)"></div><div><label class="f">Receita anual por profissional (€/mês)</label><input type="number" min="0" step="0.01" value="${t.arpu}" onchange="setTam('arpu',this.value)"></div><div><label class="f">% alcançável (SAM)</label><input type="number" min="0" max="100" value="${t.sam}" onchange="setTam('sam',this.value)"></div><div><label class="f">% que consegues obter (SOM)</label><input type="number" min="0" max="100" value="${t.som}" onchange="setTam('som',this.value)"></div></div>
+      <div class="grid g3" style="margin-top:12px">${kpi("TAM", eur(tam), "por ano")}${kpi("SAM", eur(sam), "por ano")}${kpi("SOM", eur(som), "por ano")}</div></div>
+    <div class="card"><h3>Resumo para partilhar</h3><textarea id="inv" rows="14" readonly style="font:13px/1.6 ui-monospace,Menlo,monospace">${esc(investorText())}</textarea><div class="row" style="margin-top:8px"><button class="btn sm" onclick="navigator.clipboard.writeText($('#inv').value).then(()=>toast('Copiado'))">Copiar</button></div></div></div>`;
+};
+
+/* ============ NOTA GLOBAL DA EMPRESA ============ */
+function scores() {
+  const pros = M.pros.length || 1, g = setting("goals"), late = store.tasks.filter(t => t.status !== "done" && t.due_date && new Date(t.due_date) < now() - DAY).length;
+  const gdprLate = M.gp.filter(x => now() - new Date(x.created_at) > 20 * DAY).length, failed = D.notif.filter(n => n.status === "failed").length;
+  const S = [
+    ["Ativação", pct(M.complete, pros), "% de profissionais com perfil de 80+ pontos"],
+    ["Retenção", pct(M.mau, M.P.length || 1), "% de contas ativas nos últimos 30 dias"],
+    ["Procura", Math.min(100, Math.round(M.clients.length / pros * 200)), "1 cliente por cada 2 profissionais = 100"],
+    ["Confiança", pct(M.pros.filter(p => p.verified).length, pros), "% de profissionais verificados"],
+    ["Receita", g.mrr ? Math.min(100, pct(M.mrr, g.mrr)) : 0, "MRR face à meta definida"],
+    ["Operação", Math.max(0, 100 - gdprLate * 30 - failed * 10 - late * 5 - M.flags.length * 5 - M.openReq.length * 10), "desconta atrasos, RGPD, falhas e pedidos por responder"]
+  ];
+  return { S, overall: Math.round(S.reduce((s, x) => s + x[1], 0) / S.length) };
+}
+function scoreCard() {
+  const { S, overall } = scores(), c = v => v >= 70 ? "ok" : v >= 40 ? "warn" : "bad";
+  return `<div class="card" style="margin-bottom:14px"><h3>Nota global da empresa <span class="sp"></span><span class="pill ${c(overall)}" style="font-size:14px">${overall}/100</span></h3><div class="grid g3">${S.map(x => `<div><div class="row" style="justify-content:space-between"><span>${x[0]}</span><b>${x[1]}</b></div>${bar(x[1], 100, c(x[1]))}<div class="mut" style="font-size:11px;margin-top:3px">${esc(x[2])}</div></div>`).join("")}</div></div>`;
+}
+
+/* ============ PESQUISA GLOBAL (Ctrl+K) ============ */
+let searchOpen = false;
+function openSearch() {
+  searchOpen = true; const m = $("#modal"); m.classList.remove("hidden");
+  m.innerHTML = `<div class="mb" style="max-width:580px;align-self:start;margin-top:8vh"><input id="gs" placeholder="Pesquisar profissionais, leads, tarefas, apoio, contactos, notas…" autocomplete="off"><div id="gsr" style="margin-top:10px;max-height:60vh;overflow:auto"></div></div>`;
+  m.onclick = e => { if (e.target === m) closeSearch(); };
+  const run = () => {
+    const q = $("#gs").value.trim().toLowerCase(), R = []; if (q.length < 2) { $("#gsr").innerHTML = `<span class="mut">Escreve pelo menos 2 letras.</span>`; return; }
+    const has = (...a) => a.join(" ").toLowerCase().includes(q);
+    M.pros.forEach(p => { if (has(p.name, p.category, p.location, p._phone)) R.push(["Profissional", p.name + " · " + (p.category || "sem categoria"), `closeSearch();openPro('${p.id}')`]); });
+    items("lead").forEach(l => { if (has(l.name, l.phone, l.category)) R.push(["Lead", l.name, `closeSearch();go('leads')`]); });
+    store.tasks.forEach(t => { if (has(t.title)) R.push(["Tarefa", t.title, `closeSearch();go('tasks')`]); });
+    items("ticket").forEach(t => { if (has(t.from, t.subject, t.contact)) R.push(["Apoio", t.from + " · " + t.subject, `closeSearch();go('support')`]); });
+    items("contact").forEach(c => { if (has(c.name, c.org, c.role, c.phone, c.email)) R.push(["Contacto", c.name + " · " + c.role, `closeSearch();go('company')`]); });
+    items("note").forEach(n => { if (has(n.title, n.text)) R.push(["Nota", n.title, `closeSearch();go('company')`]); });
+    items("sop").forEach(n => { if (has(n.title, n.text)) R.push(["Processo", n.title, `closeSearch();go('company')`]); });
+    items("decision").forEach(n => { if (has(n.title, n.why)) R.push(["Decisão", n.title, `closeSearch();go('strategy')`]); });
+    items("invoice").forEach(n => { if (has(n.number, n.client, n.description)) R.push(["Fatura", n.number + " · " + n.client, `closeSearch();go('invoices')`]); });
+    $("#gsr").innerHTML = R.slice(0, 30).map(r => `<div class="sug" style="cursor:pointer" onclick="${r[2]}"><span class="pill acc">${r[0]}</span><span class="t">${esc(r[1])}</span></div>`).join("") || `<span class="mut">Sem resultados.</span>`;
+  };
+  $("#gs").oninput = run; $("#gs").focus(); run();
+}
+function closeSearch() { searchOpen = false; const m = $("#modal"); m.classList.add("hidden"); m.innerHTML = ""; m.onclick = null; }
+document.addEventListener("keydown", e => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k" && !$("#app").classList.contains("hidden")) { e.preventDefault(); if (!searchOpen && $("#modal").classList.contains("hidden")) openSearch(); }
+  else if (e.key === "Escape" && searchOpen) closeSearch();
+});
+
+/* ============ GRÁFICOS (SVG simples, sem bibliotecas) ============ */
+const COL = ["#f26a1b", "#2563eb", "#0d9488", "#7c3aed", "#d97706"];
+const niceMax = m => m <= 4 ? 4 : Math.ceil(m / 4) * 4;
+function axes(w, h, p, max, labels) {
+  let g = "";
+  for (let i = 0; i <= 4; i++) { const v = max * i / 4, y = h - p.b - (v / max) * (h - p.t - p.b); g += `<line x1="${p.l}" x2="${w - p.r}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${p.l - 6}" y="${y + 3}" text-anchor="end">${Math.round(v * 10) / 10}</text>`; }
+  const step = Math.max(1, Math.ceil(labels.length / 7));
+  labels.forEach((l, i) => { if (i % step === 0 || i === labels.length - 1) { const x = p.l + (labels.length > 1 ? i * (w - p.l - p.r) / (labels.length - 1) : 0); g += `<text x="${x}" y="${h - 6}" text-anchor="middle">${esc(l)}</text>`; } });
+  return g;
+}
+function lineChart(series, o = {}) {
+  const w = 700, h = o.h || 210, p = { l: 34, r: 12, t: 10, b: 24 }, n = series[0].data.length;
+  const max = niceMax(Math.max(1, ...series.flatMap(s => s.data.map(d => d.y))));
+  const X = i => p.l + (n > 1 ? i * (w - p.l - p.r) / (n - 1) : 0), Y = v => h - p.b - (v / max) * (h - p.t - p.b);
+  const lab = series[0].data.map(d => o.fmtX ? o.fmtX(d.x) : d.x);
+  let s = axes(w, h, p, max, lab);
+  series.forEach((sr, k) => {
+    const c = sr.color || COL[k], pts = sr.data.map((d, i) => `${X(i)},${Y(d.y)}`).join(" ");
+    if (o.area && k === 0) s += `<polygon points="${p.l},${h - p.b} ${pts} ${X(n - 1)},${h - p.b}" fill="${c}" opacity=".12"/>`;
+    s += `<polyline points="${pts}" fill="none" stroke="${c}" stroke-width="2.2" stroke-linejoin="round"/>`;
+    if (n <= 31) sr.data.forEach((d, i) => { s += `<circle cx="${X(i)}" cy="${Y(d.y)}" r="3" fill="${c}"><title>${esc(lab[i])}: ${d.y} ${esc(sr.name)}</title></circle>`; });
+  });
+  const lg = series.length > 1 ? `<div class="legend">${series.map((s, k) => `<span><i style="background:${s.color || COL[k]}"></i>${esc(s.name)}</span>`).join("")}</div>` : "";
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" role="img">${s}</svg>${lg}`;
+}
+function barChart(series, o = {}) { // barras empilhadas
+  const w = 700, h = o.h || 210, p = { l: 34, r: 12, t: 10, b: 24 }, n = series[0].data.length;
+  const tot = series[0].data.map((_, i) => series.reduce((s, sr) => s + sr.data[i].y, 0));
+  const max = niceMax(Math.max(1, ...tot)), bw = (w - p.l - p.r) / n * .62, X = i => p.l + (i + .5) * (w - p.l - p.r) / n;
+  const lab = series[0].data.map(d => d.x);
+  let s = axes(w, h, p, max, lab).replace(/<text x="[\d.]+" y="\d+" text-anchor="middle">[^<]*<\/text>/g, "");
+  lab.forEach((l, i) => { if (i % Math.max(1, Math.ceil(n / 8)) === 0 || i === n - 1) s += `<text x="${X(i)}" y="${h - 6}" text-anchor="middle">${esc(l)}</text>`; });
+  series.forEach((sr, k) => sr.data.forEach((d, i) => {
+    const below = series.slice(0, k).reduce((a, q) => a + q.data[i].y, 0), y0 = h - p.b - below / max * (h - p.t - p.b), hh = d.y / max * (h - p.t - p.b);
+    if (d.y) s += `<rect x="${X(i) - bw / 2}" y="${y0 - hh}" width="${bw}" height="${hh}" rx="3" fill="${sr.color || COL[k]}"><title>${esc(lab[i])}: ${d.y} ${esc(sr.name)}</title></rect>`;
+  }));
+  const lg = series.length > 1 ? `<div class="legend">${series.map((s, k) => `<span><i style="background:${s.color || COL[k]}"></i>${esc(s.name)}</span>`).join("")}</div>` : "";
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" role="img">${s}</svg>${lg}`;
+}
+const delta = (a, b) => { if (!b && !a) return `<span class="d">sem alteração</span>`; if (!b) return `<span class="d up">▲ novo</span>`; const p = Math.round((a - b) / b * 100); if (!p) return `<span class="d">igual aos 7 dias anteriores</span>`; return `<span class="d ${p >= 0 ? "up" : "dn"}">${p >= 0 ? "▲" : "▼"} ${Math.abs(p)}% vs 7 dias anteriores</span>`; };
+const kpi = (lb, v, d = "") => `<div class="card kpi"><div class="lb">${lb}</div><div class="v">${v}</div><div class="d">${d}</div></div>`;
+const bar = (v, max, cls = "") => `<div class="bar ${cls}"><i style="width:${Math.min(100, max ? v / max * 100 : 0)}%"></i></div>`;
+const sc = s => s >= 80 ? "ok" : s >= 50 ? "warn" : "bad";
+
+/* ============ MODAL / DRAWER ============ */
+function ask(title, msg, okLabel = "Confirmar", danger = false) {
+  return new Promise(res => {
+    const m = $("#modal"); m.classList.remove("hidden");
+    m.innerHTML = `<div class="mb"><h3 style="font-size:17px;margin-bottom:8px">${esc(title)}</h3><p class="mut" style="margin:0 0 18px">${esc(msg)}</p><div class="row" style="justify-content:flex-end"><button class="btn sec" id="mno">Cancelar</button><button class="btn ${danger ? "bad" : ""}" id="myes">${esc(okLabel)}</button></div></div>`;
+    const done = v => { m.classList.add("hidden"); m.innerHTML = ""; res(v); };
+    $("#mno").onclick = () => done(false); $("#myes").onclick = () => done(true);
+  });
+}
+function openDrawer(html) { $("#ov").classList.remove("hidden"); const d = $("#drawer"); d.classList.remove("hidden"); d.innerHTML = html; d.scrollTop = 0; }
+function closeDrawer() { $("#ov").classList.add("hidden"); $("#drawer").classList.add("hidden"); }
+$("#ov").onclick = closeDrawer;
+const toast = m => { const t = document.createElement("div"); t.textContent = m; t.style.cssText = "position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1c2033;color:#fff;padding:10px 16px;border-radius:10px;z-index:99;font-size:13px"; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); };
+
+/* ============ VISTAS ============ */
+const NAVG = [["Visão geral", [["home", "🏠", "Painel"], ["cal", "🗓️", "Calendário"], ["history", "📊", "Histórico"], ["reports", "📄", "Relatórios"]]],
+  ["Crescimento", [["growth", "📈", "Crescimento e funil"], ["leads", "📞", "Aquisição (leads)"], ["marketing", "📣", "Marketing"], ["retention", "🔁", "Retenção e atividade"]]],
+  ["Plataforma", [["pros", "👷", "Profissionais (CRM)"], ["demand", "🧾", "Procura e conversas"], ["quality", "🔎", "Qualidade e risco"], ["support", "🎧", "Apoio a clientes"]]],
+  ["Dinheiro", [["fin", "💶", "Finanças"], ["invoices", "🧮", "Faturação"]]],
+  ["Empresa", [["strategy", "🧭", "Estratégia"], ["compliance", "⚖️", "Conformidade e riscos"], ["company", "🏢", "Contactos e processos"], ["investor", "💼", "Investidores"]]],
+  ["Operação", [["tasks", "✅", "Tarefas"], ["ops", "🛡️", "Operações"], ["set", "⚙️", "Definições"]]]];
+let view = "home", filt = { q: "", cat: "", st: "", stage: "", sort: "created" };
+
+function head(title, sub = "", extra = "") {
+  return `<div class="top"><button class="btn sec sm mob" onclick="$('#side').classList.toggle('open')">☰</button><div><h1>${title}</h1>${sub ? `<div class="sub">${sub}</div>` : ""}</div><div class="sp"></div>${extra}<button class="btn sec sm" onclick="reload()">↻ Atualizar</button></div>${DEMO ? `<div class="note">Modo demonstração: todos os dados são fictícios. Nada é enviado nem guardado no Flinko.</div>` : ""}`;
+}
+const vHome = () => {
+  const g = setting("goals"), pr = M.pros.length, cl = M.clients.length;
+  const goal = (l, v, t, f = num) => `<div style="margin-bottom:12px"><div class="row" style="justify-content:space-between"><span>${l}</span><span class="mut">${f(v)} / ${f(t)} · ${pct(v, t)}%</span></div>${bar(v, t, v >= t ? "ok" : "")}</div>`;
+  const hoje = todayCard();
+  return head("Painel", `Visão geral do Flinko · ${M.pros.length + M.clients.length} contas reais (exclui ${M.ignored} de admin/demo e as tuas visitas)`) +
+    hoje + scoreCard() +
+    (M.alerts.length ? `<div class="card" style="margin-bottom:14px"><h3>⚠️ Precisa de atenção</h3>${M.alerts.map(a => `<div class="sug"><span class="pill ${a.lvl}">${a.lvl === "bad" ? "urgente" : "atenção"}</span><span class="t">${esc(a.txt)}</span><button class="btn sec sm" onclick="go('${a.go}')">Ver</button></div>`).join("")}</div>` : "") +
+    `<div class="grid g4">
+      ${kpi("Profissionais", num(pr), `${M.pros.filter(p => p.verified).length} verificados`)}
+      ${kpi("Clientes", num(cl), `${pct(cl, pr + cl)}% das contas`)}
+      ${kpi("Registos (7 dias)", num(M.su7), delta(M.su7, M.sup7))}
+      ${kpi("Visitantes únicos (7 dias)", num(M.u7), delta(M.u7, M.up7))}
+      ${kpi("Qualidade média dos perfis", M.avgScore + "/100", `${M.complete} perfis com 80+ pontos`)}
+      ${kpi("Receita mensal (MRR)", eur(M.mrr), `${M.activePaid.length} subscrições pagas`)}
+      ${kpi("Pedidos de clientes", num(D.requests.length), `${M.openReq.length} abertos sem proposta`)}
+      ${kpi("Conversas / mensagens", `${num(D.conversations.length)} / ${num(M.msgs)}`, `${num(M.rev)} avaliações`)}
+    </div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card"><h3>Registos por semana (12 semanas)</h3>${barChart([{ name: "Profissionais", data: M.proWeeks, color: COL[0] }, { name: "Clientes", data: M.cliWeeks, color: COL[1] }])}</div>
+      <div class="card"><h3>Visitantes únicos por dia (30 dias)</h3>${lineChart([{ name: "Visitantes únicos", data: M.uvis30, color: COL[1] }], { area: true, fmtX: x => x.slice(8) + "/" + x.slice(5, 7) })}</div>
+    </div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card"><h3>Metas <button class="btn sec sm" onclick="go('set')">Editar</button></h3>
+        ${goal("Profissionais", pr, g.pros)}${goal("Clientes", cl, g.clients)}${goal("Avaliações", M.rev, g.reviews)}${goal("MRR", M.mrr, g.mrr, eur)}</div>
+      <div class="card"><h3>Funil dos profissionais</h3>${funnelHtml(M.funnel.slice(0, 6))}<button class="btn sec sm" onclick="go('growth')">Ver funil completo</button></div>
+    </div>`;
+};
+function funnelHtml(f) {
+  const top = f[0][1] || 1;
+  return f.map((s, i) => `<div class="fun"><span>${esc(s[0])}</span><div class="fb"><i style="width:${s[1] / top * 100}%"></i></div><span class="n"><b>${s[1]}</b> <span class="mut">${pct(s[1], top)}%</span></span></div>${i < f.length - 1 && f[i][1] ? `` : ""}`).join("");
+}
+const vGrowth = () => {
+  const f = M.funnel; let worst = null;
+  for (let i = 1; i < f.length; i++) { const lost = f[i - 1][1] - f[i][1]; if (!worst || lost > worst.lost) worst = { lost, from: f[i - 1][0], to: f[i][0] }; }
+  const pages = {}; D.visits.forEach(v => { pages[v.path] = (pages[v.path] || 0) + 1; });
+  const refs = {}; D.visits.forEach(v => { let r = "Direto"; try { if (v.referrer) r = new URL(v.referrer).hostname.replace("www.", ""); } catch (e) { r = v.referrer || "Direto"; } refs[r] = (refs[r] || 0) + 1; });
+  const top = o => Object.entries(o).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const tp = top(pages), tr = top(refs), mp = tp[0]?.[1] || 1, mr = tr[0]?.[1] || 1;
+  return head("Crescimento e funil", "Onde perdes profissionais entre o registo e a atividade real") +
+    `<div class="grid g2"><div class="card"><h3>Funil de ativação</h3>${funnelHtml(f)}${worst && worst.lost > 0 ? `<div class="note" style="margin:12px 0 0">Maior perda: <b>${worst.lost}</b> profissionais entre “${esc(worst.from)}” e “${esc(worst.to)}”.</div>` : ""}</div>
+    <div class="card"><h3>Registos por semana</h3>${lineChart([{ name: "Todos os registos", data: M.signWeeks, color: COL[0] }, { name: "Pedidos", data: M.reqWeeks, color: COL[2] }, { name: "Conversas", data: M.convWeeks, color: COL[3] }], { area: true })}</div></div>
+    <div class="grid g4" style="margin-top:14px">
+      ${kpi("Visitas (30 dias)", num(M.v30), `${num(M.u30)} visitantes únicos`)}
+      ${kpi("Visitas por visitante", M.u30 ? (M.v30 / M.u30).toFixed(1) : "—", "engagement dos últimos 30 dias")}
+      ${kpi("Registos / visitantes", M.u30 ? pct(M.su7 * 4, M.u30) + "%" : "—", "estimativa mensal")}
+      ${kpi("Visualizações de perfis", num(D.pviews.length), `${M.pros.length ? (D.pviews.length / M.pros.length).toFixed(1) : 0} por profissional`)}
+    </div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card"><h3>Páginas mais vistas</h3>${tp.map(([k, v]) => `<div class="row" style="justify-content:space-between"><span>${esc(k)}</span><b>${v}</b></div>${bar(v, mp)}<div style="height:6px"></div>`).join("") || `<span class="mut">Sem dados</span>`}</div>
+      <div class="card"><h3>De onde vêm as visitas</h3>${tr.map(([k, v]) => `<div class="row" style="justify-content:space-between"><span>${esc(k)}</span><b>${v}</b></div>${bar(v, mr)}<div style="height:6px"></div>`).join("") || `<span class="mut">Sem dados</span>`}</div>
+    </div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card"><h3>Profissionais por zona</h3><div class="tw"><table>${M.loc.slice(0, 12).map(([l, n]) => `<tr><td>${esc(l)}</td><td style="width:50%">${bar(n, M.loc[0][1])}</td><td><b>${n}</b></td></tr>`).join("")}</table></div></div>
+      <div class="card"><h3>Oferta vs procura por categoria</h3>${catTable()}</div>
+    </div>`;
+};
+function catTable() {
+  return `<div class="tw"><table><tr><th>Categoria</th><th>Profissionais</th><th>Pedidos</th><th>Propostas</th><th></th></tr>${M.cat.map(c => `<tr><td>${esc(c.c)}</td><td>${c.pros} <span class="mut">(${c.ver} verif.)</span></td><td>${c.req}</td><td>${c.off}</td><td>${c.req && !c.pros ? `<span class="pill bad">sem oferta</span>` : c.pros >= 3 && !c.req ? `<span class="pill warn">sem procura</span>` : c.req && !c.off ? `<span class="pill warn">sem propostas</span>` : ""}</td></tr>`).join("")}</table></div>`;
+}
+const STAGES = { novo: "Novo", contactado: "Contactado", a_completar: "A completar perfil", ativo: "Ativo", inativo: "Inativo" };
+const stageOf = p => (store.crm[p.id]?.stage) || "novo";
+function proList() {
+  let L = M.pros.slice(); const q = filt.q.toLowerCase();
+  if (q) L = L.filter(p => (p.name + " " + p.category + " " + p.location + " " + p._phone).toLowerCase().includes(q));
+  if (filt.cat) L = L.filter(p => (p.category || "—") === filt.cat);
+  if (filt.stage) L = L.filter(p => stageOf(p) === filt.stage);
+  const st = filt.st;
+  if (st === "unver") L = L.filter(p => !p.verified); else if (st === "ver") L = L.filter(p => p.verified);
+  else if (st === "nocat") L = L.filter(p => !p.category); else if (st === "low") L = L.filter(p => p._score < 60);
+  else if (st === "susp") L = L.filter(p => p.suspended); else if (st === "paid") L = L.filter(p => p.plan !== "free");
+  const s = filt.sort;
+  L.sort((a, b) => s === "score" ? a._score - b._score : s === "views" ? b._views - a._views : s === "name" ? a.name.localeCompare(b.name) : new Date(b.created_at) - new Date(a.created_at));
+  return L;
+}
+const vPros = () => {
+  const L = proList(), cats = [...new Set(M.pros.map(p => p.category || "—"))].sort();
+  return head("Profissionais (CRM)", `${L.length} de ${M.pros.length} profissionais`, `<button class="btn sec sm" onclick="exportCsv()">⬇ Exportar CSV</button>`) +
+    `<div class="tools"><input placeholder="Pesquisar nome, categoria, zona, telemóvel…" value="${esc(filt.q)}" oninput="filt.q=this.value;renderTable()" style="min-width:260px">
+      <select onchange="filt.cat=this.value;renderTable()"><option value="">Todas as categorias</option>${cats.map(c => `<option ${filt.cat === c ? "selected" : ""}>${esc(c)}</option>`).join("")}</select>
+      <select onchange="filt.st=this.value;renderTable()">${[["", "Todos os estados"], ["unver", "Por verificar"], ["ver", "Verificados"], ["nocat", "Sem categoria"], ["low", "Perfil incompleto (<60)"], ["paid", "Planos pagos"], ["susp", "Suspensos"]].map(o => `<option value="${o[0]}" ${filt.st === o[0] ? "selected" : ""}>${o[1]}</option>`).join("")}</select>
+      <select onchange="filt.stage=this.value;renderTable()"><option value="">Todas as fases CRM</option>${Object.entries(STAGES).map(([k, v]) => `<option value="${k}" ${filt.stage === k ? "selected" : ""}>${v}</option>`).join("")}</select>
+      <select onchange="filt.sort=this.value;renderTable()">${[["created", "Mais recentes"], ["score", "Pior perfil primeiro"], ["views", "Mais vistos"], ["name", "Nome A–Z"]].map(o => `<option value="${o[0]}" ${filt.sort === o[0] ? "selected" : ""}>${o[1]}</option>`).join("")}</select></div>
+    <div class="card"><div class="tw" id="ptable">${proTable()}</div></div>`;
+};
+function proTable() {
+  const L = proList();
+  return `<table><tr><th>Nome</th><th>Categoria</th><th>Zona</th><th>Perfil</th><th>Vistas</th><th>Conv.</th><th>Fase CRM</th><th>Registo</th></tr>${L.map(p => `<tr class="clk" onclick="openPro('${p.id}')"><td><b>${esc(p.name)}</b> ${p.verified ? `<span class="pill ok">✓</span>` : `<span class="pill warn">por verificar</span>`}${p.suspended ? ` <span class="pill bad">suspenso</span>` : ""}${p.plan !== "free" ? ` <span class="pill acc">${esc(p.plan)}</span>` : ""}</td><td>${esc(p.category || "—")}</td><td>${esc(p.location || "—")}</td><td style="min-width:110px"><div class="row" style="gap:6px"><div style="flex:1">${bar(p._score, 100, sc(p._score))}</div><span class="mut">${p._score}</span></div></td><td>${p._views}</td><td>${p._conv}</td><td>${STAGES[stageOf(p)]}</td><td class="mut">${fdate(p.created_at)}</td></tr>`).join("") || `<tr><td colspan="8" class="mut">Nenhum resultado.</td></tr>`}</table>`;
+}
+function renderTable() { $("#ptable").innerHTML = proTable(); $(".top .sub").textContent = `${proList().length} de ${M.pros.length} profissionais`; }
+function waLink(ph) { const d = String(ph || "").replace(/\D/g, ""); if (!d) return ""; return "https://wa.me/" + (d.length === 9 ? "351" + d : d); }
+function openPro(id) {
+  const p = D.profiles.find(x => x.id === id); if (!p) return;
+  const c = store.crm[id] || {}, tasks = store.tasks.filter(t => t.profile_id === id);
+  const ph = M.phone[id] || "";
+  openDrawer(`<div class="row" style="justify-content:space-between"><h2 style="font-size:19px">${esc(p.name)}</h2><button class="btn sec sm" onclick="closeDrawer()">✕</button></div>
+    <div class="row" style="margin-top:6px">${p.verified ? `<span class="pill ok">verificado</span>` : `<span class="pill warn">por verificar</span>`}${p.suspended ? `<span class="pill bad">suspenso</span>` : ""}<span class="pill">${esc(p.plan || "free")}</span></div>
+    <div class="kv"><span>Categoria</span><span>${esc(p.category || "—")}</span><span>Zona</span><span>${esc(p.location || "—")}</span><span>Telemóvel</span><span>${ph ? `${esc(ph)} · <a href="tel:${esc(ph)}">ligar</a> · <a target="_blank" rel="noopener" href="${waLink(ph)}">WhatsApp</a>` : "—"}</span><span>Registo</span><span>${fdate(p.created_at)} (${ago(p.created_at)})</span><span>Vistas do perfil</span><span>${p._views}</span><span>Conversas</span><span>${p._conv}</span><span>Serviços</span><span>${p._svc}</span></div>
+    <h3 style="margin:14px 0 6px">Qualidade do perfil: ${p._score}/100</h3>${bar(p._score, 100, sc(p._score))}
+    <div class="row" style="margin-top:8px">${p._chk.map(k => `<span class="pill ${k[2] ? "ok" : "bad"}">${k[2] ? "✓" : "✗"} ${k[0]}</span>`).join("")}</div>
+    <h3 style="margin:18px 0 6px">CRM</h3>
+    <label class="f">Fase</label><select id="crmStage">${Object.entries(STAGES).map(([k, v]) => `<option value="${k}" ${(c.stage || "novo") === k ? "selected" : ""}>${v}</option>`).join("")}</select>
+    <label class="f">Próximo contacto</label><input id="crmNext" type="date" value="${c.next_contact ? String(c.next_contact).slice(0, 10) : ""}">
+    <label class="f">Notas</label><textarea id="crmNotes" rows="4" placeholder="O que falaste com este profissional…">${esc(c.notes || "")}</textarea>
+    <div class="row" style="margin-top:10px"><button class="btn" onclick="saveCrmForm('${id}')">Guardar</button>
+    <button class="btn sec" onclick="newTaskFor('${id}')">+ Tarefa</button></div>
+    <h3 style="margin:18px 0 6px">Tarefas (${tasks.length})</h3>${tasks.map(t => `<div class="sug"><span class="t">${esc(t.title)}<br><span class="mut">${t.status === "done" ? "feita" : t.due_date ? "até " + fdate(t.due_date) : "sem prazo"}</span></span></div>`).join("") || `<span class="mut">Nenhuma.</span>`}
+    <h3 style="margin:18px 0 6px">Ações</h3>
+    <div class="row"><button class="btn sec" onclick="toggleVerify('${id}')">${p.verified ? "Remover verificação" : "Verificar profissional"}</button>
+    <button class="btn sec" onclick="waPro('${id}')">WhatsApp com modelo</button>
+    <button class="btn sec" onclick="toggleSuspend('${id}')">${p.suspended ? "Reativar conta" : "Suspender conta"}</button></div>
+    ${p.slug ? `<p class="mut" style="margin-top:14px">Perfil público: <a target="_blank" rel="noopener" href="https://flinko.pt/${esc(p.slug)}">flinko.pt/${esc(p.slug)}</a></p>` : ""}`);
+}
+async function saveCrmForm(id) {
+  try { await saveCrm(id, { stage: $("#crmStage").value, next_contact: $("#crmNext").value || null, notes: $("#crmNotes").value }); toast("Guardado"); renderTable(); } catch (e) { toast("Erro: " + e.message); }
+}
+async function patchProfile(id, body) {
+  if (DEMO) { Object.assign(D.profiles.find(p => p.id === id), body); return; }
+  await api("profiles?id=eq." + id, { method: "PATCH", body, headers: { Prefer: "return=minimal" } });
+  Object.assign(D.profiles.find(p => p.id === id), body);
+}
+async function toggleVerify(id) {
+  const p = D.profiles.find(x => x.id === id), nv = !p.verified;
+  if (!await ask(nv ? "Verificar profissional" : "Remover verificação", `${p.name} ${nv ? "passa a aparecer como verificado no Flinko." : "deixa de aparecer como verificado."}`)) return;
+  try { await patchProfile(id, { verified: nv }); compute(); closeDrawer(); render(); toast("Atualizado"); } catch (e) { toast("Erro: " + e.message); }
+}
+async function toggleSuspend(id) {
+  const p = D.profiles.find(x => x.id === id), ns = !p.suspended;
+  if (!await ask(ns ? "Suspender conta" : "Reativar conta", ns ? `${p.name} deixa de aparecer nas pesquisas do Flinko.` : `${p.name} volta a aparecer nas pesquisas.`, ns ? "Suspender" : "Reativar", ns)) return;
+  try { await patchProfile(id, { suspended: ns }); compute(); closeDrawer(); render(); toast("Atualizado"); } catch (e) { toast("Erro: " + e.message); }
+}
+function exportCsv() {
+  const rows = [["Nome", "Categoria", "Zona", "Telemóvel", "Plano", "Verificado", "Perfil", "Vistas", "Conversas", "Fase CRM", "Registo"]].concat(proList().map(p => [p.name, p.category || "", p.location || "", p._phone, p.plan, p.verified ? "sim" : "não", p._score, p._views, p._conv, STAGES[stageOf(p)], fdate(p.created_at)]));
+  const csv = "﻿" + rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(";")).join("\n");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" })); a.download = "flinko-profissionais.csv"; a.click();
+}
+
+const nameOf = id => D.profiles.find(p => p.id === id)?.name || "—";
+const vDemand = () => {
+  const reqs = D.requests, withOff = reqs.filter(r => D.offers.some(o => o.request_id === r.id)).length;
+  const bySender = {}; D.messages.forEach(m => { bySender[m.conversation_id] = bySender[m.conversation_id] || new Set(); bySender[m.conversation_id].add(m.sender_id); });
+  const replied = D.conversations.filter(c => bySender[c.id] && bySender[c.id].has(c.professional_id)).length;
+  return head("Procura e conversas", "O lado do cliente: pedidos, propostas e conversas") +
+    `<div class="grid g4">${kpi("Pedidos", num(reqs.length), `${reqs.filter(r => r.status === "open").length} abertos`)}${kpi("Pedidos com proposta", pct(withOff, reqs.length) + "%", `${withOff} de ${reqs.length}`)}${kpi("Conversas", num(D.conversations.length), `${num(M.msgs)} mensagens`)}${kpi("Profissional respondeu", pct(replied, D.conversations.length) + "%", `${replied} de ${D.conversations.length} conversas`)}${kpi("Tempo médio de resposta", M.pros.filter(p => p.avg_response_minutes).length ? Math.round(M.pros.filter(p => p.avg_response_minutes).reduce((s, p) => s + +p.avg_response_minutes, 0) / M.pros.filter(p => p.avg_response_minutes).length) + " min" : "—", "profissionais com histórico")}${kpi("Avaliação média", M.rev ? M.avgRating.toFixed(1) + " ★" : "—", `${M.rev} avaliações`)}</div>
+    <div class="grid g2" style="margin-top:14px"><div class="card"><h3>Oferta vs procura por categoria</h3>${catTable()}</div>
+    <div class="card"><h3>Pedidos de clientes</h3><div class="tw"><table><tr><th>Pedido</th><th>Categoria</th><th>Zona</th><th>Estado</th><th>Propostas</th><th>Data</th></tr>${reqs.slice(0, 20).map(r => { const n = D.offers.filter(o => o.request_id === r.id).length; return `<tr><td>${esc(r.title)} ${r.is_urgent ? `<span class="pill bad">urgente</span>` : ""}</td><td>${esc(r.category)}</td><td>${esc(r.location)}</td><td>${esc(r.status)}</td><td>${n ? n : `<span class="pill bad">0</span>`}</td><td class="mut">${fdate(r.created_at)}</td></tr>`; }).join("") || `<tr><td colspan="6" class="mut">Sem pedidos.</td></tr>`}</table></div></div></div>
+    <div class="card" style="margin-top:14px"><h3>Últimas conversas</h3><div class="tw"><table><tr><th>Profissional</th><th>Cliente</th><th>Última mensagem</th><th>Quando</th></tr>${D.conversations.slice(0, 15).map(c => `<tr><td>${esc(nameOf(c.professional_id))}</td><td>${esc(nameOf(c.client_id))}</td><td>${esc((c.last_message || "(sem mensagens)").slice(0, 70))}</td><td class="mut">${ago(c.last_message_at)}</td></tr>`).join("")}</table></div></div>`;
+};
+
+function projection() {
+  const pj = Object.assign({}, DEFAULTS.proj, setting("proj")), costs = setting("costs").reduce((s, c) => s + (+c.amount || 0), 0);
+  let pros = M.pros.length, paying = M.activePaid.length, cum = 0; const rows = [];
+  for (let m = 1; m <= 12; m++) {
+    const add = pj.newPros * Math.pow(1 + pj.growth / 100, m - 1);
+    pros += add; paying += add * pj.conv / 100;
+    const rev = paying * pj.avgPrice, net = rev - costs; cum += net;
+    rows.push({ m, pros: Math.round(pros), paying: Math.round(paying * 10) / 10, rev, net, cum });
+  }
+  return { pj, costs, rows };
+}
+const vFin = () => {
+  const pr = setting("prices"), costs = setting("costs"), { pj, costs: tc, rows } = projection();
+  const oneOff = M.aiRev, net = M.mrr - tc;
+  const paidPlans = Object.entries(pr).map(([k, v]) => [k, M.activePaid.filter(p => p.plan === k).length, v]);
+  const be = pj.avgPrice ? Math.ceil(tc / pj.avgPrice) : 0;
+  return head("Finanças", "Receita, custos, ponto de equilíbrio e projeção") +
+    `<div class="note">Os preços dos planos e os custos abaixo são <b>valores que defines tu</b> (a base de dados não os guarda). Ajusta-os para os valores reais.</div>
+    <div class="grid g4">${kpi("MRR", eur(M.mrr), `ARR ${eur(M.mrr * 12)}`)}${kpi("Receitas únicas", eur(oneOff), `${M.aiUnlocked.length} × construtor de perfil IA (${eur(setting("aiFee"))})`)}${kpi("Custos mensais", eur(tc), "soma da tabela abaixo")}${kpi("Resultado mensal", `<span class="${net >= 0 ? "up" : "dn"}">${eur(net)}</span>`, "MRR − custos")}
+    ${kpi("Ponto de equilíbrio", tc ? be + " pagantes" : "—", tc ? `com preço médio de ${eur(pj.avgPrice)}` : "define os custos mensais abaixo")}${kpi("Volume de trabalhos pagos", eur(M.gmv), `${D.jobs.filter(j => j.status === "pago").length} trabalhos`)}${kpi("Créditos em anúncios", num(M.adCredits), `${D.ads.filter(a => a.status === "ativo").length} ativos`)}${kpi("Conversão a pago", pct(M.activePaid.length, M.pros.length) + "%", `${M.activePaid.length} de ${M.pros.length}`)}</div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card"><h3>Preços dos planos (€/mês)</h3><div class="grid g3">${Object.entries(pr).map(([k, v]) => `<div><label class="f">${k}</label><input type="number" step="0.01" min="0" value="${v}" onchange="setPrice('${k}',this.value)"></div>`).join("")}<div><label class="f">Construtor IA (único)</label><input type="number" step="0.01" min="0" value="${setting("aiFee")}" onchange="saveSetting('aiFee',+this.value).then(()=>{compute();render()})"></div></div>
+        <p class="mut" style="margin:12px 0 0">${paidPlans.map(p => `${p[0]}: ${p[1]} × ${eur(p[2])}`).join(" · ")}</p></div>
+      <div class="card"><h3>Custos mensais <button class="btn sec sm" onclick="addCost()">+ linha</button></h3>${costs.map((c, i) => `<div class="row" style="margin-bottom:6px"><input value="${esc(c.name)}" onchange="editCost(${i},'name',this.value)" style="flex:2"><input type="number" step="0.01" min="0" value="${c.amount}" onchange="editCost(${i},'amount',this.value)" style="flex:1"><button class="btn sec sm" onclick="delCost(${i})">✕</button></div>`).join("")}<b>Total: ${eur(tc)}/mês</b></div></div>
+    <div class="card" style="margin-top:14px"><h3>Projeção a 12 meses</h3>
+      <div class="grid g4"><div><label class="f">Novos profissionais/mês</label><input type="number" min="0" value="${pj.newPros}" onchange="setProj('newPros',this.value)"></div><div><label class="f">Crescimento mensal (%)</label><input type="number" min="0" value="${pj.growth}" onchange="setProj('growth',this.value)"></div><div><label class="f">Conversão para pago (%)</label><input type="number" min="0" max="100" value="${pj.conv}" onchange="setProj('conv',this.value)"></div><div><label class="f">Preço médio (€/mês)</label><input type="number" step="0.01" min="0" value="${pj.avgPrice}" onchange="setProj('avgPrice',this.value)"></div></div>
+      <div style="margin-top:14px">${lineChart([{ name: "Receita mensal", data: rows.map(r => ({ x: "M" + r.m, y: Math.round(r.rev) })), color: COL[0] }, { name: "Custos", data: rows.map(r => ({ x: "M" + r.m, y: Math.round(tc) })), color: "#dc2626" }])}</div>
+      <div class="tw"><table><tr><th>Mês</th><th>Profissionais</th><th>Pagantes</th><th>Receita</th><th>Resultado</th><th>Acumulado</th></tr>${rows.map(r => `<tr><td>M${r.m}</td><td>${r.pros}</td><td>${r.paying}</td><td>${eur(r.rev)}</td><td class="${r.net >= 0 ? "up" : "dn"}">${eur(r.net)}</td><td class="${r.cum >= 0 ? "up" : "dn"}">${eur(r.cum)}</td></tr>`).join("")}</table></div></div>` + finExtra();
+};
+const setPrice = (k, v) => { const p = Object.assign({}, setting("prices")); p[k] = +v || 0; saveSetting("prices", p).then(() => { compute(); render(); }); };
+const setProj = (k, v) => { const p = Object.assign({}, DEFAULTS.proj, setting("proj")); p[k] = +v || 0; saveSetting("proj", p).then(render); };
+const editCost = (i, k, v) => { const c = setting("costs").map(x => Object.assign({}, x)); c[i][k] = k === "amount" ? +v || 0 : v; saveSetting("costs", c).then(render); };
+const addCost = () => saveSetting("costs", setting("costs").concat([{ name: "Novo custo", amount: 0 }])).then(render);
+const delCost = i => saveSetting("costs", setting("costs").filter((_, j) => j !== i)).then(render);
+
+/* tarefas */
+const PRI = { alta: "bad", media: "warn", baixa: "" };
+function suggestions() {
+  const s = [], has = t => store.tasks.some(x => x.title === t && x.status !== "done");
+  const nv = M.pros.filter(p => !p.verified); nv.slice(0, 3).forEach(p => s.push(`Verificar ${p.name}`));
+  M.pros.filter(p => !p.category).slice(0, 5).forEach(p => s.push(`Contactar ${p.name} para completar o perfil (falta categoria)`));
+  M.gp.forEach(g => s.push(`Tratar pedido RGPD de ${nameOf(g.profile_id)}`));
+  M.openReq.slice(0, 3).forEach(r => s.push(`Arranjar profissional para o pedido “${r.title}”`));
+  const inactive = M.pros.filter(p => p.verified && !p._conv && !p._views).length; if (inactive) s.push(`Divulgar ${inactive} perfis verificados que ainda não tiveram visitas ou conversas`);
+  const tl = items("ticket").filter(t => t.status !== "resolvido" && now() - new Date(t.date) > 2 * DAY).length; if (tl) s.push(`Responder a ${tl} pedido(s) de apoio fora do prazo de 48 h`);
+  const il = items("invoice").filter(i => i.status === "emitida" && i.due && i.due < today()).length; if (il) s.push(`Cobrar ${il} fatura(s) em atraso`);
+  const ld = leadsDue().length; if (ld) s.push(`Contactar ${ld} lead(s) em atraso na aquisição`);
+  if (M.neverBack && M.neverBack.length) s.push(`Reativar ${M.neverBack.length} profissionais que nunca voltaram ao site`);
+  if (M.flags && M.flags.length) s.push(`Moderar ${M.flags.length} conversa(s) com conteúdo assinalado`);
+  return s.filter(t => !has(t));
+}
+const vTasks = () => {
+  const cols = [["todo", "Por fazer"], ["doing", "Em curso"], ["done", "Feitas"]], sug = suggestions();
+  return head("Tarefas", `${store.tasks.filter(t => t.status !== "done").length} em aberto${store.cloud ? "" : " · guardadas só neste navegador"}`) +
+    `<div class="card" style="margin-bottom:14px"><h3>Nova tarefa</h3><form class="row" onsubmit="addTask(event)"><input id="ttl" placeholder="O que tens de fazer?" required style="flex:3;min-width:220px"><input id="tdue" type="date" style="flex:1;min-width:140px"><select id="tpri" style="flex:1;min-width:110px"><option value="alta">Alta</option><option value="media" selected>Média</option><option value="baixa">Baixa</option></select><button class="btn">Adicionar</button></form></div>
+    <div class="kb">${cols.map(([k, l]) => `<div class="col"><h4>${l} (${store.tasks.filter(t => t.status === k).length})</h4>${store.tasks.filter(t => t.status === k).sort((a, b) => (a.due_date || "9") < (b.due_date || "9") ? -1 : 1).map(t => `<div class="tk"><div class="tt">${esc(t.title)}</div><div class="mt">${t.profile_id ? "👤 " + esc(nameOf(t.profile_id)) + " · " : ""}<span class="pill ${PRI[t.priority] || ""}">${esc(t.priority || "media")}</span> ${t.due_date ? (new Date(t.due_date) < now() - DAY && t.status !== "done" ? `<span class="dn">atrasada · ${fdate(t.due_date)}</span>` : "até " + fdate(t.due_date)) : ""}</div><div class="ac">${k !== "todo" ? `<button class="btn sec sm" onclick="moveTask('${t.id}','${k === "done" ? "doing" : "todo"}')">◀</button>` : ""}${k !== "done" ? `<button class="btn sm" onclick="moveTask('${t.id}','${k === "todo" ? "doing" : "done"}')">${k === "todo" ? "Iniciar" : "Concluir"} ▶</button>` : ""}<button class="btn sec sm" onclick="removeTask('${t.id}')">✕</button></div></div>`).join("") || `<span class="mut">—</span>`}</div>`).join("")}</div>
+    ${sug.length ? `<div class="card" style="margin-top:14px"><h3>💡 Sugestões automáticas (a partir dos teus dados)</h3>${sug.map((t, i) => `<div class="sug"><span class="t">${esc(t)}</span><button class="btn sec sm" onclick="addSug(${i})">+ Criar tarefa</button></div>`).join("")}</div>` : ""}`;
+};
+const addTask = async e => { e.preventDefault(); await saveTask({ id: uid(), title: $("#ttl").value.trim(), status: "todo", priority: $("#tpri").value, due_date: $("#tdue").value || null, profile_id: null, created_at: new Date().toISOString() }); render(); };
+const addSug = async i => { const t = suggestions()[i]; if (!t) return; await saveTask({ id: uid(), title: t, status: "todo", priority: "media", due_date: null, profile_id: null, created_at: new Date().toISOString() }); render(); };
+const moveTask = async (id, st) => { const t = store.tasks.find(x => x.id === id); await saveTask(Object.assign({}, t, { status: st })); render(); };
+const removeTask = async id => { if (await ask("Apagar tarefa", "Esta ação não pode ser desfeita.", "Apagar", true)) { await delTask(id); render(); } };
+const askText = (title, ph) => new Promise(res => { const m = $("#modal"); m.classList.remove("hidden"); m.innerHTML = `<div class="mb"><h3 style="font-size:17px;margin-bottom:10px">${esc(title)}</h3><input id="mtx" placeholder="${esc(ph)}"><div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn sec" id="mno">Cancelar</button><button class="btn" id="myes">Criar</button></div></div>`; const done = v => { m.classList.add("hidden"); m.innerHTML = ""; res(v); }; $("#mno").onclick = () => done(null); $("#myes").onclick = () => done($("#mtx").value.trim()); $("#mtx").focus(); });
+const newTaskFor = async pid => { const title = await askText("Nova tarefa para " + nameOf(pid), "O que tens de fazer?"); if (!title) return; await saveTask({ id: uid(), title, status: "todo", priority: "media", due_date: null, profile_id: pid, created_at: new Date().toISOString() }); toast("Tarefa criada"); openPro(pid); };
+
+const vOps = () => {
+  const gd = D.gdpr, days = g => Math.floor((now() - new Date(g.created_at)) / DAY), nq = s => D.notif.filter(n => n.status === s).length;
+  return head("Operações", "Verificações, RGPD, notificações e saúde dos dados") +
+    `<div class="grid g4">${kpi("Verificações pendentes", M.vp.length, `${D.verif.length} pedidos no total`)}${kpi("RGPD em aberto", M.gp.length, "prazo legal: 30 dias")}${kpi("Notificações enviadas", nq("sent"), `${nq("failed")} falharam · ${nq("pending")} pendentes`)}${kpi("Subscrições push", D.push.length, `${D.saved.length} favoritos · ${D.referrals.length} convites`)}</div>
+    <div class="grid g2" style="margin-top:14px"><div class="card"><h3>Pedidos RGPD</h3><div class="tw"><table><tr><th>Conta</th><th>Tipo</th><th>Estado</th><th>Em aberto</th></tr>${gd.map(g => `<tr><td>${esc(nameOf(g.profile_id))}</td><td>${g.request_type === "delete" ? "Eliminação" : "Exportação"}</td><td><span class="pill ${g.status === "completed" ? "ok" : "warn"}">${esc(g.status)}</span></td><td class="${days(g) > 20 && g.status !== "completed" ? "dn" : ""}">${g.status === "completed" ? "—" : days(g) + " dias"}</td></tr>`).join("") || `<tr><td colspan="4" class="mut">Sem pedidos.</td></tr>`}</table></div></div>
+    <div class="card"><h3>Pedidos de verificação</h3><div class="tw"><table><tr><th>Profissional</th><th>Estado</th><th>Data</th></tr>${D.verif.map(v => `<tr><td>${esc(nameOf(v.profile_id))}</td><td><span class="pill ${v.status === "approved" ? "ok" : v.status === "pending" ? "warn" : ""}">${esc(v.status)}</span></td><td class="mut">${fdate(v.created_at)}</td></tr>`).join("") || `<tr><td colspan="3" class="mut">Sem pedidos.</td></tr>`}</table></div></div></div>
+    <div class="card" style="margin-top:14px"><h3>Saúde da ligação aos dados</h3>${LOADERR.length ? LOADERR.map(e => `<div class="sug"><span class="pill bad">erro</span><span class="t">${esc(e)}</span></div>`).join("") : `<span class="pill ok">Todas as tabelas carregaram sem erros</span>`}</div>`;
+};
+const MIGRATION = `-- Tabelas privadas do painel de gestão (só administradores têm acesso)
+create table if not exists public.admin_tasks (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  status text not null default 'todo' check (status in ('todo','doing','done')),
+  priority text default 'media',
+  due_date date,
+  profile_id uuid references public.profiles(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+create table if not exists public.admin_crm (
+  profile_id uuid primary key references public.profiles(id) on delete cascade,
+  stage text not null default 'novo',
+  notes text default '',
+  next_contact date,
+  updated_at timestamptz default now()
+);
+create table if not exists public.admin_settings (
+  key text primary key,
+  value jsonb not null
+);
+create table if not exists public.admin_items (
+  id uuid primary key default gen_random_uuid(),
+  kind text not null,
+  data jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+create index if not exists admin_items_kind_idx on public.admin_items(kind);
+alter table public.admin_items enable row level security;
+create policy admin_items_all on public.admin_items for all using (is_admin()) with check (is_admin());
+alter table public.admin_tasks enable row level security;
+alter table public.admin_crm enable row level security;
+alter table public.admin_settings enable row level security;
+create policy admin_tasks_all on public.admin_tasks for all using (is_admin()) with check (is_admin());
+create policy admin_crm_all on public.admin_crm for all using (is_admin()) with check (is_admin());
+create policy admin_settings_all on public.admin_settings for all using (is_admin()) with check (is_admin());`;
+const vSet = () => {
+  const g = setting("goals");
+  return head("Definições", "Metas, armazenamento e ligação") +
+    `<div class="grid g2"><div class="card"><h3>Metas</h3><div class="grid g3">${[["pros", "Profissionais"], ["clients", "Clientes"], ["reviews", "Avaliações"], ["mrr", "MRR (€)"]].map(([k, l]) => `<div><label class="f">${l}</label><input type="number" min="0" value="${g[k]}" onchange="setGoal('${k}',this.value)"></div>`).join("")}</div></div>
+    <div class="card"><h3>Armazenamento de tarefas, CRM e definições</h3>${store.cloud ? `<span class="pill ok">Sincronizado no Supabase</span><p class="mut">Tarefas, notas e definições ficam guardadas na base de dados e ficam iguais em qualquer computador.</p>` : `<span class="pill warn">Só neste navegador</span><p class="mut">As tabelas <code>admin_tasks</code>, <code>admin_crm</code> e <code>admin_settings</code> ainda não existem no Supabase, por isso tudo é guardado apenas neste navegador. Para sincronizar, executa este SQL no Supabase (SQL Editor):</p><textarea readonly rows="10" onclick="this.select()" style="font:12px monospace">${esc(MIGRATION)}</textarea>`}</div></div>
+    <div class="card" style="margin-top:14px"><h3>Como são calculados os números</h3><ul style="margin:0;padding-left:18px;line-height:1.8"><li><b>Contas reais</b>: todas as contas menos as de administrador e demo. As tuas visitas (com sessão iniciada) também são excluídas do tráfego.</li><li><b>Qualidade do perfil</b> (0–100): categoria 15, bio 15, foto 15, serviço 15, localização 10, portfólio 10, verificado 10, capa 5, telemóvel 5.</li><li><b>MRR</b>: nº de profissionais com plano pago e não expirado × preço do plano que defines em Finanças.</li><li><b>Funil</b>: cada passo conta profissionais que cumprem esse critério (não é obrigatório cumprir o anterior).</li><li><b>Nota global</b>: média de seis notas de 0 a 100 (ativação, retenção, procura, confiança, receita e operação). É um indicador de conjunto, não uma métrica oficial.</li><li><b>Histórico</b>: os totais são reconstruídos pelas datas de criação; MRR, caixa, leads e atividade só existem a partir do dia em que o painel começou a guardar fotografias diárias.</li><li><b>Projeção</b>: novos profissionais por mês, com crescimento composto, × conversão para pago × preço médio − custos.</li></ul></div>`;
+};
+const setGoal = (k, v) => { const g = Object.assign({}, setting("goals")); g[k] = +v || 0; saveSetting("goals", g); };
+
+/* ============ NAVEGAÇÃO / ARRANQUE ============ */
+const VIEWS = { cal: vCal, history: vHistory, marketing: vMarketing, support: vSupport, invoices: vInvoices, company: vCompany, investor: vInvestor, home: vHome, growth: vGrowth, leads: vLeads, pros: vPros, retention: vRetention, demand: vDemand, quality: vQuality, fin: vFin, strategy: vStrategy, compliance: vCompliance, tasks: vTasks, reports: vReports, ops: vOps, set: vSet };
+function badgeOf(k) {
+  if (k === "ops") return M.gp.length + M.vp.length;
+  if (k === "leads") return leadsDue().length;
+  if (k === "quality") return M.flags.length;
+  if (k === "tasks") return store.tasks.filter(t => t.status !== "done" && t.due_date && new Date(t.due_date) < now() - DAY).length;
+  if (k === "support") return items("ticket").filter(t => t.status !== "resolvido" && now() - new Date(t.date) > 2 * DAY).length;
+  if (k === "invoices") return items("invoice").filter(i => i.status === "emitida" && i.due && i.due < today()).length;
+  return 0;
+}
+function render() {
+  $("#nav").innerHTML = NAVG.map(([g, L]) => `<div class="ng">${g}</div>` + L.map(([k, ic, l]) => { const b = badgeOf(k); return `<button class="nv ${view === k ? "on" : ""}" onclick="go('${k}')"><span class="ic">${ic}</span>${l}${b ? `<span class="bd">${b}</span>` : ""}</button>`; }).join("")).join("");
+  $("#main").innerHTML = VIEWS[view]();
+}
+function go(v) { view = v; $("#side").classList.remove("open"); closeDrawer(); render(); scrollTo(0, 0); }
+async function reload() { try { await loadAll(); render(); toast("Dados atualizados"); } catch (e) { toast("Erro: " + e.message); } }
+async function start() {
+  $("#login").classList.add("hidden"); $("#app").classList.remove("hidden");
+  $("#main").innerHTML = `<p class="mut">A carregar dados…</p>`;
+  $("#whoami").textContent = DEMO ? "Demonstração" : (session.user?.email || "");
+  await loadAll(); render();
+}
+$("#lf").onsubmit = async e => {
+  e.preventDefault(); $("#lerr").textContent = "";
+  try {
+    const j = await authFetch("token?grant_type=password", { email: $("#em").value.trim(), password: $("#pw").value });
+    session = { access_token: j.access_token, refresh_token: j.refresh_token, user: j.user }; ls.set("fk_session", session);
+    const me = await api("profiles?select=is_admin&id=eq." + j.user.id);
+    if (!me[0]?.is_admin) { session = null; ls.set("fk_session", null); throw new Error("Esta conta não tem permissões de administrador."); }
+    $("#pw").value = ""; await start();
+  } catch (err) { $("#lerr").textContent = err.message; }
+};
+$("#demoBtn").onclick = () => { DEMO = true; start(); };
+$("#logout").onclick = () => { session = null; ls.set("fk_session", null); location.reload(); };
+(async () => {
+  if (new URLSearchParams(location.search).has("demo")) { DEMO = true; return start(); }
+  if (session?.access_token) { try { const me = await api("profiles?select=is_admin&id=eq." + session.user.id); if (me[0]?.is_admin) return start(); } catch (e) { } }
+})();
+</script>
+</body>
+</html>
