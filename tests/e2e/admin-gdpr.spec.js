@@ -1,4 +1,4 @@
-// Teste E2E do separador "RGPD" em admin.html — o lado administrativo do
+// Teste E2E do separador "RGPD" em admin-classico.html — o lado administrativo do
 // fluxo criado em dashboard.html (ver dashboard-gdpr.spec.js). Sem isto, um
 // pedido de eliminação/exportação criado por um utilizador ficaria na tabela
 // gdpr_requests sem ninguém o ver nem tratar, o que é exatamente o risco de
@@ -37,7 +37,7 @@ test('separador RGPD mostra pedidos pendentes/urgentes e permite mudar de estado
     },
   });
 
-  await page.goto('/admin.html');
+  await page.goto('/admin-classico.html');
   await page.waitForSelector('#admin-panel', { state: 'visible' });
   await page.click('text=🔒 RGPD');
 
