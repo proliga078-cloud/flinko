@@ -1,4 +1,4 @@
-// Regressão de SEGURANÇA em admin.html (separador Verificação).
+// Regressão de SEGURANÇA em admin-classico.html (separador Verificação).
 //
 // Achado da revisão de código: o caminho de cada documento
 // (verification_requests.documents[].path) é escrito pelo profissional e
@@ -32,7 +32,7 @@ test('path malicioso de um documento não executa código no admin e é passado 
     },
   });
 
-  await page.goto('/admin.html');
+  await page.goto('/admin-classico.html');
   await page.waitForSelector('#admin-panel', { state: 'visible' });
   // substitui a função que abre o documento para vermos com que argumento é chamada
   await page.evaluate(() => { window.__docAberto = null; window.viewVerificationDoc = (p) => { window.__docAberto = p; }; });
