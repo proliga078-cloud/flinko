@@ -6,9 +6,12 @@
 // servidor envia um email personalizado a cada um pelo Resend (o mesmo
 // serviço que já manda as notificações de mensagens).
 //
-// É para comunicações de serviço (sobre a conta e o perfil). Não envia a quem
-// desligou os emails no dashboard (profiles.notify_email = false), e cada
-// email diz porque foi recebido e como deixar de receber.
+// Por omissão é para comunicações de serviço (sobre a conta e o perfil). Não
+// envia a quem desligou os emails no dashboard (profiles.notify_email = false),
+// e cada email diz porque foi recebido e como deixar de receber.
+// Com promo:true (planos, campanhas) só segue para quem tem consentimento
+// registado no painel (admin_items kind "consent", o registo mais recente de
+// cada pessoa tem de ser "dado") — RGPD art. 7.º e Lei 41/2004 art. 13.º-A.
 //
 //   action:"preview" -> conta quantos vão receber e quantos ficam de fora (e
 //                       porquê), sem enviar nada.
@@ -38,9 +41,10 @@ function emailHtml(text){
 }
 
 // Função pura (testável): decide quem recebe e quem fica de fora.
-function recipients(profiles,emails){
+function recipients(profiles,emails,consent=null){
   const ok=[],skipped=[]
   for(const p of profiles){
+    if(consent&&consent[p.id]!=='dado'){skipped.push({id:p.id,reason:'sem consentimento para promoções'});continue}
     if(p.is_demo||p.is_admin){skipped.push({id:p.id,reason:'conta de admin ou demo'});continue}
     if(p.suspended){skipped.push({id:p.id,reason:'conta suspensa'});continue}
     if(p.notify_email===false){skipped.push({id:p.id,reason:'desligou os emails'});continue}
@@ -49,6 +53,13 @@ function recipients(profiles,emails){
     ok.push({...p,email})
   }
   return{ok,skipped}
+}
+
+// Estado mais recente do consentimento de cada perfil ("dado" ou "retirado").
+function latestConsent(rows){
+  const last={}
+  for(const r of rows){const d=r.data||r;if(!d.ref)continue;const k=(d.date||'')+'|'+(d.at||'');if(!last[d.ref]||k>last[d.ref].k)last[d.ref]={k,status:d.status}}
+  return Object.fromEntries(Object.entries(last).map(([id,v])=>[id,v.status]))
 }
 
 async function emailMap(){
@@ -70,14 +81,20 @@ exports.handler=async(event)=>{
     if(auth.error)return auth.error
 
     const body=JSON.parse(event.body||'{}')
-    const{action,profileIds,subject,message,messages}=body
+    const{action,profileIds,subject,message,messages,promo}=body
     if(!Array.isArray(profileIds)||!profileIds.length)return json(400,{error:'Escolhe pelo menos um destinatário.'})
     if(profileIds.length>MAX_RECIPIENTS)return json(400,{error:`No máximo ${MAX_RECIPIENTS} destinatários por envio.`})
     if(!profileIds.every(id=>typeof id==='string'))return json(400,{error:'profileIds inválidos.'})
 
     const{data:profiles,error}=await admin.from('profiles').select('id,user_id,name,category,notify_email,suspended,is_demo,is_admin').in('id',profileIds)
     if(error)return json(500,{error:error.message})
-    const{ok,skipped}=recipients(profiles||[],await emailMap())
+    let consent=null
+    if(promo){
+      const{data:rows,error:cErr}=await admin.from('admin_items').select('data').eq('kind','consent')
+      if(cErr)return json(500,{error:cErr.message})
+      consent=latestConsent(rows||[])
+    }
+    const{ok,skipped}=recipients(profiles||[],await emailMap(),consent)
 
     if(action==='preview')return json(200,{recipients:ok.length,skipped})
 
@@ -108,8 +125,8 @@ exports.handler=async(event)=>{
       }
     }
 
-    await audit(admin,auth.user,'email_massa',{targetType:'campaign',summary:`Email “${subj}” enviado a ${sent.length} profissional(is)${failed.length?` (${failed.length} falharam)`:''}`,
-      details:{subject:subj,message:msg,sent,failed,skipped}})
+    await audit(admin,auth.user,'email_massa',{targetType:'campaign',summary:`Email${promo?' promocional':''} “${subj}” enviado a ${sent.length} profissional(is)${failed.length?` (${failed.length} falharam)`:''}`,
+      details:{subject:subj,message:msg,promo:!!promo,sent,failed,skipped}})
     return json(200,{sent:sent.length,failed,skipped,sentIds:sent})
   }catch(err){
     console.error('admin-send-campaign error:',err)
@@ -118,5 +135,6 @@ exports.handler=async(event)=>{
 }
 
 exports.recipients=recipients
+exports.latestConsent=latestConsent
 exports.fill=fill
 exports.emailHtml=emailHtml

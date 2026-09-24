@@ -584,22 +584,150 @@ const lstage = l => (M.regPhones && l.phone && M.regPhones.has(d9(l.phone))) ? "
 const DEFAULT_TPL = [
   { id: "d1", name: "Primeiro contacto", text: "Olá {nome}, sou o David do Flinko (flinko.pt), uma plataforma gratuita para profissionais em Portugal, sem comissões. Posso explicar-lhe em 2 minutos como criar o seu perfil de {categoria}?", std: 1 },
   { id: "d2", name: "Completar perfil", text: "Olá {nome}, já tem conta no Flinko. Para aparecer nas pesquisas falta completar: {falta}. Precisa de ajuda com isso?", std: 1 },
-  { id: "d4", name: "Perfil a ganhar visibilidade (convite ao plano pago)", text: "Olá {nome}, o seu perfil no Flinko teve {vistas} visualizações e {conversas} conversa(s). Se quiser aparecer mais acima nas pesquisas de {categoria}, tenho planos pagos a partir de poucos euros por mês. Quer que lhe explique como funcionam?", std: 1 },
+  { id: "d4", promo: 1, name: "Perfil a ganhar visibilidade (convite ao plano pago)", text: "Olá {nome}, o seu perfil no Flinko teve {vistas} visualizações e {conversas} conversa(s). Se quiser aparecer mais acima nas pesquisas de {categoria}, tenho planos pagos a partir de poucos euros por mês. Quer que lhe explique como funcionam?", std: 1 },
   { id: "d5", name: "Plano a expirar", text: "Olá {nome}, o seu plano {plano} no Flinko está a terminar. Quer renovar para continuar a aparecer em destaque? Se preferir mudar de plano ou tiver alguma dúvida, diga-me.", std: 1 },
-  { id: "d3", name: "Reativação", text: "Olá {nome}, já há algum tempo que não o vemos no Flinko. Quer que o ajude a atualizar o perfil e a ver se há pedidos na sua zona?", std: 1 }
+  { id: "d3", name: "Reativação", text: "Olá {nome}, já há algum tempo que não o vemos no Flinko. Quer que o ajude a atualizar o perfil e a ver se há pedidos na sua zona?", std: 1 },
+  { id: "d6", name: "Seguimento (3 dias)", text: "Olá {nome}, só para saber se chegou a ver a minha mensagem sobre o Flinko. Se preferir, ligo-lhe 5 minutos para tratarmos do perfil juntos. Qual é a melhor hora?", std: 1 },
+  { id: "d7", name: "Último contacto (7 dias)", text: "Olá {nome}, não quero insistir: fica só o link para quando lhe der jeito, flinko.pt. O perfil é gratuito e sem comissões. Bom trabalho!", std: 1 },
+  { id: "d8", name: "Lembrete: completar perfil", text: "Olá {nome}, o seu perfil no Flinko ainda não aparece bem nas pesquisas porque falta: {falta}. Quer que o ajude agora? Demora 5 minutos.", std: 1 },
+  { id: "d9", name: "Pagamento falhado — dia 0", text: "Olá {nome}, não conseguimos processar o pagamento do seu plano no Flinko (pode ser o cartão expirado ou sem saldo). Para manter o destaque, basta atualizar o método de pagamento na sua conta. Se precisar de ajuda, responda a esta mensagem.", std: 1 },
+  { id: "d10", name: "Pagamento falhado — dia 7", text: "Olá {nome}, o pagamento do seu plano ainda está por regularizar. Se não for resolvido nos próximos dias, o plano volta ao gratuito e perde o destaque. Consegue atualizar hoje? Ajudo-o se precisar.", std: 1 },
+  { id: "d11", name: "Pagamento falhado — aviso final", text: "Olá {nome}, este é o último aviso: sem pagamento nos próximos dias o seu plano passa para gratuito. O perfil e os dados mantêm-se, só perde o destaque. Se já resolveu, ignore esta mensagem.", std: 1 }
 ];
 const tpls = () => items("template").concat(DEFAULT_TPL);
 const fillTpl = (txt, o) => txt.replace(/\{nome\}/g, (o.name || "").split(" ")[0] || "").replace(/\{categoria\}/g, (o.category || "a sua área").toLowerCase()).replace(/\{falta\}/g, (o.missing || []).slice(0, 3).join(", ") || "alguns detalhes").replace(/\{vistas\}/g, o.views ?? 0).replace(/\{conversas\}/g, o.convs ?? 0).replace(/\{plano\}/g, o.plan || "gratuito");
-const waOpen = (phone, text) => { const d = String(phone || "").replace(/\D/g, ""); if (!d) { toast("Sem telemóvel"); return; } window.open("https://wa.me/" + (d.length === 9 ? "351" + d : d) + "?text=" + encodeURIComponent(text), "_blank", "noopener"); };
-async function waChoose(o, phone) {
-  const r = await form("Mensagem de WhatsApp", [{ k: "t", label: "Modelo", type: "select", opts: tpls().map(t => [t.id, t.name]) }], {}, "Abrir WhatsApp");
-  if (!r) return; const t = tpls().find(x => x.id === r.t); waOpen(phone, fillTpl(t.text, o));
+/* ============ MODELOS POR CATEGORIA ============ */
+// Grupos de categorias com argumentos diferentes (um eletricista e uma
+// esteticista não respondem às mesmas razões).
+const CATG = [
+  ["casa", "Obras e reparações", /eletric|canaliz|pintor|pedreir|carpint|serralh|obra|reparaç|reparac/i],
+  ["servicos", "Limpeza, jardim e mudanças", /limpez|jardin|mudan/i],
+  ["beleza", "Beleza e bem-estar", /cabele|estetic|personal|trainer|massag|unhas|barbe/i],
+  ["digital", "Digital e tecnologia", /design|program|tech|informát|informat|web|fotógra|fotogra/i],
+  ["deco", "Decoração e interiores", /decora|interior/i]
+];
+const catGroup = c => { const g = CATG.find(x => x[2].test(c || "")); return g ? g[0] : null; };
+const FIRST_BY_CAT = {
+  casa: "Olá {nome}, sou o David, do Flinko (flinko.pt). Quem procura {categoria} na sua zona encontra lá profissionais verificados e pede orçamento diretamente, sem intermediários nem comissões sobre o trabalho. O perfil é gratuito e fica pronto em 5 minutos. Quer que lhe envie o link?",
+  servicos: "Olá {nome}, sou o David, do Flinko (flinko.pt). Muitos clientes de {categoria} procuram alguém de confiança perto de casa e com preço claro. No Flinko pode mostrar os seus serviços com preço indicativo e receber pedidos da sua zona, sem comissões. Quer que o ajude a criar o perfil?",
+  beleza: "Olá {nome}, sou o David, do Flinko (flinko.pt). É uma montra gratuita para profissionais de {categoria}: fotografias do seu trabalho, serviços com preço e contacto direto dos clientes, sem comissões. Posso enviar-lhe o link para ver um perfil de exemplo?",
+  digital: "Olá {nome}, sou o David, do Flinko (flinko.pt). Empresas e particulares procuram lá {categoria} de confiança, com portfólio e preço indicativo. O perfil é gratuito, sem comissões, e pode ligar o seu site e redes. Quer que lhe envie o link?",
+  deco: "Olá {nome}, sou o David, do Flinko (flinko.pt). Quem vai renovar a casa procura lá {categoria} com portfólio e avaliações de clientes. Criar o perfil é gratuito e sem comissões, e as fotografias dos seus projetos ficam em destaque. Posso ajudá-lo a montar o perfil?"
+};
+// Texto do modelo para esta pessoa: a variante da categoria, se existir.
+const tplText = (t, o = {}) => { const g = catGroup(o.category); return (t.byCat && g && t.byCat[g]) || t.text; };
+
+/* ============ SEQUÊNCIAS DE SEGUIMENTO ============ */
+// Ao usar um modelo com sequência, o painel agenda sozinho o passo seguinte
+// (fica no calendário, em "Para fazer hoje" e em Aquisição). Enviar um passo
+// agenda o próximo. Para sozinha quando o lead se regista ou é dado como
+// perdido, quando o perfil fica completo, ou quando carregas em Parar.
+const SEQS = { d1: [[3, "d6"], [7, "d7"]], d2: [[4, "d8"]], d9: [[7, "d10"], [13, "d11"]] };
+const SEQNAME = { d1: "Primeiro contacto → 3 dias → 7 dias", d2: "Completar perfil → 4 dias", d9: "Pagamento falhado → dia 7 → aviso final" };
+function fuTarget(f) {
+  if (f.target === "lead") { const l = items("lead").find(x => x.id === f.ref); return l && { name: l.name, category: l.category, phone: l.phone, obj: l, stop: ["registado", "perdido"].includes(lstage(l)) }; }
+  const p = D.profiles.find(x => x.id === f.ref); if (!p) return null;
+  return { name: p.name, category: p.category, phone: M.phone[p.id], obj: p, stop: p.suspended || (f.seq === "d2" && p._score >= 80) || (f.seq === "d9" && (!p.plan || p.plan === "free")) };
 }
-const waPro = id => { const p = D.profiles.find(x => x.id === id); waChoose({ name: p.name, category: p.category, missing: p._missing, views: p._views, convs: p._conv, plan: p.plan }, M.phone[id]); };
-const waLead = id => { const l = items("lead").find(x => x.id === id); waChoose({ name: l.name, category: l.category }, l.phone); };
+const followups = () => items("followup").filter(f => !f.done).map(f => Object.assign({ _t: fuTarget(f) }, f)).filter(f => f._t && !f._t.stop).sort((a, b) => a.due < b.due ? -1 : 1);
+const followupsDue = () => followups().filter(f => f.due <= today());
+async function scheduleStep(ctx, seq, step, fromTs = now()) {
+  const s = SEQS[seq]; if (!s || !s[step]) return;
+  const gap = s[step][0] - (step ? s[step - 1][0] : 0);
+  await saveItem("followup", { target: ctx.kind, ref: ctx.id, seq, step, tpl: s[step][1], due: dkey(fromTs + gap * DAY), created: new Date().toISOString() });
+}
+async function startSeq(ctx, tplId) {
+  for (const f of items("followup").filter(f => f.ref === ctx.id && !f.done)) await saveItem("followup", Object.assign({}, f, { done: "substituído", doneAt: new Date().toISOString() }));
+  if (SEQS[tplId]) await scheduleStep(ctx, tplId, 0);
+}
+async function sendFollowup(id) {
+  const f = items("followup").find(x => x.id === id), tg = f && fuTarget(f); if (!tg) return;
+  const t = tpls().find(x => x.id === f.tpl); if (!t) return toast("Modelo em falta");
+  if (!tg.phone) return toast("Sem telemóvel");
+  waOpen(tg.phone, fillTpl(tplText(t, tg), tg.target === "lead" ? { name: tg.name, category: tg.category } : proVars(tg.obj)));
+  await saveItem("followup", Object.assign({}, f, { done: "enviado", doneAt: new Date().toISOString() }));
+  await logContact({ kind: f.target, id: f.ref }, t, "WhatsApp");
+  await scheduleStep({ kind: f.target, id: f.ref }, f.seq, f.step + 1);
+  render();
+}
+async function stopFollowup(id) { const f = items("followup").find(x => x.id === id); if (f) { await saveItem("followup", Object.assign({}, f, { done: "parado", doneAt: new Date().toISOString() })); render(); } }
+const fuRow = f => { const t = tpls().find(x => x.id === f.tpl); return `<div class="sug"><span class="pill ${f.due < today() ? "bad" : "acc"}">${f.due < today() ? "atrasado" : f.due === today() ? "hoje" : fdate(f.due)}</span><span class="t"><b>${esc(f._t.name)}</b> <span class="mut">${f.target === "lead" ? "lead" : "profissional"}</span><br><span class="mut">${esc(t ? t.name : f.tpl)} · ${esc(SEQNAME[f.seq] || "")}</span></span><button class="btn sm" onclick="sendFollowup('${f.id}')">Enviar (WhatsApp)</button><button class="btn sec sm" onclick="stopFollowup('${f.id}')">Parar</button></div>`; };
+const followupCard = (title = "🔁 Seguimentos agendados") => { const L = followups(), due = L.filter(f => f.due <= today()); return `<div class="card" style="margin-top:14px" id="fuCard"><h3>${title} <span class="sp"></span><span class="pill ${due.length ? "bad" : ""}">${due.length} para hoje</span></h3>${L.slice(0, 12).map(fuRow).join("") || `<span class="mut">Nenhum. Ao usar “Primeiro contacto”, “Completar perfil” ou “Pagamento falhado — dia 0”, o seguimento fica agendado aqui sozinho.</span>`}</div>`; };
+
+/* ============ REGISTO DE CONTACTOS E RESULTADOS POR MODELO ============ */
+const proVars = p => ({ name: p.name, category: p.category, missing: p._missing, views: p._views, convs: p._conv, plan: p.plan });
+async function logContact(ctx, t, channel) {
+  const at = new Date().toISOString();
+  if (ctx.kind === "lead") {
+    const l = items("lead").find(x => x.id === ctx.id); if (!l) return;
+    await saveItem("lead", Object.assign({}, l, { stage: l.stage === "novo" ? "contactado" : l.stage, log: [{ at, txt: channel + " · " + t.name, tpl: t.id }].concat(l.log || []) }));
+  } else {
+    await saveItem("contact", { profile_id: ctx.id, at, channel, tpl: t.name, tplId: t.id });
+    const c = store.crm[ctx.id] || {}; if (!c.stage || c.stage === "novo") await saveCrm(ctx.id, { stage: "contactado", next_contact: dkey(now() + 3 * DAY) }).catch(() => { });
+  }
+}
+// Que modelos resultam: leads contactados com cada modelo que se registaram,
+// e profissionais contactados que voltaram ao site nos 14 dias seguintes.
+function tplStats() {
+  const byName = Object.fromEntries(tpls().map(t => [t.name, t.id])), S = {};
+  const row = id => S[id] = S[id] || { id, sent: 0, leads: new Set(), leadsReg: new Set(), pros: new Set(), prosBack: new Set() };
+  items("lead").forEach(l => (l.log || []).forEach(g => { if (!g.tpl) return; const r = row(g.tpl); r.sent++; r.leads.add(l.id); if (lstage(l) === "registado") r.leadsReg.add(l.id); }));
+  items("contact").filter(c => c.profile_id).forEach(c => {
+    const id = c.tplId || byName[c.tpl]; if (!id) return; const r = row(id); r.sent++; r.pros.add(c.profile_id);
+    const p = D.profiles.find(x => x.id === c.profile_id), at = new Date(c.at).getTime();
+    if (p && (p._act || []).some(x => x > at + 36e5 && x <= at + 14 * DAY)) r.prosBack.add(c.profile_id);
+  });
+  return Object.values(S).map(r => Object.assign(r, { t: tpls().find(x => x.id === r.id) })).filter(r => r.t).sort((a, b) => b.sent - a.sent);
+}
+const statsCard = () => {
+  const L = tplStats(), rate = (a, b) => b ? `<b>${pct(a, b)}%</b> <span class="mut">(${a}/${b})</span>` : `<span class="mut">—</span>`;
+  return `<div class="card" id="tplStats"><h3>📊 Que textos funcionam</h3><div class="tw"><table><tr><th>Modelo</th><th>Envios</th><th>Leads → registaram-se</th><th>Profissionais → voltaram ao site (14 dias)</th></tr>${L.map(r => `<tr><td><b>${esc(r.t.name)}</b>${r.t.promo ? ` <span class="pill warn">promocional</span>` : ""}</td><td>${r.sent}</td><td>${rate(r.leadsReg.size, r.leads.size)}</td><td>${rate(r.prosBack.size, r.pros.size)}</td></tr>`).join("") || `<tr><td colspan="4" class="mut">Ainda sem envios registados com modelo. Os contactos feitos pelos botões de WhatsApp, SMS, email e pelos seguimentos contam aqui sozinhos.</td></tr>`}</table></div>
+    <p class="mut" style="margin:10px 0 0">Um lead conta como registado quando o telemóvel dele aparece num perfil do Flinko. Com menos de 10 envios por modelo, as percentagens ainda são sorte; compara modelos com o mesmo tipo de pessoa.</p></div>`;
+};
+
+/* ============ CONSENTIMENTOS PARA PROMOÇÕES ============ */
+// RGPD art. 7.º: quem envia promoções tem de conseguir provar o consentimento,
+// e retirá-lo tem de ser tão fácil como dá-lo. Aqui fica quem consentiu,
+// quando, por que canal e como (prova). Modelos promocionais e emails
+// promocionais em grupo só seguem para quem tem consentimento registado.
+const consentOf = ref => { const l = items("lead").find(x => x.id === ref); if (l) return l.consent ? { status: l.consent, date: l.consentDate, source: l.consentSrc, channel: "—" } : null; return items("consent").filter(c => c.ref === ref).sort((a, b) => (a.date + (a.at || "")) < (b.date + (b.at || "")) ? 1 : -1)[0] || null; };
+const hasConsent = ref => (consentOf(ref) || {}).status === "dado";
+async function setConsent(pid, status) {
+  const p = D.profiles.find(x => x.id === pid);
+  const r = await form(status === "dado" ? "Registar consentimento para promoções" : "Registar recusa / retirada", [{ k: "channel", label: "Canal", type: "select", opts: ["Todos", "WhatsApp", "Email", "SMS", "Telefone"] }, { k: "date", label: "Data", type: "date", def: today(), req: 1 }, { k: "source", label: status === "dado" ? "Como consentiu (prova): ex. caixa no registo, mensagem escrita de dd/mm, chamada gravada" : "Como pediu para parar: ex. respondeu PARAR por WhatsApp", req: 1 }], {}, "Registar");
+  if (!r) return;
+  await saveItem("consent", { ref: pid, name: p ? p.name : "", status, channel: r.channel, date: r.date, source: r.source, at: new Date().toISOString(), by: session?.user?.email || "" });
+  toast("Registado"); if (!$("#drawer").classList.contains("hidden")) openPro(pid); else render();
+}
+const consentBox = id => { const c = consentOf(id); return `<h3 style="margin:18px 0 6px">Consentimento para promoções</h3>${c ? `<span class="pill ${c.status === "dado" ? "ok" : "bad"}">${c.status === "dado" ? "consentiu" : "recusou / retirou"}</span> <span class="mut">${fdate(c.date)} · ${esc(c.channel || "")} · ${esc(c.source || "")}</span>` : `<span class="pill">sem registo</span> <span class="mut">só recebe mensagens de serviço (conta e perfil)</span>`}<div class="row" style="margin-top:8px"><button class="btn sec sm" onclick="setConsent('${id}','dado')">Registar consentimento</button><button class="btn sec sm" onclick="setConsent('${id}','retirado')">Registar recusa (PARAR)</button></div>`; };
+const consentCard = () => {
+  const L = items("consent").slice().sort((a, b) => (a.at || a.date) < (b.at || b.date) ? 1 : -1), LL = items("lead").filter(l => l.consent);
+  return `<div class="card" style="margin-top:14px" id="consentCard"><h3>✅ Registo de consentimentos <span class="sp"></span><button class="btn sec sm" onclick="consentCsv()">⬇ CSV</button></h3>
+    <p class="mut" style="margin:0 0 8px">Quem pode receber <b>promoções</b> (planos pagos, campanhas). Mensagens sobre a conta e o perfil não precisam disto. Regista aqui cada consentimento com a prova, e cada “PARAR”.</p>
+    <div class="tw"><table><tr><th>Pessoa</th><th>Estado</th><th>Canal</th><th>Data</th><th>Prova / como</th></tr>${L.map(c => `<tr><td>${esc(c.name || nameOf(c.ref))}</td><td><span class="pill ${c.status === "dado" ? "ok" : "bad"}">${c.status === "dado" ? "consentiu" : "retirou"}</span></td><td>${esc(c.channel || "")}</td><td>${fdate(c.date)}</td><td class="mut">${esc(c.source || "")}</td></tr>`).concat(LL.map(l => `<tr><td>${esc(l.name)} <span class="mut">(lead)</span></td><td><span class="pill ${l.consent === "dado" ? "ok" : "bad"}">${l.consent === "dado" ? "consentiu" : "retirou"}</span></td><td>—</td><td>${fdate(l.consentDate)}</td><td class="mut">${esc(l.consentSrc || "")}</td></tr>`)).join("") || `<tr><td colspan="5" class="mut">Ainda sem registos. Na ficha de cada profissional há os botões “Registar consentimento” e “Registar recusa”.</td></tr>`}</table></div></div>`;
+};
+function consentCsv() {
+  const rows = [["Pessoa", "Tipo", "Estado", "Canal", "Data", "Prova"]].concat(items("consent").map(c => [c.name || nameOf(c.ref), "profissional", c.status, c.channel || "", c.date || "", c.source || ""]), items("lead").filter(l => l.consent).map(l => [l.name, "lead", l.consent, "", l.consentDate || "", l.consentSrc || ""]));
+  download("flinko-consentimentos-" + today() + ".csv", "﻿" + rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(";")).join("\n"), "text/csv");
+}
+// Bloqueia modelos promocionais para quem não consentiu.
+const promoBlocked = (t, ref) => t && t.promo && !hasConsent(ref);
+DEFAULT_TPL[0].byCat = FIRST_BY_CAT;
+const waOpen = (phone, text) => { const d = String(phone || "").replace(/\D/g, ""); if (!d) { toast("Sem telemóvel"); return; } window.open("https://wa.me/" + (d.length === 9 ? "351" + d : d) + "?text=" + encodeURIComponent(text), "_blank", "noopener"); };
+async function waChoose(o, phone, ctx) {
+  const r = await form("Mensagem de WhatsApp", [{ k: "t", label: "Modelo", type: "select", opts: tpls().map(t => [t.id, t.name + (t.promo ? " (promocional)" : "") + (SEQS[t.id] ? " · com seguimento" : "")]) }], {}, "Abrir WhatsApp");
+  if (!r) return; const t = tpls().find(x => x.id === r.t);
+  if (ctx && promoBlocked(t, ctx.id)) return toast("Modelo promocional: esta pessoa não tem consentimento registado. Regista-o primeiro (ficha › Consentimento).");
+  if (!phone) return toast("Sem telemóvel");
+  waOpen(phone, fillTpl(tplText(t, o), o));
+  if (ctx) { await logContact(ctx, t, "WhatsApp"); await startSeq(ctx, t.id); if (view === "leads" || view === "contact") render(); }
+}
+const waPro = id => { const p = D.profiles.find(x => x.id === id); waChoose(proVars(p), M.phone[id], { kind: "pro", id }); };
+const waLead = id => { const l = items("lead").find(x => x.id === id); waChoose({ name: l.name, category: l.category }, l.phone, { kind: "lead", id }); };
 const LFIELDS = [
   { k: "name", label: "Nome", req: 1 }, { k: "phone", label: "Telemóvel" }, { k: "category", label: "Categoria", ph: "Eletricistas, Pintores…" }, { k: "zone", label: "Zona" },
-  { k: "source", label: "Origem", type: "select", opts: LSRC }, { k: "stage", label: "Fase", type: "select", opts: Object.entries(LST) }, { k: "next", label: "Próximo contacto", type: "date" }, { k: "notes", label: "Notas", type: "textarea" }
+  { k: "source", label: "Origem", type: "select", opts: LSRC }, { k: "stage", label: "Fase", type: "select", opts: Object.entries(LST) }, { k: "next", label: "Próximo contacto", type: "date" }, { k: "notes", label: "Notas", type: "textarea" },
+  { k: "consent", label: "Consentimento para promoções", type: "select", opts: [["", "Não registado (só mensagens de serviço)"], ["dado", "Deu consentimento"], ["retirado", "Recusou / pediu para parar"]] }, { k: "consentDate", label: "Data do consentimento ou da recusa", type: "date" }, { k: "consentSrc", label: "Como (prova): ex. disse que sim por WhatsApp em dd/mm" }
 ];
 async function addLead() { const r = await form("Novo lead", LFIELDS, { stage: "novo", source: "Telefone" }); if (r) { r.created = new Date().toISOString(); r.log = []; await saveItem("lead", r); render(); } }
 async function editLead(id) { const l = items("lead").find(x => x.id === id), r = await form("Editar lead", LFIELDS, l); if (r) { await saveItem("lead", Object.assign({}, l, r)); render(); } }
@@ -614,7 +742,7 @@ async function logLead(id) {
   if (!r) return; await saveItem("lead", Object.assign({}, l, { stage: r.stage, next: r.next, log: [{ at: new Date().toISOString(), txt: r.txt || "Contacto" }].concat(l.log || []) })); render();
 }
 const setLeadStage = async (id, st) => { const l = items("lead").find(x => x.id === id); await saveItem("lead", Object.assign({}, l, { stage: st })); render(); };
-async function editTpl(id) { const cur = items("template").find(x => x.id === id), r = await form(cur ? "Editar modelo" : "Novo modelo", [{ k: "name", label: "Nome", req: 1 }, { k: "text", label: "Texto (usa {nome}, {categoria}, {falta})", type: "textarea", rows: 5, req: 1 }], cur || {}); if (r) { await saveItem("template", Object.assign({}, cur || {}, r)); render(); } }
+async function editTpl(id) { const cur = items("template").find(x => x.id === id), r = await form(cur ? "Editar modelo" : "Novo modelo", [{ k: "name", label: "Nome", req: 1 }, { k: "text", label: "Texto (usa {nome}, {categoria}, {falta})", type: "textarea", rows: 5, req: 1 }, { k: "kind", label: "Tipo", type: "select", opts: [["servico", "Serviço (sobre a conta e o perfil)"], ["promo", "Promocional (planos, campanhas): só para quem consentiu"]] }], Object.assign({ kind: cur && cur.promo ? "promo" : "servico" }, cur || {})); if (r) { r.promo = r.kind === "promo" ? 1 : 0; delete r.kind; await saveItem("template", Object.assign({}, cur || {}, r)); render(); } }
 const vLeads = () => {
   const L = items("lead"), td = today(), eff = L.map(l => Object.assign({}, l, { _s: lstage(l) }));
   const open = eff.filter(l => !["registado", "perdido"].includes(l._s));
@@ -624,10 +752,11 @@ const vLeads = () => {
   eff.forEach(l => { const s = l.source || "Outro"; src[s] = src[s] || { n: 0, r: 0 }; src[s].n++; if (l._s === "registado") src[s].r++; });
   return head("Aquisição (leads)", "O teu canal principal: contactos diretos com profissionais que ainda não estão no Flinko", `<button class="btn sec sm" onclick="importLeads()">⬆ Importar lista</button><button class="btn sm" onclick="addLead()">+ Novo lead</button>`) +
     `<div class="grid g4">${kpi("Leads no total", L.length, `${open.length} em aberto`)}${kpi("Para contactar hoje", due.length, "sem contacto ou com data vencida")}${kpi("Contactos esta semana", wk, "registados no histórico")}${kpi("Conversão lead → registo", pct(reg, L.length) + "%", `${reg} de ${L.length} (o telemóvel do lead é comparado com os registos)`)}</div>
+    ${followupCard("🔁 Seguimentos (sequências automáticas)")}
     <div class="grid g2" style="margin-top:14px"><div class="card"><h3>📞 Contactar hoje (${due.length})</h3>${due.slice(0, 8).map(l => `<div class="sug"><span class="t"><b>${esc(l.name)}</b> <span class="mut">${esc(l.category || "")} ${esc(l.zone || "")}</span><br><span class="mut">${l.next ? "data: " + fdate(l.next) : "ainda sem contacto"}</span></span><button class="btn sm" onclick="logLead('${l.id}')">Registar</button><button class="btn sec sm" onclick="waLead('${l.id}')">WhatsApp</button></div>`).join("") || `<span class="mut">Ninguém para contactar hoje.</span>`}</div>
     <div class="card"><h3>Conversão por origem</h3><div class="tw"><table><tr><th>Origem</th><th>Leads</th><th>Registados</th><th>Conversão</th></tr>${Object.entries(src).sort((a, b) => b[1].n - a[1].n).map(([k, v]) => `<tr><td>${esc(k)}</td><td>${v.n}</td><td>${v.r}</td><td>${pct(v.r, v.n)}%</td></tr>`).join("") || `<tr><td colspan="4" class="mut">Sem leads ainda.</td></tr>`}</table></div></div></div>
     <div class="card" style="margin-top:14px"><h3>Todos os leads</h3><div class="tw"><table><tr><th>Nome</th><th>Categoria / zona</th><th>Origem</th><th>Fase</th><th>Próximo</th><th>Último contacto</th><th></th></tr>${eff.map(l => `<tr><td><b>${esc(l.name)}</b><br><span class="mut">${esc(l.phone || "")}</span></td><td>${esc(l.category || "—")}<br><span class="mut">${esc(l.zone || "")}</span></td><td>${esc(l.source || "")}</td><td>${l._s === "registado" && l.stage !== "registado" ? `<span class="pill ok">Registado (automático)</span>` : `<select onchange="setLeadStage('${l.id}',this.value)" style="min-width:130px">${Object.entries(LST).map(([k, v]) => `<option value="${k}" ${l.stage === k ? "selected" : ""}>${v}</option>`).join("")}</select>`}</td><td>${l.next ? fdate(l.next) : "—"}</td><td class="mut">${(l.log || [])[0] ? ago(l.log[0].at) : "—"}</td><td style="white-space:nowrap"><button class="btn sec sm" onclick="logLead('${l.id}')">Registar</button> <button class="btn sec sm" onclick="waLead('${l.id}')">WA</button> <button class="btn sec sm" onclick="editLead('${l.id}')">✎</button> <button class="btn sec sm" onclick="confirmDel('lead','${l.id}','este lead')">✕</button></td></tr>`).join("") || `<tr><td colspan="7" class="mut">Ainda não tens leads. Usa “Importar lista” para colar os contactos que já tens.</td></tr>`}</table></div></div>
-    <div class="card" style="margin-top:14px"><h3>Modelos de mensagem <button class="btn sec sm" onclick="editTpl()">+ Novo modelo</button></h3>${tpls().map(t => `<div class="sug"><span class="t"><b>${esc(t.name)}</b>${t.std ? ` <span class="pill">padrão</span>` : ""}<br><span class="mut">${esc(t.text)}</span></span>${t.std ? "" : `<button class="btn sec sm" onclick="editTpl('${t.id}')">✎</button><button class="btn sec sm" onclick="confirmDel('template','${t.id}','este modelo')">✕</button>`}</div>`).join("")}</div>`;
+    <div class="card" style="margin-top:14px"><h3>Modelos de mensagem <button class="btn sec sm" onclick="editTpl()">+ Novo modelo</button></h3>${tpls().map(t => `<div class="sug"><span class="t"><b>${esc(t.name)}</b>${t.std ? ` <span class="pill">padrão</span>` : ""}${t.promo ? ` <span class="pill warn">promocional</span>` : ""}${SEQS[t.id] ? ` <span class="pill acc">com seguimento</span>` : ""}<br><span class="mut">${esc(t.text)}</span></span>${t.std ? "" : `<button class="btn sec sm" onclick="editTpl('${t.id}')">✎</button><button class="btn sec sm" onclick="confirmDel('template','${t.id}','este modelo')">✕</button>`}</div>`).join("")}</div>`;
 };
 
 /* ============ RETENÇÃO ============ */
@@ -712,7 +841,7 @@ const vStrategy = () => {
 
 /* ============ CONFORMIDADE E RISCOS ============ */
 const CHECKS = [
-  ["RGPD", [["Política de privacidade publicada e atualizada"], ["Termos e condições publicados"], ["Aviso de cookies conforme (recusar tão fácil como aceitar)"], ["Procedimento para responder a pedidos RGPD em 30 dias"], ["Registo das atividades de tratamento de dados"], ["Acordos de tratamento de dados com subcontratantes (Supabase, Netlify, Stripe)"], ["Procedimento para violação de dados (notificar a CNPD em 72 h)"]]],
+  ["RGPD", [["Política de privacidade publicada e atualizada"], ["Termos e condições publicados"], ["Aviso de cookies conforme (recusar tão fácil como aceitar)"], ["Procedimento para responder a pedidos RGPD em 30 dias"], ["Registo das atividades de tratamento de dados"], ["Acordos de tratamento de dados com subcontratantes (Supabase, Netlify, Stripe)"], ["Procedimento para violação de dados (notificar a CNPD em 72 h)"], ["Registo de consentimentos para promoções (quem, quando, como)"]]],
   ["Empresa e finanças", [["Atividade aberta nas Finanças / forma jurídica definida"], ["Enquadramento de IVA definido com o contabilista"], ["Faturação a cumprir os requisitos legais"], ["Seguro de responsabilidade civil avaliado"], ["Marca registada (INPI) avaliada"], ["Livro de Reclamações Eletrónico (confirmar se se aplica)"], ["Email e domínios em nome do projeto, com renovação automática"]]],
   ["Segurança", [["2FA ativo em Supabase, Netlify, Stripe, GitHub e email"], ["Backups da base de dados verificados e testados"], ["Políticas de acesso (RLS) revistas"], ["Chaves secretas fora do código e rodadas se expostas"], ["Segundo administrador ou plano se perderes acesso à conta"]]],
   ["Operação", [["Email dedicado ao Flinko para suporte"], ["Processo de verificação de profissionais escrito"], ["Resposta a reclamações e suporte definida (prazos)"], ["Regras de moderação de conteúdo definidas"]]]
@@ -802,14 +931,15 @@ const leadsDue = () => { const td = today(); return items("lead").filter(l => { 
 function todayCard() {
   const td = today(), ld = leadsDue(), tk = store.tasks.filter(t => t.status !== "done" && t.due_date && t.due_date <= td), cr = M.pros.filter(p => store.crm[p.id]?.next_contact && String(store.crm[p.id].next_contact).slice(0, 10) <= td), dr = items("decision").filter(d => d.review && d.review <= td);
   const row = (n, txt, to) => n ? `<div class="sug"><span class="pill acc">${n}</span><span class="t">${txt}</span><button class="btn sec sm" onclick="go('${to}')">Abrir</button></div>` : "";
-  const html = row(ld.length, "leads para contactar", "leads") + row(tk.length, "tarefas com prazo hoje ou em atraso", "tasks") + row(cr.length, "profissionais com contacto agendado (CRM)", "pros") + row(dr.length, "decisões para rever", "strategy");
+  const fd = followupsDue();
+  const html = row(fd.length, "seguimentos para enviar", "leads") + row(ld.length, "leads para contactar", "leads") + row(tk.length, "tarefas com prazo hoje ou em atraso", "tasks") + row(cr.length, "profissionais com contacto agendado (CRM)", "pros") + row(dr.length, "decisões para rever", "strategy");
   return `<div class="card" style="margin-bottom:14px"><h3>☀️ Para fazer hoje</h3>${html || `<span class="pill ok">Nada agendado para hoje</span>`}</div>`;
 }
 
 
 /* ============ CALENDÁRIO UNIFICADO ============ */
-const EVC = { task: ["#f26a1b", "Tarefa"], lead: ["#2563eb", "Lead"], crm: ["#0d9488", "CRM"], decision: ["#7c3aed", "Decisão"], gdpr: ["#dc2626", "RGPD"], plan: ["#d97706", "Plano"], invoice: ["#16a34a", "Fatura"], post: ["#db2777", "Publicação"], ticket: ["#64748b", "Apoio"] };
-const EVGO = { task: "tasks", lead: "leads", crm: "pros", decision: "company", gdpr: "ops", plan: "fin", invoice: "invoices", post: "marketing", ticket: "support" };
+const EVC = { task: ["#f26a1b", "Tarefa"], lead: ["#2563eb", "Lead"], crm: ["#0d9488", "CRM"], decision: ["#7c3aed", "Decisão"], gdpr: ["#dc2626", "RGPD"], plan: ["#d97706", "Plano"], invoice: ["#16a34a", "Fatura"], post: ["#db2777", "Publicação"], ticket: ["#64748b", "Apoio"], followup: ["#0891b2", "Seguimento"] };
+const EVGO = { task: "tasks", lead: "leads", crm: "pros", decision: "company", gdpr: "ops", plan: "fin", invoice: "invoices", post: "marketing", ticket: "support", followup: "leads" };
 function events() {
   const E = [], add = (date, type, label) => { if (date) E.push({ date: String(date).slice(0, 10), type, label }); };
   store.tasks.filter(t => t.status !== "done").forEach(t => add(t.due_date, "task", t.title));
@@ -821,6 +951,7 @@ function events() {
   items("invoice").filter(i => i.status === "emitida").forEach(i => add(i.due, "invoice", "Vence " + i.number + " · " + i.client));
   items("post").filter(p => p.status !== "publicado").forEach(p => add(p.date, "post", "Publicar: " + (p.text || "").slice(0, 32)));
   items("ticket").filter(t => t.status !== "resolvido").forEach(t => add(dkey(new Date(t.date).getTime() + 2 * DAY), "ticket", "Responder (48 h): " + t.subject));
+  followups().forEach(f => add(f.due, "followup", "Seguimento: " + f._t.name));
   D.tickets.filter(t => t.status !== "resolvido").forEach(t => add(dkey(new Date(t.created_at).getTime() + 2 * DAY), "ticket", "Responder (48 h): " + t.subject));
   return E;
 }
@@ -1113,12 +1244,13 @@ const clogMap = () => {
 };
 const tplOf = () => tpls().find(t => t.id === cst.tpl) || tpls()[0];
 const curText = () => cst.text || tplOf().text;
-const msgFor = p => fillTpl(curText(), { name: p.name, category: p.category, missing: p._missing, views: p._views, convs: p._conv, plan: p.plan });
+const msgFor = p => fillTpl(cst.text || tplText(tplOf(), p), proVars(p));
 function contactList() {
   const s = SEGS.find(x => x[0] === cst.seg) || SEGS[0], lm = clogMap(), q = cst.q.toLowerCase();
   let L = M.pros.filter(p => !p.suspended && s[2](p));
   if (q) L = L.filter(p => (p.name + " " + (p.category || "") + " " + (p.location || "")).toLowerCase().includes(q));
   if (cst.hide) L = L.filter(p => !(lm[p.id] && now() - new Date(lm[p.id].at) < 7 * DAY));
+  if (tplOf().promo) L = L.filter(p => hasConsent(p.id)); // promoções só para quem consentiu
   return L;
 }
 function contactRows() {
@@ -1134,14 +1266,15 @@ function refreshContact() {
 }
 async function contactVia(pid, ch) {
   const p = D.profiles.find(x => x.id === pid), text = msgFor(p), ph = M.phone[pid], em = EMAILS && EMAILS[pid];
+  if (promoBlocked(tplOf(), pid)) return toast("Modelo promocional: sem consentimento registado para esta pessoa.");
   if (ch === "wa") { if (!ph) return toast("Sem telemóvel"); waOpen(ph, text); }
   else if (ch === "sms") { if (!ph) return toast("Sem telemóvel"); location.href = "sms:" + ph.replace(/\s/g, "") + "?body=" + encodeURIComponent(text); }
   else if (ch === "tel") { if (!ph) return toast("Sem telemóvel"); location.href = "tel:" + ph.replace(/\s/g, ""); }
   else if (ch === "mail") { if (!em) return toast("Sem email"); location.href = "mailto:" + em + "?subject=" + encodeURIComponent("Flinko · " + tplOf().name) + "&body=" + encodeURIComponent(text); }
   try {
-    await saveItem("contact", { profile_id: pid, at: new Date().toISOString(), channel: { wa: "WhatsApp", sms: "SMS", tel: "chamada", mail: "email" }[ch], tpl: tplOf().name });
-    const c = store.crm[pid] || {}; if (!c.stage || c.stage === "novo") await saveCrm(pid, { stage: "contactado", next_contact: dkey(now() + 3 * DAY) });
-  } catch (e) { }
+    await logContact({ kind: "pro", id: pid }, tplOf(), { wa: "WhatsApp", sms: "SMS", tel: "chamada", mail: "email" }[ch]);
+    if (ch !== "tel") await startSeq({ kind: "pro", id: pid }, tplOf().id);
+  } catch (e) { toast("Erro: " + e.message); }
   refreshContact();
 }
 // Envio de email a todo o grupo, pelo servidor (admin-send-campaign). Cada
@@ -1149,18 +1282,19 @@ async function contactVia(pid, ch) {
 async function sendGroupEmail() {
   const L = contactList(); if (!L.length) return toast("Ninguém neste grupo");
   if (L.length > 500) return toast("No máximo 500 pessoas por envio. Filtra o grupo.");
-  const r = await form(`Email para ${L.length} profissional(is)`, [{ k: "subject", label: "Assunto (podes usar {nome})", req: 1 }, { k: "text", label: "Mensagem (usa {nome} {categoria} {falta} {vistas} {conversas} {plano})", type: "textarea", rows: 9, req: 1 }], { subject: "Flinko · " + tplOf().name, text: curText() }, "Continuar");
+  const r = await form(`Email para ${L.length} profissional(is)`, [{ k: "subject", label: "Assunto (podes usar {nome})", req: 1 }, { k: "text", label: "Mensagem (usa {nome} {categoria} {falta} {vistas} {conversas} {plano})", type: "textarea", rows: 9, req: 1 }, { k: "kind", label: "Tipo de email", type: "select", opts: [["servico", "Serviço (sobre a conta e o perfil)"], ["promo", "Promocional: só segue para quem consentiu"]] }], { subject: "Flinko · " + tplOf().name, text: curText(), kind: tplOf().promo ? "promo" : "servico" }, "Continuar");
+  const promo = r && r.kind === "promo";
   if (!r) return;
   const ids = L.map(p => p.id);
   try {
-    const pv = await fn("admin-send-campaign", { action: "preview", profileIds: ids });
+    const pv = await fn("admin-send-campaign", { action: "preview", profileIds: ids, promo });
     const why = {}; (pv.skipped || []).forEach(x => { why[x.reason] = (why[x.reason] || 0) + 1; });
     const out = Object.entries(why).map(([k, n]) => `${n} ${k}`).join(", ");
     if (!pv.recipients) return toast("Ninguém deste grupo pode receber email" + (out ? " (" + out + ")" : ""));
     if (!await ask("Enviar emails", `Vai ser enviado um email a ${pv.recipients} profissional(is)${out ? `. Ficam de fora: ${out}` : ""}. Só para comunicações sobre a conta e o perfil; promoções precisam de consentimento prévio. Não pode ser desfeito.`, "Enviar " + pv.recipients + " emails")) return;
     const byId = Object.fromEntries(L.map(p => [p.id, p]));
-    const messages = {}; ids.forEach(id => { messages[id] = fillTpl(r.text, { name: byId[id].name, category: byId[id].category, missing: byId[id]._missing, views: byId[id]._views, convs: byId[id]._conv, plan: byId[id].plan }); });
-    const j = await fn("admin-send-campaign", { action: "send", profileIds: ids, subject: r.subject, message: r.text, messages });
+    const messages = {}; ids.forEach(id => { messages[id] = fillTpl(r.text === curText() && !cst.text ? tplText(tplOf(), byId[id]) : r.text, proVars(byId[id])); });
+    const j = await fn("admin-send-campaign", { action: "send", profileIds: ids, subject: r.subject, message: r.text, messages, promo });
     D.audit.unshift({ at: new Date().toISOString(), action: "email_massa", actor_email: session?.user?.email, summary: `Email “${r.subject}” enviado a ${j.sent} profissional(is)`, details: { sent: j.sentIds || [] } });
     for (const id of j.sentIds || []) { const c = store.crm[id] || {}; if (!c.stage || c.stage === "novo") await saveCrm(id, { stage: "contactado", next_contact: dkey(now() + 3 * DAY) }).catch(() => { }); }
     toast(`${j.sent} email(s) enviado(s)${j.failed && j.failed.length ? " · " + j.failed.length + " falharam" : ""}`); refreshContact();
@@ -1184,6 +1318,7 @@ const vContact = () => {
       <label class="f">Modelo</label><select onchange="setTpl(this.value)">${T.map(t => `<option value="${esc(t.id)}" ${t.id === tplOf().id ? "selected" : ""}>${esc(t.name)}</option>`).join("")}</select>
       <label class="f">Texto (podes editar; usa {nome} {categoria} {falta} {vistas} {conversas} {plano})</label>
       <textarea rows="6" oninput="cst.text=this.value;refreshContact()">${esc(curText())}</textarea>
+      ${tplOf().promo ? `<div class="note bad" style="margin:12px 0 0">Modelo <b>promocional</b>: o grupo mostra só quem tem consentimento registado (${M.pros.filter(p => hasConsent(p.id)).length} pessoa(s)). Vê “Resultados e consentimentos” em Angariação e cobrança.</div>` : ""}
       <div class="note" id="cprev" style="margin:12px 0 0"></div></div>
     <div class="card"><h3>Ações do grupo <span class="sp"></span><span class="pill" id="ccount"></span></h3>
       <div class="row"><button class="btn" onclick="contactNext()">Próximo por contactar (WhatsApp)</button>
@@ -1191,11 +1326,11 @@ const vContact = () => {
       <label class="f">Filtrar por nome, categoria ou zona</label><input value="${esc(cst.q)}" oninput="cst.q=this.value;refreshContact()" placeholder="Pesquisar…">
       <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" style="width:auto" ${cst.hide ? "checked" : ""} onchange="cst.hide=this.checked;refreshContact()"> Esconder quem já contactei nos últimos 7 dias</label>
       <p class="mut" style="margin:10px 0 0">Ao contactar, a fase do CRM passa a “Contactado” e fica um próximo contacto agendado para daqui a 3 dias.</p></div></div>
-    <div class="card" style="margin-top:14px"><div class="tw" id="ctable">${contactRows()}</div></div>`;
+    <div class="card" style="margin-top:14px"><div class="tw" id="ctable">${contactRows()}</div></div>${followupCard()}`;
 };
 
 /* ============ AVISOS ============ */
-const ALERT_RULES = [["gdpr", "Pedidos RGPD em aberto"], ["verif", "Pedidos de verificação por tratar"], ["unver", "Profissionais por verificar"], ["nocat", "Profissionais sem categoria"], ["notif", "Notificações que falharam"], ["req", "Pedidos de clientes sem proposta há mais de 24 h"], ["exp", "Subscrições a expirar"], ["ticket", "Apoio fora do prazo (48 h)"], ["den", "Denúncias de perfis por resolver"], ["inv", "Faturas vencidas"], ["task", "Tarefas atrasadas"], ["lead", "Leads por contactar"], ["crm", "Contactos agendados no CRM"], ["reg", "Sem novos registos em 7 dias"]];
+const ALERT_RULES = [["gdpr", "Pedidos RGPD em aberto"], ["verif", "Pedidos de verificação por tratar"], ["unver", "Profissionais por verificar"], ["nocat", "Profissionais sem categoria"], ["notif", "Notificações que falharam"], ["req", "Pedidos de clientes sem proposta há mais de 24 h"], ["exp", "Subscrições a expirar"], ["ticket", "Apoio fora do prazo (48 h)"], ["den", "Denúncias de perfis por resolver"], ["inv", "Faturas vencidas"], ["task", "Tarefas atrasadas"], ["lead", "Leads por contactar"], ["seg", "Seguimentos para enviar"], ["crm", "Contactos agendados no CRM"], ["reg", "Sem novos registos em 7 dias"]];
 function liveAlerts(all) {
   const A = [], t = now(), td = today(), off = new Set((setting("alertrules") || {}).off || []);
   const sn = new Set(items("snooze").filter(s => s.until >= td).map(s => s.key));
@@ -1212,6 +1347,7 @@ function liveAlerts(all) {
   const iv = items("invoice").filter(i => i.status === "emitida" && i.due && i.due < td); if (iv.length) add("inv", "all", "bad", `${iv.length} fatura(s) vencida(s) por cobrar`, "invoices");
   const tt = store.tasks.filter(x => x.status !== "done" && x.due_date && new Date(x.due_date) < t - DAY); if (tt.length) add("task", "all", "warn", `${tt.length} tarefa(s) atrasada(s)`, "tasks");
   const ld = leadsDue().length; if (ld) add("lead", "all", "warn", `${ld} lead(s) para contactar hoje ou em atraso`, "leads");
+  const sg = followupsDue().length; if (sg) add("seg", "all", "warn", `${sg} seguimento(s) para enviar hoje`, "leads");
   const cr = Object.values(store.crm).filter(c => c.next_contact && String(c.next_contact).slice(0, 10) <= td && !["ativo", "inativo"].includes(c.stage) && D.profiles.some(p => p.id === c.profile_id)); if (cr.length) add("crm", "all", "warn", `${cr.length} profissional(is) com contacto agendado para hoje ou em atraso`, "contact");
   if (M.pros.length && !M.su7) add("reg", "all", "warn", "Nenhum registo novo nos últimos 7 dias", "growth");
   return all ? A : A.filter(a => !sn.has(a.key));
@@ -1236,6 +1372,7 @@ const vAlerts = () => {
 /* ============ ANGARIAÇÃO E COBRANÇA (guia + textos prontos) ============ */
 const PBT = [];
 const mk = (name, text, tip) => { PBT.push({ name, text }); return { i: PBT.length - 1, name, text, tip }; };
+const mkp = (name, text, tip) => { const r = mk(name, text, tip); PBT[r.i].promo = 1; r.promo = 1; return r; }; // texto promocional
 const PB = [
   {
     id: "atrair", title: "Angariar profissionais", ic: "🧲",
@@ -1250,6 +1387,21 @@ const PB = [
       { t: mk("Publicação para grupos e redes", "Profissionais em Portugal: já está aberto o Flinko, um diretório de profissionais verificados, com perfil gratuito e sem comissões. Crie o seu perfil em flinko.pt e apareça a quem procura {categoria} perto de si. Dúvidas? Responda a esta mensagem.") },
       { t: mk("Email a associações e lojas parceiras", "Bom dia, chamo-me David e sou o fundador do Flinko (flinko.pt), uma plataforma portuguesa que dá visibilidade gratuita a profissionais verificados. Gostava de propor uma parceria simples: divulgarem o Flinko aos vossos associados/clientes, e nós divulgarmos o vosso trabalho aos nossos utilizadores. Podemos falar 10 minutos esta semana?") },
       { t: mk("Guião de chamada (30 segundos)", "“Bom dia, fala o David, do Flinko. Estou a ligar porque vi o seu trabalho como {categoria} e temos uma plataforma gratuita onde os clientes o podem encontrar, sem comissões. Tem 2 minutos para eu lhe explicar? … Posso enviar-lhe o link por WhatsApp e ajudá-lo a preencher o perfil agora?”") }
+    ]
+  },
+  {
+    id: "clientes", title: "Angariar clientes", ic: "🏠",
+    intro: "Depois de teres profissionais numa zona, o que falta é quem procura. Nesta fase, os clientes vêm sobretudo de três sítios: pesquisas no Google (“eletricista em Braga”), recomendações de quem já usou, e parceiros que falam com pessoas a precisar de obras ou serviços todos os dias. Concentra-te na mesma zona e categoria onde já tens oferta: um cliente que não encontra ninguém não volta.",
+    blocks: [
+      { h: "Plano de 30 dias", ul: ["Semana 1 — cria o Perfil da Empresa do Flinko no Google e partilha as páginas por categoria e cidade que já existem no site (por exemplo /eletricistas e /eletricista-lisboa) nos teus canais.", "Semana 2 — fala com 5 parceiros da zona: administradores de condomínio, imobiliárias, lojas de materiais, associações de moradores ou juntas de freguesia.", "Semana 3 — publica em 3 grupos de bairro (pede autorização ao administrador) e pede a cada profissional ativo que partilhe o seu perfil com os últimos clientes.", "Semana 4 — mede em Crescimento e funil: de onde vieram as visitas e quantos pedidos de clientes entraram. Repete o que resultou."] },
+      { h: "Onde estão os clientes", ul: ["Google: Perfil da Empresa (gratuito) e as páginas de categoria e cidade do site. É onde se procura um profissional com urgência.", "Administradores de condomínio: gerem obras e reparações de dezenas de prédios e precisam de profissionais de confiança.", "Imobiliárias e alojamento local: quem compra, arrenda ou gere casas precisa de limpezas, pinturas, pequenas reparações e mudanças.", "Lojas de materiais e drogarias: o cliente que compra tinta ou torneiras muitas vezes pergunta “conhece alguém que faça isto?”. Deixa lá o cartaz com QR (Divulgar no dashboard).", "Grupos de bairro no Facebook e WhatsApp: pedidos de recomendação aparecem todos os dias.", "Os próprios profissionais: cada perfil partilhado com um cliente satisfeito traz outros clientes."] },
+      { h: "Avaliações no Google e no Flinko", p: "Pedir avaliações a clientes reais é permitido e ajuda muito. Oferecer dinheiro, descontos ou serviços em troca de uma avaliação, ou publicar avaliações falsas, é proibido pelas regras do Google e destrói a confiança. Pede sempre a experiência verdadeira, sem incentivos." },
+      { t: mk("Parceria com administrador de condomínio", "Bom dia, chamo-me David e sou o fundador do Flinko (flinko.pt), uma plataforma portuguesa de profissionais verificados: eletricistas, canalizadores, pintores, limpezas e outros. Para quem gere vários prédios, pode ser uma forma rápida de encontrar alguém de confiança perto, com avaliações de outros clientes e sem comissões. Posso mostrar-lhe em 10 minutos como funciona?", "Email ou mensagem para empresas (pessoa coletiva): em regra permitido, desde que não se tenham oposto. Ver Regras de contacto.") },
+      { t: mk("Parceria com imobiliária ou alojamento local", "Bom dia, sou o David, do Flinko (flinko.pt). Temos profissionais verificados na vossa zona para limpezas, pinturas, pequenas reparações e mudanças. Para os vossos clientes (e para as casas que gerem), pode poupar tempo a encontrar alguém de confiança. Faz sentido falarmos 10 minutos esta semana?") },
+      { t: mk("Loja de materiais (deixar o cartaz)", "Olá, sou o David, do Flinko. Muitos clientes vossos perguntam se conhecem alguém para fazer o trabalho. Posso deixar aqui um cartaz com um QR code que leva a profissionais verificados da zona? Não custa nada à loja e ajuda os vossos clientes.") },
+      { t: mk("Publicação em grupo de bairro", "Olá vizinhos! Para quem procura {categoria} de confiança aqui na zona: no Flinko (flinko.pt) há profissionais verificados, com avaliações de clientes e contacto direto, sem intermediários. Se precisarem de alguma coisa, espreitem. Qualquer dúvida, respondam aqui.", "Pede sempre autorização ao administrador do grupo antes de publicar.") },
+      { t: mk("Pedir ao profissional que partilhe o perfil", "Olá {nome}, uma dica que traz clientes: quando acabar um trabalho, envie o link do seu perfil no Flinko ao cliente e peça-lhe uma avaliação sincera. Clientes novos confiam muito mais em quem tem avaliações. Quer que lhe envie o link do seu perfil pronto a partilhar?") },
+      { t: mk("Pedido de avaliação ao cliente (para o profissional enviar)", "Olá! Obrigado por ter confiado no meu trabalho. Se ficou satisfeito, deixava a sua opinião sincera no meu perfil do Flinko? Ajuda muito outros clientes a decidir. Aqui está o link: {link}", "Sem descontos nem ofertas em troca: só a experiência verdadeira.") }
     ]
   },
   {
@@ -1268,7 +1420,7 @@ const PB = [
     intro: "Só se cobra depois de mostrar valor. A ordem que costuma funcionar em marketplaces: perfil gratuito, primeira conversa ou visita real, e só então a proposta de plano com números concretos (“teve {vistas} visualizações e {conversas} conversas”). Cobra pelo que é fácil de perceber: mais visibilidade, destaque nas pesquisas, mais contactos.",
     blocks: [
       { h: "Como propor o plano pago", ul: ["Escolhe quem já tem sinais: perfil completo (80+), visitas ou conversas (segmento “Com visitas e sem plano pago”).", "Mostra números do perfil dele e o que muda com o plano, em vez de listar funcionalidades.", "Pede uma decisão pequena: começar por um mês. Facilita o pagamento e diz claramente como cancelar.", "Trata as objeções: “não tenho tempo” (fazemos nós), “já tenho clientes” (mais volume e melhores clientes), “é caro” (compara com o valor de um único trabalho)."] },
-      { t: mk("Convite ao plano pago (com números)", "Olá {nome}, o seu perfil no Flinko teve {vistas} visualizações e {conversas} conversa(s). Se quiser aparecer mais acima nas pesquisas de {categoria}, tenho planos pagos a partir de poucos euros por mês. Quer que lhe explique como funcionam?") },
+      { t: mkp("Convite ao plano pago (com números)", "Olá {nome}, o seu perfil no Flinko teve {vistas} visualizações e {conversas} conversa(s). Se quiser aparecer mais acima nas pesquisas de {categoria}, tenho planos pagos a partir de poucos euros por mês. Quer que lhe explique como funcionam?") },
       { t: mk("Plano a expirar", "Olá {nome}, o seu plano {plano} no Flinko está a terminar. Quer renovar para continuar a aparecer em destaque? Se preferir mudar de plano, diga-me.") },
       { h: "Pagamento falhado (subscrições)", p: "Sem cobrança automática de recuperação, uma parte da receita recorrente perde-se por cartões expirados ou sem saldo, e não por o cliente querer sair. A prática comum é uma sequência curta e amigável, com o problema e a solução no assunto, sem linguagem de cobrança agressiva. Cadência habitual: dia 0, 3, 7, 10 e 13; oferta de reativação por volta do dia 20; aviso final antes do cancelamento definitivo." },
       { t: mk("Pagamento falhado — dia 0", "Olá {nome}, não conseguimos processar o pagamento do seu plano no Flinko (pode ser o cartão expirado ou sem saldo). Para manter o destaque, basta atualizar o método de pagamento na sua conta. Se precisar de ajuda, responda a esta mensagem.") },
@@ -1281,11 +1433,45 @@ const PB = [
     ]
   },
   {
+    id: "objecoes", title: "Objeções", ic: "💬",
+    intro: "As mesmas dúvidas repetem-se. Responde sempre em três passos: dá razão à preocupação, responde com um facto concreto e termina com um pedido pequeno (enviar o link, ligar 5 minutos). Não discutas: se a pessoa não quer, agradece e segue.",
+    blocks: [
+      { t: mk("“Já tenho clientes que cheguem.”", "Ainda bem, é sinal de que faz bom trabalho! O Flinko não é para encher a agenda à força: serve para escolher melhor os trabalhos e ter clientes para os meses mais calmos. O perfil é gratuito e fica lá; só responde aos pedidos que lhe interessarem. Envio-lhe o link?") },
+      { t: mk("“Não confio nestas plataformas.”", "Compreendo, há muitas que cobram por cada contacto ou ficam com uma parte do trabalho. No Flinko o perfil é gratuito, não há comissões e o cliente fala diretamente consigo. Os profissionais são verificados um a um. Quer ver um perfil de exemplo antes de decidir?") },
+      { t: mk("“Quanto é que isto custa?”", "Criar o perfil e receber contactos é gratuito, sem comissões. Existem planos pagos opcionais para quem quer aparecer mais acima nas pesquisas, mas não precisa deles para começar. Quer que o ajude a criar o perfil gratuito agora?") },
+      { t: mk("“Não tenho tempo para isso.”", "Faz todo o sentido, está sempre a trabalhar. Por isso proponho fazermos juntos: em 5 minutos ao telefone eu preencho o perfil consigo. Depois só tem de responder aos pedidos que quiser. Qual é a melhor hora para lhe ligar?") },
+      { t: mk("“Já estou no OLX / Facebook / outra plataforma.”", "Ótimo, quanto mais sítios melhor. O Flinko é só de profissionais verificados, com avaliações e sem comissões, e aparece a quem procura {categoria} na sua zona. Não tem de sair de onde está: é mais uma montra, gratuita. Envio-lhe o link?") },
+      { t: mk("“Não percebo nada de internet.”", "Não precisa! Eu trato disso consigo por telefone: só tem de me dizer o que faz, a zona e, se quiser, enviar-me umas fotografias de trabalhos. Os pedidos chegam-lhe por mensagem. Posso ligar-lhe hoje?") },
+      { t: mk("“Não quero dar os meus dados.”", "É uma preocupação justa. No perfil só aparece o que escolher mostrar; o seu telemóvel não fica público e os clientes falam consigo pela mensagem do Flinko. Pode apagar a conta quando quiser. Quer ver como fica um perfil antes de avançar?") },
+      { t: mk("“Os clientes só querem o mais barato.”", "Alguns sim, mas no Flinko o cliente vê avaliações, fotografias dos trabalhos e a verificação antes de pedir orçamento, por isso escolhe também pela confiança. Um perfil completo ajuda-o a destacar-se pela qualidade e não pelo preço.") },
+      { t: mk("“Já experimentei e não recebi nada.”", "Obrigado por ser sincero, isso ajuda-me. Normalmente é porque falta alguma coisa ao perfil (no seu falta: {falta}) ou porque ainda há poucos clientes na sua zona, e estamos a trabalhar nisso. Quer que vejamos juntos o que melhorar? Demora 5 minutos.") },
+      { t: mk("“Vou pensar.”", "Claro, sem pressa. Posso enviar-lhe o link para ver com calma e volto a falar consigo daqui a uns dias, pode ser?", "Regista o próximo contacto em Aquisição para não te esqueceres.") }
+    ]
+  },
+  {
+    id: "categorias", title: "Por categoria", ic: "🧰",
+    intro: "Cada tipo de profissional valoriza coisas diferentes. Usa estes argumentos na conversa e o texto de primeiro contacto da categoria dele. O modelo “Primeiro contacto” em Contactar já escolhe sozinho a variante pela categoria de cada profissional.",
+    blocks: [
+      { h: "Obras e reparações (eletricistas, canalizadores, pintores, pedreiros, carpinteiros, serralheiros)", ul: ["Recebem pedidos urgentes e querem saber o trabalho antes de se deslocarem: realça as fotografias e a descrição do pedido.", "Detestam pagar por contactos que não dão em nada: sem comissões e sem pagar por pedido.", "A verificação e as avaliações ajudam a justificar o preço face a quem cobra menos sem garantias."] },
+      { t: mk("Primeiro contacto — obras e reparações", FIRST_BY_CAT.casa) },
+      { h: "Limpeza, jardim e mudanças", ul: ["Trabalho recorrente: um bom cliente vale muitos meses. Realça que o cliente pode voltar a contactar diretamente.", "Preço claro vende: incentiva serviços com preço indicativo (por hora ou por serviço).", "Confiança em casa alheia é tudo: verificação e avaliações pesam muito."] },
+      { t: mk("Primeiro contacto — limpeza, jardim e mudanças", FIRST_BY_CAT.servicos) },
+      { h: "Beleza e bem-estar (cabeleireiros, esteticistas, personal trainers)", ul: ["O portfólio é o argumento: fotografias antes e depois e dos espaços.", "Muitos já usam Instagram: o perfil do Flinko complementa e aparece a quem procura na zona, não só a seguidores.", "Horários e disponibilidade no perfil poupam mensagens."] },
+      { t: mk("Primeiro contacto — beleza e bem-estar", FIRST_BY_CAT.beleza) },
+      { h: "Digital e tecnologia (designers, programadores, reparações)", ul: ["Valorizam clientes com orçamento claro: realça pedidos com descrição e orçamento indicativo.", "Querem ligar o portfólio e o site: o perfil aceita site e redes.", "Trabalham à distância: podem aceitar clientes fora da zona."] },
+      { t: mk("Primeiro contacto — digital e tecnologia", FIRST_BY_CAT.digital) },
+      { h: "Decoração e interiores", ul: ["Vendem pelo resultado: projetos com fotografias de qualidade.", "Clientes de renovações contratam vários profissionais: parcerias com pintores e carpinteiros do Flinko.", "Avaliações detalhadas valem mais do que estrelas."] },
+      { t: mk("Primeiro contacto — decoração e interiores", FIRST_BY_CAT.deco) }
+    ]
+  },
+  { id: "resultados", title: "Resultados e consentimentos", ic: "📊", intro: "", blocks: [] },
+  {
     id: "regras", title: "Regras de contacto", ic: "⚖️",
     intro: "Isto é um resumo informativo, não aconselhamento jurídico. Em caso de dúvida, confirma com um advogado ou com a CNPD.",
     blocks: [
       { h: "Email, SMS e chamadas automáticas de marketing", ul: ["Pessoas singulares (incluindo empresários em nome individual e freelancers): em regra só com consentimento prévio e expresso.", "Pessoas coletivas (empresas, associações): em regra permitido, exceto se recusarem ou estiverem na lista de oposição gerida pela Direção-Geral do Consumidor.", "Clientes existentes: podes contactar sobre serviços semelhantes aos que já usam, desde que ofereças forma fácil e gratuita de recusar, em cada mensagem.", "Mantém uma lista atualizada de quem consentiu e de quem recusou, e respeita de imediato os pedidos para parar."] },
       { h: "Na prática, para o Flinko", ul: ["Profissionais que já criaram conta: mensagens sobre a conta, o perfil e o serviço (completar perfil, plano a expirar, pagamento falhado) são comunicações de serviço.", "Promoções de planos pagos e campanhas: usa consentimento (caixa no registo) e inclui sempre “responda PARAR para não receber mais”.", "Prospeção fria a pessoas singulares por WhatsApp, SMS ou email: evita. Prefere chamada 1 a 1, presença em locais e grupos onde eles já estão, e indicações.", "Guarda a data e a origem dos contactos que importas (lista de leads) e não compres listas."] },
+      { h: "Provar o consentimento", ul: ["O RGPD exige que consigas demonstrar que a pessoa consentiu (art. 7.º, n.º 1): guarda quem, quando, por que canal e como. Usa “Registar consentimento” na ficha do profissional ou os campos de consentimento do lead.", "Retirar o consentimento tem de ser tão fácil como dá-lo (art. 7.º, n.º 3): quem responder PARAR fica registado com “Registar recusa” e deixa de receber promoções nesse momento.", "O painel bloqueia modelos e emails promocionais para quem não tem consentimento registado. Mensagens de serviço (conta e perfil) continuam a poder ser enviadas."] },
       { t: mk("Rodapé de recusa (junta a qualquer mensagem promocional)", "Se não quiser receber mais mensagens do Flinko, responda PARAR e retiramos o seu contacto de imediato.") }
     ]
   },
@@ -1293,25 +1479,25 @@ const PB = [
     id: "fontes", title: "Fontes", ic: "🔗",
     intro: "Pesquisa feita em setembro de 2026. As táticas são resumos e adaptações; os números de juros e os pormenores legais devem ser confirmados antes de usar.",
     blocks: [
-      { links: [["Fundação Francisco Manuel dos Santos — marketing direto não solicitado", "https://ffms.pt/pt-pt/direitos-e-deveres/e-permitido-o-contacto-telefonico-ou-envio-de-sms-e-email-para-marketing-directo-nao-solicitado"], ["ANACOM — Lei n.º 41/2004 (art. 13.º-A, comunicações não solicitadas)", "https://www.anacom.pt/render.jsp?contentId=944401"], ["CNPD — Diretriz 2022/1 sobre comunicações eletrónicas de marketing direto", "https://www.cnpd.pt/umbraco/surface/cnpdDecision/download/121958"], ["The Marketplace Guide — Supply acquisition", "https://themarketplaceguide.com/patterns/supply-acquisition/"], ["Sharetribe — How to build supply for your marketplace", "https://www.sharetribe.com/academy/how-to-build-supply-marketplace/"], ["Reforge — Beat the cold start problem in a marketplace", "https://www.reforge.com/guides/beat-the-cold-start-problem-in-a-marketplace"], ["Baremetrics — Dunning management (sequência de recuperação de pagamentos)", "https://baremetrics.com/blog/dunning-management"], ["Diário da República — taxas de juros de mora comerciais (aviso do 2.º semestre de 2026)", "https://diariodarepublica.pt/dr/detalhe/aviso/16623-2026-1143256936"]] }
+      { links: [["Fundação Francisco Manuel dos Santos — marketing direto não solicitado", "https://ffms.pt/pt-pt/direitos-e-deveres/e-permitido-o-contacto-telefonico-ou-envio-de-sms-e-email-para-marketing-directo-nao-solicitado"], ["ANACOM — Lei n.º 41/2004 (art. 13.º-A, comunicações não solicitadas)", "https://www.anacom.pt/render.jsp?contentId=944401"], ["CNPD — Diretriz 2022/1 sobre comunicações eletrónicas de marketing direto", "https://www.cnpd.pt/umbraco/surface/cnpdDecision/download/121958"], ["The Marketplace Guide — Supply acquisition", "https://themarketplaceguide.com/patterns/supply-acquisition/"], ["Sharetribe — How to build supply for your marketplace", "https://www.sharetribe.com/academy/how-to-build-supply-marketplace/"], ["Reforge — Beat the cold start problem in a marketplace", "https://www.reforge.com/guides/beat-the-cold-start-problem-in-a-marketplace"], ["Baremetrics — Dunning management (sequência de recuperação de pagamentos)", "https://baremetrics.com/blog/dunning-management"], ["Diário da República — taxas de juros de mora comerciais (aviso do 2.º semestre de 2026)", "https://diariodarepublica.pt/dr/detalhe/aviso/16623-2026-1143256936"], ["RGPD (Regulamento (UE) 2016/679), art. 7.º — condições do consentimento", "https://eur-lex.europa.eu/legal-content/PT/TXT/?uri=CELEX:32016R0679"], ["Google Maps — conteúdo proibido (avaliações pagas ou com incentivos)", "https://support.google.com/contributionpolicy/answer/7400114?hl=pt"], ["Google — Perfil da Empresa (gratuito)", "https://www.google.com/intl/pt-PT/business/"]] }
     ]
   }
 ];
 let pbTab = "atrair";
 const copyTpl = i => copyOut(PBT[i].text, "Texto copiado");
-async function useTpl(i) { await saveItem("template", { name: PBT[i].name, text: PBT[i].text.replace(/\{(data|numero|valor)\}/g, "{$1}") }); toast("Guardado em Contactar › modelos"); }
+async function useTpl(i) { await saveItem("template", { name: PBT[i].name, text: PBT[i].text.replace(/\{(data|numero|valor)\}/g, "{$1}"), promo: PBT[i].promo ? 1 : 0 }); toast("Guardado em Contactar › modelos"); }
 const pbBlock = b => {
-  if (b.t) return `<div class="card" style="margin:10px 0;background:var(--bg);box-shadow:none"><div class="row" style="justify-content:space-between"><b>${esc(b.t.name)}</b><span class="row"><button class="btn sec sm" onclick="copyTpl(${b.t.i})">Copiar</button><button class="btn sec sm" onclick="useTpl(${b.t.i})">Guardar como modelo</button></span></div><p style="margin:8px 0 0;white-space:pre-wrap">${esc(b.t.text)}</p>${b.t.tip ? `<p class="mut" style="margin:6px 0 0">${esc(b.t.tip)}</p>` : ""}</div>`;
+  if (b.t) return `<div class="card" style="margin:10px 0;background:var(--bg);box-shadow:none"><div class="row" style="justify-content:space-between"><b>${esc(b.t.name)}${b.t.promo ? ` <span class="pill warn">promocional</span>` : ""}</b><span class="row"><button class="btn sec sm" onclick="copyTpl(${b.t.i})">Copiar</button><button class="btn sec sm" onclick="useTpl(${b.t.i})">Guardar como modelo</button></span></div><p style="margin:8px 0 0;white-space:pre-wrap">${esc(b.t.text)}</p>${b.t.tip ? `<p class="mut" style="margin:6px 0 0">${esc(b.t.tip)}</p>` : ""}</div>`;
   if (b.links) return `<ul style="line-height:1.9">${b.links.map(([l, u]) => `<li><a target="_blank" rel="noopener" href="${esc(u)}">${esc(l)}</a></li>`).join("")}</ul>`;
   return `<h3 style="margin:16px 0 6px">${esc(b.h)}</h3>${b.p ? `<p style="margin:0 0 6px">${esc(b.p)}</p>` : ""}${b.ul ? `<ul style="margin:0;padding-left:18px;line-height:1.7">${b.ul.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}`;
 };
 function setPb(k) { pbTab = k; render(); scrollTo(0, 0); }
 const vPlaybook = () => {
   const s = PB.find(x => x.id === pbTab) || PB[0], pr = setting("prices");
-  return head("Angariação e cobrança", "Como angariar profissionais, ativá-los e fazê-los pagar, com textos prontos") +
+  return head("Angariação e cobrança", "Como angariar profissionais e clientes, ativá-los e fazê-los pagar, com textos prontos") +
     `<div class="row" style="margin-bottom:12px">${PB.map(x => `<button class="btn ${x.id === s.id ? "" : "sec"} sm" onclick="setPb('${x.id}')">${x.ic} ${esc(x.title)}</button>`).join("")}</div>
-    <div class="card"><h3>${s.ic} ${esc(s.title)}</h3><p style="margin:0 0 8px">${esc(s.intro)}</p>${s.id === "pagar" ? `<div class="note">Os teus preços atuais: Starter ${eur(pr.starter)} · Pro ${eur(pr.pro)} · Premium ${eur(pr.premium)} por mês (editáveis em Finanças).</div>` : ""}${s.blocks.map(pbBlock).join("")}</div>
-    <p class="mut">Os textos usam {nome}, {categoria}, {falta}, {vistas}, {conversas} e {plano}: o painel preenche-os sozinho em “Contactar profissionais”. Os restantes ({data}, {numero}, {valor}) preenches tu.</p>`;
+    ${s.id === "resultados" ? statsCard() + consentCard() + followupCard() : `<div class="card"><h3>${s.ic} ${esc(s.title)}</h3><p style="margin:0 0 8px">${esc(s.intro)}</p>${s.id === "pagar" ? `<div class="note">Os teus preços atuais: Starter ${eur(pr.starter)} · Pro ${eur(pr.pro)} · Premium ${eur(pr.premium)} por mês (editáveis em Finanças).</div>` : ""}${s.blocks.map(pbBlock).join("")}</div>`}
+    <p class="mut">Os textos usam {nome}, {categoria}, {falta}, {vistas}, {conversas} e {plano}: o painel preenche-os sozinho em “Contactar profissionais”. Os restantes ({data}, {numero}, {valor}, {link}) preenches tu.</p>`;
 };
 
 /* ============ GRÁFICOS (SVG simples, sem bibliotecas) ============ */
@@ -1495,6 +1681,7 @@ function openPro(id) {
     <button class="btn sec" onclick="waPro('${id}')">WhatsApp com modelo</button>
     <button class="btn sec" onclick="mailPro('${id}')">Email / SMS</button>
     <button class="btn sec" onclick="toggleSuspend('${id}')">${p.suspended ? "Reativar conta" : "Suspender conta"}</button></div>
+    ${consentBox(id)}
     ${isOwner() ? payBox(p) : `<h3 style="margin:18px 0 6px">Plano e pagamentos</h3><p class="mut">Plano atual: <b>${esc(p.plan || "free")}</b>. Mudar planos e reembolsar é só para donos.</p>`}
     ${historyBox("profile", id)}
     ${p.slug ? `<p class="mut" style="margin-top:14px">Perfil público: <a target="_blank" rel="noopener" href="https://flinko.pt/${esc(p.slug)}">flinko.pt/${esc(p.slug)}</a></p>` : ""}`);

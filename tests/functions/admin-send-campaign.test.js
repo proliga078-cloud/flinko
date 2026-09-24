@@ -92,3 +92,29 @@ test('send: rejeita mensagens demasiado curtas', async () => {
   process.env.RESEND_API_KEY = 're_fake';
   assert.equal((await handler(ev({ action: 'send', subject: 'x', message: 'curta' }))).statusCode, 400);
 });
+
+test('latestConsent: vale o registo mais recente de cada pessoa', () => {
+  const { latestConsent } = require(HANDLER_PATH);
+  const c = latestConsent([
+    { data: { ref: 'rui', status: 'dado', date: '2026-09-01', at: '2026-09-01T10:00:00Z' } },
+    { data: { ref: 'rui', status: 'retirado', date: '2026-09-20', at: '2026-09-20T10:00:00Z' } },
+    { data: { ref: 'ana', status: 'dado', date: '2026-09-10', at: '2026-09-10T10:00:00Z' } },
+  ]);
+  assert.deepEqual(c, { rui: 'retirado', ana: 'dado' });
+});
+
+test('promo: só envia a quem tem consentimento registado (quem disse PARAR fica de fora)', async () => {
+  setup();
+  scenario.queries.admin_items = (calls) => {
+    assert.deepEqual(calls.find((c) => c.method === 'eq').args, ['kind', 'consent']);
+    return { data: [{ data: { ref: 'ana', status: 'dado', date: '2026-09-10' } }, { data: { ref: 'rui', status: 'dado', date: '2026-09-01' } }, { data: { ref: 'rui', status: 'retirado', date: '2026-09-20' } }], error: null };
+  };
+  process.env.RESEND_API_KEY = 're_fake';
+  let sentBody = null;
+  global.fetch = async (_url, opts) => { sentBody = JSON.parse(opts.body); return { ok: true }; };
+  const res = await handler(ev({ action: 'send', promo: true, subject: 'Plano Pro', message: 'Temos um plano com destaque nas pesquisas.' }));
+  assert.equal(res.statusCode, 200);
+  assert.deepEqual(sentBody.map((m) => m.to[0]), ['ana@x.pt']);
+  const body = JSON.parse(res.body);
+  assert.equal(body.skipped.find((s) => s.id === 'rui').reason, 'sem consentimento para promoções');
+});
