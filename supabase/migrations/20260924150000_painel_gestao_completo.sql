@@ -472,6 +472,9 @@ create policy support_tickets_insert on public.support_tickets for insert to ano
   with check (status = 'aberto' and admin_notes is null and resolved_at is null and priority = 'media'
               and (reporter_id is null or reporter_id = auth.uid()));
 create policy support_tickets_admin on public.support_tickets for all using (public.is_admin()) with check (public.is_admin());
+-- Os visitantes só conseguem criar (sem ler, alterar nem TRUNCATE, que ignora o RLS).
+revoke all on public.support_tickets from anon;
+revoke truncate on public.support_tickets from authenticated;
 grant insert on public.support_tickets to anon, authenticated;
 
 -- Travão simples contra spam: no máximo 5 pedidos por email por hora.

@@ -161,7 +161,8 @@ test('migração painel_gestao_completo: permissões, registo de ações e funç
   // 12. formulário de contacto: anónimo cria, não lê, não força estado; limite por hora
   await as(null, () => ex(`insert into public.support_tickets(name,email,subject,message) values ('Zé','ZE@X.pt','Dúvida','Olá, tenho uma dúvida')`))
   assert.equal((await q(`select email, status, reporter_id from public.support_tickets`))[0].email, 'ze@x.pt')
-  assert.equal((await as(null, () => q(`select count(*)::int n from public.support_tickets`)))[0].n, 0)
+  await assert.rejects(as(null, () => q(`select count(*) from public.support_tickets`)), /permission denied/) // visitantes nem conseguem tentar ler
+  await assert.rejects(as(null, () => ex(`truncate public.support_tickets`)), /permission denied/)
   await assert.rejects(as(null, () => ex(`insert into public.support_tickets(name,email,subject,message,status) values ('Zé','ze@x.pt','x','resolvido já','resolvido')`)), /row-level security/)
   await assert.rejects(as(null, () => ex(`insert into public.support_tickets(name,email,subject,message) values ('Zé','nao-email','x','mensagem ok')`)), /check constraint/)
   for (let i = 0; i < 4; i++) await as(null, () => ex(`insert into public.support_tickets(name,email,subject,message) values ('Zé','ze@x.pt','x','mensagem ${i}')`))
