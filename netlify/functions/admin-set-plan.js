@@ -22,29 +22,25 @@ const Stripe=require('stripe')
 const{createClient}=require('@supabase/supabase-js')
 const stripe=Stripe(process.env.STRIPE_SECRET_KEY)
 const admin=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY)
+const{requireAdmin,audit}=require('./_admin.js')
 
 const ALLOWED_PLANS=['free','starter','pro','premium']
 
 exports.handler=async(event)=>{
   if(event.httpMethod!=='POST')return{statusCode:405,body:'Method Not Allowed'}
   try{
-    const token=(event.headers.authorization||'').replace(/^Bearer\s+/i,'')
-    if(!token)return{statusCode:401,body:JSON.stringify({error:'Sem sessão. Inicia sessão primeiro.'})}
-    const{data:userData,error:userErr}=await admin.auth.getUser(token)
-    if(userErr||!userData||!userData.user)return{statusCode:401,body:JSON.stringify({error:'Sessão inválida. Inicia sessão novamente.'})}
-
-    // Confirma que quem pede é mesmo admin — lê is_admin diretamente com a
-    // service role (que ignora RLS), em vez de confiar em nada vindo do
-    // browser.
-    const{data:callerProfile}=await admin.from('profiles').select('is_admin').eq('user_id',userData.user.id).maybeSingle()
-    if(!callerProfile||!callerProfile.is_admin)return{statusCode:403,body:JSON.stringify({error:'Sem permissões de administrador.'})}
+    // Confirma que quem pede é mesmo admin e dono (os admins de apoio não
+    // mexem em dinheiro) — lê o perfil diretamente com a service role (que
+    // ignora RLS), em vez de confiar em nada vindo do browser.
+    const auth=await requireAdmin(admin,event,{owner:true})
+    if(auth.error)return auth.error
 
     const body=JSON.parse(event.body||'{}')
     const{targetProfileId,plan}=body
     if(!targetProfileId||typeof targetProfileId!=='string')return{statusCode:400,body:JSON.stringify({error:'targetProfileId em falta.'})}
     if(!ALLOWED_PLANS.includes(plan))return{statusCode:400,body:JSON.stringify({error:'Plano inválido.'})}
 
-    const{data:target,error:targetErr}=await admin.from('profiles').select('id,stripe_subscription_id').eq('id',targetProfileId).maybeSingle()
+    const{data:target,error:targetErr}=await admin.from('profiles').select('id,name,plan,stripe_subscription_id').eq('id',targetProfileId).maybeSingle()
     if(targetErr)return{statusCode:500,body:JSON.stringify({error:targetErr.message})}
     if(!target)return{statusCode:404,body:JSON.stringify({error:'Perfil não encontrado.'})}
 
@@ -72,6 +68,8 @@ exports.handler=async(event)=>{
 
     const{error:updateErr}=await admin.from('profiles').update(updates).eq('id',targetProfileId)
     if(updateErr)return{statusCode:500,body:JSON.stringify({error:updateErr.message})}
+
+    await audit(admin,auth.user,'plano_alterado',{targetType:'profile',targetId:targetProfileId,summary:`Plano de ${target.name||'—'}: ${target.plan||'free'} → ${plan}${target.stripe_subscription_id?' (subscrição Stripe cancelada)':''}`,details:{de:target.plan||'free',para:plan,stripeCancelled:!!target.stripe_subscription_id}})
 
     return{statusCode:200,body:JSON.stringify({success:true,stripeCancelled:!!target.stripe_subscription_id})}
   }catch(err){

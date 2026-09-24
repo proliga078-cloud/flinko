@@ -26,32 +26,24 @@ const Stripe=require('stripe')
 const{createClient}=require('@supabase/supabase-js')
 const stripe=Stripe(process.env.STRIPE_SECRET_KEY)
 const admin=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY)
+const{requireAdmin,audit}=require('./_admin.js')
 
 // Motivos aceites pelo Stripe (stripe.com/docs/api/refunds/create) — não
 // inventar outros valores, a API rejeita-os.
 const ALLOWED_REASONS=['duplicate','fraudulent','requested_by_customer']
 
-async function requireAdmin(event){
-const token=(event.headers.authorization||'').replace(/^Bearer\s+/i,'')
-if(!token)return{error:{statusCode:401,body:JSON.stringify({error:'Sem sessão. Inicia sessão primeiro.'})}}
-const{data:userData,error:userErr}=await admin.auth.getUser(token)
-if(userErr||!userData||!userData.user)return{error:{statusCode:401,body:JSON.stringify({error:'Sessão inválida. Inicia sessão novamente.'})}}
-const{data:callerProfile}=await admin.from('profiles').select('is_admin').eq('user_id',userData.user.id).maybeSingle()
-if(!callerProfile||!callerProfile.is_admin)return{error:{statusCode:403,body:JSON.stringify({error:'Sem permissões de administrador.'})}}
-return{}
-}
-
 exports.handler=async(event)=>{
 if(event.httpMethod!=='POST')return{statusCode:405,body:'Method Not Allowed'}
 try{
-const authCheck=await requireAdmin(event)
+// Só donos: os admins de apoio não mexem em dinheiro.
+const authCheck=await requireAdmin(admin,event,{owner:true})
 if(authCheck.error)return authCheck.error
 
 const body=JSON.parse(event.body||'{}')
 const{action,targetProfileId}=body
 if(!targetProfileId||typeof targetProfileId!=='string')return{statusCode:400,body:JSON.stringify({error:'targetProfileId em falta.'})}
 
-const{data:target,error:targetErr}=await admin.from('profiles').select('id,stripe_customer_id').eq('id',targetProfileId).maybeSingle()
+const{data:target,error:targetErr}=await admin.from('profiles').select('id,name,stripe_customer_id').eq('id',targetProfileId).maybeSingle()
 if(targetErr)return{statusCode:500,body:JSON.stringify({error:targetErr.message})}
 if(!target)return{statusCode:404,body:JSON.stringify({error:'Perfil não encontrado.'})}
 
@@ -96,6 +88,7 @@ charge:chargeId,
 ...(amount!==undefined?{amount}:{}),
 ...(reason?{reason}:{})
 })
+await audit(admin,authCheck.user,'reembolso',{targetType:'profile',targetId:target.id,summary:`Reembolso de ${(refund.amount/100).toFixed(2)} ${String(charge.currency||'eur').toUpperCase()} a ${target.name||'—'}${reason?' ('+reason+')':''}`,details:{chargeId,refundId:refund.id,amount:refund.amount,reason:reason||null}})
 return{statusCode:200,body:JSON.stringify({success:true,refund:{id:refund.id,amount:refund.amount,status:refund.status}})}
 }catch(stripeErr){
 console.error('admin-refund: erro ao criar reembolso Stripe:',stripeErr)

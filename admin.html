@@ -114,6 +114,7 @@ svg text{fill:var(--mut);font-size:10px}
 .kv{display:grid;grid-template-columns:130px 1fr;gap:6px 10px;margin:12px 0}
 .kv span:nth-child(odd){color:var(--mut)}
 .note{background:var(--acc2);color:var(--ink);border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:14px}
+.note.bad{background:#fee2e2;color:#7f1d1d}
 .mut{color:var(--mut)}
 .mob{display:none}
 @media print{aside,.tools,.btn,.mob,#ov,#drawer{display:none!important}#app{display:block}main{padding:0}body{background:#fff}.card{box-shadow:none;border:1px solid #ddd}}
@@ -181,6 +182,9 @@ const uid = () => (crypto.randomUUID ? crypto.randomUUID() : String(Math.random(
 /* ============ AUTH + API ============ */
 let session = ls.get("fk_session", null);
 let DEMO = false;
+let ROLE = "owner"; // "owner" (tudo) ou "support" (sem dinheiro nem permissões)
+const isOwner = () => DEMO || ROLE === "owner";
+const ownerOnly = (what = "Esta ação") => `<span class="pill">${what} é só para donos</span>`;
 
 async function authFetch(path, body) {
   const r = await fetch(SB_URL + "/auth/v1/" + path, { method: "POST", headers: { apikey: SB_KEY, "Content-Type": "application/json" }, body: JSON.stringify(body) });
@@ -195,7 +199,7 @@ async function refresh() {
   ls.set("fk_session", session);
 }
 async function api(path, opt = {}, retry = true) {
-  if (DEMO) return demoApi(path, opt);
+  if (DEMO) { const r = demoApi(path, opt), q = new URLSearchParams(path.split("?")[1] || ""); return Array.isArray(r) && q.has("limit") ? r.slice(+q.get("offset") || 0, (+q.get("offset") || 0) + +q.get("limit")) : r; }
   const r = await fetch(SB_URL + "/rest/v1/" + path, {
     method: opt.method || "GET",
     headers: Object.assign({ apikey: SB_KEY, Authorization: "Bearer " + session.access_token, "Content-Type": "application/json", Prefer: "return=representation" }, opt.headers || {}),
@@ -206,6 +210,24 @@ async function api(path, opt = {}, retry = true) {
   if (!r.ok) { let m = t; try { m = JSON.parse(t).message || t; } catch (e) { } const e = new Error(m); e.status = r.status; throw e; }
   return t ? JSON.parse(t) : [];
 }
+// Lê TODAS as linhas de uma consulta, página a página. A API do Supabase
+// devolve no máximo 1000 linhas por pedido (às vezes menos); sem isto os
+// números paravam de crescer sem aviso nenhum. Avança pelo nº de linhas que
+// chegou, por isso funciona seja qual for o limite do servidor. A consulta
+// tem de ter uma ordem estável (order=...,id).
+async function apiAll(path, page = 1000) {
+  const out = [], sep = path.includes("?") ? "&" : "?";
+  for (let off = 0; ; ) {
+    const rows = await api(path + sep + "limit=" + page + "&offset=" + off);
+    if (!Array.isArray(rows) || !rows.length) break;
+    out.push(...rows); off += rows.length;
+    if (out.length > 200000) break; // travão de segurança
+  }
+  return out;
+}
+// Tabela ou função ainda não criada no Supabase (migração por aplicar).
+const missing = e => e && (e.status === 404 || /does not exist|PGRST20[25]|schema cache|Could not find/i.test(e.message || ""));
+window.addEventListener("unhandledrejection", e => { const m = e.reason && e.reason.message || String(e.reason || ""); if (m) toast("Erro: " + m); });
 
 /* ============ STORAGE (tarefas, CRM, definições) ============ */
 const store = { cloud: false, tasks: [], crm: {}, settings: {} };
@@ -218,36 +240,49 @@ const DEFAULTS = {
 };
 async function loadStore() {
   if (DEMO && store._init) return;
-  store._init = true;
+  store._init = true; store.broken = null;
   try {
-    const [t, c, s] = await Promise.all([api("admin_tasks?select=*&order=created_at.desc"), api("admin_crm?select=*"), api("admin_settings?select=*")]);
+    const [t, c, st, it] = await Promise.all([apiAll("admin_tasks?select=*&order=created_at.desc,id"), apiAll("admin_crm?select=*&order=profile_id"), apiAll("admin_settings?select=*&order=key"), apiAll("admin_items?select=*&order=created_at,id")]);
     store.tasks = t; store.crm = Object.fromEntries(c.map(x => [x.profile_id, x]));
-    store.settings = Object.fromEntries(s.map(x => [x.key, x.value]));
-    if (!(await loadItems())) throw new Error("admin_items em falta");
+    store.settings = Object.fromEntries(st.map(x => [x.key, x.value]));
+    store.items = {}; it.forEach(r => { (store.items[r.kind] = store.items[r.kind] || []).push(Object.assign({}, r.data, { id: r.id })); });
     store.cloud = true;
   } catch (e) {
     store.cloud = false;
-    store.tasks = ls.get("fk_tasks", []); store.crm = ls.get("fk_crm", {}); store.settings = ls.get("fk_settings", {}); store.items = ls.get("fk_items", {});
+    if (missing(e)) {
+      // As tabelas do painel ainda não existem: usa este navegador (e diz isso em Definições).
+      store.tasks = ls.get("fk_tasks", []); store.crm = ls.get("fk_crm", {}); store.settings = ls.get("fk_settings", {}); store.items = ls.get("fk_items", {});
+    } else {
+      // Falha de rede ou de permissões: NÃO passa a guardar no navegador às
+      // escondidas. Bloqueia as gravações e mostra o erro no topo.
+      store.broken = e.message || "erro desconhecido";
+      store.tasks = []; store.crm = {}; store.settings = {}; store.items = {};
+    }
   }
 }
+const guard = () => { if (store.broken) throw new Error("Sem ligação às tabelas do painel no Supabase: nada foi guardado. Carrega em ↻ Atualizar."); };
 const setting = k => store.settings[k] ?? DEFAULTS[k];
 async function saveSetting(k, v) {
+  guard();
   store.settings[k] = v;
   if (store.cloud) await api("admin_settings", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=minimal" }, body: { key: k, value: v } });
   else ls.set("fk_settings", store.settings);
 }
 async function saveTask(t) {
+  guard();
   const i = store.tasks.findIndex(x => x.id === t.id);
   if (i >= 0) store.tasks[i] = t; else store.tasks.unshift(t);
   if (store.cloud) await api("admin_tasks", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=minimal" }, body: t });
   else ls.set("fk_tasks", store.tasks);
 }
 async function delTask(id) {
+  guard();
   store.tasks = store.tasks.filter(x => x.id !== id);
   if (store.cloud) await api("admin_tasks?id=eq." + id, { method: "DELETE", headers: { Prefer: "return=minimal" } });
   else ls.set("fk_tasks", store.tasks);
 }
 async function saveCrm(pid, patch) {
+  guard();
   const cur = store.crm[pid] || { profile_id: pid, stage: "novo", notes: "", next_contact: null };
   const nv = Object.assign({}, cur, patch, { profile_id: pid, updated_at: new Date().toISOString() });
   store.crm[pid] = nv;
@@ -257,32 +292,57 @@ async function saveCrm(pid, patch) {
 
 /* ============ CARREGAR DADOS ============ */
 let D = {}, M = {}, LOADERR = [];
+// Todas as consultas têm uma ordem estável (acabam em id) para a paginação
+// de apiAll não saltar nem repetir linhas.
 const TABLES = {
-  profiles: "profiles?select=id,name,category,location,plan,plan_expires_at,verified,approved,suspended,is_admin,is_demo,created_at,account_type,bio,photo_url,cover_url,slug,stripe_subscription_id,ai_profile_builder_unlocked,ai_profile_builder_paid_at,credits,avg_response_minutes&order=created_at.desc&limit=5000",
-  private: "profile_private?select=profile_id,phone&limit=5000",
-  services: "services?select=id,professional_id,price_from,price_to,created_at&limit=5000",
-  portfolio: "portfolio_items?select=id,professional_id,created_at&limit=5000",
-  reviews: "reviews?select=id,professional_id,rating,created_at&limit=5000",
-  conversations: "conversations?select=id,professional_id,client_id,last_message,last_message_at,created_at&order=last_message_at.desc&limit=5000",
-  messages: "messages?select=id,conversation_id,sender_id,read,created_at&limit=10000",
-  requests: "requests?select=id,client_id,title,category,location,status,is_urgent,budget_from,budget_to,created_at&order=created_at.desc&limit=5000",
-  offers: "request_offers?select=id,request_id,professional_id,created_at&limit=5000",
-  jobs: "jobs?select=id,professional_id,status,quote_amount,paid_amount,paid_at,created_at&limit=5000",
-  visits: "site_visits?select=visitor_id,user_id,path,referrer,created_at&order=created_at.desc&limit=20000",
-  pviews: "profile_views?select=profile_id,viewed_at&limit=20000",
-  gdpr: "gdpr_requests?select=id,profile_id,request_type,status,created_at,resolved_at&order=created_at.desc&limit=500",
-  verif: "verification_requests?select=id,profile_id,status,created_at,resolved_at&order=created_at.desc&limit=500",
-  ads: "ad_slots?select=id,professional_id,credits_spent,status,starts_at,ends_at&limit=1000",
-  notif: "notification_queue?select=id,status,kind,created_at&limit=5000",
-  push: "push_subscriptions?select=id,profile_id&limit=5000",
-  saved: "saved_professionals?select=id&limit=5000",
-  referrals: "signup_referrals?select=id&limit=5000"
+  profiles: "profiles?select=id,name,category,location,plan,plan_expires_at,verified,approved,suspended,is_admin,is_demo,created_at,account_type,bio,photo_url,cover_url,slug,stripe_subscription_id,ai_profile_builder_unlocked,ai_profile_builder_paid_at,credits,avg_response_minutes&order=created_at.desc,id",
+  private: "profile_private?select=profile_id,phone&order=profile_id",
+  services: "services?select=id,professional_id,price_from,price_to,created_at&order=id",
+  portfolio: "portfolio_items?select=id,professional_id,created_at&order=id",
+  reviews: "reviews?select=id,professional_id,client_id,reviewer_name,rating,comment,created_at&order=created_at.desc,id",
+  conversations: "conversations?select=id,professional_id,client_id,last_message,last_message_at,created_at&order=last_message_at.desc.nullslast,id",
+  messages: "messages?select=id,conversation_id,sender_id,read,created_at&order=id",
+  requests: "requests?select=id,client_id,title,description,category,location,status,is_urgent,budget_from,budget_to,created_at&order=created_at.desc,id",
+  offers: "request_offers?select=id,request_id,professional_id,created_at&order=id",
+  jobs: "jobs?select=id,professional_id,status,quote_amount,paid_amount,paid_at,created_at&order=id",
+  // Visitas já agregadas no servidor (dia × visitante × página × origem), ver admin_visit_rows.
+  visits: "rpc/admin_visit_rows?p_days=400&order=day,visitor_id,user_id,path,ref_host",
+  pviews: "profile_views?select=profile_id,viewed_at&order=id",
+  gdpr: "gdpr_requests?select=id,profile_id,request_type,status,notes,admin_notes,created_at,resolved_at&order=created_at.desc,id",
+  verif: "verification_requests?select=id,profile_id,status,documents,notes,admin_notes,created_at,resolved_at&order=created_at.desc,id",
+  ads: "ad_slots?select=id,professional_id,credits_spent,status,starts_at,ends_at&order=id",
+  notif: "notification_queue?select=id,status,kind,created_at&order=id",
+  push: "push_subscriptions?select=id,profile_id&order=id",
+  saved: "saved_professionals?select=id&order=id",
+  referrals: "signup_referrals?select=id&order=id",
+  tickets: "support_tickets?select=*&order=created_at.desc,id"
 };
+// Converte visitas em bruto (uma linha por visita) no formato agregado de
+// admin_visit_rows. Usado enquanto a migração não estiver aplicada.
+function compactVisits(raw) {
+  const m = {};
+  raw.forEach(v => {
+    let ref = "Direto"; try { if (v.referrer) ref = new URL(v.referrer).hostname.replace(/^www./, ""); } catch (e) { ref = v.referrer || "Direto"; }
+    const day = dkey(v.created_at), k = [day, v.visitor_id, v.user_id || "", v.path, ref].join("|");
+    const r = m[k] = m[k] || { day, visitor_id: v.visitor_id, user_id: v.user_id || null, path: v.path, ref_host: ref, n: 0, last_at: v.created_at };
+    r.n++; if (v.created_at > r.last_at) r.last_at = v.created_at;
+  });
+  return Object.values(m);
+}
+async function loadTable(k) {
+  try { return await apiAll(TABLES[k]); }
+  catch (e) {
+    if (k === "visits" && missing(e)) return compactVisits(await apiAll("site_visits?select=visitor_id,user_id,path,referrer,created_at&created_at=gte." + new Date(now() - 400 * DAY).toISOString() + "&order=id"));
+    if (k === "tickets" && missing(e)) return [];
+    throw e;
+  }
+}
 async function loadAll() {
   LOADERR = [];
   const keys = Object.keys(TABLES);
-  const res = await Promise.all(keys.map(k => api(TABLES[k]).catch(e => { LOADERR.push(k + ": " + e.message); return []; })));
+  const res = await Promise.all(keys.map(k => loadTable(k).catch(e => { LOADERR.push(k + ": " + e.message); return []; })));
   D = Object.fromEntries(keys.map((k, i) => [k, res[i]]));
+  D.audit = DEMO ? [] : await api("admin_audit?select=*&order=at.desc&limit=500").catch(e => { if (!missing(e)) LOADERR.push("admin_audit: " + e.message); return []; });
   await loadStore();
   compute();
   takeSnapshot().catch(() => { });
@@ -313,7 +373,8 @@ function compute() {
   const V = D.visits.filter(v => !(v.user_id && ignoreIds.has(v.user_id)));
   const inWin = (arr, f, a, b) => arr.filter(x => { const q = new Date(x[f]).getTime(); return q >= a && q < b; });
   const uniq = arr => new Set(arr.map(v => v.visitor_id)).size;
-  const v7 = inWin(V, "created_at", d7, t + DAY), vp7 = inWin(V, "created_at", d14, d7), v30 = inWin(V, "created_at", d30, t + DAY);
+  const v7 = inWin(V, "last_at", d7, t + DAY), vp7 = inWin(V, "last_at", d14, d7), v30 = inWin(V, "last_at", d30, t + DAY);
+  const hits = arr => arr.reduce((s, v) => s + (+v.n || 1), 0); // cada linha agregada vale n visitas
   const su7 = inWin(P, "created_at", d7, t + DAY).length, sup7 = inWin(P, "created_at", d14, d7).length;
 
   /* pagamentos */
@@ -351,7 +412,8 @@ function compute() {
   const days = n => Array.from({ length: n }, (_, i) => dkey(t - (n - 1 - i) * DAY));
   const bucket = (arr, f, keys, filt) => { const m = Object.fromEntries(keys.map(k => [k, 0])); arr.forEach(x => { if (filt && !filt(x)) return; const k = dkey(x[f]); if (k in m) m[k]++; }); return keys.map(k => ({ x: k, y: m[k] })); };
   const d30k = days(30);
-  const uv = keys => { const m = Object.fromEntries(keys.map(k => [k, new Set()])); V.forEach(v => { const k = dkey(v.created_at); if (k in m) m[k].add(v.visitor_id); }); return keys.map(k => ({ x: k, y: m[k].size })); };
+  const uv = keys => { const m = Object.fromEntries(keys.map(k => [k, new Set()])); V.forEach(v => { const k = String(v.day); if (k in m) m[k].add(v.visitor_id); }); return keys.map(k => ({ x: k, y: m[k].size })); };
+  const vday = keys => { const m = Object.fromEntries(keys.map(k => [k, 0])); V.forEach(v => { const k = String(v.day); if (k in m) m[k] += +v.n || 1; }); return keys.map(k => ({ x: k, y: m[k] })); };
   const weeks = 12, wk = Array.from({ length: weeks }, (_, i) => { const a = t - (weeks - i) * 7 * DAY, b = a + 7 * DAY; return { a, b, x: new Date(b - DAY).toLocaleDateString("pt-PT", { day: "2-digit", month: "2-digit" }) }; });
   const wser = (arr, f, filt) => wk.map(w => ({ x: w.x, y: arr.filter(r => { const q = new Date(r[f]).getTime(); return q >= w.a && q < w.b && (!filt || filt(r)); }).length }));
 
@@ -368,10 +430,10 @@ function compute() {
 
   M = {
     P, pros, clients, phone, mrr, activePaid, aiUnlocked, aiRev, adCredits, gmv, funnel, cat: Object.values(cat).sort((a, b) => (b.req + b.pros) - (a.req + a.pros)), loc: Object.entries(loc).sort((a, b) => b[1] - a[1]),
-    su7, sup7, v7: v7.length, vp7: vp7.length, u7: uniq(v7), up7: uniq(vp7), v30: v30.length, u30: uniq(v30),
+    su7, sup7, v7: hits(v7), vp7: hits(vp7), u7: uniq(v7), up7: uniq(vp7), v30: hits(v30), u30: uniq(v30),
     avgScore: pros.length ? Math.round(pros.reduce((s, p) => s + p._score, 0) / pros.length) : 0,
     complete: pros.filter(p => p._score >= 80).length,
-    visits30: bucket(V, "created_at", d30k), uvis30: uv(d30k),
+    visits30: vday(d30k), uvis30: uv(d30k),
     signWeeks: wser(P, "created_at"), proWeeks: wser(P, "created_at", p => p.account_type !== "client"), cliWeeks: wser(P, "created_at", p => p.account_type === "client"),
     reqWeeks: wser(D.requests, "created_at"), convWeeks: wser(D.conversations, "created_at"),
     alerts, gp, vp, rev: D.reviews.length, avgRating: D.reviews.length ? D.reviews.reduce((s, r) => s + r.rating, 0) / D.reviews.length : 0,
@@ -388,6 +450,8 @@ function demoApi(path, opt) {
   if (opt.method && opt.method !== "GET") return [];
   if (path.startsWith("profiles?select=is_admin")) return [{ is_admin: true }];
   if (!_demo) _demo = genDemo();
+  if (path.startsWith("rpc/admin_visit_rows")) { if (!_demo) _demo = genDemo(); return compactVisits(_demo.visits); }
+  if (path.startsWith("rpc/") || table === "support_tickets" || table === "admin_audit") return [];
   const map = { profiles: "profiles", profile_private: "private", services: "services", portfolio_items: "portfolio", reviews: "reviews", conversations: "conversations", messages: "messages", requests: "requests", request_offers: "offers", jobs: "jobs", site_visits: "visits", profile_views: "pviews", gdpr_requests: "gdpr", verification_requests: "verif", ad_slots: "ads", notification_queue: "notif", push_subscriptions: "push", saved_professionals: "saved", signup_referrals: "referrals" };
   return JSON.parse(JSON.stringify(_demo[map[table]] || []));
 }
@@ -419,14 +483,8 @@ function genDemo() {
 /* ============ ARMAZENAMENTO GENÉRICO (admin_items) ============ */
 store.items = {};
 const items = k => store.items[k] || [];
-async function loadItems() {
-  try {
-    const rows = await api("admin_items?select=*&limit=5000");
-    store.items = {}; rows.forEach(r => { (store.items[r.kind] = store.items[r.kind] || []).push(Object.assign({}, r.data, { id: r.id })); });
-    return true;
-  } catch (e) { store.items = ls.get("fk_items", {}); return false; }
-}
 async function saveItem(kind, it) {
+  guard();
   if (!it.id) it.id = uid();
   const arr = items(kind).slice(), i = arr.findIndex(x => x.id === it.id);
   if (i >= 0) arr[i] = it; else arr.unshift(it);
@@ -436,6 +494,7 @@ async function saveItem(kind, it) {
   return it;
 }
 async function delItem(kind, id) {
+  guard();
   store.items[kind] = items(kind).filter(x => x.id !== id);
   if (store.cloud) await api("admin_items?id=eq." + id, { method: "DELETE", headers: { Prefer: "return=minimal" } });
   else ls.set("fk_items", store.items);
@@ -469,7 +528,7 @@ const confirmDel = async (kind, id, what = "este registo") => { if (await ask("A
 /* ============ CÁLCULOS EXTRA (atividade, coortes, qualidade) ============ */
 function computeExtra() {
   const t = now(), users = M.P;
-  const act = {}; D.visits.forEach(v => { if (v.user_id) (act[v.user_id] = act[v.user_id] || []).push(new Date(v.created_at).getTime()); });
+  const act = {}; D.visits.forEach(v => { if (v.user_id) (act[v.user_id] = act[v.user_id] || []).push(new Date(v.last_at).getTime()); });
   users.forEach(p => { const a = act[p.id] || []; p._last = a.length ? Math.max(...a) : null; p._nv = a.length; p._act = a; });
   const active = d => users.filter(p => p._last && p._last > t - d * DAY).length;
   M.dau = active(1); M.wau = active(7); M.mau = active(30);
@@ -688,7 +747,7 @@ function reportText(days) {
   const inR = (arr, f, x, y) => arr.filter(r => { const q = new Date(r[f]).getTime(); return q >= x && q < y; }).length;
   const cmp = (c, p) => `${c} (${c - p >= 0 ? "+" : ""}${c - p} vs período anterior)`;
   const V = D.visits.filter(v => !(v.user_id && M.P.every(p => p.id !== v.user_id) && D.profiles.some(p => p.id === v.user_id && (p.is_admin || p.is_demo))));
-  const uv = (x, y) => new Set(V.filter(v => { const q = new Date(v.created_at).getTime(); return q >= x && q < y; }).map(v => v.visitor_id)).size;
+  const uv = (x, y) => new Set(V.filter(v => { const q = new Date(v.last_at).getTime(); return q >= x && q < y; }).map(v => v.visitor_id)).size;
   const np = inR(M.pros, "created_at", a, t + DAY), npp = inR(M.pros, "created_at", b, a), nc = inR(M.clients, "created_at", a, t + DAY), ncp = inR(M.clients, "created_at", b, a);
   const cv = inR(D.conversations, "created_at", a, t + DAY), cvp = inR(D.conversations, "created_at", b, a), rq = inR(D.requests, "created_at", a, t + DAY), rqp = inR(D.requests, "created_at", b, a);
   const L = items("lead"), lc = L.reduce((n, l) => n + (l.log || []).filter(g => { const q = new Date(g.at).getTime(); return q >= a; }).length, 0);
@@ -762,6 +821,7 @@ function events() {
   items("invoice").filter(i => i.status === "emitida").forEach(i => add(i.due, "invoice", "Vence " + i.number + " · " + i.client));
   items("post").filter(p => p.status !== "publicado").forEach(p => add(p.date, "post", "Publicar: " + (p.text || "").slice(0, 32)));
   items("ticket").filter(t => t.status !== "resolvido").forEach(t => add(dkey(new Date(t.date).getTime() + 2 * DAY), "ticket", "Responder (48 h): " + t.subject));
+  D.tickets.filter(t => t.status !== "resolvido").forEach(t => add(dkey(new Date(t.created_at).getTime() + 2 * DAY), "ticket", "Responder (48 h): " + t.subject));
   return E;
 }
 let calOff = 0, calDay = null;
@@ -838,9 +898,11 @@ const setTicket = async (id, st) => { const t = items("ticket").find(x => x.id =
 const vSupport = () => {
   const T = items("ticket").slice().sort((a, b) => a.date < b.date ? 1 : -1), open = T.filter(t => t.status !== "resolvido"), late = open.filter(t => now() - new Date(t.date) > 2 * DAY);
   const done = T.filter(t => t.resolved_at), avg = done.length ? done.reduce((s, t) => s + (new Date(t.resolved_at) - new Date(t.date)), 0) / done.length / 36e5 : 0;
-  return head("Apoio a clientes", "Pedidos de ajuda, dúvidas e reclamações de profissionais e clientes", `<button class="btn sm" onclick="addTicket()">+ Novo pedido</button>`) +
-    `<div class="grid g4">${kpi("Em aberto", open.length, `${T.length} no total`)}${kpi("Fora do prazo (48 h)", late.length, late.length ? "responde primeiro a estes" : "tudo dentro do prazo")}${kpi("Tempo médio de resolução", done.length ? (avg < 48 ? avg.toFixed(1) + " h" : (avg / 24).toFixed(1) + " dias") : "—", `${done.length} resolvidos`)}${kpi("RGPD em aberto", M.gp.length, "ver Operações")}</div>
-    <div class="card" style="margin-top:14px"><h3>Pedidos</h3><div class="tw"><table><tr><th>Data</th><th>Quem</th><th>Assunto</th><th>Canal</th><th>Prioridade</th><th>Estado</th><th></th></tr>${T.map(t => `<tr><td>${fdate(t.date)}${t.status !== "resolvido" && now() - new Date(t.date) > 2 * DAY ? `<br><span class="pill bad">+48 h</span>` : ""}</td><td><b>${esc(t.from)}</b><br><span class="mut">${esc(t.contact || "")}</span></td><td>${esc(t.subject)}<br><span class="mut">${esc((t.notes || "").slice(0, 80))}</span></td><td>${esc(t.channel)}</td><td><span class="pill ${t.priority === "alta" ? "bad" : t.priority === "baixa" ? "" : "warn"}">${esc(t.priority)}</span></td><td><select onchange="setTicket('${t.id}',this.value)">${[["aberto", "Aberto"], ["curso", "Em curso"], ["resolvido", "Resolvido"]].map(o => `<option value="${o[0]}" ${t.status === o[0] ? "selected" : ""}>${o[1]}</option>`).join("")}</select></td><td style="white-space:nowrap"><button class="btn sec sm" onclick="editTicket('${t.id}')">✎</button> <button class="btn sec sm" onclick="confirmDel('ticket','${t.id}','este pedido')">✕</button></td></tr>`).join("") || `<tr><td colspan="7" class="mut">Ainda sem pedidos. Regista aqui tudo o que chegar por email, WhatsApp ou telefone, para nada se perder.</td></tr>`}</table></div></div>`;
+  const W = D.tickets.filter(t => t.kind !== "denuncia").sort((a, b) => (a.status === "resolvido") - (b.status === "resolvido") || (a.created_at < b.created_at ? 1 : -1)), wOpen = W.filter(t => t.status !== "resolvido");
+  return head("Apoio a clientes", "Pedidos de ajuda, dúvidas e reclamações de profissionais e clientes", `<button class="btn sm" onclick="addTicket()">+ Registar pedido</button>`) +
+    `<div class="grid g4">${kpi("Em aberto", open.length + wOpen.length, `${wOpen.length} vindos do site · ${open.length} registados à mão`)}${kpi("Fora do prazo (48 h)", late.length, late.length ? "responde primeiro a estes" : "tudo dentro do prazo")}${kpi("Tempo médio de resolução", done.length ? (avg < 48 ? avg.toFixed(1) + " h" : (avg / 24).toFixed(1) + " dias") : "—", `${done.length} resolvidos`)}${kpi("RGPD em aberto", M.gp.length, "ver Operações")}</div>
+    <div class="card" style="margin-top:14px" id="webTickets"><h3>📨 Recebidos pelo formulário de contacto (${wOpen.length} em aberto)</h3>${ticketTable(W)}<p class="mut" style="margin:10px 0 0">Chegam sozinhos pela página de contacto do site. Responde pelo email da pessoa (carrega no endereço) e muda o estado aqui. As denúncias de perfis estão em Moderação.</p></div>
+    <div class="card" style="margin-top:14px"><h3>Registados à mão (email, WhatsApp, telefone)</h3><div class="tw"><table><tr><th>Data</th><th>Quem</th><th>Assunto</th><th>Canal</th><th>Prioridade</th><th>Estado</th><th></th></tr>${T.map(t => `<tr><td>${fdate(t.date)}${t.status !== "resolvido" && now() - new Date(t.date) > 2 * DAY ? `<br><span class="pill bad">+48 h</span>` : ""}</td><td><b>${esc(t.from)}</b><br><span class="mut">${esc(t.contact || "")}</span></td><td>${esc(t.subject)}<br><span class="mut">${esc((t.notes || "").slice(0, 80))}</span></td><td>${esc(t.channel)}</td><td><span class="pill ${t.priority === "alta" ? "bad" : t.priority === "baixa" ? "" : "warn"}">${esc(t.priority)}</span></td><td><select onchange="setTicket('${t.id}',this.value)">${[["aberto", "Aberto"], ["curso", "Em curso"], ["resolvido", "Resolvido"]].map(o => `<option value="${o[0]}" ${t.status === o[0] ? "selected" : ""}>${o[1]}</option>`).join("")}</select></td><td style="white-space:nowrap"><button class="btn sec sm" onclick="editTicket('${t.id}')">✎</button> <button class="btn sec sm" onclick="confirmDel('ticket','${t.id}','este pedido')">✕</button></td></tr>`).join("") || `<tr><td colspan="7" class="mut">Ainda sem pedidos. Regista aqui tudo o que chegar por email, WhatsApp ou telefone, para nada se perder.</td></tr>`}</table></div></div>`;
 };
 
 /* ============ FATURAÇÃO ============ */
@@ -887,7 +949,7 @@ const noteTasks = async id => {
   await saveItem("note", Object.assign({}, n, { tasksDone: true })); toast(L.length + " tarefas criadas"); render();
 };
 const vCompany = () => {
-  const C = items("contact"), S = items("sop"), N = items("note").slice().sort((a, b) => a.date < b.date ? 1 : -1);
+  const C = items("contact").filter(c => !c.profile_id), S = items("sop"), N = items("note").slice().sort((a, b) => a.date < b.date ? 1 : -1);
   return head("Empresa", "Contactos úteis, processos escritos e notas de reunião") +
     `<div class="grid g2"><div class="card"><h3>Contactos úteis <span class="sp"></span><button class="btn sm" onclick="addCt()">+ Contacto</button></h3>${C.map(c => `<div class="sug"><span class="t"><b>${esc(c.name)}</b> <span class="pill">${esc(c.role)}</span> <span class="mut">${esc(c.org || "")}</span><br>${c.phone ? `<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a> ` : ""}${c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : ""}<br><span class="mut">${esc(c.notes || "")}</span></span><button class="btn sec sm" onclick="editCt('${c.id}')">✎</button><button class="btn sec sm" onclick="confirmDel('contact','${c.id}','este contacto')">✕</button></div>`).join("") || `<span class="mut">Guarda aqui o contabilista, o advogado, parceiros e fornecedores.</span>`}</div>
     <div class="card"><h3>Notas de reunião <span class="sp"></span><button class="btn sm" onclick="addNote()">+ Nota</button></h3>${N.map(n => `<div class="sug"><span class="t"><b>${esc(n.title)}</b> <span class="mut">${fdate(n.date)}</span><br><span class="mut" style="white-space:pre-wrap">${esc(n.text || "")}</span>${n.actions ? `<br><b>Ações:</b><span style="white-space:pre-wrap"> ${esc(n.actions)}</span>` : ""}</span>${n.actions && !n.tasksDone ? `<button class="btn sm" onclick="noteTasks('${n.id}')">→ Tarefas</button>` : ""}<button class="btn sec sm" onclick="confirmDel('note','${n.id}','esta nota')">✕</button></div>`).join("") || `<span class="mut">Escreve o que ficou decidido e transforma as ações em tarefas com um clique.</span>`}</div></div>
@@ -947,10 +1009,12 @@ function openSearch() {
     const q = $("#gs").value.trim().toLowerCase(), R = []; if (q.length < 2) { $("#gsr").innerHTML = `<span class="mut">Escreve pelo menos 2 letras.</span>`; return; }
     const has = (...a) => a.join(" ").toLowerCase().includes(q);
     M.pros.forEach(p => { if (has(p.name, p.category, p.location, p._phone)) R.push(["Profissional", p.name + " · " + (p.category || "sem categoria"), `closeSearch();openPro('${p.id}')`]); });
+    M.clients.forEach(c => { if (has(c.name, EMAILS && EMAILS[c.id])) R.push(["Cliente", c.name, `closeSearch();openClient('${c.id}')`]); });
+    D.tickets.forEach(t => { if (has(t.name, t.email, t.subject)) R.push([t.kind === "denuncia" ? "Denúncia" : "Apoio", t.name + " · " + t.subject, `closeSearch();go('${t.kind === "denuncia" ? "mod" : "support"}')`]); });
     items("lead").forEach(l => { if (has(l.name, l.phone, l.category)) R.push(["Lead", l.name, `closeSearch();go('leads')`]); });
     store.tasks.forEach(t => { if (has(t.title)) R.push(["Tarefa", t.title, `closeSearch();go('tasks')`]); });
     items("ticket").forEach(t => { if (has(t.from, t.subject, t.contact)) R.push(["Apoio", t.from + " · " + t.subject, `closeSearch();go('support')`]); });
-    items("contact").forEach(c => { if (has(c.name, c.org, c.role, c.phone, c.email)) R.push(["Contacto", c.name + " · " + c.role, `closeSearch();go('company')`]); });
+    items("contact").filter(c => !c.profile_id).forEach(c => { if (has(c.name, c.org, c.role, c.phone, c.email)) R.push(["Contacto", c.name + " · " + c.role, `closeSearch();go('company')`]); });
     items("note").forEach(n => { if (has(n.title, n.text)) R.push(["Nota", n.title, `closeSearch();go('company')`]); });
     items("sop").forEach(n => { if (has(n.title, n.text)) R.push(["Processo", n.title, `closeSearch();go('company')`]); });
     items("decision").forEach(n => { if (has(n.title, n.why)) R.push(["Decisão", n.title, `closeSearch();go('strategy')`]); });
@@ -980,7 +1044,6 @@ function demoFn(name, body) {
   if (name === "admin-refund" && body.action === "list") return { charges: [{ id: "ch_demo1", amount: 999, amount_refunded: 0, currency: "eur", refunded: false, paid: true, created: Math.floor(now() / 1000) - 12 * 86400 }, { id: "ch_demo2", amount: 999, amount_refunded: 999, currency: "eur", refunded: true, paid: true, created: Math.floor(now() / 1000) - 42 * 86400 }] };
   return { ok: true };
 }
-const audit = async txt => { try { await saveItem("audit", { at: new Date().toISOString(), txt, by: DEMO ? "demo" : (session?.user?.email || "") }); } catch (e) { } };
 const money = (c, cur) => ((c || 0) / 100).toLocaleString("pt-PT", { style: "currency", currency: String(cur || "eur").toUpperCase() });
 function payBox(p) {
   return `<h3 style="margin:18px 0 6px">Plano e pagamentos</h3>
@@ -997,7 +1060,6 @@ async function setPlanFor(id) {
   try {
     await fn("admin-set-plan", { targetProfileId: id, plan });
     const old = p.plan || "free"; p.plan = plan; if (sub) p.stripe_subscription_id = null; if (plan === "free") p.plan_expires_at = null;
-    await audit(`Plano de ${p.name}: ${old} → ${plan}${sub ? " (subscrição Stripe cancelada)" : ""}`);
     compute(); render(); openPro(id); toast("Plano alterado");
   } catch (e) { toast("Erro: " + e.message); }
 }
@@ -1017,7 +1079,6 @@ async function refundCharge(id, chargeId, maxCents, cur) {
   if (!await ask("Confirmar reembolso", `Vais devolver ${money(cents || maxCents, cur)} a ${p.name}. O dinheiro sai da tua conta Stripe e isto não pode ser desfeito.`, "Reembolsar", true)) return;
   try {
     await fn("admin-refund", { action: "refund", targetProfileId: id, chargeId, amount: cents, reason: r.reason });
-    await audit(`Reembolso de ${money(cents || maxCents, cur)} a ${p.name} (${r.reason})`);
     toast("Reembolso efetuado"); showCharges(id);
   } catch (e) { toast("Erro: " + e.message); }
 }
@@ -1044,7 +1105,12 @@ const SEGS = [
   ["all", "Todos", () => true]
 ];
 const cst = { seg: "incomplete", tpl: "d2", text: "", q: "", hide: true };
-const clogMap = () => { const m = {}; items("contact").forEach(c => { if (!m[c.profile_id] || c.at > m[c.profile_id].at) m[c.profile_id] = c; }); return m; };
+const clogMap = () => {
+  const m = {}, put = c => { if (c.profile_id && (!m[c.profile_id] || c.at > m[c.profile_id].at)) m[c.profile_id] = c; };
+  items("contact").forEach(put);
+  D.audit.filter(r => r.action === "email_massa").forEach(r => ((r.details && r.details.sent) || []).forEach(id => put({ profile_id: id, at: r.at, channel: "email em grupo" })));
+  return m;
+};
 const tplOf = () => tpls().find(t => t.id === cst.tpl) || tpls()[0];
 const curText = () => cst.text || tplOf().text;
 const msgFor = p => fillTpl(curText(), { name: p.name, category: p.category, missing: p._missing, views: p._views, convs: p._conv, plan: p.plan });
@@ -1078,6 +1144,29 @@ async function contactVia(pid, ch) {
   } catch (e) { }
   refreshContact();
 }
+// Envio de email a todo o grupo, pelo servidor (admin-send-campaign). Cada
+// pessoa recebe o texto já preenchido com os dados dela ({nome}, {falta}…).
+async function sendGroupEmail() {
+  const L = contactList(); if (!L.length) return toast("Ninguém neste grupo");
+  if (L.length > 500) return toast("No máximo 500 pessoas por envio. Filtra o grupo.");
+  const r = await form(`Email para ${L.length} profissional(is)`, [{ k: "subject", label: "Assunto (podes usar {nome})", req: 1 }, { k: "text", label: "Mensagem (usa {nome} {categoria} {falta} {vistas} {conversas} {plano})", type: "textarea", rows: 9, req: 1 }], { subject: "Flinko · " + tplOf().name, text: curText() }, "Continuar");
+  if (!r) return;
+  const ids = L.map(p => p.id);
+  try {
+    const pv = await fn("admin-send-campaign", { action: "preview", profileIds: ids });
+    const why = {}; (pv.skipped || []).forEach(x => { why[x.reason] = (why[x.reason] || 0) + 1; });
+    const out = Object.entries(why).map(([k, n]) => `${n} ${k}`).join(", ");
+    if (!pv.recipients) return toast("Ninguém deste grupo pode receber email" + (out ? " (" + out + ")" : ""));
+    if (!await ask("Enviar emails", `Vai ser enviado um email a ${pv.recipients} profissional(is)${out ? `. Ficam de fora: ${out}` : ""}. Só para comunicações sobre a conta e o perfil; promoções precisam de consentimento prévio. Não pode ser desfeito.`, "Enviar " + pv.recipients + " emails")) return;
+    const byId = Object.fromEntries(L.map(p => [p.id, p]));
+    const messages = {}; ids.forEach(id => { messages[id] = fillTpl(r.text, { name: byId[id].name, category: byId[id].category, missing: byId[id]._missing, views: byId[id]._views, convs: byId[id]._conv, plan: byId[id].plan }); });
+    const j = await fn("admin-send-campaign", { action: "send", profileIds: ids, subject: r.subject, message: r.text, messages });
+    D.audit.unshift({ at: new Date().toISOString(), action: "email_massa", actor_email: session?.user?.email, summary: `Email “${r.subject}” enviado a ${j.sent} profissional(is)`, details: { sent: j.sentIds || [] } });
+    for (const id of j.sentIds || []) { const c = store.crm[id] || {}; if (!c.stage || c.stage === "novo") await saveCrm(id, { stage: "contactado", next_contact: dkey(now() + 3 * DAY) }).catch(() => { }); }
+    toast(`${j.sent} email(s) enviado(s)${j.failed && j.failed.length ? " · " + j.failed.length + " falharam" : ""}`); refreshContact();
+  } catch (e) { toast("Erro: " + e.message); }
+}
+
 function contactNext() { const p = contactList().find(x => M.phone[x.id]); if (!p) return toast("Ninguém com telemóvel neste grupo"); contactVia(p.id, "wa"); }
 function setSeg(k) { cst.seg = k; render(); }
 function setTpl(id) { cst.tpl = id; cst.text = ""; render(); }
@@ -1098,7 +1187,7 @@ const vContact = () => {
       <div class="note" id="cprev" style="margin:12px 0 0"></div></div>
     <div class="card"><h3>Ações do grupo <span class="sp"></span><span class="pill" id="ccount"></span></h3>
       <div class="row"><button class="btn" onclick="contactNext()">Próximo por contactar (WhatsApp)</button>
-      <button class="btn sec" onclick="copyPhones()">Copiar números</button><button class="btn sec" onclick="copyEmails()">Copiar emails</button></div>
+      <button class="btn sec" onclick="copyPhones()">Copiar números</button><button class="btn sec" onclick="copyEmails()">Copiar emails</button>${isOwner() ? `<button class="btn sec" onclick="sendGroupEmail()">✉ Enviar email a este grupo</button>` : ""}</div>
       <label class="f">Filtrar por nome, categoria ou zona</label><input value="${esc(cst.q)}" oninput="cst.q=this.value;refreshContact()" placeholder="Pesquisar…">
       <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" style="width:auto" ${cst.hide ? "checked" : ""} onchange="cst.hide=this.checked;refreshContact()"> Esconder quem já contactei nos últimos 7 dias</label>
       <p class="mut" style="margin:10px 0 0">Ao contactar, a fase do CRM passa a “Contactado” e fica um próximo contacto agendado para daqui a 3 dias.</p></div></div>
@@ -1106,7 +1195,7 @@ const vContact = () => {
 };
 
 /* ============ AVISOS ============ */
-const ALERT_RULES = [["gdpr", "Pedidos RGPD em aberto"], ["verif", "Pedidos de verificação por tratar"], ["unver", "Profissionais por verificar"], ["nocat", "Profissionais sem categoria"], ["notif", "Notificações que falharam"], ["req", "Pedidos de clientes sem proposta há mais de 24 h"], ["exp", "Subscrições a expirar"], ["ticket", "Apoio fora do prazo (48 h)"], ["inv", "Faturas vencidas"], ["task", "Tarefas atrasadas"], ["lead", "Leads por contactar"], ["crm", "Contactos agendados no CRM"], ["reg", "Sem novos registos em 7 dias"]];
+const ALERT_RULES = [["gdpr", "Pedidos RGPD em aberto"], ["verif", "Pedidos de verificação por tratar"], ["unver", "Profissionais por verificar"], ["nocat", "Profissionais sem categoria"], ["notif", "Notificações que falharam"], ["req", "Pedidos de clientes sem proposta há mais de 24 h"], ["exp", "Subscrições a expirar"], ["ticket", "Apoio fora do prazo (48 h)"], ["den", "Denúncias de perfis por resolver"], ["inv", "Faturas vencidas"], ["task", "Tarefas atrasadas"], ["lead", "Leads por contactar"], ["crm", "Contactos agendados no CRM"], ["reg", "Sem novos registos em 7 dias"]];
 function liveAlerts(all) {
   const A = [], t = now(), td = today(), off = new Set((setting("alertrules") || {}).off || []);
   const sn = new Set(items("snooze").filter(s => s.until >= td).map(s => s.key));
@@ -1118,7 +1207,8 @@ function liveAlerts(all) {
   const fn_ = D.notif.filter(n => n.status === "failed").length; if (fn_) add("notif", "all", "bad", `${fn_} notificações falharam o envio`, "ops");
   const rq = M.openReq.filter(r => t - new Date(r.created_at) > DAY); if (rq.length) add("req", "all", "bad", `${rq.length} pedido(s) de clientes sem nenhuma proposta há mais de 24 h`, "demand");
   M.activePaid.filter(p => p.plan_expires_at && new Date(p.plan_expires_at) < t + 7 * DAY).forEach(p => { const d = Math.ceil((new Date(p.plan_expires_at) - t) / DAY); add("exp", p.id, d <= 2 ? "bad" : "warn", `Plano ${p.plan} de ${p.name} expira ${d <= 0 ? "hoje" : "em " + d + " dia(s)"}`, "contact"); });
-  const tk = items("ticket").filter(x => x.status !== "resolvido" && t - new Date(x.date) > 2 * DAY); if (tk.length) add("ticket", "all", "bad", `${tk.length} pedido(s) de apoio há mais de 48 h sem resolução`, "support");
+  const tk = items("ticket").filter(x => x.status !== "resolvido" && t - new Date(x.date) > 2 * DAY).length + D.tickets.filter(x => x.kind !== "denuncia" && x.status !== "resolvido" && t - new Date(x.created_at) > 2 * DAY).length; if (tk) add("ticket", "all", "bad", `${tk} pedido(s) de apoio há mais de 48 h sem resolução`, "support");
+  const dn = D.tickets.filter(x => x.kind === "denuncia" && x.status !== "resolvido"); if (dn.length) add("den", "all", dn.some(x => t - new Date(x.created_at) > 2 * DAY) ? "bad" : "warn", `${dn.length} denúncia(s) de perfis por resolver`, "mod");
   const iv = items("invoice").filter(i => i.status === "emitida" && i.due && i.due < td); if (iv.length) add("inv", "all", "bad", `${iv.length} fatura(s) vencida(s) por cobrar`, "invoices");
   const tt = store.tasks.filter(x => x.status !== "done" && x.due_date && new Date(x.due_date) < t - DAY); if (tt.length) add("task", "all", "warn", `${tt.length} tarefa(s) atrasada(s)`, "tasks");
   const ld = leadsDue().length; if (ld) add("lead", "all", "warn", `${ld} lead(s) para contactar hoje ou em atraso`, "leads");
@@ -1132,7 +1222,6 @@ async function toggleRule(id, on) { const cur = new Set((setting("alertrules") |
 const vAlerts = () => {
   const A = liveAlerts(), bad = A.filter(a => a.lvl === "bad"), warn = A.filter(a => a.lvl !== "bad"), off = new Set((setting("alertrules") || {}).off || []);
   const hasPush = !DEMO && session?.user && D.push.some(x => x.profile_id === session.user.id);
-  const log = items("audit").slice().sort((a, b) => a.at < b.at ? 1 : -1).slice(0, 25);
   return head("Avisos", "O que precisa da tua atenção agora, sem teres de andar à procura") +
     `<div class="grid g4">${kpi("Urgentes", bad.length, bad.length ? "resolve primeiro" : "nada urgente")}${kpi("Atenção", warn.length, "para ver hoje")}${kpi("Adiados", liveAlerts(true).length - A.length, "escondidos 7 dias")}${kpi("Avisos no telemóvel", hasPush ? "Ativos" : "Por ativar", hasPush ? "recebes push com o resumo" : "ver abaixo")}</div>
     <div class="card" style="margin-top:14px"><h3>Agora</h3>${A.map(alertRow).join("") || `<span class="mut">Tudo em ordem. 🎉</span>`}</div>
@@ -1141,7 +1230,7 @@ const vAlerts = () => {
       <p style="margin:0 0 8px"><b>No painel:</b> o número de avisos aparece no menu e no título do separador, e ao entrares recebes um resumo.</p>
       <p style="margin:0 0 8px"><b>No telemóvel, todas as manhãs:</b> uma notificação push com o resumo (RGPD, verificações, pedidos sem resposta, planos a expirar, notificações falhadas). Só chega quando há algo a resolver. Vem da função <code>admin-alerts</code> que vai junto com este painel.</p>
       <p class="mut" style="margin:0">${hasPush ? `<span class="pill ok">Esta conta tem notificações push ativas</span>` : `<span class="pill warn">Esta conta ainda não tem push ativo</span> Entra no Flinko com a tua conta de administrador, no telemóvel ou computador onde queres receber os avisos, e aceita as notificações.`}</p></div></div>
-    <div class="card" style="margin-top:14px"><h3>Registo de ações (planos, reembolsos)</h3>${log.map(l => `<div class="sug"><span class="t">${esc(l.txt)}<br><span class="mut">${fdate(l.at)} · ${esc(l.by || "")}</span></span></div>`).join("") || `<span class="mut">Ainda sem ações registadas.</span>`}</div>`;
+    <div class="card" style="margin-top:14px"><h3>Últimas ações de administração <span class="sp"></span><button class="btn sec sm" onclick="go('audit')">Ver registo completo</button></h3><div class="tw"><table>${D.audit.slice(0, 8).map(auditRow).join("") || `<tr><td class="mut">Ainda sem ações registadas.</td></tr>`}</table></div></div>`;
 };
 
 /* ============ ANGARIAÇÃO E COBRANÇA (guia + textos prontos) ============ */
@@ -1286,14 +1375,14 @@ const toast = m => { document.querySelectorAll(".toast").forEach(x => x.remove()
 /* ============ VISTAS ============ */
 const NAVG = [["Visão geral", [["home", "🏠", "Painel"], ["alerts", "🔔", "Avisos"], ["cal", "🗓️", "Calendário"], ["history", "📊", "Histórico"], ["reports", "📄", "Relatórios"]]],
   ["Crescimento", [["growth", "📈", "Crescimento e funil"], ["leads", "📞", "Aquisição (leads)"], ["contact", "💬", "Contactar profissionais"], ["playbook", "📚", "Angariação e cobrança"], ["marketing", "📣", "Marketing"], ["retention", "🔁", "Retenção e atividade"]]],
-  ["Plataforma", [["pros", "👷", "Profissionais (CRM)"], ["demand", "🧾", "Procura e conversas"], ["quality", "🔎", "Qualidade e risco"], ["support", "🎧", "Apoio a clientes"]]],
+  ["Plataforma", [["pros", "👷", "Profissionais (CRM)"], ["clients", "🙋", "Clientes"], ["demand", "🧾", "Procura e conversas"], ["mod", "🚩", "Moderação"], ["quality", "🔎", "Qualidade e risco"], ["support", "🎧", "Apoio a clientes"]]],
   ["Dinheiro", [["fin", "💶", "Finanças"], ["invoices", "🧮", "Faturação"]]],
   ["Empresa", [["strategy", "🧭", "Estratégia"], ["compliance", "⚖️", "Conformidade e riscos"], ["company", "🏢", "Contactos e processos"], ["investor", "💼", "Investidores"]]],
-  ["Operação", [["tasks", "✅", "Tarefas"], ["ops", "🛡️", "Operações"], ["set", "⚙️", "Definições"]]]];
+  ["Operação", [["tasks", "✅", "Tarefas"], ["ops", "🛡️", "Operações"], ["audit", "🧾", "Registo de ações"], ["set", "⚙️", "Definições"]]]];
 let view = "home", filt = { q: "", cat: "", st: "", stage: "", sort: "created" };
 
 function head(title, sub = "", extra = "") {
-  return `<div class="top"><button class="btn sec sm mob" onclick="$('#side').classList.toggle('open')">☰</button><div><h1>${title}</h1>${sub ? `<div class="sub">${sub}</div>` : ""}</div><div class="sp"></div>${extra}<button class="btn sec sm" onclick="reload()">↻ Atualizar</button></div>${DEMO ? `<div class="note">Modo demonstração: todos os dados são fictícios. Nada é enviado nem guardado no Flinko.</div>` : ""}`;
+  return `<div class="top"><button class="btn sec sm mob" onclick="$('#side').classList.toggle('open')">☰</button><div><h1>${title}</h1>${sub ? `<div class="sub">${sub}</div>` : ""}</div><div class="sp"></div>${extra}<button class="btn sec sm" onclick="reload()">↻ Atualizar</button></div>${DEMO ? `<div class="note">Modo demonstração: todos os dados são fictícios. Nada é enviado nem guardado no Flinko.</div>` : ""}${store.broken ? `<div class="note bad" id="brokenBanner"><b>Sem ligação às tabelas do painel no Supabase.</b> Tarefas, CRM, notas e definições não carregaram e as alterações estão bloqueadas para não se perder nada. Erro: ${esc(store.broken)}. Carrega em ↻ Atualizar.</div>` : ""}`;
 }
 const vHome = () => {
   const g = setting("goals"), pr = M.pros.length, cl = M.clients.length;
@@ -1308,7 +1397,7 @@ const vHome = () => {
       ${kpi("Registos (7 dias)", num(M.su7), delta(M.su7, M.sup7))}
       ${kpi("Visitantes únicos (7 dias)", num(M.u7), delta(M.u7, M.up7))}
       ${kpi("Qualidade média dos perfis", M.avgScore + "/100", `${M.complete} perfis com 80+ pontos`)}
-      ${kpi("Receita mensal (MRR)", eur(M.mrr), `${M.activePaid.length} subscrições pagas`)}
+      ${kpi("Receita mensal (MRR)", STRIPE ? eur(STRIPE.mrr / 100) : eur(M.mrr), STRIPE ? `real, Stripe · ${STRIPE.subscriptions.active} subscrições ativas` : `estimado · ${M.activePaid.length} subscrições pagas`)}
       ${kpi("Pedidos de clientes", num(D.requests.length), `${M.openReq.length} abertos sem proposta`)}
       ${kpi("Conversas / mensagens", `${num(D.conversations.length)} / ${num(M.msgs)}`, `${num(M.rev)} avaliações`)}
     </div>
@@ -1329,8 +1418,8 @@ function funnelHtml(f) {
 const vGrowth = () => {
   const f = M.funnel; let worst = null;
   for (let i = 1; i < f.length; i++) { const lost = f[i - 1][1] - f[i][1]; if (!worst || lost > worst.lost) worst = { lost, from: f[i - 1][0], to: f[i][0] }; }
-  const pages = {}; D.visits.forEach(v => { pages[v.path] = (pages[v.path] || 0) + 1; });
-  const refs = {}; D.visits.forEach(v => { let r = "Direto"; try { if (v.referrer) r = new URL(v.referrer).hostname.replace("www.", ""); } catch (e) { r = v.referrer || "Direto"; } refs[r] = (refs[r] || 0) + 1; });
+  const pages = {}; D.visits.forEach(v => { pages[v.path] = (pages[v.path] || 0) + (+v.n || 1); });
+  const refs = {}; D.visits.forEach(v => { const r = v.ref_host || "Direto"; refs[r] = (refs[r] || 0) + (+v.n || 1); });
   const top = o => Object.entries(o).sort((a, b) => b[1] - a[1]).slice(0, 8);
   const tp = top(pages), tr = top(refs), mp = tp[0]?.[1] || 1, mr = tr[0]?.[1] || 1;
   return head("Crescimento e funil", "Onde perdes profissionais entre o registo e a atividade real") +
@@ -1390,7 +1479,7 @@ function openPro(id) {
   const c = store.crm[id] || {}, tasks = store.tasks.filter(t => t.profile_id === id);
   const ph = M.phone[id] || "";
   openDrawer(`<div class="row" style="justify-content:space-between"><h2 style="font-size:19px">${esc(p.name)}</h2><button class="btn sec sm" onclick="closeDrawer()">✕</button></div>
-    <div class="row" style="margin-top:6px">${p.verified ? `<span class="pill ok">verificado</span>` : `<span class="pill warn">por verificar</span>`}${p.suspended ? `<span class="pill bad">suspenso</span>` : ""}<span class="pill">${esc(p.plan || "free")}</span></div>
+    <div class="row" style="margin-top:6px">${p.verified ? `<span class="pill ok">verificado</span>` : `<span class="pill warn">por verificar</span>`}${p.suspended ? `<span class="pill bad">suspenso</span>` : ""}<span class="pill">${esc(p.plan || "free")}</span>${p.suspended ? `<span class="pill" title="O webhook do Stripe suspende automaticamente perfis com uma contestação de pagamento (disputa). Se foi isso, resolve a disputa no Stripe antes de reativar.">pode ser disputa Stripe</span>` : ""}</div>
     <div class="kv"><span>Categoria</span><span>${esc(p.category || "—")}</span><span>Zona</span><span>${esc(p.location || "—")}</span><span>Telemóvel</span><span>${ph ? `${esc(ph)} · <a href="tel:${esc(ph)}">ligar</a> · <a target="_blank" rel="noopener" href="${waLink(ph)}">WhatsApp</a>` : "—"}</span><span>Registo</span><span>${fdate(p.created_at)} (${ago(p.created_at)})</span><span>Vistas do perfil</span><span>${p._views}</span><span>Conversas</span><span>${p._conv}</span><span>Serviços</span><span>${p._svc}</span></div>
     <h3 style="margin:14px 0 6px">Qualidade do perfil: ${p._score}/100</h3>${bar(p._score, 100, sc(p._score))}
     <div class="row" style="margin-top:8px">${p._chk.map(k => `<span class="pill ${k[2] ? "ok" : "bad"}">${k[2] ? "✓" : "✗"} ${k[0]}</span>`).join("")}</div>
@@ -1406,7 +1495,8 @@ function openPro(id) {
     <button class="btn sec" onclick="waPro('${id}')">WhatsApp com modelo</button>
     <button class="btn sec" onclick="mailPro('${id}')">Email / SMS</button>
     <button class="btn sec" onclick="toggleSuspend('${id}')">${p.suspended ? "Reativar conta" : "Suspender conta"}</button></div>
-    ${payBox(p)}
+    ${isOwner() ? payBox(p) : `<h3 style="margin:18px 0 6px">Plano e pagamentos</h3><p class="mut">Plano atual: <b>${esc(p.plan || "free")}</b>. Mudar planos e reembolsar é só para donos.</p>`}
+    ${historyBox("profile", id)}
     ${p.slug ? `<p class="mut" style="margin-top:14px">Perfil público: <a target="_blank" rel="noopener" href="https://flinko.pt/${esc(p.slug)}">flinko.pt/${esc(p.slug)}</a></p>` : ""}`);
 }
 async function saveCrmForm(id) {
@@ -1420,7 +1510,11 @@ async function patchProfile(id, body) {
 async function toggleVerify(id) {
   const p = D.profiles.find(x => x.id === id), nv = !p.verified;
   if (!await ask(nv ? "Verificar profissional" : "Remover verificação", `${p.name} ${nv ? "passa a aparecer como verificado no Flinko." : "deixa de aparecer como verificado."}`)) return;
-  try { await patchProfile(id, { verified: nv }); compute(); closeDrawer(); render(); toast("Atualizado"); } catch (e) { toast("Erro: " + e.message); }
+  try {
+    // Pela função do servidor: ao verificar, fecha também os pedidos de verificação pendentes deste perfil.
+    if (DEMO) Object.assign(p, { verified: nv }); else { await rpc("admin_set_verified", { p_profile: id, p_value: nv }); p.verified = nv; if (nv) D.verif.forEach(v => { if (v.profile_id === id && v.status === "pending") v.status = "approved"; }); }
+    compute(); closeDrawer(); render(); toast("Atualizado");
+  } catch (e) { toast("Erro: " + e.message); }
 }
 async function toggleSuspend(id) {
   const p = D.profiles.find(x => x.id === id), ns = !p.suspended;
@@ -1456,14 +1550,48 @@ function projection() {
   }
   return { pj, costs, rows };
 }
+/* ============ RECEITA REAL (Stripe, via admin-stripe-summary) ============ */
+let STRIPE = null, stripeErr = "", stripeLoading = false;
+function demoStripe() {
+  const t = Math.floor(now() / 1000), mk = i => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0"); };
+  return { mrr: 1999, last30: { gross: 3998, refunds: 0, fees: 150, net: 3848 }, months: [5, 4, 3, 2, 1, 0].map(i => ({ month: mk(i), gross: i < 3 ? 1999 : 0, refunds: 0, fees: i < 3 ? 75 : 0, disputes: 0, net: i < 3 ? 1924 : 0 })), subscriptions: { active: 1, trialing: 0, pastDue: 0 }, pastDue: [], churned30: [], disputes: [], balance: { available: 3848, pending: 0 }, demo: t };
+}
+async function loadStripe(force) {
+  if (!isOwner() || stripeLoading || (STRIPE && !force)) return;
+  stripeLoading = true; stripeErr = "";
+  try { STRIPE = DEMO ? demoStripe() : await fn("admin-stripe-summary", {}); STRIPE._at = now(); }
+  catch (e) { stripeErr = e.message; }
+  stripeLoading = false;
+  if (view === "fin" || view === "home") render();
+}
+const ce = c => eur((+c || 0) / 100);
+const custLink = c => c && c.profile_id ? `<a href="#" onclick="openPro('${esc(c.profile_id)}');return false">${esc(c.name || "—")}</a>` : `<span class="mut">cliente Stripe sem perfil</span>`;
+function stripeCard() {
+  if (!isOwner()) return `<div class="card" style="margin-bottom:14px"><h3>💳 Receita real (Stripe)</h3>${ownerOnly("A receita real")}</div>`;
+  if (stripeErr) return `<div class="card" style="margin-bottom:14px"><h3>💳 Receita real (Stripe) <span class="sp"></span><button class="btn sec sm" onclick="loadStripe(true)">Tentar de novo</button></h3><span class="pill bad">Não foi possível ler o Stripe</span> <span class="mut">${esc(stripeErr)}</span></div>`;
+  if (!STRIPE) return `<div class="card" style="margin-bottom:14px"><h3>💳 Receita real (Stripe)</h3><span class="mut">A carregar dados do Stripe…</span></div>`;
+  const S = STRIPE, diff = S.mrr / 100 - M.mrr;
+  return `<div class="sec" style="margin-top:0">Receita real (Stripe)</div>
+    <div class="grid g4">${kpi("Recebido (30 dias)", ce(S.last30.gross), `líquido ${ce(S.last30.net)} depois de taxas e reembolsos`)}${kpi("MRR real", ce(S.mrr), Math.abs(diff) >= 1 ? `<span class="${diff >= 0 ? "up" : "dn"}">${diff >= 0 ? "+" : ""}${eur(diff)} vs estimativa do painel</span>` : "igual à estimativa do painel")}${kpi("Subscrições ativas", S.subscriptions.active, `${S.subscriptions.trialing} em período de teste`)}${kpi("Pagamentos em atraso", S.pastDue.length, S.pastDue.length ? "ver lista abaixo" : "nenhum")}
+    ${kpi("Reembolsos (30 dias)", ce(S.last30.refunds), "")}${kpi("Taxas do Stripe (30 dias)", ce(S.last30.fees), "")}${kpi("Cancelamentos (30 dias)", S.churned30.length, "")}${kpi("Saldo Stripe", S.balance ? ce(S.balance.available) : "—", S.balance ? `${ce(S.balance.pending)} pendente` : "")}</div>
+    <div class="grid g2" style="margin-top:14px"><div class="card"><h3>Recebido por mês (6 meses) <span class="sp"></span><span class="mut" style="font-weight:400">atualizado ${ago(S._at)} <button class="btn sec sm" onclick="loadStripe(true)">↻</button></span></h3>${lineChart([{ name: "Bruto", data: S.months.map(m => ({ x: m.month.slice(5) + "/" + m.month.slice(2, 4), y: Math.round(m.gross / 100) })), color: COL[0] }, { name: "Líquido", data: S.months.map(m => ({ x: m.month.slice(5) + "/" + m.month.slice(2, 4), y: Math.round(m.net / 100) })), color: COL[2] }])}</div>
+    <div class="card"><h3>Precisa de atenção</h3>
+      ${S.pastDue.map(x => `<div class="sug"><span class="pill bad">em atraso</span><span class="t">${custLink(x.customer)} · ${ce(x.monthly)}/mês</span>${x.customer && x.customer.profile_id ? `<button class="btn sec sm" onclick="waPro('${esc(x.customer.profile_id)}')">WhatsApp</button>` : ""}</div>`).join("")}
+      ${S.disputes.map(d => `<div class="sug"><span class="pill bad">disputa</span><span class="t">${custLink(d.customer)} · ${ce(d.amount)} · ${esc(d.reason || "")} · ${esc(d.status)}<br><span class="mut">${fdate(d.created * 1000)} · responde no painel do Stripe antes do prazo</span></span></div>`).join("")}
+      ${S.churned30.map(c => `<div class="sug"><span class="pill warn">cancelou</span><span class="t">${custLink(c.customer)} · ${fdate(c.canceled_at * 1000)}${c.reason ? ` · ${esc(c.reason)}` : ""}</span></div>`).join("")}
+      ${!S.pastDue.length && !S.disputes.length && !S.churned30.length ? `<span class="pill ok">Sem pagamentos em atraso, disputas ou cancelamentos recentes</span>` : ""}
+      <p class="mut" style="margin:10px 0 0">Para pagamentos em atraso tens textos prontos em Angariação e cobrança › Fazer pagar.</p></div></div>`;
+}
+
 const vFin = () => {
   const pr = setting("prices"), costs = setting("costs"), { pj, costs: tc, rows } = projection();
   const oneOff = M.aiRev, net = M.mrr - tc;
   const paidPlans = Object.entries(pr).map(([k, v]) => [k, M.activePaid.filter(p => p.plan === k).length, v]);
   const be = pj.avgPrice ? Math.ceil(tc / pj.avgPrice) : 0;
-  return head("Finanças", "Receita, custos, ponto de equilíbrio e projeção") +
-    `<div class="note">Os preços dos planos e os custos abaixo são <b>valores que defines tu</b> (a base de dados não os guarda). Ajusta-os para os valores reais.</div>
-    <div class="grid g4">${kpi("MRR", eur(M.mrr), `ARR ${eur(M.mrr * 12)}`)}${kpi("Receitas únicas", eur(oneOff), `${M.aiUnlocked.length} × construtor de perfil IA (${eur(setting("aiFee"))})`)}${kpi("Custos mensais", eur(tc), "soma da tabela abaixo")}${kpi("Resultado mensal", `<span class="${net >= 0 ? "up" : "dn"}">${eur(net)}</span>`, "MRR − custos")}
+  setTimeout(() => loadStripe(), 0);
+  return head("Finanças", "Receita, custos, ponto de equilíbrio e projeção") + stripeCard() +
+    `<div class="sec">Estimativas e projeção</div><div class="note">Os preços dos planos e os custos abaixo são <b>valores que defines tu</b> (a base de dados não os guarda). Ajusta-os para os valores reais.</div>
+    <div class="grid g4">${kpi("MRR estimado", eur(M.mrr), STRIPE ? `real no Stripe: ${eur(STRIPE.mrr / 100)}` : `ARR ${eur(M.mrr * 12)}`)}${kpi("Receitas únicas", eur(oneOff), `${M.aiUnlocked.length} × construtor de perfil IA (${eur(setting("aiFee"))})`)}${kpi("Custos mensais", eur(tc), "soma da tabela abaixo")}${kpi("Resultado mensal", `<span class="${net >= 0 ? "up" : "dn"}">${eur(net)}</span>`, "MRR − custos")}
     ${kpi("Ponto de equilíbrio", tc ? be + " pagantes" : "—", tc ? `com preço médio de ${eur(pj.avgPrice)}` : "define os custos mensais abaixo")}${kpi("Volume de trabalhos pagos", eur(M.gmv), `${D.jobs.filter(j => j.status === "pago").length} trabalhos`)}${kpi("Créditos em anúncios", num(M.adCredits), `${D.ads.filter(a => a.status === "ativo").length} ativos`)}${kpi("Conversão a pago", pct(M.activePaid.length, M.pros.length) + "%", `${M.activePaid.length} de ${M.pros.length}`)}</div>
     <div class="grid g2" style="margin-top:14px">
       <div class="card"><h3>Preços dos planos (€/mês)</h3><div class="grid g3">${Object.entries(pr).map(([k, v]) => `<div><label class="f">${k}</label><input type="number" step="0.01" min="0" value="${v}" onchange="setPrice('${k}',this.value)"></div>`).join("")}<div><label class="f">Construtor IA (único)</label><input type="number" step="0.01" min="0" value="${setting("aiFee")}" onchange="saveSetting('aiFee',+this.value).then(()=>{compute();render()})"></div></div>
@@ -1510,12 +1638,198 @@ const removeTask = async id => { if (await ask("Apagar tarefa", "Esta ação nã
 const askText = (title, ph) => new Promise(res => { const m = $("#modal"); m.classList.remove("hidden"); m.innerHTML = `<div class="mb"><h3 style="font-size:17px;margin-bottom:10px">${esc(title)}</h3><input id="mtx" placeholder="${esc(ph)}"><div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn sec" id="mno">Cancelar</button><button class="btn" id="myes">Criar</button></div></div>`; const done = v => { m.classList.add("hidden"); m.innerHTML = ""; res(v); }; $("#mno").onclick = () => done(null); $("#myes").onclick = () => done($("#mtx").value.trim()); $("#mtx").focus(); });
 const newTaskFor = async pid => { const title = await askText("Nova tarefa para " + nameOf(pid), "O que tens de fazer?"); if (!title) return; await saveTask({ id: uid(), title, status: "todo", priority: "media", due_date: null, profile_id: pid, created_at: new Date().toISOString() }); toast("Tarefa criada"); openPro(pid); };
 
+/* ============ REGISTO DE AÇÕES (admin_audit, escrito pela base de dados) ============ */
+const ACTS = { perfil_alterado: "Perfil alterado", perfil_apagado: "Conta apagada", avaliacao_apagada: "Avaliação apagada", avaliacao_alterada: "Avaliação alterada", pedido_estado: "Pedido de cliente", pedido_apagado: "Pedido apagado", rgpd_estado: "RGPD", rgpd_exportacao: "RGPD · exportação", rgpd_eliminacao: "RGPD · eliminação", verificacao_estado: "Verificação", plano_alterado: "Plano", reembolso: "Reembolso", email_massa: "Email em massa" };
+const actLabel = a => ACTS[a] || a;
+const auditRow = r => `<tr><td class="mut" style="white-space:nowrap">${new Date(r.at).toLocaleString("pt-PT", { dateStyle: "short", timeStyle: "short" })}</td><td>${esc(r.actor_email || "sistema")}</td><td><span class="pill">${esc(actLabel(r.action))}</span></td><td>${esc(r.summary || "")}</td><td>${r.target_type === "profile" && D.profiles.some(p => p.id === r.target_id) ? `<button class="btn sec sm" onclick="openAny('${esc(r.target_id)}')">Ficha</button>` : ""}</td></tr>`;
+function historyBox(type, id) {
+  const L = D.audit.filter(r => (r.target_type === type && r.target_id === id) || (r.details && r.details.profile_id === id)).slice(0, 10);
+  return `<h3 style="margin:18px 0 6px">Histórico de ações (${L.length})</h3>${L.map(r => `<div class="sug"><span class="t">${esc(r.summary || actLabel(r.action))}<br><span class="mut">${new Date(r.at).toLocaleString("pt-PT", { dateStyle: "short", timeStyle: "short" })} · ${esc(r.actor_email || "sistema")}</span></span></div>`).join("") || `<span class="mut">Nenhuma ação de administração registada.</span>`}`;
+}
+const openAny = id => { const p = D.profiles.find(x => x.id === id); if (!p) return; p.account_type === "client" ? openClient(id) : openPro(id); };
+let auQ = "", auA = "", auD = 30;
+const auditList = () => D.audit.filter(r => (!auA || r.action === auA) && (!auD || now() - new Date(r.at) < auD * DAY) && (!auQ || ((r.summary || "") + " " + (r.actor_email || "")).toLowerCase().includes(auQ.toLowerCase())));
+function auditCsv() {
+  const rows = [["Data", "Quem", "Ação", "Resumo"]].concat(auditList().map(r => [new Date(r.at).toLocaleString("pt-PT"), r.actor_email || "sistema", actLabel(r.action), r.summary || ""]));
+  download("flinko-registo-acoes-" + today() + ".csv", "﻿" + rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(";")).join("\n"), "text/csv");
+}
+const vAudit = () => {
+  const L = auditList(), old = items("audit").slice().sort((a, b) => a.at < b.at ? 1 : -1), acts = [...new Set(D.audit.map(r => r.action))];
+  return head("Registo de ações", "Quem fez o quê no painel: verificações, suspensões, planos, reembolsos, RGPD, moderação e emails", `<button class="btn sec sm" onclick="auditCsv()">⬇ Exportar CSV</button>`) +
+    `<div class="note">Este registo é escrito pela própria base de dados e não pode ser alterado nem apagado a partir do painel, nem por outro administrador. Mostra as 500 ações mais recentes.</div>
+    <div class="tools"><input placeholder="Pesquisar nome, email…" value="${esc(auQ)}" oninput="auQ=this.value;$('#autable').innerHTML=auditTable()" style="min-width:240px"><select onchange="auA=this.value;render()"><option value="">Todas as ações</option>${acts.map(a => `<option value="${esc(a)}" ${auA === a ? "selected" : ""}>${esc(actLabel(a))}</option>`).join("")}</select><select onchange="auD=+this.value;render()">${[[7, "7 dias"], [30, "30 dias"], [90, "90 dias"], [0, "Tudo"]].map(o => `<option value="${o[0]}" ${auD === o[0] ? "selected" : ""}>${o[1]}</option>`).join("")}</select></div>
+    <div class="card"><div class="tw" id="autable">${auditTable()}</div></div>
+    ${old.length ? `<details class="card" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">Registo antigo (${old.length}), guardado pelo navegador antes desta versão</summary>${old.map(l => `<div class="sug"><span class="t">${esc(l.txt)}<br><span class="mut">${fdate(l.at)} · ${esc(l.by || "")}</span></span></div>`).join("")}</details>` : ""}`;
+};
+const auditTable = () => `<table><tr><th>Quando</th><th>Quem</th><th>Ação</th><th>Detalhe</th><th></th></tr>${auditList().map(auditRow).join("") || `<tr><td colspan="5" class="mut">${D.audit.length ? "Nada com estes filtros." : "Ainda sem ações registadas (ou a migração do registo ainda não foi aplicada)."}</td></tr>`}</table>`;
+
+/* ============ PEDIDOS DE APOIO E DENÚNCIAS VINDOS DO SITE (support_tickets) ============ */
+const TST = [["aberto", "Aberto"], ["curso", "Em curso"], ["resolvido", "Resolvido"]];
+async function patchTicket(id, body) {
+  const t = D.tickets.find(x => x.id === id); if (!t) return;
+  if (body.status) body.resolved_at = body.status === "resolvido" ? (t.resolved_at || new Date().toISOString()) : null;
+  try { if (!DEMO) await api("support_tickets?id=eq." + id, { method: "PATCH", body, headers: { Prefer: "return=minimal" } }); Object.assign(t, body); render(); toast("Guardado"); }
+  catch (e) { toast("Erro: " + e.message); render(); }
+}
+async function noteTicket(id) {
+  const t = D.tickets.find(x => x.id === id), r = await form("Notas internas", [{ k: "admin_notes", label: "O que foi feito / respondido", type: "textarea", rows: 5 }, { k: "priority", label: "Prioridade", type: "select", opts: [["alta", "Alta"], ["media", "Média"], ["baixa", "Baixa"]] }], t);
+  if (r) await patchTicket(id, r);
+}
+const ticketRow = t => {
+  const late = t.status !== "resolvido" && now() - new Date(t.created_at) > 2 * DAY, tp = t.target_profile_id && D.profiles.find(p => p.id === t.target_profile_id);
+  return `<tr><td class="mut" style="white-space:nowrap">${fdate(t.created_at)}${late ? `<br><span class="pill bad">+48 h</span>` : ""}</td><td><b>${esc(t.name)}</b><br><a href="mailto:${esc(t.email)}?subject=${encodeURIComponent("Re: " + (t.subject || ""))}">${esc(t.email)}</a></td><td>${t.kind === "denuncia" ? `<span class="pill bad">denúncia</span> ` : ""}<b>${esc(t.subject)}</b><br><span class="mut" style="white-space:pre-wrap">${esc((t.message || "").slice(0, 400))}</span>${tp ? `<br>Perfil denunciado: <a href="#" onclick="openAny('${tp.id}');return false">${esc(tp.name)}</a>${tp.suspended ? ` <span class="pill bad">suspenso</span>` : ""}` : ""}${t.admin_notes ? `<br><span class="mut">Notas: ${esc(t.admin_notes)}</span>` : ""}</td><td><select style="width:auto" onchange="patchTicket('${t.id}',{status:this.value})">${TST.map(o => `<option value="${o[0]}" ${t.status === o[0] ? "selected" : ""}>${o[1]}</option>`).join("")}</select></td><td style="white-space:nowrap"><button class="btn sec sm" onclick="noteTicket('${t.id}')">Notas</button>${tp && !tp.suspended ? ` <button class="btn sec sm" onclick="toggleSuspend('${tp.id}')">Suspender perfil</button>` : ""}</td></tr>`;
+};
+const ticketTable = L => `<div class="tw"><table><tr><th>Data</th><th>Quem</th><th>Assunto</th><th>Estado</th><th></th></tr>${L.map(ticketRow).join("") || `<tr><td colspan="5" class="mut">Nada por aqui.</td></tr>`}</table></div>`;
+
+/* ============ MODERAÇÃO ============ */
+const BADWORDS = /(fuder|foder|merda|puta|caralho|porra|cabr[aã]o|idiota|burro|estúpido|estupido|filho da|vigarist|burl[aã])/i;
+function reviewFlags(r) {
+  const f = [], txt = (r.comment || "").trim();
+  if (BADWORDS.test(txt) || BADWORDS.test(r.reviewer_name || "")) f.push("linguagem ofensiva ou acusação");
+  if (/(https?:\/\/|www\.)/i.test(txt)) f.push("contém ligação");
+  if (r.client_id && r.client_id === r.professional_id) f.push("avaliou-se a si próprio");
+  if (r.client_id && D.reviews.filter(x => x.client_id === r.client_id && x.professional_id === r.professional_id).length > 1) f.push("mesmo cliente várias vezes");
+  if (!r.client_id && D.reviews.filter(x => !x.client_id && x.professional_id === r.professional_id && (x.reviewer_name || "").trim().toLowerCase() === (r.reviewer_name || "").trim().toLowerCase()).length > 1) f.push("mesmo nome várias vezes");
+  if (r.rating <= 2) f.push(r.rating + "★");
+  return f;
+}
+let modRev = "flag", modReq = "open";
+async function delReview(id) {
+  const r = D.reviews.find(x => x.id === id); if (!r) return;
+  if (!await ask("Apagar avaliação", `Vais apagar a avaliação de ${r.reviewer_name || "—"} (${r.rating}★) a ${nameOf(r.professional_id)}. Fica uma cópia no Registo de ações.`, "Apagar", true)) return;
+  try { if (!DEMO) await api("reviews?id=eq." + id, { method: "DELETE", headers: { Prefer: "return=minimal" } }); D.reviews = D.reviews.filter(x => x.id !== id); compute(); render(); toast("Avaliação apagada"); }
+  catch (e) { toast("Erro: " + e.message); }
+}
+async function setReqStatus(id, st) {
+  const r = D.requests.find(x => x.id === id); if (!r) return;
+  try { if (!DEMO) await api("requests?id=eq." + id, { method: "PATCH", body: { status: st }, headers: { Prefer: "return=minimal" } }); r.status = st; compute(); render(); toast(st === "open" ? "Pedido reaberto" : "Pedido fechado"); }
+  catch (e) { toast("Erro: " + e.message); }
+}
+async function delRequest(id) {
+  const r = D.requests.find(x => x.id === id); if (!r) return;
+  if (!await ask("Apagar pedido", `Vais apagar o pedido “${r.title}” de ${nameOf(r.client_id)} (por exemplo spam ou conteúdo proibido). As propostas associadas também desaparecem. Fica registado no Registo de ações.`, "Apagar", true)) return;
+  try { if (!DEMO) await api("requests?id=eq." + id, { method: "DELETE", headers: { Prefer: "return=minimal" } }); D.requests = D.requests.filter(x => x.id !== id); D.offers = D.offers.filter(o => o.request_id !== id); compute(); render(); toast("Pedido apagado"); }
+  catch (e) { toast("Erro: " + e.message); }
+}
+const vMod = () => {
+  const den = D.tickets.filter(t => t.kind === "denuncia").sort((a, b) => (a.status === "resolvido") - (b.status === "resolvido") || (a.created_at < b.created_at ? 1 : -1));
+  const RV = D.reviews.map(r => Object.assign({ _f: reviewFlags(r) }, r)).filter(r => modRev === "all" || (modRev === "low" ? r.rating <= 2 : r._f.some(x => !/★$/.test(x))));
+  const RQ = D.requests.filter(r => modReq === "all" || (modReq === "open" ? r.status === "open" : r.status !== "open"));
+  const offN = id => D.offers.filter(o => o.request_id === id).length;
+  const stars = n => "★".repeat(n) + "☆".repeat(5 - n);
+  return head("Moderação", "Denúncias, avaliações, pedidos de clientes e conversas a rever") +
+    `<div class="grid g4">${kpi("Denúncias por resolver", den.filter(t => t.status !== "resolvido").length, `${den.length} no total`)}${kpi("Avaliações a rever", D.reviews.filter(r => reviewFlags(r).some(x => !/★$/.test(x))).length, `${D.reviews.filter(r => r.rating <= 2).length} com 1–2★`)}${kpi("Pedidos abertos", D.requests.filter(r => r.status === "open").length, `${M.openReq.length} sem proposta`)}${kpi("Conversas assinaladas", M.flags.length, "ver Qualidade e risco")}</div>
+    <div class="card" style="margin-top:14px" id="denCard"><h3>🚩 Denúncias de perfis</h3>${ticketTable(den)}<p class="mut" style="margin:10px 0 0">Chegam pelo botão “Denunciar” nos perfis públicos. Vê o perfil, fala com as duas partes e, se for preciso, suspende a conta. As regras estão em Contactos e processos › Moderação de conteúdo.</p></div>
+    <div class="card" style="margin-top:14px" id="revCard"><h3>⭐ Avaliações <span class="sp"></span><select style="width:auto" onchange="modRev=this.value;render()">${[["flag", "Suspeitas"], ["low", "1–2 estrelas"], ["all", "Todas"]].map(o => `<option value="${o[0]}" ${modRev === o[0] ? "selected" : ""}>${o[1]}</option>`).join("")}</select></h3>
+      <div class="tw"><table><tr><th>Quem avaliou</th><th>Profissional</th><th>Nota</th><th>Comentário</th><th>Data</th><th></th></tr>${RV.slice(0, 100).map(r => `<tr><td><b>${esc(r.reviewer_name || "—")}</b>${r.client_id ? `<br><span class="mut">conta de cliente</span>` : `<br><span class="mut">sem conta</span>`}</td><td><a href="#" onclick="openPro('${r.professional_id}');return false">${esc(nameOf(r.professional_id))}</a></td><td style="color:#d97706;white-space:nowrap">${stars(r.rating)}</td><td>${esc((r.comment || "(sem comentário)").slice(0, 300))}${r._f.length ? `<br>${r._f.map(x => `<span class="pill ${/★$/.test(x) ? "warn" : "bad"}">${esc(x)}</span>`).join(" ")}` : ""}</td><td class="mut">${fdate(r.created_at)}</td><td><button class="btn sec sm" onclick="delReview('${r.id}')">Apagar</button></td></tr>`).join("") || `<tr><td colspan="6" class="mut">${modRev === "flag" ? "Nenhuma avaliação suspeita." : "Sem avaliações."}</td></tr>`}</table></div>
+      <p class="mut" style="margin:10px 0 0">Suspeitas: linguagem ofensiva, ligações, autoavaliação ou a mesma pessoa a avaliar várias vezes. Avaliações negativas legítimas não se apagam: dão credibilidade às positivas.</p></div>
+    <div class="card" style="margin-top:14px" id="reqCard"><h3>🧾 Pedidos de clientes <span class="sp"></span><select style="width:auto" onchange="modReq=this.value;render()">${[["open", "Abertos"], ["closed", "Fechados"], ["all", "Todos"]].map(o => `<option value="${o[0]}" ${modReq === o[0] ? "selected" : ""}>${o[1]}</option>`).join("")}</select></h3>
+      <div class="tw"><table><tr><th>Pedido</th><th>Cliente</th><th>Categoria / zona</th><th>Propostas</th><th>Data</th><th></th></tr>${RQ.slice(0, 100).map(r => `<tr><td><b>${esc(r.title)}</b> ${r.is_urgent ? `<span class="pill bad">urgente</span>` : ""}<br><span class="mut">${esc((r.description || "").slice(0, 160))}</span></td><td><a href="#" onclick="openAny('${r.client_id}');return false">${esc(nameOf(r.client_id))}</a></td><td>${esc(r.category || "—")}<br><span class="mut">${esc(r.location || "")}</span></td><td>${offN(r.id) || `<span class="pill bad">0</span>`}</td><td class="mut">${fdate(r.created_at)}<br>${esc(r.status)}</td><td style="white-space:nowrap">${r.status === "open" ? `<button class="btn sec sm" onclick="setReqStatus('${r.id}','resolved')">Fechar</button>` : `<button class="btn sec sm" onclick="setReqStatus('${r.id}','open')">Reabrir</button>`} <button class="btn sec sm" onclick="delRequest('${r.id}')">Apagar (spam)</button></td></tr>`).join("") || `<tr><td colspan="6" class="mut">Sem pedidos.</td></tr>`}</table></div></div>
+    <div class="card" style="margin-top:14px"><h3>💬 Conversas assinaladas</h3>${M.flags.map(f => `<div class="sug"><span class="t"><b>${esc(nameOf(f.c.professional_id))}</b> ↔ ${esc(nameOf(f.c.client_id))}<br><span class="mut">“${esc((f.c.last_message || "").slice(0, 100))}” · ${esc(f.why)} · ${ago(f.c.last_message_at)}</span></span><button class="btn sec sm" onclick="openPro('${f.c.professional_id}')">Profissional</button><button class="btn sec sm" onclick="openAny('${f.c.client_id}')">Cliente</button></div>`).join("") || `<span class="pill ok">Nada a assinalar</span>`}</div>`;
+};
+
+/* ============ CLIENTES ============ */
+let cliQ = "", cliF = "";
+function clientStats(c) {
+  return { req: D.requests.filter(r => r.client_id === c.id).length, conv: D.conversations.filter(x => x.client_id === c.id).length, rev: D.reviews.filter(r => r.client_id === c.id).length };
+}
+function clientList() {
+  let L = M.clients.slice(); const q = cliQ.toLowerCase();
+  if (q) L = L.filter(c => (c.name + " " + (EMAILS && EMAILS[c.id] || "")).toLowerCase().includes(q));
+  if (cliF === "req") L = L.filter(c => clientStats(c).req); else if (cliF === "noact") L = L.filter(c => !clientStats(c).req && !clientStats(c).conv); else if (cliF === "susp") L = L.filter(c => c.suspended);
+  return L.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+}
+const clientTable = () => `<table><tr><th>Cliente</th><th>Registo</th><th>Pedidos</th><th>Conversas</th><th>Avaliações</th><th>Última visita</th></tr>${clientList().map(c => { const s = clientStats(c); return `<tr class="clk" onclick="openClient('${c.id}')"><td><b>${esc(c.name || "—")}</b>${c.suspended ? ` <span class="pill bad">suspenso</span>` : ""}<br><span class="mut">${esc(EMAILS && EMAILS[c.id] || "")}</span></td><td class="mut">${fdate(c.created_at)}</td><td>${s.req}</td><td>${s.conv}</td><td>${s.rev}</td><td class="mut">${c._last ? ago(new Date(c._last)) : "—"}</td></tr>`; }).join("") || `<tr><td colspan="6" class="mut">Nenhum cliente.</td></tr>`}</table>`;
+const vClients = () => {
+  setTimeout(() => loadEmails().then(() => { if (view === "clients") { const t = $("#cltable"); if (t) t.innerHTML = clientTable(); } }), 0);
+  const act = M.clients.filter(c => { const s = clientStats(c); return s.req || s.conv; }).length;
+  return head("Clientes", `${M.clients.length} contas de cliente`) +
+    `<div class="grid g4">${kpi("Clientes", M.clients.length, `${M.clients.filter(c => now() - new Date(c.created_at) < 30 * DAY).length} nos últimos 30 dias`)}${kpi("Com pedido ou conversa", act, `${pct(act, M.clients.length)}% dos clientes`)}${kpi("Pedidos por cliente", M.clients.length ? (D.requests.length / M.clients.length).toFixed(1) : "—", `${D.requests.length} pedidos`)}${kpi("Suspensos", M.clients.filter(c => c.suspended).length, "")}</div>
+    <div class="tools" style="margin-top:14px"><input placeholder="Pesquisar nome ou email…" value="${esc(cliQ)}" oninput="cliQ=this.value;$('#cltable').innerHTML=clientTable()" style="min-width:240px"><select onchange="cliF=this.value;render()">${[["", "Todos"], ["req", "Com pedidos"], ["noact", "Sem atividade"], ["susp", "Suspensos"]].map(o => `<option value="${o[0]}" ${cliF === o[0] ? "selected" : ""}>${o[1]}</option>`).join("")}</select></div>
+    <div class="card"><div class="tw" id="cltable">${clientTable()}</div></div>`;
+};
+function openClient(id) {
+  const c = D.profiles.find(x => x.id === id); if (!c) return;
+  const R = D.requests.filter(r => r.client_id === id), C = D.conversations.filter(x => x.client_id === id), G = D.gdpr.filter(g => g.profile_id === id), em = EMAILS && EMAILS[id];
+  openDrawer(`<div class="row" style="justify-content:space-between"><h2 style="font-size:19px">${esc(c.name || "—")}</h2><button class="btn sec sm" onclick="closeDrawer()">✕</button></div>
+    <div class="row" style="margin-top:6px"><span class="pill">cliente</span>${c.suspended ? `<span class="pill bad">suspenso</span>` : ""}</div>
+    <div class="kv"><span>Email</span><span>${em ? `<a href="mailto:${esc(em)}">${esc(em)}</a>` : "—"}</span><span>Registo</span><span>${fdate(c.created_at)} (${ago(c.created_at)})</span><span>Última visita</span><span>${c._last ? ago(new Date(c._last)) : "—"}</span><span>Pedidos</span><span>${R.length}</span><span>Conversas</span><span>${C.length}</span></div>
+    <h3 style="margin:14px 0 6px">Pedidos (${R.length})</h3>${R.map(r => `<div class="sug"><span class="t"><b>${esc(r.title)}</b> <span class="mut">${esc(r.status)} · ${fdate(r.created_at)}</span><br><span class="mut">${esc(r.category || "")} ${esc(r.location || "")} · ${D.offers.filter(o => o.request_id === r.id).length} proposta(s)</span></span></div>`).join("") || `<span class="mut">Nenhum.</span>`}
+    <h3 style="margin:14px 0 6px">Conversas (${C.length})</h3>${C.slice(0, 10).map(x => `<div class="sug"><span class="t">com <b>${esc(nameOf(x.professional_id))}</b><br><span class="mut">${esc((x.last_message || "").slice(0, 80))} · ${ago(x.last_message_at)}</span></span></div>`).join("") || `<span class="mut">Nenhuma.</span>`}
+    ${G.length ? `<h3 style="margin:14px 0 6px">Pedidos RGPD</h3>${G.map(g => `<div class="sug"><span class="t">${g.request_type === "delete" ? "Eliminação" : "Exportação"} · ${esc((GST[g.status] || [g.status])[0])} · ${fdate(g.created_at)}</span><button class="btn sec sm" onclick="closeDrawer();go('ops')">Tratar</button></div>`).join("")}` : ""}
+    <h3 style="margin:18px 0 6px">Ações</h3><div class="row"><button class="btn sec" onclick="toggleSuspend('${id}')">${c.suspended ? "Reativar conta" : "Suspender conta"}</button></div>
+    ${historyBox("profile", id)}`);
+  if (!EMAILS) loadEmails().then(() => { if (!$("#drawer").classList.contains("hidden")) openClient(id); });
+}
+
+/* ============ OPERAÇÕES: verificações e RGPD ============ */
+const VST = { pending: ["Pendente", "warn"], approved: ["Aprovado", "ok"], rejected: ["Rejeitado", "bad"], cancelled: ["Cancelado", ""] };
+const GST = { pending: ["Pendente", "warn"], in_progress: ["Em tratamento", "warn"], completed: ["Concluído", "ok"], cancelled: ["Cancelado", ""] };
+let opsVerif = "pending", opsGdpr = "open";
+async function rpc(name, body) { return api("rpc/" + name, { method: "POST", body }); }
+async function viewDoc(path) {
+  try {
+    if (DEMO) return toast("Modo demonstração: sem documentos reais");
+    const call = () => fetch(SB_URL + "/storage/v1/object/sign/verification-docs/" + String(path).split("/").map(encodeURIComponent).join("/"), { method: "POST", headers: { apikey: SB_KEY, Authorization: "Bearer " + session.access_token, "Content-Type": "application/json" }, body: JSON.stringify({ expiresIn: 300 }) });
+    let r = await call(); if (r.status === 401) { await refresh(); r = await call(); }
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !(j.signedURL || j.signedUrl)) throw new Error(j.message || j.error || "Erro " + r.status);
+    window.open(SB_URL + "/storage/v1" + (j.signedURL || j.signedUrl), "_blank", "noopener");
+  } catch (e) { toast("Não foi possível abrir o documento: " + e.message); }
+}
+async function resolveVerif(id, approve) {
+  const v = D.verif.find(x => x.id === id); if (!v) return;
+  const r = await form(approve ? "Aprovar verificação" : "Rejeitar verificação", [{ k: "note", label: approve ? "Nota interna (opcional)" : "Motivo (fica guardado; diz-lho também por mensagem)", type: "textarea", req: !approve }], {}, approve ? "Aprovar e marcar verificado" : "Rejeitar");
+  if (!r) return;
+  try {
+    if (DEMO) { v.status = approve ? "approved" : "rejected"; if (approve) Object.assign(D.profiles.find(p => p.id === v.profile_id) || {}, { verified: true }); compute(); render(); }
+    else { await rpc("admin_resolve_verification", { p_request: id, p_approve: approve, p_note: r.note || null }); await reload(); }
+    toast(approve ? "Verificação aprovada" : "Pedido rejeitado");
+  } catch (e) { toast("Erro: " + e.message); }
+}
+async function setGdpr(id, st) {
+  const g = D.gdpr.find(x => x.id === id); if (!g || g.status === st) return;
+  try {
+    const body = { status: st, resolved_at: st === "completed" || st === "cancelled" ? new Date().toISOString() : null };
+    if (!DEMO) await api("gdpr_requests?id=eq." + id, { method: "PATCH", body, headers: { Prefer: "return=minimal" } });
+    Object.assign(g, body); compute(); render(); toast("Estado atualizado");
+  } catch (e) { toast("Erro: " + e.message); render(); }
+}
+const download = (name, text, type = "application/json") => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); };
+const slugName = n => String(n || "conta").toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+async function gdprExport(id) {
+  const g = D.gdpr.find(x => x.id === id);
+  try {
+    toast("A reunir os dados…");
+    const j = await fn("admin-gdpr", { action: "export", requestId: id });
+    download("flinko-dados-" + slugName(nameOf(g.profile_id)) + "-" + today() + ".json", JSON.stringify(j, null, 2));
+    if (g.status === "pending") await setGdpr(id, "in_progress");
+    toast("Ficheiro descarregado. Envia-o à pessoa por um canal seguro e marca o pedido como concluído.");
+  } catch (e) { toast("Erro: " + e.message); }
+}
+async function gdprDelete(id) {
+  const g = D.gdpr.find(x => x.id === id), nm = nameOf(g.profile_id);
+  const r = await form("Apagar conta (pedido RGPD)", [{ k: "name", label: `Isto apaga a conta de ${nm} e todos os dados: perfil, serviços, portfólio, mensagens, pedidos e ficheiros. Cancela a subscrição Stripe, se houver. Não pode ser desfeito. Para confirmar, escreve o nome da conta exatamente assim: ${nm}`, req: 1 }], {}, "Apagar conta");
+  if (!r) return;
+  if (r.name.trim() !== nm.trim()) return toast("O nome não coincide. Nada foi apagado.");
+  try {
+    const j = await fn("admin-gdpr", { action: "delete", requestId: id, confirmName: r.name.trim() });
+    toast(`Conta apagada${j.filesRemoved ? " · " + j.filesRemoved + " ficheiro(s)" : ""}${j.stripeCancelled ? " · subscrição Stripe cancelada" : ""}. Confirma por escrito à pessoa.`);
+    await reload();
+  } catch (e) { toast("Erro: " + e.message); }
+}
 const vOps = () => {
-  const gd = D.gdpr, days = g => Math.floor((now() - new Date(g.created_at)) / DAY), nq = s => D.notif.filter(n => n.status === s).length;
+  const days = g => Math.floor((now() - new Date(g.created_at)) / DAY), nq = s => D.notif.filter(n => n.status === s).length;
+  const VL = D.verif.filter(v => opsVerif === "all" || v.status === opsVerif), GL = D.gdpr.filter(g => opsGdpr === "all" || (opsGdpr === "open" ? ["pending", "in_progress"].includes(g.status) : g.status === opsGdpr));
+  const docs = v => (Array.isArray(v.documents) ? v.documents : []).map((d, i) => `<button class="btn sec sm" data-path="${esc(d.path)}" onclick="viewDoc(this.dataset.path)">📄 ${esc(d.name || "Documento " + (i + 1))}</button>`).join(" ") || `<span class="mut">sem documentos</span>`;
   return head("Operações", "Verificações, RGPD, notificações e saúde dos dados") +
     `<div class="grid g4">${kpi("Verificações pendentes", M.vp.length, `${D.verif.length} pedidos no total`)}${kpi("RGPD em aberto", M.gp.length, "prazo legal: 30 dias")}${kpi("Notificações enviadas", nq("sent"), `${nq("failed")} falharam · ${nq("pending")} pendentes`)}${kpi("Subscrições push", D.push.length, `${D.saved.length} favoritos · ${D.referrals.length} convites`)}</div>
-    <div class="grid g2" style="margin-top:14px"><div class="card"><h3>Pedidos RGPD</h3><div class="tw"><table><tr><th>Conta</th><th>Tipo</th><th>Estado</th><th>Em aberto</th></tr>${gd.map(g => `<tr><td>${esc(nameOf(g.profile_id))}</td><td>${g.request_type === "delete" ? "Eliminação" : "Exportação"}</td><td><span class="pill ${g.status === "completed" ? "ok" : "warn"}">${esc(g.status)}</span></td><td class="${days(g) > 20 && g.status !== "completed" ? "dn" : ""}">${g.status === "completed" ? "—" : days(g) + " dias"}</td></tr>`).join("") || `<tr><td colspan="4" class="mut">Sem pedidos.</td></tr>`}</table></div></div>
-    <div class="card"><h3>Pedidos de verificação</h3><div class="tw"><table><tr><th>Profissional</th><th>Estado</th><th>Data</th></tr>${D.verif.map(v => `<tr><td>${esc(nameOf(v.profile_id))}</td><td><span class="pill ${v.status === "approved" ? "ok" : v.status === "pending" ? "warn" : ""}">${esc(v.status)}</span></td><td class="mut">${fdate(v.created_at)}</td></tr>`).join("") || `<tr><td colspan="3" class="mut">Sem pedidos.</td></tr>`}</table></div></div></div>
+    <div class="card" style="margin-top:14px" id="verifCard"><h3>Pedidos de verificação <span class="sp"></span><select style="width:auto" onchange="opsVerif=this.value;render()">${[["pending", "Pendentes"], ["approved", "Aprovados"], ["rejected", "Rejeitados"], ["all", "Todos"]].map(o => `<option value="${o[0]}" ${opsVerif === o[0] ? "selected" : ""}>${o[1]}</option>`).join("")}</select></h3>
+      <div class="tw"><table><tr><th>Profissional</th><th>Pedido</th><th>Documentos</th><th>Notas</th><th>Estado</th><th></th></tr>${VL.map(v => { const p = D.profiles.find(x => x.id === v.profile_id); return `<tr><td><b>${esc(nameOf(v.profile_id))}</b>${p ? `<br><span class="mut">${esc(p.category || "sem categoria")} · perfil ${p._score ?? "—"}/100</span>` : ""}</td><td class="mut">${fdate(v.created_at)}<br>${v.status === "pending" ? `<span class="${days(v) > 3 ? "dn" : ""}">há ${days(v)} dias</span>` : "resolvido " + fdate(v.resolved_at)}</td><td>${docs(v)}</td><td>${esc(v.notes || "—")}${v.admin_notes ? `<br><span class="mut">Admin: ${esc(v.admin_notes)}</span>` : ""}</td><td><span class="pill ${(VST[v.status] || [])[1] || ""}">${esc((VST[v.status] || [v.status])[0])}</span></td><td style="white-space:nowrap">${v.status === "pending" ? `<button class="btn sm" onclick="resolveVerif('${v.id}',true)">Aprovar</button> <button class="btn sec sm" onclick="resolveVerif('${v.id}',false)">Rejeitar</button>` : ""} ${p ? `<button class="btn sec sm" onclick="openPro('${p.id}')">Ficha</button>` : ""}</td></tr>`; }).join("") || `<tr><td colspan="6" class="mut">Sem pedidos neste estado.</td></tr>`}</table></div>
+      <p class="mut" style="margin:10px 0 0">Aprovar marca o perfil como verificado e fecha o pedido. Os documentos abrem num link temporário (5 minutos).</p></div>
+    <div class="card" style="margin-top:14px" id="gdprCard"><h3>Pedidos RGPD <span class="sp"></span><select style="width:auto" onchange="opsGdpr=this.value;render()">${[["open", "Em aberto"], ["completed", "Concluídos"], ["cancelled", "Cancelados"], ["all", "Todos"]].map(o => `<option value="${o[0]}" ${opsGdpr === o[0] ? "selected" : ""}>${o[1]}</option>`).join("")}</select></h3>
+      <div class="tw"><table><tr><th>Conta</th><th>Tipo</th><th>Pedido</th><th>Prazo</th><th>Estado</th><th></th></tr>${GL.map(g => { const open = ["pending", "in_progress"].includes(g.status), left = 30 - days(g); return `<tr><td><b>${esc(nameOf(g.profile_id))}</b>${g.notes ? `<br><span class="mut">${esc(g.notes)}</span>` : ""}</td><td>${g.request_type === "delete" ? "Eliminação" : "Exportação"}</td><td class="mut">${fdate(g.created_at)}</td><td class="${open && left <= 10 ? "dn" : ""}">${open ? (left >= 0 ? left + " dias restantes" : "atrasado " + -left + " dias") : "—"}</td><td><select style="width:auto" onchange="setGdpr('${g.id}',this.value)">${Object.entries(GST).map(([k, v]) => `<option value="${k}" ${g.status === k ? "selected" : ""}>${v[0]}</option>`).join("")}</select></td><td style="white-space:nowrap">${isOwner() ? `<button class="btn sec sm" onclick="gdprExport('${g.id}')">⬇ Exportar dados</button>${g.request_type === "delete" && open ? ` <button class="btn bad sm" onclick="gdprDelete('${g.id}')">Apagar conta</button>` : ""}` : ownerOnly("Exportar e apagar")}</td></tr>`; }).join("") || `<tr><td colspan="6" class="mut">Sem pedidos neste estado.</td></tr>`}</table></div>
+      <p class="mut" style="margin:10px 0 0">Exportação: descarrega um ficheiro com todos os dados da conta para enviares à pessoa. Eliminação: apaga a conta de facto; o pedido desaparece com ela, mas fica em “Registo de ações”. O processo passo a passo está em Contactos e processos.</p></div>
     <div class="card" style="margin-top:14px"><h3>Saúde da ligação aos dados</h3>${LOADERR.length ? LOADERR.map(e => `<div class="sug"><span class="pill bad">erro</span><span class="t">${esc(e)}</span></div>`).join("") : `<span class="pill ok">Todas as tabelas carregaram sem erros</span>`}</div>`;
 };
 const MIGRATION = `-- Tabelas privadas do painel de gestão (só administradores têm acesso)
@@ -1554,24 +1868,53 @@ alter table public.admin_settings enable row level security;
 create policy admin_tasks_all on public.admin_tasks for all using (is_admin()) with check (is_admin());
 create policy admin_crm_all on public.admin_crm for all using (is_admin()) with check (is_admin());
 create policy admin_settings_all on public.admin_settings for all using (is_admin()) with check (is_admin());`;
+/* ============ EQUIPA (quem tem acesso ao painel) ============ */
+let TEAM = null;
+async function loadTeam() {
+  try { TEAM = DEMO ? [{ name: "Admin", email: "demo@exemplo.pt", admin_role: "owner" }] : await rpc("admin_team", {}); }
+  catch (e) { TEAM = { err: missing(e) ? "A gestão da equipa precisa da migração painel_gestao_completo no Supabase." : e.message }; }
+  if (view === "set") render();
+}
+const ROLEL = { owner: "Dono (tudo)", support: "Apoio (sem dinheiro nem permissões)" };
+async function setRole(email, role) {
+  const msg = role === "none" ? `${email} deixa de ter acesso ao painel.` : `${email} passa a ${ROLEL[role]}.`;
+  if (!await ask("Alterar acesso ao painel", msg, "Confirmar", role === "none")) return;
+  try { if (!DEMO) await rpc("admin_set_role", { p_email: email, p_role: role }); TEAM = null; toast("Acesso atualizado"); loadTeam(); }
+  catch (e) { toast("Erro: " + e.message); }
+}
+async function addMember() {
+  const r = await form("Dar acesso ao painel", [{ k: "email", label: "Email da conta Flinko da pessoa (tem de estar registada)", type: "email", req: 1 }, { k: "role", label: "Nível de acesso", type: "select", opts: [["support", ROLEL.support], ["owner", ROLEL.owner]] }], { role: "support" }, "Dar acesso");
+  if (r) await setRole(r.email.trim(), r.role);
+}
+function teamCard() {
+  const body = !TEAM ? `<span class="mut">A carregar…</span>` : TEAM.err ? `<span class="pill warn">${esc(TEAM.err)}</span>` :
+    `<div class="tw"><table><tr><th>Pessoa</th><th>Acesso</th><th></th></tr>${TEAM.map(m => `<tr><td><b>${esc(m.name || "—")}</b><br><span class="mut">${esc(m.email || "")}</span></td><td>${isOwner() && !DEMO ? `<select style="width:auto" onchange="setRole('${esc(m.email)}',this.value)">${Object.entries(ROLEL).map(([k, v]) => `<option value="${k}" ${m.admin_role === k ? "selected" : ""}>${v}</option>`).join("")}</select>` : esc(ROLEL[m.admin_role] || m.admin_role)}</td><td>${isOwner() && !DEMO ? `<button class="btn sec sm" onclick="setRole('${esc(m.email)}','none')">Tirar acesso</button>` : ""}</td></tr>`).join("")}</table></div>`;
+  return `<div class="card" style="margin-top:14px" id="teamCard"><h3>👥 Equipa com acesso ao painel <span class="sp"></span>${isOwner() && !DEMO ? `<button class="btn sm" onclick="addMember()">+ Dar acesso</button>` : ""}</h3>${body}
+    <p class="mut" style="margin:10px 0 0"><b>Dono</b>: tudo, incluindo planos, reembolsos, receita do Stripe, RGPD, emails em grupo e esta lista. <b>Apoio</b>: vê o painel e trata verificações, moderação e pedidos de apoio, mas não mexe em dinheiro nem em permissões (a base de dados bloqueia-o, não é só o botão escondido). Tem de ficar sempre pelo menos um dono.</p>
+    <p class="mut" style="margin:6px 0 0">O painel antigo continua disponível em <a href="/admin-classico.html">admin-classico.html</a>, caso precises dele.</p></div>`;
+}
+
 const vSet = () => {
   const g = setting("goals");
+  if (!TEAM) setTimeout(loadTeam, 0);
   return head("Definições", "Metas, armazenamento e ligação") +
     `<div class="grid g2"><div class="card"><h3>Metas</h3><div class="grid g3">${[["pros", "Profissionais"], ["clients", "Clientes"], ["reviews", "Avaliações"], ["mrr", "MRR (€)"]].map(([k, l]) => `<div><label class="f">${l}</label><input type="number" min="0" value="${g[k]}" onchange="setGoal('${k}',this.value)"></div>`).join("")}</div></div>
-    <div class="card"><h3>Armazenamento de tarefas, CRM e definições</h3>${store.cloud ? `<span class="pill ok">Sincronizado no Supabase</span><p class="mut">Tarefas, notas e definições ficam guardadas na base de dados e ficam iguais em qualquer computador.</p>` : `<span class="pill warn">Só neste navegador</span><p class="mut">As tabelas <code>admin_tasks</code>, <code>admin_crm</code> e <code>admin_settings</code> ainda não existem no Supabase, por isso tudo é guardado apenas neste navegador. Para sincronizar, executa este SQL no Supabase (SQL Editor):</p><textarea readonly rows="10" onclick="this.select()" style="font:12px monospace">${esc(MIGRATION)}</textarea>`}</div></div>
+    <div class="card"><h3>Armazenamento de tarefas, CRM e definições</h3>${store.cloud ? `<span class="pill ok">Sincronizado no Supabase</span><p class="mut">Tarefas, notas e definições ficam guardadas na base de dados e ficam iguais em qualquer computador.</p>` : `${store.broken ? `<span class="pill bad">Sem ligação</span><p class="mut">Não foi possível ler as tabelas do painel: ${esc(store.broken)}. As alterações estão bloqueadas até voltar a ligação.</p>` : `<span class="pill warn">Só neste navegador</span>`}<p class="mut">As tabelas <code>admin_tasks</code>, <code>admin_crm</code>, <code>admin_settings</code> e <code>admin_items</code> não existem no Supabase, por isso o que fizeres fica guardado apenas neste navegador. Aplica a migração <code>supabase/migrations/20260924150000_painel_gestao_completo.sql</code> ou executa este SQL no Supabase (SQL Editor):</p><textarea readonly rows="10" onclick="this.select()" style="font:12px monospace">${esc(MIGRATION)}</textarea>`}</div></div>
+    ${teamCard()}
     <div class="card" style="margin-top:14px"><h3>Como são calculados os números</h3><ul style="margin:0;padding-left:18px;line-height:1.8"><li><b>Contas reais</b>: todas as contas menos as de administrador e demo. As tuas visitas (com sessão iniciada) também são excluídas do tráfego.</li><li><b>Qualidade do perfil</b> (0–100): categoria 15, bio 15, foto 15, serviço 15, localização 10, portfólio 10, verificado 10, capa 5, telemóvel 5.</li><li><b>MRR</b>: nº de profissionais com plano pago e não expirado × preço do plano que defines em Finanças.</li><li><b>Funil</b>: cada passo conta profissionais que cumprem esse critério (não é obrigatório cumprir o anterior).</li><li><b>Nota global</b>: média de seis notas de 0 a 100 (ativação, retenção, procura, confiança, receita e operação). É um indicador de conjunto, não uma métrica oficial.</li><li><b>Histórico</b>: os totais são reconstruídos pelas datas de criação; MRR, caixa, leads e atividade só existem a partir do dia em que o painel começou a guardar fotografias diárias.</li><li><b>Projeção</b>: novos profissionais por mês, com crescimento composto, × conversão para pago × preço médio − custos.</li></ul></div>`;
 };
 const setGoal = (k, v) => { const g = Object.assign({}, setting("goals")); g[k] = +v || 0; saveSetting("goals", g); };
 
 /* ============ NAVEGAÇÃO / ARRANQUE ============ */
-const VIEWS = { alerts: vAlerts, contact: vContact, playbook: vPlaybook, cal: vCal, history: vHistory, marketing: vMarketing, support: vSupport, invoices: vInvoices, company: vCompany, investor: vInvestor, home: vHome, growth: vGrowth, leads: vLeads, pros: vPros, retention: vRetention, demand: vDemand, quality: vQuality, fin: vFin, strategy: vStrategy, compliance: vCompliance, tasks: vTasks, reports: vReports, ops: vOps, set: vSet };
+const VIEWS = { alerts: vAlerts, contact: vContact, playbook: vPlaybook, cal: vCal, history: vHistory, marketing: vMarketing, support: vSupport, invoices: vInvoices, company: vCompany, investor: vInvestor, home: vHome, growth: vGrowth, leads: vLeads, pros: vPros, retention: vRetention, demand: vDemand, quality: vQuality, fin: vFin, strategy: vStrategy, compliance: vCompliance, tasks: vTasks, reports: vReports, ops: vOps, set: vSet, mod: vMod, clients: vClients, audit: vAudit };
 function badgeOf(k) {
   if (k === "alerts") return liveAlerts().length;
   if (k === "ops") return M.gp.length + M.vp.length;
   if (k === "leads") return leadsDue().length;
   if (k === "quality") return M.flags.length;
   if (k === "tasks") return store.tasks.filter(t => t.status !== "done" && t.due_date && new Date(t.due_date) < now() - DAY).length;
-  if (k === "support") return items("ticket").filter(t => t.status !== "resolvido" && now() - new Date(t.date) > 2 * DAY).length;
+  if (k === "support") return items("ticket").filter(t => t.status !== "resolvido" && now() - new Date(t.date) > 2 * DAY).length + D.tickets.filter(t => t.kind !== "denuncia" && t.status !== "resolvido").length;
+  if (k === "mod") return D.tickets.filter(t => t.kind === "denuncia" && t.status !== "resolvido").length;
   if (k === "invoices") return items("invoice").filter(i => i.status === "emitida" && i.due && i.due < today()).length;
   return 0;
 }
@@ -1585,23 +1928,31 @@ async function reload() { try { await loadAll(); render(); toast("Dados atualiza
 async function start() {
   $("#login").classList.add("hidden"); $("#app").classList.remove("hidden");
   $("#main").innerHTML = `<p class="mut">A carregar dados…</p>`;
-  $("#whoami").textContent = DEMO ? "Demonstração" : (session.user?.email || "");
+  $("#whoami").textContent = DEMO ? "Demonstração" : (session.user?.email || "") + (ROLE === "support" ? " · apoio" : " · dono");
   await loadAll(); render();
   const u = liveAlerts().filter(a => a.lvl === "bad").length; if (u) toast(u + " aviso(s) urgente(s) — vê “Avisos”");
+}
+// Lê is_admin e o papel (dono/apoio). Antes da migração admin_role não existe: conta como dono.
+async function whoAmI() {
+  let me;
+  try { me = (await api("profiles?select=is_admin,admin_role&id=eq." + session.user.id))[0]; }
+  catch (e) { if (!/admin_role/.test(e.message || "")) throw e; me = (await api("profiles?select=is_admin&id=eq." + session.user.id))[0]; }
+  ROLE = me?.admin_role || "owner";
+  return me;
 }
 $("#lf").onsubmit = async e => {
   e.preventDefault(); $("#lerr").textContent = "";
   try {
     const j = await authFetch("token?grant_type=password", { email: $("#em").value.trim(), password: $("#pw").value });
     session = { access_token: j.access_token, refresh_token: j.refresh_token, user: j.user }; ls.set("fk_session", session);
-    const me = await api("profiles?select=is_admin&id=eq." + j.user.id);
-    if (!me[0]?.is_admin) { session = null; ls.set("fk_session", null); throw new Error("Esta conta não tem permissões de administrador."); }
+    const me = await whoAmI();
+    if (!me?.is_admin) { session = null; ls.set("fk_session", null); throw new Error("Esta conta não tem permissões de administrador."); }
     $("#pw").value = ""; await start();
   } catch (err) { $("#lerr").textContent = err.message; }
 };
 $("#logout").onclick = () => { session = null; ls.set("fk_session", null); location.reload(); };
 (async () => {
-  if (session?.access_token) { try { const me = await api("profiles?select=is_admin&id=eq." + session.user.id); if (me[0]?.is_admin) return start(); } catch (e) { } }
+  if (session?.access_token) { try { const me = await whoAmI(); if (me?.is_admin) return start(); } catch (e) { } }
 })();
 </script>
 </body>

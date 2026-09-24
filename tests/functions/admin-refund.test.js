@@ -33,6 +33,7 @@ function resetScenario() {
   scenario.chargesRetrieve = undefined;
   scenario.refundsCreate = undefined;
   scenario.updateCalls = [];
+  scenario.insertCalls = [];
 }
 
 function baseEvent(overrides = {}) {
@@ -47,12 +48,12 @@ function baseEvent(overrides = {}) {
 // Admin autenticado como 'admin-user-1', is_admin=true.
 function adminSelectMaybeSingle({ target = {} } = {}) {
   return async ({ cols, col, val }) => {
-    if (cols === 'is_admin') {
+    if (cols === 'is_admin,admin_role') {
       assert.equal(col, 'user_id');
       assert.equal(val, 'admin-user-1');
       return { data: { is_admin: true }, error: null };
     }
-    if (cols === 'id,stripe_customer_id') {
+    if (cols === 'id,name,stripe_customer_id') {
       assert.equal(col, 'id');
       assert.equal(val, 'pro-1');
       return { data: { id: 'pro-1', stripe_customer_id: target.stripe_customer_id ?? null }, error: null };
@@ -82,7 +83,7 @@ test('rejeita quem não é admin', async () => {
   resetScenario();
   scenario.getUser = async () => ({ data: { user: { id: 'user-comum' } }, error: null });
   scenario.selectMaybeSingle = async ({ cols }) => {
-    assert.equal(cols, 'is_admin');
+    assert.equal(cols, 'is_admin,admin_role');
     return { data: { is_admin: false }, error: null };
   };
   const res = await handler(baseEvent());
@@ -99,7 +100,7 @@ test('rejeita pedido sem targetProfileId', async () => {
 test('rejeita perfil que não existe', async () => {
   resetScenario();
   scenario.getUser = async () => ({ data: { user: { id: 'admin-user-1' } }, error: null });
-  scenario.selectMaybeSingle = async ({ cols }) => (cols === 'is_admin' ? { data: { is_admin: true }, error: null } : { data: null, error: null });
+  scenario.selectMaybeSingle = async ({ cols }) => (cols === 'is_admin,admin_role' ? { data: { is_admin: true }, error: null } : { data: null, error: null });
   const res = await handler(baseEvent());
   assert.equal(res.statusCode, 404);
 });
@@ -218,4 +219,31 @@ test('refund: erro do Stripe a criar o reembolso -> 502', async () => {
   scenario.refundsCreate = async () => { throw new Error('charge already refunded'); };
   const res = await handler(baseEvent({ body: JSON.stringify({ action: 'refund', targetProfileId: 'pro-1', chargeId: 'ch_1' }) }));
   assert.equal(res.statusCode, 502);
+});
+
+test('admin de apoio (admin_role=support) não pode ver pagamentos nem reembolsar', async () => {
+  resetScenario();
+  scenario.getUser = async () => ({ data: { user: { id: 'apoio-1' } }, error: null });
+  scenario.selectMaybeSingle = async ({ cols }) => {
+    assert.equal(cols, 'is_admin,admin_role');
+    return { data: { is_admin: true, admin_role: 'support' }, error: null };
+  };
+  scenario.refundsCreate = async () => { throw new Error('não devia chegar ao Stripe'); };
+  const res = await handler(baseEvent({ body: JSON.stringify({ action: 'refund', targetProfileId: 'pro-1', chargeId: 'ch_1' }) }));
+  assert.equal(res.statusCode, 403);
+});
+
+test('refund: reembolso feito fica no registo de ações (admin_audit)', async () => {
+  resetScenario();
+  asAdmin({ stripe_customer_id: 'cus_42' });
+  scenario.chargesRetrieve = async () => ({ customer: 'cus_42', currency: 'eur' });
+  scenario.refundsCreate = async () => ({ id: 're_9', amount: 1500, status: 'succeeded' });
+  const res = await handler(baseEvent({ body: JSON.stringify({ action: 'refund', targetProfileId: 'pro-1', chargeId: 'ch_1', amount: 1500, reason: 'duplicate' }) }));
+  assert.equal(res.statusCode, 200);
+  assert.equal(scenario.insertCalls.length, 1);
+  const row = scenario.insertCalls[0].row;
+  assert.equal(scenario.insertCalls[0].table, 'admin_audit');
+  assert.equal(row.action, 'reembolso');
+  assert.match(row.summary, /15\.00 EUR/);
+  assert.equal(row.details.refundId, 're_9');
 });

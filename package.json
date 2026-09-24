@@ -7,7 +7,8 @@
     "check": "node scripts/check-syntax.js && node scripts/check-migrations.js",
     "test:unit": "node --test \"tests/functions/**/*.test.js\"",
     "test:e2e": "playwright test",
-    "test": "npm run check && npm run test:unit && npm run test:e2e"
+    "test": "npm run check && npm run test:unit && npm run test:db && npm run test:e2e",
+    "test:db": "node --test \"tests/db/**/*.test.mjs\""
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
@@ -15,6 +16,7 @@
     "web-push": "^3.6.7"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.3.16",
     "@playwright/test": "^1.56.0"
   },
   "engines": {

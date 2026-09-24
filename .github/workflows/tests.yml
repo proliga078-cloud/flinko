@@ -37,6 +37,11 @@ jobs:
       - name: Testes unitários (netlify/functions)
         run: npm run test:unit
 
+      # Migrações do painel de gestão num Postgres em memória (PGlite): permissões,
+      # registo de ações só de leitura e funções de administração.
+      - name: Testes da base de dados (supabase/migrations)
+        run: npm run test:db
+
       - name: Instalar navegador do Playwright
         run: npx playwright install --with-deps chromium
 

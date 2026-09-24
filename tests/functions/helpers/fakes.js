@@ -78,6 +78,11 @@ function makeFakeSupabaseAdmin(scenario) {
             },
           }),
         }),
+        insert: (row) => {
+          scenario.insertCalls = scenario.insertCalls || [];
+          scenario.insertCalls.push({ table, row });
+          return Promise.resolve({ data: null, error: null });
+        },
         update: (patch) => ({
           eq: (col, val) => {
             scenario.updateCalls = scenario.updateCalls || [];
