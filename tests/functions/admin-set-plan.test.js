@@ -33,6 +33,7 @@ function resetScenario() {
   scenario.subscriptionsRetrieve = undefined;
   scenario.subscriptionsCancel = undefined;
   scenario.updateCalls = [];
+  scenario.insertCalls = [];
 }
 
 function baseEvent(overrides = {}) {
@@ -47,12 +48,12 @@ function baseEvent(overrides = {}) {
 // Admin autenticado como 'admin-user-1', is_admin=true.
 function adminSelectMaybeSingle({ target = {} } = {}) {
   return async ({ cols, col, val }) => {
-    if (cols === 'is_admin') {
+    if (cols === 'is_admin,admin_role') {
       assert.equal(col, 'user_id');
       assert.equal(val, 'admin-user-1');
       return { data: { is_admin: true }, error: null };
     }
-    if (cols === 'id,stripe_subscription_id') {
+    if (cols === 'id,name,plan,stripe_subscription_id') {
       assert.equal(col, 'id');
       assert.equal(val, 'pro-1');
       return { data: { id: 'pro-1', stripe_subscription_id: target.stripe_subscription_id ?? null }, error: null };
@@ -77,7 +78,7 @@ test('rejeita quem não é admin', async () => {
   resetScenario();
   scenario.getUser = async () => ({ data: { user: { id: 'user-comum' } }, error: null });
   scenario.selectMaybeSingle = async ({ cols }) => {
-    assert.equal(cols, 'is_admin');
+    assert.equal(cols, 'is_admin,admin_role');
     return { data: { is_admin: false }, error: null };
   };
   const res = await handler(baseEvent());
@@ -155,4 +156,30 @@ test('erro real do Stripe ao cancelar (não resource_missing): devolve 502 e nã
   const res = await handler(baseEvent());
   assert.equal(res.statusCode, 502);
   assert.equal(scenario.updateCalls.length, 0, 'não deve mudar o plano se não conseguimos confirmar que a cobrança real foi parada');
+});
+
+test('admin de apoio (admin_role=support) não pode mudar planos', async () => {
+  resetScenario();
+  scenario.getUser = async () => ({ data: { user: { id: 'apoio-1' } }, error: null });
+  scenario.selectMaybeSingle = async ({ cols }) => {
+    assert.equal(cols, 'is_admin,admin_role');
+    return { data: { is_admin: true, admin_role: 'support' }, error: null };
+  };
+  scenario.subscriptionsCancel = async () => { throw new Error('não devia chegar ao Stripe'); };
+  const res = await handler(baseEvent());
+  assert.equal(res.statusCode, 403);
+  assert.equal(scenario.updateCalls.length, 0);
+});
+
+test('mudança de plano fica no registo de ações (admin_audit)', async () => {
+  resetScenario();
+  scenario.getUser = async () => ({ data: { user: { id: 'admin-user-1', email: 'dono@flinko.pt' } }, error: null });
+  scenario.selectMaybeSingle = adminSelectMaybeSingle({ target: { stripe_subscription_id: null } });
+  const res = await handler(baseEvent());
+  assert.equal(res.statusCode, 200);
+  assert.equal(scenario.insertCalls.length, 1);
+  assert.equal(scenario.insertCalls[0].table, 'admin_audit');
+  assert.equal(scenario.insertCalls[0].row.action, 'plano_alterado');
+  assert.equal(scenario.insertCalls[0].row.actor_email, 'dono@flinko.pt');
+  assert.equal(scenario.insertCalls[0].row.target_id, 'pro-1');
 });

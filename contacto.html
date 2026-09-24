@@ -26,6 +26,14 @@ nav{position:sticky;top:0;z-index:200;background:var(--white);border-bottom:1px 
 .contact-card .ic{font-size:28px;margin-bottom:10px}
 .contact-card strong{display:block;font-size:15px;margin-bottom:4px}
 .contact-card p{font-size:13px;color:var(--muted);margin:0}
+.contact-form{background:var(--bg);border-radius:14px;padding:24px;margin-top:24px}
+.contact-form h2{font-size:18px;margin-bottom:4px}
+.contact-form label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:12px 0 4px}
+.contact-form input,.contact-form select,.contact-form textarea{width:100%;border:1px solid var(--border);border-radius:10px;padding:10px 12px;font:inherit;background:#fff}
+.contact-form button{margin-top:14px;background:#E8720A;color:#fff;border:0;border-radius:10px;padding:11px 20px;font:inherit;font-weight:700;cursor:pointer}
+.contact-form button:disabled{opacity:.6;cursor:default}
+.sf-hp{position:absolute;left:-9999px}
+.sf-status{font-size:14px;margin-top:10px}.sf-ok{color:#166534}.sf-err{color:#b91c1c}
 .legal-body p.lead{font-size:15px;color:#334155;text-align:center;margin-bottom:28px}
 footer{background:var(--text);color:rgba(255,255,255,.6);padding:28px 5%;text-align:center;font-size:13px}
 footer a{color:rgba(255,255,255,.7)}
@@ -54,6 +62,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <meta name="theme-color" content="#0f231b"/>
 <script src="/assets/pwa.js" defer></script>
 <script src="/assets/cookie-consent.js" defer></script>
+<script src="/assets/support-form.js"></script>
 <meta property="og:title" content="Contacto – Flinko"/>
 <meta property="og:description" content="Fala com a equipa do Flinko."/>
 <meta property="og:type" content="website"/>
@@ -87,9 +96,22 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <p>flinkogeral@gmail.com</p>
 </a>
 </div>
+<form class="contact-form" id="contactForm" novalidate>
+<h2>Enviar mensagem</h2>
+<p style="font-size:14px;color:var(--muted)">Chega diretamente à equipa. Respondemos para o email que indicares.</p>
+<label for="cf-name">Nome</label><input id="cf-name" name="name" required maxlength="120" autocomplete="name">
+<label for="cf-email">Email</label><input id="cf-email" name="email" type="email" required maxlength="200" autocomplete="email">
+<label for="cf-subject">Assunto</label><select id="cf-subject" name="subject"><option>Dúvida sobre o Flinko</option><option>Problema com a minha conta</option><option>Pagamentos e planos</option><option>Reclamação sobre um profissional ou cliente</option><option>Proteção de dados (RGPD)</option><option>Parcerias</option><option>Outro</option></select>
+<label for="cf-message">Mensagem</label><textarea id="cf-message" name="message" rows="6" required minlength="5" maxlength="5000"></textarea>
+<input class="sf-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+<button type="submit">Enviar</button>
+<div class="sf-status" data-status role="status" aria-live="polite"></div>
+<p style="font-size:12px;color:var(--muted);margin-top:10px">Usamos estes dados só para responder ao teu pedido. Vê a <a href="privacidade.html">política de privacidade</a>.</p>
+</form>
 </div>
 <footer>
 <p>© 2026 Flinko · <a href="termos.html">Termos</a> · <a href="privacidade.html">Privacidade</a> · <a href="cookies.html">Cookies</a> · <a href="rgpd.html">RGPD</a> · <a href="index.html">Voltar ao início</a></p>
 </footer>
+<script>flinkoSupport.bindForm(document.getElementById('contactForm'),{kind:'contacto'})</script>
 </body>
 </html>
