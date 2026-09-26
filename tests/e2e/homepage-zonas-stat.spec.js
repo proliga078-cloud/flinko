@@ -21,7 +21,7 @@ async function withFakeSupabase(page, config) {
   }, config);
 }
 
-test.describe('index.html — stat de zonas e título do mapa refletem dados reais', () => {
+test.describe('index.html — stat de zonas reflete dados reais', () => {
   test('várias zonas: mostra a contagem real, no plural', async ({ page }) => {
     await withFakeSupabase(page, {
       tableData: {
@@ -38,11 +38,10 @@ test.describe('index.html — stat de zonas e título do mapa refletem dados rea
       },
     });
     await page.goto('/index.html');
-    await page.waitForFunction(() => document.getElementById('zonas-intro')?.textContent !== 'Ainda estamos a começar.' || document.getElementById('stat-zonas')?.getAttribute('data-count') !== '0', null, { timeout: 3000 }).catch(() => {});
+    await page.waitForFunction(() => document.getElementById('stat-zonas')?.getAttribute('data-count') !== '0', null, { timeout: 3000 }).catch(() => {});
 
     await expect(page.locator('#stat-zonas')).toHaveAttribute('data-count', '3');
     await expect(page.locator('#stat-zonas-label')).toHaveText('Zonas com profissionais');
-    await expect(page.locator('#zonas-intro')).toHaveText('Já em 3 zonas de Portugal.');
   });
 
   test('uma só zona: mostra o nome da zona em vez de "1 zonas"', async ({ page }) => {
@@ -60,11 +59,10 @@ test.describe('index.html — stat de zonas e título do mapa refletem dados rea
       },
     });
     await page.goto('/index.html');
-    await page.waitForFunction(() => document.getElementById('zonas-intro')?.textContent !== 'Ainda estamos a começar.' || document.getElementById('stat-zonas')?.getAttribute('data-count') !== '0', null, { timeout: 3000 }).catch(() => {});
+    await page.waitForFunction(() => document.getElementById('stat-zonas')?.getAttribute('data-count') !== '0', null, { timeout: 3000 }).catch(() => {});
 
     await expect(page.locator('#stat-zonas')).toHaveAttribute('data-count', '1');
     await expect(page.locator('#stat-zonas-label')).toHaveText('Zona com profissionais');
-    await expect(page.locator('#zonas-intro')).toHaveText('Já em 1 zona de Portugal.');
   });
 
   test('nenhuma zona reconhecida: fica honesto ("Ainda estamos a começar"), não finge cobertura', async ({ page }) => {
@@ -81,9 +79,8 @@ test.describe('index.html — stat de zonas e título do mapa refletem dados rea
       },
     });
     await page.goto('/index.html');
-    await page.waitForFunction(() => document.getElementById('zonas-intro')?.textContent !== 'Ainda estamos a começar.' || document.getElementById('stat-zonas')?.getAttribute('data-count') !== '0', null, { timeout: 3000 }).catch(() => {});
+    await page.waitForFunction(() => document.getElementById('stat-zonas')?.getAttribute('data-count') !== '0', null, { timeout: 3000 }).catch(() => {});
 
     await expect(page.locator('#stat-zonas')).toHaveAttribute('data-count', '0');
-    await expect(page.locator('#zonas-intro')).toHaveText('Ainda estamos a começar.');
   });
 });

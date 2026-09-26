@@ -672,6 +672,9 @@ footer{background:var(--dark);color:rgba(255,255,255,.75);border-top:3px solid v
   .map-card{height:300px}
 }
 @media (max-width:720px){
+  /* No telemóvel a faixa de cima roubava quase um quinto do ecrã. */
+  .promo-bar{display:none}
+  .hero h1{font-size:clamp(2.1rem,9vw,2.6rem)}
   .nav-links{display:none}
   .nav-actions .btn-ghost{display:none}
   .nav-toggle{display:flex}
@@ -681,6 +684,10 @@ footer{background:var(--dark);color:rgba(255,255,255,.75);border-top:3px solid v
   .footer-top{grid-template-columns:1fr;padding-bottom:24px}
 }
 @media (max-width:520px){
+  /* A pesquisa tem de caber no primeiro ecrã do telemóvel. */
+  .hero .badge-pill{display:none}
+  .hero p.lead{font-size:.98rem;margin-top:12px}
+  .hero .mode-toggle{margin-top:16px}
   .value-card{grid-template-columns:1fr}
   .value-item:not(:last-child)::after{display:none;content:none}
   .value-item:not(:last-child){border-bottom:1px solid var(--line)}
@@ -697,7 +704,8 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
 /* hero entrance */
 .hero::before{transform:scale(1.08);transition:transform 5s cubic-bezier(.16,.8,.24,1)}
 .hero.loaded::before{transform:scale(1)}
-.badge-pill,.hero h1,.hero p.lead,.search-card,.trust-row,.hero-ctas{opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.16,.8,.24,1),transform .7s cubic-bezier(.16,.8,.24,1)}
+/* O título e o texto do topo aparecem logo (sem esperar pela animação): são a primeira coisa que se lê e o que o Google mede como carregamento. */
+.badge-pill,.search-card,.hero-ctas{opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.16,.8,.24,1),transform .7s cubic-bezier(.16,.8,.24,1)}
 .hero.loaded .badge-pill{opacity:1;transform:none;transition-delay:.05s}
 .hero.loaded h1{opacity:1;transform:none;transition-delay:.14s}
 .hero.loaded p.lead{opacity:1;transform:none;transition-delay:.22s}
@@ -749,7 +757,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
 /* headline word reveal */
 .hero h1{display:block}
 .hw{display:inline-block;overflow:hidden;vertical-align:top}
-.hw span{display:inline-block;transform:translateY(110%);transition:transform .6s cubic-bezier(.16,.8,.24,1)}
+.hw span{display:inline-block;transform:none;transition:transform .6s cubic-bezier(.16,.8,.24,1)}
 .hero.loaded .hw span{transform:translateY(0)}
 .hw:nth-of-type(1) span{transition-delay:.16s}
 .hw:nth-of-type(2) span{transition-delay:.2s}
@@ -1003,11 +1011,10 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   <div class="wrap">
   <section class="hero spotlight" id="heroSection">
     <div class="hero-orbs" aria-hidden="true"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span></div><div class="glow-spot" aria-hidden="true"></div>
-    <div class="hero-ribbon" aria-hidden="true">100% verificados à mão</div>
     <div class="hero-pad hero-inner">
       <div>
         <span class="badge-pill"><span class="dot"></span> Portugal · Perfis verificados manualmente</span>
-        <h1><span class="hw"><span>Encontra</span></span> <span class="hw"><span>um</span></span> <span class="hw"><span>profissional</span></span> <span class="hw"><span>de</span></span> <span class="hw hi"><span>confiança</span></span> <span class="hw"><span>em</span></span> <span class="hw"><span>todo</span></span> <span class="hw"><span>o</span></span> <span class="hw accent"><span>país</span></span></h1>
+        <h1><span class="hw"><span>Encontra</span></span> <span class="hw"><span>um</span></span> <span class="hw"><span>profissional</span></span> <span class="hw"><span>de</span></span> <span class="hw hi"><span>confiança</span></span> <span class="hw"><span>em</span></span> <span class="hw"><span>todo</span></span> <span class="hw"><span>o</span></span> <span class="hw"><span>país</span></span></h1>
         <p class="lead" id="heroLead">Eletricistas, canalizadores, pintores e muito mais. Pede orçamento, compara perfis verificados e decide — sem compromisso e sem comissões.</p>
 
         <div class="mode-toggle" role="tablist" id="modeToggle">
@@ -1035,16 +1042,8 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
           <a href="/limpeza" class="quick-pill">Limpeza →</a>
         </div>
 
-        <div class="trust-row">
-          <span class="trust-chip">✓ Sem custos escondidos</span>
-          <span class="trust-chip">✓ Perfis verificados</span>
-          <span class="trust-chip">✓ Contacto direto</span>
-          <span class="trust-chip trust-chip-urgent">⚡ Modo urgente · resposta em menos de 2h</span>
-        </div>
-
         <div class="hero-ctas">
-          <a href="/categoria" class="btn btn-orange magnetic">Encontrar profissional <span class="arrow">→</span></a>
-          <a href="/pedidos" class="btn btn-ghost-dark">Publicar pedido</a>
+          <a href="/pedidos" class="btn btn-ghost-dark">Ou publica um pedido grátis <span class="arrow">→</span></a>
         </div>
       </div>
 
@@ -1094,30 +1093,6 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
           <div><strong>Resposta em 24h</strong><span>É esse o nosso objetivo</span></div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- TICKER -->
-  <div class="ticker">
-    <div class="ticker-track">
-      <span class="ticker-item"><span class="dot"></span>Eletricistas</span>
-      <span class="ticker-item"><span class="dot"></span>Canalizadores</span>
-      <span class="ticker-item"><span class="dot"></span>Pintores</span>
-      <span class="ticker-item"><span class="dot"></span>Limpeza</span>
-      <span class="ticker-item"><span class="dot"></span>Programadores</span>
-      <span class="ticker-item"><span class="dot"></span>Designers</span>
-      <span class="ticker-item"><span class="dot"></span>Porto</span>
-      <span class="ticker-item"><span class="dot"></span>Lisboa</span>
-      <span class="ticker-item"><span class="dot"></span>Braga</span>
-      <span class="ticker-item"><span class="dot"></span>Eletricistas</span>
-      <span class="ticker-item"><span class="dot"></span>Canalizadores</span>
-      <span class="ticker-item"><span class="dot"></span>Pintores</span>
-      <span class="ticker-item"><span class="dot"></span>Limpeza</span>
-      <span class="ticker-item"><span class="dot"></span>Programadores</span>
-      <span class="ticker-item"><span class="dot"></span>Designers</span>
-      <span class="ticker-item"><span class="dot"></span>Porto</span>
-      <span class="ticker-item"><span class="dot"></span>Lisboa</span>
-      <span class="ticker-item"><span class="dot"></span>Braga</span>
     </div>
   </div>
 
@@ -1256,17 +1231,6 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
     </div>
   </section>
 
-  <!-- VERIFICATION -->
-  <section>
-    <div class="wrap">
-      <div class="section-head center" data-reveal>
-        <span class="kicker">Confiança</span>
-        <h2>Cada profissional é <span class="hi-block">verificado à mão</span> pela nossa equipa</h2>
-        <p>Antes de qualquer perfil ficar visível na Flinko, alguém da nossa equipa confirma quem está do outro lado — não é um processo automático.</p>
-      </div>
-    </div>
-  </section>
-
   <!-- PRICE GUIDE -->
   <section class="price-section">
     <div class="wrap">
@@ -1303,47 +1267,6 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
         </div>
       </div>
       <p class="price-note" data-reveal="d2">Valores indicativos de mercado. O preço final depende sempre da avaliação do profissional para o teu caso.</p>
-    </div>
-  </section>
-
-  <!-- COVERAGE + MAP -->
-  <section>
-    <div class="wrap coverage-inner">
-      <div data-reveal>
-        <span class="kicker">Cobertura</span>
-        <h2>Profissionais <span class="hi-block mint">perto de ti</span></h2>
-        <p style="margin-top:16px;color:var(--muted);font-size:1.02rem;line-height:1.6"><span id="zonas-intro">Ainda estamos a começar.</span> Cada ponto no mapa representa profissionais ativos na Flinko. A cobertura cresce todas as semanas à medida que mais profissionais se juntam à plataforma.</p>
-        <p class="zone-note">Ainda não há profissionais na tua zona? <a href="/auth?tab=register" style="color:var(--orange-dark);font-weight:700">Regista-te</a> e sê o primeiro.</p>
-      </div>
-      <div class="map-card" data-reveal="d1" aria-label="Ilustração da rede de profissionais Flinko em Portugal">
-        <span class="map-head"><span class="n"></span>Rede Flinko</span>
-        <svg class="map-link" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M50,56 L32,22"/>
-          <path d="M50,56 L54,8"/>
-          <path d="M50,56 L82,22"/>
-          <path d="M50,56 L74,44"/>
-          <path d="M50,56 L32,84"/>
-          <path d="M50,56 L66,92"/>
-        </svg>
-        <div class="map-pin lg" style="top:22%;left:32%"><span class="dot"></span><span class="lbl">Porto</span></div>
-        <div class="map-pin" style="top:8%;left:54%"><span class="dot"></span><span class="lbl">Braga</span></div>
-        <div class="map-pin" style="top:22%;left:82%"><span class="dot"></span><span class="lbl">Aveiro</span></div>
-        <div class="map-pin" style="top:44%;left:74%"><span class="dot"></span><span class="lbl">Coimbra</span></div>
-        <div class="map-pin you" style="top:56%;left:50%"><span class="dot"></span><span class="lbl">A tua zona</span></div>
-        <div class="map-pin lg" style="top:84%;left:32%"><span class="dot"></span><span class="lbl">Lisboa</span></div>
-        <div class="map-pin" style="top:92%;left:66%"><span class="dot"></span><span class="lbl">Faro</span></div>
-      </div>
-      <div class="zone-chips-row" data-reveal="d2">
-        <span class="zone-tile lg"><span class="n"></span>Porto</span>
-        <span class="zone-tile lg"><span class="n"></span>Lisboa</span>
-        <span class="zone-tile"><span class="n"></span>Braga</span>
-        <span class="zone-tile"><span class="n"></span>Coimbra</span>
-        <span class="zone-tile"><span class="n"></span>Aveiro</span>
-        <span class="zone-tile"><span class="n"></span>Barcelos</span>
-        <span class="zone-tile"><span class="n"></span>Guimarães</span>
-        <span class="zone-tile"><span class="n"></span>Setúbal</span>
-        <span class="zone-tile"><span class="n"></span>Faro</span>
-      </div>
     </div>
   </section>
 
@@ -1409,16 +1332,6 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
           </button>
           <div class="faq-a"><p>Não. Criar conta, procurar profissionais e enviar mensagens é sempre gratuito para clientes.</p></div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- GRADIENT BANNER -->
-  <section style="padding-top:0">
-    <div class="wrap">
-      <div class="gradient-banner" data-reveal>
-        <h2>Encontra o profissional certo para o que precisas a seguir</h2>
-        <a href="/categoria" class="btn">Explorar profissionais <span class="arrow">→</span></a>
       </div>
     </div>
   </section>
@@ -1899,9 +1812,6 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
         if(zoneEl){ zoneEl.setAttribute('data-count', n); if(zoneEl.classList.contains('counted')) zoneEl.textContent = n; }
         var zoneLbl = document.getElementById('stat-zonas-label');
         if(zoneLbl) zoneLbl.textContent = n === 1 ? 'Zona com profissionais' : 'Zonas com profissionais';
-        // Texto honesto: o numero vem da base de dados, nunca fixo no HTML.
-        var zoneIntro = document.getElementById('zonas-intro');
-        if(zoneIntro) zoneIntro.textContent = n === 0 ? 'Ainda estamos a começar.' : (n === 1 ? 'Já em 1 zona de Portugal.' : 'Já em ' + n + ' zonas de Portugal.');
       })
       .catch(function(){
         if(avatarsText) avatarsText.textContent = 'Profissionais verificados em Portugal';
