@@ -52,4 +52,24 @@ function siteHeader(page = '') {
 </div>`
 }
 
-module.exports = { siteHeader, LINKS }
+// Rodapé único (mesma ideia: marcas <!-- fk:footer --> … <!-- /fk:footer -->).
+function siteFooter() {
+  const col = (titulo, links) => `<div class="fk-fcol"><h2>${titulo}</h2><ul>${links.map(([h, t]) => `<li><a href="${h}">${t}</a></li>`).join('')}</ul></div>`
+  return `<div class="fk-footer" role="contentinfo">
+  <div class="fk-ftop">
+    <div class="fk-fbrand">
+      <a href="/" class="fk-logo">Flink<span>o</span></a>
+      <p>Profissionais verificados em Portugal. Grátis para clientes, sem comissões para profissionais.</p>
+    </div>
+    ${col('Para clientes', [['/categoria', 'Encontrar profissional'], ['/pedidos?publicar=1', 'Publicar pedido'], ['/como-funciona', 'Como funciona'], ['/calculadora-orcamento', 'Calculadora de orçamento']])}
+    ${col('Para profissionais', [['/profissionais', 'A Flinko para profissionais'], ['/auth?tab=register', 'Criar perfil grátis'], ['/pricing', 'Preços'], ['/dashboard', 'O meu painel']])}
+    ${col('Flinko', [['/sobre', 'Sobre nós'], ['/academia', 'Academia'], ['/porque-escolher', 'Porquê a Flinko'], ['/contacto', 'Contacto']])}
+  </div>
+  <div class="fk-fbottom">
+    <span>© 2026 Flinko · Portugal</span>
+    <span class="fk-legal"><a href="/termos">Termos</a><a href="/privacidade">Privacidade</a><a href="/cookies">Cookies</a><a href="/rgpd">RGPD</a></span>
+  </div>
+</div>`
+}
+
+module.exports = { siteHeader, siteFooter, LINKS }

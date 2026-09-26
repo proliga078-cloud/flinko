@@ -10,7 +10,7 @@
 // scripts/site-header.js e corre `npm run build`.
 const fs = require('fs')
 const path = require('path')
-const { siteHeader } = require('./site-header.js')
+const { siteHeader, siteFooter } = require('./site-header.js')
 
 const ROOT = path.join(__dirname, '..')
 const CATEGORY_SLUGS = new Set(require('./categories-data.json').map(c => c.slug))
@@ -20,6 +20,7 @@ function apply(html, page) {
   return html
     .replace(/<!-- fk:head -->[\s\S]*?<!-- \/fk:head -->/, () => `<!-- fk:head -->\n${HEAD}\n<!-- /fk:head -->`)
     .replace(/<!-- fk:header -->[\s\S]*?<!-- \/fk:header -->/, () => `<!-- fk:header -->\n${siteHeader(page)}\n<!-- /fk:header -->`)
+    .replace(/<!-- fk:footer -->[\s\S]*?<!-- \/fk:footer -->/, () => `<!-- fk:footer -->\n${siteFooter()}\n<!-- /fk:footer -->`)
 }
 
 function files() {

@@ -27,9 +27,11 @@ const PAGINAS = [
 ];
 
 for (const [url, ativo] of PAGINAS) {
-  test(`${url}: tem o cabeçalho único${ativo ? ` com "${ativo}" marcado` : ''}`, async ({ page }) => {
+  test(`${url}: tem o cabeçalho e o rodapé únicos${ativo ? ` com "${ativo}" marcado` : ''}`, async ({ page }) => {
     await abrir(page, url);
     await expect(page.locator('#fkHeader')).toHaveCount(1);
+    await expect(page.locator('.fk-footer')).toHaveCount(1);
+    await expect(page.locator('.fk-footer .fk-legal a')).toHaveText(['Termos', 'Privacidade', 'Cookies', 'RGPD']);
     await expect(page.locator('#fkHeader .fk-links a')).toHaveText(['Encontrar', 'Pedidos', 'Como funciona', 'Preços', 'Para profissionais', 'Academia']);
     const atual = page.locator('#fkHeader .fk-links a[aria-current="page"]');
     if (ativo) await expect(atual).toHaveText(ativo);

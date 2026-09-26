@@ -12,7 +12,7 @@
 //  - categorias e cidades desconhecidas devolvem 404 a sério.
 const{createClient}=require('@supabase/supabase-js')
 const{SITE,DISTRITOS,slugify,esc,categoryBySlug,placesOf,loadPros,ordenar,profileUrl,combinacoes}=require('./_local')
-const{siteHeader}=require('../../scripts/site-header.js')
+const{siteHeader,siteFooter}=require('../../scripts/site-header.js')
 
 const admin=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY)
 
@@ -190,8 +190,6 @@ h2{font-size:1.25rem;margin:0 0 12px}
 details{border-bottom:1px solid var(--line);padding:12px 0}summary{cursor:pointer;font-weight:600}details p{color:var(--soft);margin:8px 0 0}
 .cta{background:var(--ink);color:#fff;border-radius:20px;padding:28px;margin:34px 0}
 .cta h2{margin:0 0 6px}.cta p{margin:0 0 16px;color:#cfe4d9}
-footer{border-top:1px solid var(--line);padding:24px 5%;font-size:13px;color:var(--soft);text-align:center}
-footer a{margin:0 8px}
 </style>
 </head>
 <body>
@@ -208,7 +206,7 @@ ${ligacoes}
 ${faqHtml}
 <div class="cta"><h2>És ${esc(servico.toLowerCase())} em ${esc(placeName)}?</h2><p>Cria o teu perfil grátis e recebe pedidos de clientes da tua zona.</p><a class="btn" href="/auth.html?tab=register">Criar perfil grátis</a></div>
 </main>
-<footer><a href="/sobre.html">Sobre</a><a href="/termos.html">Termos</a><a href="/privacidade.html">Privacidade</a><a href="/cookies.html">Cookies</a></footer>
+${siteFooter()}
 <script src="/assets/cookie-consent.js" defer></script>
 </body>
 </html>`
