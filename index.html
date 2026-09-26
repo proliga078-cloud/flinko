@@ -1165,27 +1165,27 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   <section>
     <div class="wrap">
       <div class="section-head center" data-reveal>
-        <span class="kicker">Um exemplo real</span>
+        <span class="kicker">Passo a passo</span>
         <h2>Como funciona</h2>
-        <p>Segue o pedido da Ana, que precisava de um eletricista em Cascais — do primeiro clique à obra marcada.</p>
+        <p>Um exemplo: a Ana precisa de um eletricista em Cascais. Do primeiro clique à obra marcada.</p>
       </div>
       <div class="steps-grid">
         <div class="step-card" data-reveal="d1"><span class="glow-spot"></span>
           <span class="step-num">01</span>
           <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>
           <h3>Ana escreve o que precisa</h3>
-          <p>"Eletricista" + "Cascais" na pesquisa. Em segundos vê 4 profissionais verificados na zona, com faixa de preço e tempo médio de resposta já visíveis — sem ter de pedir orçamento a cada um.</p>
+          <p>"Eletricista" + "Cascais" na pesquisa. Vê logo os profissionais verificados da zona, com preços "a partir de" e avaliações — sem ter de pedir orçamento a cada um.</p>
         </div>
         <div class="step-card" data-reveal="d2"><span class="glow-spot"></span>
           <span class="step-num">02</span>
           <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg></span>
-          <h3>Compara e abre o passaporte de verificação</h3>
-          <p>Escolhe o perfil com melhor avaliação, confirma o que foi verificado (documento, registo criminal, referências) e envia mensagem direta a perguntar disponibilidade esta semana.</p>
+          <h3>Compara e fala diretamente</h3>
+          <p>Abre os perfis, vê serviços, fotos de trabalhos e avaliações, e envia mensagem direta a perguntar disponibilidade esta semana.</p>
         </div>
         <div class="step-card" data-reveal="d3"><span class="glow-spot"></span>
           <span class="step-num">03</span>
           <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></span>
-          <h3>Resposta em 40 minutos, obra marcada</h3>
+          <h3>Combina a visita e marca a obra</h3>
           <p>O profissional responde, combinam a visita diretamente no chat e marcam data. A Ana não pagou nada à Flinko — nem para procurar, nem para fechar o trabalho.</p>
         </div>
       </div>
@@ -1263,7 +1263,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
       <div class="section-head center" data-reveal>
         <span class="kicker">Antes de pedir orçamento</span>
         <h2>Quanto custa, mais ou menos?</h2>
-        <p>Faixas de preço reais praticadas na plataforma, por serviço — para não começares às escuras.</p>
+        <p>Faixas de preço de referência em Portugal, por serviço — para não começares às escuras.</p>
       </div>
       <div class="price-list" data-reveal="d1">
         <div class="price-row">
@@ -1277,7 +1277,6 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
           <div class="dur"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>30 min a 1h30</div>
         </div>
         <div class="price-row">
-          <span class="popular-tag">Mais pedido</span>
           <div class="svc"><span class="ic ic-purple"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19a3 3 0 0 0 3-3V4H9v12a3 3 0 0 0 3 3Z"/></svg></span><div><strong>Pintar uma sala (± 20m²)</strong><span>Tinta e mão de obra</span></div></div>
           <div class="range">150€ – 300€</div>
           <div class="dur"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>1 a 2 dias</div>
@@ -1293,7 +1292,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
           <div class="dur"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>2 a 4 semanas</div>
         </div>
       </div>
-      <p class="price-note" data-reveal="d2">Valores indicativos com base em pedidos fechados na plataforma. O preço final depende sempre da avaliação do profissional para o teu caso.</p>
+      <p class="price-note" data-reveal="d2">Valores indicativos de mercado. O preço final depende sempre da avaliação do profissional para o teu caso.</p>
     </div>
   </section>
 
@@ -1838,9 +1837,12 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
     db.from('requests').select('title,category,location,created_at').eq('status','open').gte('created_at', new Date(Date.now() - 14*24*60*60*1000).toISOString()).order('created_at', {ascending:false}).limit(3)
       .then(function(res){
         var items = (res && res.data) || [];
+        // Sem pedidos recentes o cartão sai de cena: um "ainda não há pedidos"
+        // no topo da homepage é a primeira coisa que o cliente vê e tira
+        // confiança. Fica só a contagem de profissionais por baixo.
         if(!items.length){
-          feed.innerHTML = '<div class="live-req is-active"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span><div><strong>Ainda não há pedidos publicados</strong><span>Sê o primeiro a publicar um</span></div></div>';
-          dotsWrap.innerHTML = '';
+          var card = feed.closest('.live-card');
+          if(card) card.hidden = true;
           return;
         }
         feed.innerHTML = items.map(function(it, i){
@@ -1859,7 +1861,8 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
         if(window.startLiveFeedRotation) window.startLiveFeedRotation();
       })
       .catch(function(){
-        feed.innerHTML = '';
+        var card = feed.closest('.live-card');
+        if(card) card.hidden = true;
       });
   }
   loadLiveFeed();
@@ -1874,9 +1877,11 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   }
   function loadRealCounts(){
     var avatarsText = document.getElementById('avatarsRowText');
-    db.from('profiles').select('location').eq('account_type', 'professional').eq('verified', true).eq('is_demo', false).eq('suspended', false).eq('approved', true)
+    // Só conta quem já escolheu categoria: sem ela o perfil não aparece em
+    // nenhuma pesquisa, e o número deixava de bater com os das categorias.
+    db.from('profiles').select('location,category').eq('account_type', 'professional').eq('verified', true).eq('is_demo', false).eq('suspended', false).eq('approved', true).neq('category', '')
       .then(function(res){
-        var rows = (res && res.data) || [];
+        var rows = ((res && res.data) || []).filter(function(p){ return p.category == null || String(p.category).trim(); });
         if(avatarsText) avatarsText.textContent = rows.length + (rows.length === 1 ? ' profissional verificado em Portugal' : ' profissionais verificados em Portugal');
         // So conta distritos reconhecidos: texto livre ("Sítio desconhecido")
         // nao pode inflacionar o numero de zonas com cobertura.
@@ -2023,10 +2028,18 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
         .eq('is_demo', false)
         .eq('suspended', false)
         .not('category', 'is', null)
+        .neq('category', '')
         .order('created_at', {ascending: false})
-        .limit(3 + excludeIds.length)
+        .limit(12 + excludeIds.length)
         .then(function(res2){
-          var extra = ((res2 && res2.data) || []).filter(function(p){ return excludeIds.indexOf(p.id) === -1; });
+          // Primeiro os perfis mais completos (descrição e foto): são os que
+          // passam confiança na montra. Os outros só completam se faltar.
+          var completo = function(p){ return (p.bio && String(p.bio).trim() ? 2 : 0) + (p.photo_url ? 1 : 0); };
+          var extra = ((res2 && res2.data) || [])
+            .filter(function(p){ return excludeIds.indexOf(p.id) === -1 && String(p.category || '').trim(); })
+            .map(function(p, i){ return {p: p, i: i}; })
+            .sort(function(a, b){ return completo(b.p) - completo(a.p) || a.i - b.i; })
+            .map(function(x){ return x.p; });
           return spotlight.concat(extra).slice(0, 3);
         });
     })

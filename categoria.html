@@ -266,7 +266,6 @@ Filtros
 </div>
 <div class="filter-card"><div class="filter-title">Distrito</div><div class="filter-group"><select class="range-input" id="f-loc-select" style="width:100%" onchange="filters.loc=this.value;loadPros()"><option value="">Todo o país</option><option value="Aveiro">Aveiro</option><option value="Beja">Beja</option><option value="Braga">Braga</option><option value="Bragança">Bragança</option><option value="Castelo Branco">Castelo Branco</option><option value="Coimbra">Coimbra</option><option value="Évora">Évora</option><option value="Faro">Faro</option><option value="Guarda">Guarda</option><option value="Leiria">Leiria</option><option value="Lisboa">Lisboa</option><option value="Portalegre">Portalegre</option><option value="Porto">Porto</option><option value="Santarém">Santarém</option><option value="Setúbal">Setúbal</option><option value="Viana do Castelo">Viana do Castelo</option><option value="Vila Real">Vila Real</option><option value="Viseu">Viseu</option><option value="Açores">Açores</option><option value="Madeira">Madeira</option></select></div></div><div class="filter-card">
 <div class="filter-title">Plano / Destaque</div>
-<label class="filter-label"><input type="checkbox" id="f-premium" onchange="loadPros()"> <span>👑 Premium</span></label>
 <label class="filter-label"><input type="checkbox" id="f-pro" onchange="loadPros()"> <span>🚀 Pro</span></label>
 <label class="filter-label"><input type="checkbox" id="f-fast" onchange="loadPros()"> <span>⚡ Responde em menos de 1h</span></label>
 <label class="filter-label"><input type="checkbox" id="f-verified" onchange="loadPros()"> <span>✅ Verificados</span></label>
@@ -364,8 +363,7 @@ container.innerHTML=`<div class="loading-grid">${Array(6).fill(`<div class="skel
  const _verificado=!!document.getElementById('f-verified')?.checked
  const _sort=document.getElementById('sort-select')?.value||'plan'
  const _planos=[]
- if(document.getElementById('f-premium')?.checked)_planos.push('premium')
- if(document.getElementById('f-pro')?.checked)_planos.push('pro')
+  if(document.getElementById('f-pro')?.checked)_planos.push('pro','premium')
  const _rapido=!!document.getElementById('f-fast')?.checked
  const _pMin=document.getElementById('price-min')?.value,_pMax=document.getElementById('price-max')?.value
  // Quando qualquer filtro/ordenacao muda, volta a pagina 1 (mudar so de pagina nao mexe nesta chave).
@@ -455,7 +453,6 @@ function clearFilters(){
 filters.cat='';filters.loc='';filters.zona='';filters.q='';filters.minRating=0;filters.page=1
 document.getElementById('f-loc-select').value=''
 document.querySelectorAll('input[name="rating"]')[0].checked=true
-document.getElementById('f-premium').checked=false
 document.getElementById('f-pro').checked=false
 {const _ff=document.getElementById('f-fast');if(_ff)_ff.checked=false}
 document.getElementById('f-verified').checked=false

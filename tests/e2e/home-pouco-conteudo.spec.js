@@ -27,6 +27,24 @@ test('cartão de profissional sem bio mostra texto de apoio e não fica vazio', 
   expect(bios.filter((t) => /Perfil verificado pela equipa/.test(t))).toHaveLength(2);
 });
 
+test('sem pedidos recentes o cartão "Pedidos recentes" do topo desaparece em vez de dizer que não há nada', async ({ page }) => {
+  await abrir(page, [pro('1')]);
+  await expect(page.locator('.live-card')).toBeHidden();
+  await expect(page.locator('body')).not.toContainText('Ainda não há pedidos publicados');
+  await expect(page.locator('#avatarsRowText')).toHaveText('1 profissional verificado em Portugal');
+});
+
+test('perfis sem categoria não contam para o total nem aparecem na montra; os completos aparecem primeiro', async ({ page }) => {
+  await abrir(page, [
+    pro('1', { name: 'Sem Categoria', category: '' }),
+    pro('2', { name: 'Só Nome' }),
+    pro('3', { name: 'Completo', bio: 'Instalações elétricas em casas e empresas.', photo_url: 'https://x.pt/f.jpg' }),
+  ]);
+  await expect(page.locator('#avatarsRowText')).toHaveText('2 profissionais verificados em Portugal');
+  const nomes = await page.locator('#proGrid .pro-name').allTextContents();
+  expect(nomes).toEqual(['Completo', 'Só Nome']);
+});
+
 test('categorias sem profissionais mostram "Em breve"; com profissionais mostram a contagem', async ({ page }) => {
   await abrir(page, [pro('1'), pro('2')]);
   await expect(page.locator('.cat-tile[data-cat="Eletricistas"] .desc')).toHaveText('2 profissionais');

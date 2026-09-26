@@ -368,7 +368,6 @@
 
  <div class="filter-card">
  <div class="filter-title">Plano / Destaque</div>
- <label class="filter-label"><input type="checkbox" id="f-premium" onchange="loadPros()"> <span> Premium</span></label>
  <label class="filter-label"><input type="checkbox" id="f-pro" onchange="loadPros()"> <span> Pro</span></label>
 <label class="filter-label"><input type="checkbox" id="f-fast" onchange="loadPros()"> <span>⚡ Responde em menos de 1h</span></label>
  <label class="filter-label"><input type="checkbox" id="f-verified" onchange="loadPros()"> <span> Verificados</span></label>
@@ -568,8 +567,7 @@ async function loadPros(){
  const _verificado=!!document.getElementById('f-verified')?.checked
  const _sort=document.getElementById('sort-select')?.value||'plan'
  const _planos=[]
- if(document.getElementById('f-premium')?.checked)_planos.push('premium')
- if(document.getElementById('f-pro')?.checked)_planos.push('pro')
+  if(document.getElementById('f-pro')?.checked)_planos.push('pro','premium')
  const _rapido=!!document.getElementById('f-fast')?.checked
  const _pMin=document.getElementById('price-min')?.value,_pMax=document.getElementById('price-max')?.value
  // Quando qualquer filtro/ordenacao muda, volta a pagina 1 (mudar so de pagina nao mexe nesta chave).
@@ -676,7 +674,6 @@ function clearFilters(){
  filters.loc='';filters.q='';filters.minRating=0;filters.page=1
  document.getElementById('f-loc-select').value=''
  document.querySelectorAll('input[name="rating"]')[0].checked=true
- document.getElementById('f-premium').checked=false
  document.getElementById('f-pro').checked=false
 {const _ff=document.getElementById('f-fast');if(_ff)_ff.checked=false}
  document.getElementById('f-verified').checked=false
