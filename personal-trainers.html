@@ -360,7 +360,7 @@
  <div class="sidebar-cta">
  <h3>Não encontraste quem procuras?</h3>
  <p>Publica um pedido em personal trainers e deixa os profissionais virem até ti.</p>
- <a href="pedidos.html?cat=Personal%20Trainers">Publicar pedido</a>
+ <a href="pedidos.html?publicar=1&amp;cat=Personal%20Trainers">Publicar pedido</a>
  </div>
  <div class="filter-card">
 <div class="filter-title">Distrito</div>
@@ -631,7 +631,7 @@ async function loadPros(){
  if(error){container.innerHTML=`<p style="color:red;padding:20px">Erro: ${escapeHtml(error.message)}</p>`;return}
 
  if(!data||!data.length){
- container.innerHTML=`<div class="pros-list"><div class="empty-state"><h3>Nenhum profissional encontrado ainda</h3><p>Ainda não há personal trainers nesta zona. Publica um pedido grátis e os profissionais desta categoria candidatam-se a ti, ou experimenta outro distrito.</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><a href="pedidos.html?cat=Personal%20Trainers" class="btn btn-solid">Publicar pedido grátis</a><a href="categoria.html" class="btn btn-outline">Ver todos os profissionais</a></div></div></div>`
+ container.innerHTML=`<div class="pros-list"><div class="empty-state"><h3>Nenhum profissional encontrado ainda</h3><p>Ainda não há personal trainers nesta zona. Publica um pedido grátis e os profissionais desta categoria candidatam-se a ti, ou experimenta outro distrito.</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><a href="pedidos.html?publicar=1&amp;cat=Personal%20Trainers" class="btn btn-solid">Publicar pedido grátis</a><a href="categoria.html" class="btn btn-outline">Ver todos os profissionais</a></div></div></div>`
  document.getElementById('results-count').textContent='0 resultados'
  const tb0=document.getElementById('tb-count'); if(tb0)tb0.textContent='0 profissionais'
  document.getElementById('pagination').innerHTML=''
@@ -646,7 +646,7 @@ async function loadPros(){
  // filtro lateral, mais alto. Em vez de um espaço em branco, mostramos
  // aqui um cartão a convidar a publicar um pedido — reaproveita o
  // padding-gap normal da .pros-list por ser mais um item da mesma lista.
- const sparseNudge=total>0&&total<=2?`<div class="sparse-nudge"><div class="sparse-nudge-text"><h3>${total===1?'Só há 1 profissional':'Só há '+total+' profissionais'} nesta categoria por agora</h3><p>Publica um pedido grátis e sê dos primeiros a ser contactado assim que mais profissionais desta categoria se juntarem à Flinko.</p></div><a href="pedidos.html?cat=Personal%20Trainers" class="btn btn-solid">Publicar pedido grátis</a></div>`:''
+ const sparseNudge=total>0&&total<=2?`<div class="sparse-nudge"><div class="sparse-nudge-text"><h3>${total===1?'Só há 1 profissional':'Só há '+total+' profissionais'} nesta categoria por agora</h3><p>Publica um pedido grátis e sê dos primeiros a ser contactado assim que mais profissionais desta categoria se juntarem à Flinko.</p></div><a href="pedidos.html?publicar=1&amp;cat=Personal%20Trainers" class="btn btn-solid">Publicar pedido grátis</a></div>`:''
 
  container.innerHTML=`<div class="pros-list">${filtered.map(pro=>{
  const r=rMap[pro.id];const avg=r?(r.s/r.c).toFixed(1):null;const n=r?Math.round(r.s/r.c):0

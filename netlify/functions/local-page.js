@@ -107,7 +107,7 @@ exports.handler=async(event)=>{
     ?`${plural(total,'profissional','profissionais')} de ${servico.toLowerCase()} em ${placeName} na Flinko. Vê perfis, compara e contacta diretamente, sem comissões.`
     :`Ainda não há ${servico.toLowerCase()} em ${placeName} na Flinko. Publica um pedido grátis e os profissionais candidatam-se a ti.`
 
-  const pedidoUrl=`/pedidos.html?cat=${encodeURIComponent(servico)}`
+  const pedidoUrl=`/pedidos.html?publicar=1&amp;cat=${encodeURIComponent(servico)}`
   const faq=(cat.faq||[]).slice(0,4)
 
   const jsonLd=[

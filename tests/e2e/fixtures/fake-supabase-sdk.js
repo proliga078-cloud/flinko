@@ -121,10 +121,14 @@ window.supabase = {
           // testes que passavam sem exercer o caminho "não encontrado".
           maybeSingle() { this._singleMode = 'maybe'; return this; },
           single() { this._singleMode = 'strict'; return this; },
-          insert: async (row) => {
+          // Encadeável como o SDK real (insert(...).select('id').single()) e
+          // também "await"-ável diretamente. Devolve cfg().insertReturn (ou um
+          // id falso) e cfg().insertError, se definidos.
+          insert(row) {
             window.__insertCalls = window.__insertCalls || [];
             window.__insertCalls.push({ table, row });
-            return { data: null, error: null };
+            this._inserted = true;
+            return this;
           },
           update(patch) {
             // Não muta de facto `tableData` (seria uma query engine real) —
@@ -139,7 +143,11 @@ window.supabase = {
             const rows = scenario.data || [];
             const count = scenario.count != null ? scenario.count : rows.length;
             let result;
-            if (this._headOnly) {
+            if (this._inserted) {
+              result = cfg().insertError
+                ? { data: null, error: { message: cfg().insertError } }
+                : { data: this._singleMode ? (cfg().insertReturn || { id: 'fake-insert-id' }) : null, error: null };
+            } else if (this._headOnly) {
               result = { data: null, count, error: null };
             } else if (this._wantsCount) {
               result = { data: rows, count, error: null };

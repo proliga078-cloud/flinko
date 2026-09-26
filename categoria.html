@@ -287,7 +287,7 @@ Filtros
 <div class="sidebar-cta">
 <h3>Não encontraste quem procuras?</h3>
 <p id="sidebar-cta-text">Publica um pedido grátis e deixa os profissionais virem até ti.</p>
-<a href="pedidos.html" id="sidebar-cta-link">Publicar pedido</a>
+<a href="pedidos.html?publicar=1" id="sidebar-cta-link">Publicar pedido</a>
 </div>
 <div class="filter-card"><div class="filter-title">Distrito</div><div class="filter-group"><select class="range-input" id="f-loc-select" style="width:100%" onchange="filters.loc=this.value;loadPros()"><option value="">Todo o país</option><option value="Aveiro">Aveiro</option><option value="Beja">Beja</option><option value="Braga">Braga</option><option value="Bragança">Bragança</option><option value="Castelo Branco">Castelo Branco</option><option value="Coimbra">Coimbra</option><option value="Évora">Évora</option><option value="Faro">Faro</option><option value="Guarda">Guarda</option><option value="Leiria">Leiria</option><option value="Lisboa">Lisboa</option><option value="Portalegre">Portalegre</option><option value="Porto">Porto</option><option value="Santarém">Santarém</option><option value="Setúbal">Setúbal</option><option value="Viana do Castelo">Viana do Castelo</option><option value="Vila Real">Vila Real</option><option value="Viseu">Viseu</option><option value="Açores">Açores</option><option value="Madeira">Madeira</option></select></div></div><div class="filter-card">
 <div class="filter-title">Plano / Destaque</div>
@@ -368,7 +368,7 @@ document.getElementById('page-desc').textContent=desc
 document.getElementById('sidebar-cta-text').textContent=cat
 ?`Publica um pedido em ${cat} e deixa os profissionais virem até ti.`
 :'Publica um pedido grátis e deixa os profissionais virem até ti.'
-document.getElementById('sidebar-cta-link').href='pedidos.html'+(cat?`?cat=${encodeURIComponent(cat)}`:'')
+document.getElementById('sidebar-cta-link').href='pedidos.html?publicar=1'+(cat?`&cat=${encodeURIComponent(cat)}`:'')
 }
 
 function setCat(cat){
