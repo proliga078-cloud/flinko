@@ -20,6 +20,11 @@
 [functions."weather-alert"]
   schedule = "0 6 * * *"
 
+# A pagina de perfil servida com o essencial ja no HTML (ver
+# netlify/functions/profile-page.js) le o profile.html do proprio deploy.
+[functions."profile-page"]
+  included_files = ["profile.html"]
+
 # Sitemap dinamico dos perfis de profissionais (netlify/functions/sitemap-profiles.js).
 # Gerado a pedido a partir da base de dados, porque perfis sao criados/
 # atualizados todos os dias — um sitemap estatico ficaria desatualizado.
@@ -29,6 +34,24 @@
   from = "/sitemap-profiles.xml"
   to = "/.netlify/functions/sitemap-profiles"
   status = 200
+
+# Perfis abertos por id (a maioria: o link proprio /o-nome-dele e so do
+# Pro). Passam pela mesma funcao que os perfis com link proprio, para o
+# titulo, a descricao, a imagem de partilha e os dados estruturados virem ja
+# no HTML. force=true porque profile.html existe como ficheiro.
+[[redirects]]
+  from = "/profile.html"
+  query = {id = ":id"}
+  to = "/.netlify/functions/profile-page?id=:id"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/profile"
+  query = {id = ":id"}
+  to = "/.netlify/functions/profile-page?id=:id"
+  status = 200
+  force = true
 
 # Pagina antiga para profissionais (fase de lancamento) — substituida por
 # /profissionais. Redirect permanente para nao perder links nem o Google.
@@ -74,7 +97,8 @@
   to = "/academia.html"
   status = 301
 
-# Link proprio dos profissionais Pro: flinko.pt/o-nome-dele
+# Link proprio dos profissionais Pro: flinko.pt/o-nome-dele (servido pela
+# funcao profile-page, que devolve 404 a caminhos que nao sao de ninguem).
 # Esta regra e a ULTIMA de proposito. O Netlify serve sempre os ficheiros
 # reais primeiro, por isso /pricing, /eletricistas e companhia continuam a
 # funcionar; so os caminhos que nao correspondem a nada e que chegam aqui.
@@ -82,7 +106,7 @@
 # ninguem consiga registar um slug que colida com elas.
 [[redirects]]
   from = "/:slug"
-  to = "/profile.html?u=:slug"
+  to = "/.netlify/functions/profile-page/:slug"
   status = 200
   force = false
 

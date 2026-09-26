@@ -559,7 +559,8 @@ async function resolveSlug(){
 // título/descrição em todos os perfis, e a partilha no WhatsApp/redes
 // sociais nunca mostrava o nome nem a foto do profissional certo).
 function updateSeoTags(pro){
-  const titulo=`${pro.name} – Flinko`
+  // Mesmo formato que netlify/functions/profile-page.js escreve no servidor.
+  const titulo=`${pro.name} – ${pro.category||'Profissional'}${pro.location?` em ${pro.location}`:''} | Flinko`
   const descricao=pro.bio
     ?pro.bio.replace(/\s+/g,' ').trim().slice(0,155)
     :`Perfil de ${pro.category||'profissional'} em ${pro.location||'Portugal'}. Contacta diretamente pela Flinko.`
@@ -578,8 +579,9 @@ function updateSeoTags(pro){
 
 function injectStructuredData(pro){
     try{
-          const existing=document.getElementById('structured-data-ld')
-                if(existing) existing.remove()
+          // Se o servidor já escreveu os dados estruturados (com avaliações e
+          // serviços, ver profile-page.js), ficam esses, que são mais completos.
+          if(document.getElementById('structured-data-ld')) return
                       const url=pro.slug?`https://flinko.pt/${encodeURIComponent(pro.slug)}`:`https://flinko.pt/profile.html?id=${pro.id}`
                             const data={
                                     "@context":"https://schema.org",
@@ -620,8 +622,8 @@ async function init(){
   }
   proData=pro
   applyThemeColor(pro)
-  document.title=`${pro.name} – Flinko`
   updateSeoTags(pro)
+  document.title=document.getElementById('meta-og-title').getAttribute('content')
   injectStructuredData(pro)
 renderHeader(pro)
   document.getElementById('content-grid').style.display='grid'
