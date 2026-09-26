@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Porquê a Flinko? – Vantagens e Confiança</title>
 <link rel="canonical" href="https://flinko.pt/porque-escolher.html"/>
-<meta name="description" content="Descobre porque milhares de portugueses escolhem a Flinko para encontrar profissionais de confiança. Verificação, avaliações reais e contacto direto."/>
+<meta name="description" content="Descobre porque escolher a Flinko para encontrar profissionais de confiança. Verificação, avaliações reais e contacto direto."/>
 <meta name="robots" content="index, follow"/>
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
@@ -149,33 +149,49 @@ footer{background:var(--text);color:rgba(255,255,255,.6);padding:44px 5% 26px}
 <meta name="twitter:title" content="Porquê a Flinko? – Vantagens e Confiança"/>
 <meta name="twitter:description" content="Verificação manual, sem comissões por trabalho fechado, profissionais em todo o país."/>
 <meta name="twitter:image" content="https://flinko.pt/assets/og-image.png"/>
+<!-- fk:head -->
+<link rel="stylesheet" href="/assets/site.css" />
+<script src="/assets/site-header.js" defer></script>
+<!-- /fk:head -->
 </head>
 <body>
 
-<nav>
-<a href="index.html" class="logo">Flink<em>o</em></a>
-<div class="navlinks">
-<a href="categoria.html"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> Encontrar profissional</a>
-<a href="como-funciona.html"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> Como Funciona</a>
-<a href="porque-escolher.html" style="color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg> Porquê a Flinko</a>
-<a href="pricing.html"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Preços</a>
-<a href="pedidos.html"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg> Pedidos</a>
+<!-- fk:header -->
+<div class="fk-header" id="fkHeader" role="banner">
+  <div class="fk-bar">
+    <a href="/" class="fk-logo" aria-label="Flinko — página inicial">Flink<span>o</span></a>
+    <div class="fk-links" role="navigation" aria-label="Navegação principal">
+      <a href="/categoria">Encontrar</a>
+      <a href="/pedidos">Pedidos</a>
+      <a href="/como-funciona">Como funciona</a>
+      <a href="/pricing">Preços</a>
+      <a href="/profissionais">Para profissionais</a>
+      <a href="/academia">Academia</a>
+    </div>
+    <div class="fk-actions">
+      <div id="nav-guest" class="fk-group">
+        <a href="/auth?tab=login" class="fk-btn fk-btn-ghost fk-hide-sm">Entrar</a>
+        <a href="/auth?tab=register" class="fk-btn fk-btn-dark">Criar conta grátis</a>
+      </div>
+      <div id="nav-user" class="fk-group" style="display:none">
+        <a href="/dashboard" class="fk-btn fk-btn-dark">O meu painel</a>
+        <a href="/dashboard" class="fk-avatar" id="nav-avatar" aria-label="O meu painel">?</a>
+      </div>
+      <button type="button" class="fk-toggle" id="fkToggle" aria-expanded="false" aria-controls="fkPanel" aria-label="Abrir menu"><span></span></button>
+    </div>
+  </div>
+  <div class="fk-panel" id="fkPanel" hidden>
+    <a href="/categoria">Encontrar</a>
+    <a href="/pedidos">Pedidos</a>
+    <a href="/como-funciona">Como funciona</a>
+    <a href="/pricing">Preços</a>
+    <a href="/profissionais">Para profissionais</a>
+    <a href="/academia">Academia</a>
+    <a href="/calculadora-orcamento">Calculadora de orçamento</a>
+    <a href="/auth?tab=login">Entrar</a>
+  </div>
 </div>
-<div class="navcta">
-<div id="nav-guest" style="display:flex;gap:8px">
-<a href="auth.html?tab=login" class="btn btn-ghost">Entrar</a>
-<a href="auth.html?tab=register" class="btn btn-ink">Registar</a>
-</div>
-<div id="nav-user" style="display:none;align-items:center;gap:8px">
-<a href="dashboard.html" class="btn btn-ghost">Dashboard</a>
-</div>
-</div><button class="hamburger-btn" aria-label="Abrir menu" onclick="toggleMobileNav()"><svg class="ic" viewBox="0 0 24 24" style="width:20px;height:20px"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-</nav>
-<div class="mobile-nav-panel" id="mobile-nav-panel"><a href="categoria.html"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> Encontrar profissional</a>
-<a href="como-funciona.html"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> Como Funciona</a>
-<a href="porque-escolher.html" style="color:var(--blue)"><svg class="ic" viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4.5 2 7L12 16l-6.5 4.5 2-7L2 9h7z"/></svg> Porquê a Flinko</a>
-<a href="pricing.html"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Preços</a>
-<a href="pedidos.html"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg> Pedidos</a></div>
+<!-- /fk:header -->
 
 <div class="hero">
 <div class="hero-badge">📍 Portugal · Perfis verificados</div>

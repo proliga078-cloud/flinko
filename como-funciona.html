@@ -231,34 +231,49 @@ footer{background:var(--surface);border-top:1px solid var(--line)}
 <meta name="twitter:title" content="Como Funciona – Flinko"/>
 <meta name="twitter:description" content="Como funciona a Flinko: pede orçamento, compara profissionais verificados e contrata com confiança."/>
 <meta name="twitter:image" content="https://flinko.pt/assets/og-image.png"/>
+<!-- fk:head -->
+<link rel="stylesheet" href="/assets/site.css" />
+<script src="/assets/site-header.js" defer></script>
+<!-- /fk:head -->
 </head>
 <body>
 
-<nav>
-<a href="index.html" class="logo">Flink<em>o</em></a>
-<div class="navlinks">
-<a href="categoria.html"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Encontrar</a>
-<a href="pedidos.html"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg>Pedidos</a>
-<a href="pricing.html"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Preços</a>
-<a href="profissionais.html"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Para Profissionais</a>
-<a href="academia.html"><svg class="ic" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/></svg>Academia</a>
+<!-- fk:header -->
+<div class="fk-header" id="fkHeader" role="banner">
+  <div class="fk-bar">
+    <a href="/" class="fk-logo" aria-label="Flinko — página inicial">Flink<span>o</span></a>
+    <div class="fk-links" role="navigation" aria-label="Navegação principal">
+      <a href="/categoria">Encontrar</a>
+      <a href="/pedidos">Pedidos</a>
+      <a href="/como-funciona" aria-current="page">Como funciona</a>
+      <a href="/pricing">Preços</a>
+      <a href="/profissionais">Para profissionais</a>
+      <a href="/academia">Academia</a>
+    </div>
+    <div class="fk-actions">
+      <div id="nav-guest" class="fk-group">
+        <a href="/auth?tab=login" class="fk-btn fk-btn-ghost fk-hide-sm">Entrar</a>
+        <a href="/auth?tab=register" class="fk-btn fk-btn-dark">Criar conta grátis</a>
+      </div>
+      <div id="nav-user" class="fk-group" style="display:none">
+        <a href="/dashboard" class="fk-btn fk-btn-dark">O meu painel</a>
+        <a href="/dashboard" class="fk-avatar" id="nav-avatar" aria-label="O meu painel">?</a>
+      </div>
+      <button type="button" class="fk-toggle" id="fkToggle" aria-expanded="false" aria-controls="fkPanel" aria-label="Abrir menu"><span></span></button>
+    </div>
+  </div>
+  <div class="fk-panel" id="fkPanel" hidden>
+    <a href="/categoria">Encontrar</a>
+    <a href="/pedidos">Pedidos</a>
+    <a href="/como-funciona" aria-current="page">Como funciona</a>
+    <a href="/pricing">Preços</a>
+    <a href="/profissionais">Para profissionais</a>
+    <a href="/academia">Academia</a>
+    <a href="/calculadora-orcamento">Calculadora de orçamento</a>
+    <a href="/auth?tab=login">Entrar</a>
+  </div>
 </div>
-<div class="nav-live"><span class="live-dot"></span> <b>22+</b> profissionais ativos agora</div>
-<div class="navcta">
-<div id="nav-guest" style="display:flex;gap:8px">
-<a href="auth.html?tab=login" class="btn btn-ghost">Entrar</a>
-<a href="auth.html?tab=register" class="btn btn-fresh">Registar</a>
-</div>
-<div class="nav-user" id="nav-user">
-<a href="dashboard.html" class="btn btn-ghost" id="nav-dashboard-link">Dashboard</a>
-</div>
-</div><button class="hamburger-btn" aria-label="Abrir menu" onclick="toggleMobileNav()"><svg class="ic" viewBox="0 0 24 24" style="width:20px;height:20px"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-</nav>
-<div class="mobile-nav-panel" id="mobile-nav-panel"><a href="categoria.html"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> Encontrar</a>
-<a href="pedidos.html"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-3-8-8-3z"/></svg> Pedidos</a>
-<a href="pricing.html"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Preços</a>
-<a href="profissionais.html"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg> Para Profissionais</a>
-<a href="academia.html"><svg class="ic" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/></svg> Academia</a></div>
+<!-- /fk:header -->
 
 <div class="page-hero">
 <div class="blob-field"><div class="blob" style="width:340px;height:340px;background:var(--fresh-soft);top:-100px;right:2%;opacity:.7"></div><div class="blob" style="width:240px;height:240px;background:var(--accent-soft);bottom:-60px;left:-4%;opacity:.6;animation-delay:1.5s"></div></div>
@@ -285,24 +300,24 @@ footer{background:var(--surface);border-top:1px solid var(--line)}
 <div class="page-hero-photo">
 <div class="php-sticker">✓ Verificado</div>
 <div class="php-card"><img src="/assets/hero-handshake.jpg" alt="Profissional e cliente a cumprimentarem-se à porta"/></div>
-<div class="php-badge"><span class="live-dot" style="position:relative;width:8px;height:8px;border-radius:50%;background:var(--fresh);flex-shrink:0"></span><span>22+ profissionais ativos agora</span></div>
+<div class="php-badge"><span class="live-dot" style="position:relative;width:8px;height:8px;border-radius:50%;background:var(--fresh);flex-shrink:0"></span><span>Perfis verificados à mão pela equipa</span></div>
 </div>
 </div>
 <div class="page-hero-bottom">
 <div class="ticker-strip">
 <div class="ticker-track">
-<div class="tick-item"><span class="dot"></span>Pedido de <strong>eletricista</strong> publicado · Braga · há 4 min</div>
-<div class="tick-item"><span class="dot"></span>Perfil <strong>verificado</strong> · Canalizador · Porto</div>
-<div class="tick-item"><span class="dot"></span>Nova <strong>mensagem</strong> enviada · há 2 min</div>
-<div class="tick-item"><span class="dot"></span>Orçamento de <strong>pintura</strong> pedido · Coimbra</div>
-<div class="tick-item"><span class="dot"></span>Cliente <strong>contratou</strong> · Limpeza · Faro</div>
-<div class="tick-item"><span class="dot"></span>Novo <strong>profissional</strong> registado · Aveiro</div>
-<div class="tick-item"><span class="dot"></span>Pedido de <strong>eletricista</strong> publicado · Braga · há 4 min</div>
-<div class="tick-item"><span class="dot"></span>Perfil <strong>verificado</strong> · Canalizador · Porto</div>
-<div class="tick-item"><span class="dot"></span>Nova <strong>mensagem</strong> enviada · há 2 min</div>
-<div class="tick-item"><span class="dot"></span>Orçamento de <strong>pintura</strong> pedido · Coimbra</div>
-<div class="tick-item"><span class="dot"></span>Cliente <strong>contratou</strong> · Limpeza · Faro</div>
-<div class="tick-item"><span class="dot"></span>Novo <strong>profissional</strong> registado · Aveiro</div>
+<div class="tick-item"><span class="dot"></span><strong>Grátis</strong> para clientes</div>
+<div class="tick-item"><span class="dot"></span><strong>0%</strong> de comissão sobre os trabalhos</div>
+<div class="tick-item"><span class="dot"></span>Perfis <strong>verificados</strong> à mão</div>
+<div class="tick-item"><span class="dot"></span>Contacto <strong>direto</strong> com o profissional</div>
+<div class="tick-item"><span class="dot"></span>Pedidos de orçamento <strong>sem compromisso</strong></div>
+<div class="tick-item"><span class="dot"></span>Profissionais de <strong>todo o país</strong></div>
+<div class="tick-item"><span class="dot"></span><strong>Grátis</strong> para clientes</div>
+<div class="tick-item"><span class="dot"></span><strong>0%</strong> de comissão sobre os trabalhos</div>
+<div class="tick-item"><span class="dot"></span>Perfis <strong>verificados</strong> à mão</div>
+<div class="tick-item"><span class="dot"></span>Contacto <strong>direto</strong> com o profissional</div>
+<div class="tick-item"><span class="dot"></span>Pedidos de orçamento <strong>sem compromisso</strong></div>
+<div class="tick-item"><span class="dot"></span>Profissionais de <strong>todo o país</strong></div>
 </div>
 </div>
 </div>

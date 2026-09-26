@@ -202,23 +202,50 @@ footer{background:var(--dark);color:rgba(255,255,255,.7);padding:48px 0 28px;fon
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
 </style>
+<!-- fk:head -->
+<link rel="stylesheet" href="/assets/site.css" />
+<script src="/assets/site-header.js" defer></script>
+<!-- /fk:head -->
 </head>
 <body>
 
 <div class="promo">Estás a ver a área para <b>profissionais</b> · Procuras um profissional? <a href="index.html">Vai para a página de clientes</a></div>
-<nav><div class="wrap">
-<a href="index.html" class="logo">Flink<em>o</em></a><span class="ptag">PARA PROFISSIONAIS</span>
-<ul>
-<li><a href="#funcionalidades">Funcionalidades</a></li>
-<li><a href="pricing.html">Preços</a></li>
-<li><a href="pedidos.html">Pedidos de clientes</a></li>
-<li><a href="index.html" class="cli">&larr; Sou cliente</a></li>
-</ul>
-<div class="r">
-<a href="auth.html?tab=login" class="nb l" id="nav-login" style="border:1.5px solid rgba(255,255,255,.3);color:#fff">Entrar</a>
-<a href="auth.html?tab=register" class="nb" style="background:var(--orange);color:#fff">Criar perfil grátis</a>
+<!-- fk:header -->
+<div class="fk-header" id="fkHeader" role="banner">
+  <div class="fk-bar">
+    <a href="/" class="fk-logo" aria-label="Flinko — página inicial">Flink<span>o</span></a>
+    <div class="fk-links" role="navigation" aria-label="Navegação principal">
+      <a href="/categoria">Encontrar</a>
+      <a href="/pedidos">Pedidos</a>
+      <a href="/como-funciona">Como funciona</a>
+      <a href="/pricing">Preços</a>
+      <a href="/profissionais" aria-current="page">Para profissionais</a>
+      <a href="/academia">Academia</a>
+    </div>
+    <div class="fk-actions">
+      <div id="nav-guest" class="fk-group">
+        <a href="/auth?tab=login" class="fk-btn fk-btn-ghost fk-hide-sm">Entrar</a>
+        <a href="/auth?tab=register" class="fk-btn fk-btn-dark">Criar conta grátis</a>
+      </div>
+      <div id="nav-user" class="fk-group" style="display:none">
+        <a href="/dashboard" class="fk-btn fk-btn-dark">O meu painel</a>
+        <a href="/dashboard" class="fk-avatar" id="nav-avatar" aria-label="O meu painel">?</a>
+      </div>
+      <button type="button" class="fk-toggle" id="fkToggle" aria-expanded="false" aria-controls="fkPanel" aria-label="Abrir menu"><span></span></button>
+    </div>
+  </div>
+  <div class="fk-panel" id="fkPanel" hidden>
+    <a href="/categoria">Encontrar</a>
+    <a href="/pedidos">Pedidos</a>
+    <a href="/como-funciona">Como funciona</a>
+    <a href="/pricing">Preços</a>
+    <a href="/profissionais" aria-current="page">Para profissionais</a>
+    <a href="/academia">Academia</a>
+    <a href="/calculadora-orcamento">Calculadora de orçamento</a>
+    <a href="/auth?tab=login">Entrar</a>
+  </div>
 </div>
-</div></nav>
+<!-- /fk:header -->
 
 <header class="hero">
 <div class="wrap">
@@ -410,8 +437,9 @@ async function init(){
 try{
 const{data:{session}}=await db.auth.getSession()
 if(session){
-const l=document.getElementById('nav-login')
-if(l){l.textContent='Dashboard';l.href='dashboard.html'}
+const g=document.getElementById('nav-guest'),u=document.getElementById('nav-user')
+if(g)g.style.display='none'
+if(u)u.style.display='flex'
 }
 }catch(e){}
 }

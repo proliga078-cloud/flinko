@@ -36,7 +36,7 @@ function emailHtml(text){
 <div style="max-width:520px;margin:0 auto;padding:28px 20px">
   <div style="font-size:20px;font-weight:800;color:#14181F;margin-bottom:22px">Flink<span style="color:#E8720A">o</span></div>
   <div style="background:#fff;border-radius:14px;padding:26px;box-shadow:0 2px 12px rgba(20,24,31,.06)">${body}</div>
-  <p style="font-size:12px;color:#707580;text-align:center;margin-top:20px;line-height:1.6">Recebeste este email porque tens uma conta profissional na Flinko.<br/>Para deixares de receber emails da Flinko, desliga os avisos por email no teu <a href="${SITE}/dashboard.html" style="color:#1E4FD6">dashboard</a> ou responde a esta mensagem com PARAR.</p>
+  <p style="font-size:12px;color:#707580;text-align:center;margin-top:20px;line-height:1.6">Recebeste este email porque tens uma conta profissional na Flinko.<br/>Para deixares de receber emails da Flinko, desliga os avisos por email no teu <a href="${SITE}/dashboard.html" style="color:#B85608">dashboard</a> ou responde a esta mensagem com PARAR.</p>
 </div></body></html>`
 }
 

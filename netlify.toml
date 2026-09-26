@@ -1,11 +1,11 @@
 [build]
   publish = "."
-  # Regenera as paginas de categoria (eletricistas.html, canalizadores.html,
+  # Aplica o cabecalho unico (scripts/site-header.js) e regenera as paginas de categoria (eletricistas.html, canalizadores.html,
   # etc.) a partir de templates/categoria.template.html + scripts/categories-data.json
   # antes de cada deploy. So mexas nesses dois ficheiros para mudar conteudo
   # de categorias — nao edites as paginas .html diretamente, sao geradas e
   # o proximo deploy sobrescreve-as. Ver scripts/build-categories.js.
-  command = "node scripts/build-categories.js"
+  command = "npm run build"
 
 [functions]
   directory = "netlify/functions"

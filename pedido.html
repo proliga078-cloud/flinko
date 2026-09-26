@@ -139,24 +139,49 @@ nav{flex-wrap:wrap;height:auto;padding:10px 4%;row-gap:8px}
 .lightbox-thumb.active{border-color:var(--fresh-light);opacity:1}
 .lightbox-thumb img{width:100%;height:100%;object-fit:cover}
 </style>
+<!-- fk:head -->
+<link rel="stylesheet" href="/assets/site.css" />
+<script src="/assets/site-header.js" defer></script>
+<!-- /fk:head -->
 </head>
 <body>
 
-<nav>
-<a href="index.html" class="logo">Flink<span>o</span></a>
-<div class="nav-right">
-<a href="categoria.html" class="btn btn-ghost">🛠️ Profissionais</a>
-<a href="pedidos.html" class="btn btn-ghost">📢 Pedidos</a>
-<div id="nav-guest" style="display:flex;gap:8px">
-<a href="auth.html?tab=login" class="btn btn-ghost">Entrar</a>
-<a href="auth.html?tab=register" class="btn btn-solid">Registar</a>
+<!-- fk:header -->
+<div class="fk-header" id="fkHeader" role="banner">
+  <div class="fk-bar">
+    <a href="/" class="fk-logo" aria-label="Flinko — página inicial">Flink<span>o</span></a>
+    <div class="fk-links" role="navigation" aria-label="Navegação principal">
+      <a href="/categoria">Encontrar</a>
+      <a href="/pedidos" aria-current="page">Pedidos</a>
+      <a href="/como-funciona">Como funciona</a>
+      <a href="/pricing">Preços</a>
+      <a href="/profissionais">Para profissionais</a>
+      <a href="/academia">Academia</a>
+    </div>
+    <div class="fk-actions">
+      <div id="nav-guest" class="fk-group">
+        <a href="/auth?tab=login" class="fk-btn fk-btn-ghost fk-hide-sm">Entrar</a>
+        <a href="/auth?tab=register" class="fk-btn fk-btn-dark">Criar conta grátis</a>
+      </div>
+      <div id="nav-user" class="fk-group" style="display:none">
+        <a href="/dashboard" class="fk-btn fk-btn-dark">O meu painel</a>
+        <a href="/dashboard" class="fk-avatar" id="nav-avatar" aria-label="O meu painel">?</a>
+      </div>
+      <button type="button" class="fk-toggle" id="fkToggle" aria-expanded="false" aria-controls="fkPanel" aria-label="Abrir menu"><span></span></button>
+    </div>
+  </div>
+  <div class="fk-panel" id="fkPanel" hidden>
+    <a href="/categoria">Encontrar</a>
+    <a href="/pedidos" aria-current="page">Pedidos</a>
+    <a href="/como-funciona">Como funciona</a>
+    <a href="/pricing">Preços</a>
+    <a href="/profissionais">Para profissionais</a>
+    <a href="/academia">Academia</a>
+    <a href="/calculadora-orcamento">Calculadora de orçamento</a>
+    <a href="/auth?tab=login">Entrar</a>
+  </div>
 </div>
-<div id="nav-user" style="display:none;align-items:center;gap:8px">
-<a href="dashboard.html" class="btn btn-outline">Dashboard</a>
-<div class="nav-avatar" id="nav-avatar" onclick="location.href='dashboard.html'">?</div>
-</div>
-</div>
-</nav>
+<!-- /fk:header -->
 
 <div class="wrap">
 <a href="pedidos.html" class="back-link">← Voltar aos pedidos</a>

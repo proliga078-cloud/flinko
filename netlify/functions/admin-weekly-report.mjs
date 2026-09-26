@@ -62,7 +62,7 @@ export function html(r) {
 <h3 style="margin:0 0 8px;font-size:15px">Números</h3><ul style="margin:0 0 16px;padding-left:18px">${li(r.numeros.map(n => n.texto))}</ul>
 <h3 style="margin:0 0 8px;font-size:15px">Por tratar</h3>${r.pendentes.length ? `<ul style="margin:0 0 16px;padding-left:18px">${li(r.pendentes)}</ul>` : '<p style="margin:0 0 16px">Nada pendente. 🎉</p>'}
 <p style="margin:0 0 16px;color:#707580">${r.acoes} ação(ões) de administração registadas esta semana.</p>
-<a href="${SITE}/admin" style="display:inline-block;background:#1E4FD6;color:#fff;font-weight:700;text-decoration:none;padding:11px 20px;border-radius:9px">Abrir o painel</a>
+<a href="${SITE}/admin" style="display:inline-block;background:#E8720A;color:#fff;font-weight:700;text-decoration:none;padding:11px 20px;border-radius:9px">Abrir o painel</a>
 </div></div></body></html>`
 }
 

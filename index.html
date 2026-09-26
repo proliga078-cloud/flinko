@@ -942,6 +942,10 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
 </style>
 <script src="/assets/cookie-consent.js" defer></script>
 <script src="/assets/public-chat-widget.js" defer></script>
+<!-- fk:head -->
+<link rel="stylesheet" href="/assets/site.css" />
+<script src="/assets/site-header.js" defer></script>
+<!-- /fk:head -->
 </head>
 <body>
 <a class="skip-link" href="#main">Saltar para o conteúdo</a>
@@ -955,36 +959,42 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   </div>
 </div>
 
-<header id="siteHeader">
-  <div class="wrap nav">
-    <a href="/" class="logo">Flink<span>o</span></a>
-    <nav class="nav-links" aria-label="Navegação principal">
+<!-- fk:header -->
+<div class="fk-header" id="fkHeader" role="banner">
+  <div class="fk-bar">
+    <a href="/" class="fk-logo" aria-label="Flinko — página inicial">Flink<span>o</span></a>
+    <div class="fk-links" role="navigation" aria-label="Navegação principal">
       <a href="/categoria">Encontrar</a>
       <a href="/pedidos">Pedidos</a>
+      <a href="/como-funciona">Como funciona</a>
       <a href="/pricing">Preços</a>
-      <a href="/profissionais">Para Profissionais</a>
+      <a href="/profissionais">Para profissionais</a>
       <a href="/academia">Academia</a>
-      <a href="/calculadora-orcamento">Calculadora</a>
-    </nav>
-    <div class="nav-actions">
-      <a href="/dashboard" class="btn btn-ghost btn-sm">Dashboard</a>
-      <a href="/auth?tab=register" class="btn btn-dark btn-sm">Criar conta grátis</a>
-      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mobilePanel" aria-label="Abrir menu">
-        <span></span>
-      </button>
+    </div>
+    <div class="fk-actions">
+      <div id="nav-guest" class="fk-group">
+        <a href="/auth?tab=login" class="fk-btn fk-btn-ghost fk-hide-sm">Entrar</a>
+        <a href="/auth?tab=register" class="fk-btn fk-btn-dark">Criar conta grátis</a>
+      </div>
+      <div id="nav-user" class="fk-group" style="display:none">
+        <a href="/dashboard" class="fk-btn fk-btn-dark">O meu painel</a>
+        <a href="/dashboard" class="fk-avatar" id="nav-avatar" aria-label="O meu painel">?</a>
+      </div>
+      <button type="button" class="fk-toggle" id="fkToggle" aria-expanded="false" aria-controls="fkPanel" aria-label="Abrir menu"><span></span></button>
     </div>
   </div>
-  <div class="mobile-panel" id="mobilePanel">
-    <a href="/categoria">Encontrar profissional</a>
+  <div class="fk-panel" id="fkPanel" hidden>
+    <a href="/categoria">Encontrar</a>
     <a href="/pedidos">Pedidos</a>
+    <a href="/como-funciona">Como funciona</a>
     <a href="/pricing">Preços</a>
-    <a href="/profissionais">Para Profissionais</a>
+    <a href="/profissionais">Para profissionais</a>
     <a href="/academia">Academia</a>
-    <a href="/calculadora-orcamento">Calculadora</a>
-    <a href="/dashboard">Dashboard</a>
-    <a href="/auth?tab=register" class="btn btn-orange">Criar conta grátis</a>
+    <a href="/calculadora-orcamento">Calculadora de orçamento</a>
+    <a href="/auth?tab=login">Entrar</a>
   </div>
-</header>
+</div>
+<!-- /fk:header -->
 
 <main id="main">
 
@@ -1483,12 +1493,6 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
 <script>
 (function(){
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  var toggle = document.getElementById('navToggle');
-  toggle.addEventListener('click', function(){
-    var open = document.body.classList.toggle('menu-open');
-    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-  });
 
   requestAnimationFrame(function(){
     setTimeout(function(){

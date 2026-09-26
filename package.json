@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "build": "node scripts/build-site-header.js && node scripts/build-categories.js",
     "build:categories": "node scripts/build-categories.js",
     "check": "node scripts/check-syntax.js && node scripts/check-migrations.js",
     "test:unit": "node --test \"tests/functions/**/*.test.js\"",
