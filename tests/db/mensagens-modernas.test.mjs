@@ -8,7 +8,7 @@ import { PGlite } from '@electric-sql/pglite'
 import fs from 'node:fs'
 import assert from 'node:assert/strict'
 
-const MIGRATION = new URL('../../supabase/migrations/20260927140000_mensagens_modernas.sql', import.meta.url)
+const MIGRATION = new URL('../../supabase/migrations/20260927152441_mensagens_modernas.sql', import.meta.url)
 
 test('migração mensagens_modernas: fotos privadas, respostas, visto e reações', async () => {
   const db = new PGlite()
