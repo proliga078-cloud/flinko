@@ -76,6 +76,12 @@ window.supabase = {
           getPublicUrl: (path) => ({
             data: { publicUrl: 'https://fake.supabase.co/storage/v1/object/public/' + path },
           }),
+          // Links temporários (fotos privadas das mensagens): cfg().signedUrls
+          // pode mapear caminho -> URL; por omissão devolve um URL falso.
+          createSignedUrls: async (paths) => ({
+            data: paths.map((p) => ({ path: p, signedUrl: (cfg().signedUrls || {})[p] || 'https://fake.supabase.co/signed/' + p, error: null })),
+            error: null,
+          }),
         }),
       },
       rpc: async (fnName, args) => {
@@ -128,6 +134,17 @@ window.supabase = {
             window.__insertCalls = window.__insertCalls || [];
             window.__insertCalls.push({ table, row });
             this._inserted = true;
+            return this;
+          },
+          upsert(row, opts) {
+            window.__upsertCalls = window.__upsertCalls || [];
+            window.__upsertCalls.push({ table, row, opts });
+            this._inserted = true;
+            return this;
+          },
+          delete() {
+            window.__deleteCalls = window.__deleteCalls || [];
+            window.__deleteCalls.push({ table });
             return this;
           },
           update(patch) {

@@ -31,6 +31,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--ink);bac
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
+[hidden]{display:none!important}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 
@@ -71,7 +72,7 @@ img{display:block;max-width:100%}
 .conv-prev{flex:1;font-size:.86rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:4px;min-width:0}
 .conv-prev .txt{overflow:hidden;text-overflow:ellipsis}
 .conv.unread .conv-prev{color:var(--ink);font-weight:600}
-.conv-prev.typing{color:var(--mint);font-weight:600}
+.conv-prev.is-typing{color:var(--mint);font-weight:600}
 .badge{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--mint);color:#fff;font-size:.72rem;font-weight:800;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
 .list-empty{padding:48px 28px;text-align:center;color:var(--muted);line-height:1.6}
 .list-empty strong{display:block;color:var(--ink);font-size:1.05rem;margin-bottom:6px}
@@ -110,7 +111,7 @@ img{display:block;max-width:100%}
 .empty-chat .big{width:84px;height:84px;border-radius:24px;background:var(--white);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px -12px rgba(19,36,32,.3)}
 .empty-chat h2{color:var(--ink);font-size:1.15rem}
 .older{display:block;margin:4px auto 10px;font-size:.8rem;color:var(--muted)}
-.day{display:flex;justify-content:center;margin:14px 0 8px;position:sticky;top:4px;z-index:1}
+.day{display:flex;justify-content:center;margin:14px 0 8px}
 .day span{background:rgba(255,255,255,.92);color:var(--muted);font-size:.74rem;font-weight:700;padding:5px 12px;border-radius:10px;box-shadow:0 1px 2px rgba(19,36,32,.08)}
 .intro{max-width:360px;margin:10px auto 16px;text-align:center;background:#FFF6E8;color:#7A4A10;font-size:.8rem;line-height:1.5;padding:10px 14px;border-radius:12px}
 
@@ -512,7 +513,7 @@ function renderList(){
     return '<button class="conv'+(act?' active':'')+(c.unread?' unread':'')+'" role="listitem" onclick="openConv(\''+(c.id||'draft')+'\')">'+
       avatarHtml(c.other)+
       '<span class="conv-body"><span class="conv-l1"><span class="conv-name">'+esc(c.other.name)+'</span><span class="conv-time">'+listTime(c.last_message_at)+'</span></span>'+
-      '<span class="conv-l2"><span class="conv-prev'+(typing?' typing':'')+'">'+prev+'</span>'+(c.unread?'<span class="badge" aria-label="'+c.unread+' por ler">'+c.unread+'</span>':'')+'</span></span></button>'
+      '<span class="conv-l2"><span class="conv-prev'+(typing?' is-typing':'')+'">'+prev+'</span>'+(c.unread?'<span class="badge" aria-label="'+c.unread+' por ler">'+c.unread+'</span>':'')+'</span></span></button>'
   }).join('')
   updateTitle()
 }
@@ -672,9 +673,9 @@ function nearBottom(){const f=$('feed');return f.scrollHeight-f.scrollTop-f.clie
 function scrollToBottom(smooth){
   const f=$('feed')
   f.scrollTo({top:f.scrollHeight,behavior:smooth?'smooth':'auto'})
-  S.newWhileUp=0;updateJump()
-  // as fotos alteram a altura quando acabam de carregar
-  if(!smooth)f.querySelectorAll('img').forEach(img=>{if(!img.complete)img.addEventListener('load',()=>{if(nearBottom()||!S.userScrolled)f.scrollTop=f.scrollHeight},{once:true})})
+  S.stick=true;S.newWhileUp=0;updateJump()
+  // as fotos alteram a altura quando acabam de carregar: se estávamos no fim, continuamos no fim
+  f.querySelectorAll('img').forEach(img=>{if(!img.complete)img.addEventListener('load',()=>{if(S.stick)f.scrollTop=f.scrollHeight},{once:true})})
 }
 function updateJump(){
   const on=!nearBottom()
@@ -683,7 +684,7 @@ function updateJump(){
   $('jumpN').textContent=S.newWhileUp
 }
 $('feed').addEventListener('scroll',()=>{
-  S.userScrolled=true
+  S.stick=nearBottom()
   updateJump()
   if(nearBottom()){S.newWhileUp=0;markRead()}
   if($('feed').scrollTop<80&&S.hasMore&&!S.loadingOlder)loadOlder()
