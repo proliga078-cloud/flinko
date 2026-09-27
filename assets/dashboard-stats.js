@@ -56,7 +56,8 @@ async function loadStats(){
 
 function renderViewsChart(views){
   const ctx=document.getElementById('chart-views')
-  if(!ctx||typeof Chart==='undefined')return
+  if(!ctx)return
+  if(typeof Chart==='undefined'){loadLib('chart').then(()=>renderViewsChart(views)).catch(()=>{});return}
   const days=[],counts={}
   for(let i=29;i>=0;i--){
     const d=new Date();d.setDate(d.getDate()-i)
@@ -76,7 +77,8 @@ function renderViewsChart(views){
 
 function renderEarningsChart(paidJobs){
   const ctx=document.getElementById('chart-earnings')
-  if(!ctx||typeof Chart==='undefined')return
+  if(!ctx)return
+  if(typeof Chart==='undefined'){loadLib('chart').then(()=>renderEarningsChart(paidJobs)).catch(()=>{});return}
   const months=[]
   for(let i=5;i>=0;i--){
     const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-i)
@@ -100,7 +102,8 @@ function renderEarningsChart(paidJobs){
 
 function renderStatusChart(jobs){
   const ctx=document.getElementById('chart-status')
-  if(!ctx||typeof Chart==='undefined')return
+  if(!ctx)return
+  if(typeof Chart==='undefined'){loadLib('chart').then(()=>renderStatusChart(jobs)).catch(()=>{});return}
   const counts={}
   jobs.forEach(j=>{counts[j.status]=(counts[j.status]||0)+1})
   let labels=Object.keys(counts).map(k=>JOB_STATUS_LABELS[k]||k)

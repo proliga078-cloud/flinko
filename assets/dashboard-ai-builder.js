@@ -89,6 +89,8 @@ async function sendAiBuilderMsg(){
         closeAiBuilder()
         profileData.ai_profile_builder_unlocked = false
         renderAiBuilderBanner()
+      } else if(data && data.error==='rate_limited'){
+        body.insertAdjacentHTML('beforeend', '<div class="ai-msg bot">Chegaste ao limite de mensagens por hoje. Amanhã continuamos.</div>')
       } else if(data && data.error==='not_configured'){
         body.insertAdjacentHTML('beforeend', '<div class="ai-msg bot">O assistente de IA ainda não foi ativado. Tenta mais tarde.</div>')
       } else {

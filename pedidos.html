@@ -13,7 +13,6 @@
 <link rel="shortcut icon" href="/favicon.ico"/>
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#132420"/>
-<script src="/assets/pwa.js" defer></script>
 <script src="/assets/cookie-consent.js" defer></script>
 <script src="/assets/a11y-clickable.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -172,6 +171,15 @@ input:focus,select:focus,textarea:focus{border-color:var(--fresh);box-shadow:0 0
 textarea{resize:vertical;min-height:80px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .modal-actions{display:flex;gap:10px;margin-top:18px}
+.more-details{border:1.5px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:6px}
+.more-details summary{cursor:pointer;font-size:13.5px;font-weight:700;color:var(--ink)}
+.more-details[open] summary{margin-bottom:12px}
+.acc-lead{font-size:14.5px;line-height:1.5;margin-bottom:14px}
+.acc-tabs{display:flex;gap:6px;background:var(--bg);padding:4px;border-radius:999px;margin-bottom:14px}
+.acc-tab{flex:1;padding:9px;border-radius:999px;font-weight:700;font-size:13.5px;border:none;background:transparent;cursor:pointer;color:var(--muted)}
+.acc-tab.active{background:var(--white);color:var(--ink);box-shadow:0 1px 4px rgba(19,36,32,.12)}
+.acc-note{font-size:12.5px;color:var(--muted);line-height:1.5}
+.acc-note a{color:var(--accent-deep);font-weight:600}
 .modal-actions .btn{flex:1;justify-content:center;padding:11px}
 .msg{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none}
 .msg.error{background:var(--red-light);color:var(--red);border:1px solid #f5c6c2;display:block}
@@ -214,24 +222,51 @@ nav{flex-wrap:wrap;height:auto;padding:10px 4%;row-gap:8px}
 .cat-chips{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}
 }
 </style>
+<!-- fk:head -->
+<link rel="stylesheet" href="/assets/site.css" />
+<script src="/assets/site-header.js" defer></script>
+<script src="/assets/pwa.js" defer></script>
+<!-- /fk:head -->
 </head>
 <body>
 
-<nav>
-<a href="index.html" class="logo">Flink<span>o</span></a>
-<div class="nav-right">
-<a href="categoria.html" class="btn btn-ghost">🛠️ Profissionais</a>
-<a href="como-funciona.html" class="btn btn-ghost">Como Funciona</a>
-<div id="nav-guest" style="display:flex;gap:8px">
-<a href="auth.html?tab=login" class="btn btn-ghost">Entrar</a>
-<a href="auth.html?tab=register" class="btn btn-solid">Registar</a>
+<!-- fk:header -->
+<div class="fk-header" id="fkHeader" role="banner">
+  <div class="fk-bar">
+    <a href="/" class="fk-logo" aria-label="Flinko — página inicial">Flink<span>o</span></a>
+    <div class="fk-links" role="navigation" aria-label="Navegação principal">
+      <a href="/categoria">Encontrar</a>
+      <a href="/pedidos" aria-current="page">Pedidos</a>
+      <a href="/como-funciona">Como funciona</a>
+      <a href="/pricing">Preços</a>
+      <a href="/profissionais">Para profissionais</a>
+      <a href="/academia">Academia</a>
+    </div>
+    <div class="fk-actions">
+      <div id="nav-guest" class="fk-group">
+        <a href="/auth?tab=login" class="fk-btn fk-btn-ghost fk-hide-sm">Entrar</a>
+        <a href="/auth?tab=register" class="fk-btn fk-btn-dark">Criar conta grátis</a>
+      </div>
+      <div id="nav-user" class="fk-group" style="display:none">
+        <a href="/dashboard" class="fk-btn fk-btn-dark">O meu painel</a>
+        <a href="/dashboard" class="fk-avatar" id="nav-avatar" aria-label="O meu painel">?</a>
+      </div>
+      <button type="button" class="fk-toggle" id="fkToggle" aria-expanded="false" aria-controls="fkPanel" aria-label="Abrir menu"><span></span></button>
+    </div>
+  </div>
+  <div class="fk-panel" id="fkPanel" hidden>
+    <a href="/categoria">Encontrar</a>
+    <a href="/pedidos" aria-current="page">Pedidos</a>
+    <a href="/como-funciona">Como funciona</a>
+    <a href="/pricing">Preços</a>
+    <a href="/profissionais">Para profissionais</a>
+    <a href="/academia">Academia</a>
+    <a href="/calculadora-orcamento">Calculadora de orçamento</a>
+    <a href="/auth?tab=login">Entrar</a>
+    <button type="button" class="fk-install" data-fk-install onclick="window.flinkoInstallApp&&window.flinkoInstallApp()">📲 Instalar a app no telemóvel</button>
+  </div>
 </div>
-<div id="nav-user" style="display:none;align-items:center;gap:8px">
-<a href="dashboard.html" class="btn btn-outline">Dashboard</a>
-<div class="nav-avatar" id="nav-avatar" onclick="location.href='dashboard.html'">?</div>
-</div>
-</div>
-</nav>
+<!-- /fk:header -->
 
 <div class="hero">
 <div class="hero-orbs" aria-hidden="true"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span></div>
@@ -335,6 +370,8 @@ nav{flex-wrap:wrap;height:auto;padding:10px 4%;row-gap:8px}
 </div>
 <div class="form-group"><label>Cidade / Zona</label><input id="m-city" type="text" placeholder="Ex: Sintra, Braga (centro)..."/></div>
 <div class="form-group"><label>Descreve o que precisas</label><textarea id="m-desc" placeholder="Dá detalhes: quando, o que precisa de ser feito, etc."></textarea></div>
+<details class="more-details">
+<summary>Mais detalhes (opcional): orçamento, fotos, urgência</summary>
 <div class="row2">
 <div class="form-group"><label>Orçamento mín. (€)</label><input id="m-bmin" type="number" min="0" placeholder="Ex: 30"/></div>
 <div class="form-group"><label>Orçamento máx. (€)</label><input id="m-bmax" type="number" min="0" placeholder="Ex: 100"/></div>
@@ -349,10 +386,28 @@ nav{flex-wrap:wrap;height:auto;padding:10px 4%;row-gap:8px}
 <div class="form-group">
 <label class="urgent-check"><input type="checkbox" id="m-urgent"/> <span>🔥 Marcar como urgente (aparece em destaque na lista)</span></label>
 </div>
-</div>
+</details>
 <div class="modal-actions">
 <button class="btn btn-ghost" style="border:1.5px solid var(--border)" onclick="closeModal()">Cancelar</button>
 <button class="btn btn-solid" id="submit-btn" onclick="submitRequest()">Publicar</button>
+</div>
+</div>
+<!-- Último passo para quem ainda não tem sessão: a conta cria-se aqui, sem
+     sair do pedido (antes mandava para o login e perdia-se o que se escreveu). -->
+<div id="modal-account" hidden>
+<p class="acc-lead"><strong>Último passo:</strong> para onde enviamos as propostas? É grátis e demora 20 segundos.</p>
+<div class="acc-tabs" role="tablist">
+<button type="button" class="acc-tab active" data-acc="new" role="tab" aria-selected="true" onclick="setAccMode('new')">Criar conta</button>
+<button type="button" class="acc-tab" data-acc="login" role="tab" aria-selected="false" onclick="setAccMode('login')">Já tenho conta</button>
+</div>
+<div class="form-group" id="acc-name-group"><label for="acc-name">O teu nome *</label><input id="acc-name" type="text" autocomplete="name" placeholder="Ex: Ana Silva"/></div>
+<div class="form-group"><label for="acc-email">Email *</label><input id="acc-email" type="email" autocomplete="email" placeholder="o.teu@email.pt"/></div>
+<div class="form-group"><label for="acc-password">Password *</label><input id="acc-password" type="password" autocomplete="new-password" placeholder="Pelo menos 6 caracteres"/></div>
+<p class="acc-note">Ao continuar aceitas os <a href="/termos" target="_blank" rel="noopener">Termos</a> e a <a href="/privacidade" target="_blank" rel="noopener">Política de Privacidade</a>. Preferes o Google? <a href="#" onclick="continueWithGoogle();return false">Entrar com o Google</a> (o pedido fica guardado).</p>
+<div class="modal-actions">
+<button class="btn btn-ghost" style="border:1.5px solid var(--border)" onclick="backToRequest()">← Voltar</button>
+<button class="btn btn-solid" id="acc-btn" onclick="accountAndPublish()">Publicar pedido</button>
+</div>
 </div>
 </div>
 </div>
@@ -370,6 +425,24 @@ nav{flex-wrap:wrap;height:auto;padding:10px 4%;row-gap:8px}
 <div class="lightbox-thumbs" id="lightbox-thumbs"></div>
 </div>
 </div>
+
+<!-- fk:footer -->
+<div class="fk-footer" role="contentinfo">
+  <div class="fk-ftop">
+    <div class="fk-fbrand">
+      <a href="/" class="fk-logo">Flink<span>o</span></a>
+      <p>Profissionais verificados em Portugal. Grátis para clientes, sem comissões para profissionais.</p>
+    </div>
+    <div class="fk-fcol"><h2>Para clientes</h2><ul><li><a href="/categoria">Encontrar profissional</a></li><li><a href="/pedidos?publicar=1">Publicar pedido</a></li><li><a href="/como-funciona">Como funciona</a></li><li><a href="/calculadora-orcamento">Calculadora de orçamento</a></li></ul></div>
+    <div class="fk-fcol"><h2>Para profissionais</h2><ul><li><a href="/profissionais">A Flinko para profissionais</a></li><li><a href="/auth?tab=register">Criar perfil grátis</a></li><li><a href="/pricing">Preços</a></li><li><a href="/dashboard">O meu painel</a></li></ul></div>
+    <div class="fk-fcol"><h2>Flinko</h2><ul><li><a href="/sobre">Sobre nós</a></li><li><a href="/academia">Academia</a></li><li><a href="/porque-escolher">Porquê a Flinko</a></li><li><a href="/contacto">Contacto</a></li></ul></div>
+  </div>
+  <div class="fk-fbottom">
+    <span>© 2026 Flinko · Portugal</span>
+    <span class="fk-legal"><a href="/termos">Termos</a><a href="/privacidade">Privacidade</a><a href="/cookies">Cookies</a><a href="/rgpd">RGPD</a></span>
+  </div>
+</div>
+<!-- /fk:footer -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/escape-html.js"></script>
@@ -413,6 +486,15 @@ document.getElementById('nav-guest').style.display='none'
 const u=document.getElementById('nav-user');u.style.display='flex'
 const name=session.user.user_metadata?.name||session.user.email||'U'
 document.getElementById('nav-avatar').textContent=name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase()
+}
+
+// ?publicar=1 (botões "Publicar pedido" do site) abre logo o formulário; um
+// rascunho guardado (quem foi confirmar o email ou entrar com o Google) volta
+// a abrir já preenchido.
+const temRascunho=loadDraft()
+if(new URLSearchParams(location.search).get('publicar')==='1'||(session&&temRascunho)){
+openModal(prefillCat)
+if(session&&temRascunho)showMsg('success','O teu pedido ficou guardado. Revê e carrega em Publicar.')
 }
 
 await loadRequests()
@@ -638,22 +720,63 @@ if(session.user.id===clientId){alert('Este é o teu próprio pedido.');return}
 location.href='messages.html?with='+clientId
 }
 
+// ===== PUBLICAR PEDIDO =====
+// O pedido preenche-se primeiro; a conta (se ainda não houver sessão) cria-se
+// no fim, na mesma janela. Antes, "Publicar" sem sessão mandava logo para o
+// login e o cliente perdia o que ia escrever.
+const DRAFT_KEY='flinko_pedido_rascunho'
+const DRAFT_FIELDS=['m-title','m-cat','m-district','m-city','m-desc','m-bmin','m-bmax']
+let accMode='new'
+
+function showMsg(kind,text){
+const el=document.getElementById('m-'+kind)
+el.textContent=text;el.style.display=text?'block':'none'
+if(text&&kind==='error')document.getElementById('m-success').style.display='none'
+}
+function showStep(step){
+document.getElementById('modal-body').hidden=step!=='request'
+document.getElementById('modal-account').hidden=step!=='account'
+}
+
 function openModal(cat){
-if(!session){location.href='auth.html?tab=login&redirect='+encodeURIComponent('pedidos.html'+location.search)+'&intent=client';return}
-pendingPhotos=[]
+showMsg('error','');showMsg('success','')
+if(window.flinkoTrack)window.flinkoTrack('pedido_iniciado',{categoria:cat||''})
+showStep('request')
 renderPhotoStrip()
 document.getElementById('modal-overlay').classList.add('open')
 if(cat&&CATEGORIES.includes(cat))document.getElementById('m-cat').value=cat
+setTimeout(()=>document.getElementById('m-title').focus(),50)
 }
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open')}
 
+// Rascunho no browser: sobrevive a confirmar o email ou a entrar com o Google.
+function saveDraft(){
+try{
+const d={urgent:document.getElementById('m-urgent').checked,at:Date.now()}
+DRAFT_FIELDS.forEach(id=>{d[id]=document.getElementById(id).value})
+localStorage.setItem(DRAFT_KEY,JSON.stringify(d))
+}catch(e){}
+}
+function loadDraft(){
+try{
+const d=JSON.parse(localStorage.getItem(DRAFT_KEY)||'null')
+if(!d||Date.now()-(d.at||0)>7*864e5)return false
+DRAFT_FIELDS.forEach(id=>{if(d[id]!=null)document.getElementById(id).value=d[id]})
+document.getElementById('m-urgent').checked=!!d.urgent
+return !!d['m-title']
+}catch(e){return false}
+}
+function clearDraft(){try{localStorage.removeItem(DRAFT_KEY)}catch(e){}}
+
+// As fotos ficam no browser até publicar (quem ainda não tem conta não pode
+// enviar ficheiros); só sobem para o Storage depois de haver sessão.
 function renderPhotoStrip(){
 const strip=document.getElementById('m-photo-strip')
-const thumbs=pendingPhotos.map((url,i)=>`<div class="photo-thumb"><img src="${escapeHtml(url)}" alt="Pré-visualização da foto ${i+1} anexada ao pedido"/><div class="rm" onclick="removePhoto(${i})">✕</div></div>`).join('')
+const thumbs=pendingPhotos.map((p,i)=>`<div class="photo-thumb"><img src="${escapeHtml(p.preview)}" alt="Pré-visualização da foto ${i+1} anexada ao pedido"/><div class="rm" onclick="removePhoto(${i})">✕</div></div>`).join('')
 const addBtn=pendingPhotos.length<4?'<div class="photo-add" onclick="document.getElementById(&quot;m-photo-file&quot;).click()">➕</div>':''
 strip.innerHTML=thumbs+addBtn
 }
-function removePhoto(i){pendingPhotos.splice(i,1);renderPhotoStrip()}
+function removePhoto(i){const p=pendingPhotos.splice(i,1)[0];if(p)URL.revokeObjectURL(p.preview);renderPhotoStrip()}
 
 async function handlePhotoSelect(input){
 const files=Array.from(input.files||[]).slice(0,4-pendingPhotos.length)
@@ -662,58 +785,134 @@ for(const file of files){
 if(file.size>5*1024*1024)continue
 try{
 const uploadFile=await resizeImageFile(file)
-const ext=uploadFile.name.split('.').pop()
-const path=`requests/${session.user.id}/${Date.now()}-${Math.random().toString(36).slice(2,7)}.${ext}`
-const{error}=await db.storage.from('proliga-media').upload(path,uploadFile,{contentType:uploadFile.type})
-if(error){console.error(error);continue}
-const{data:urlData}=db.storage.from('proliga-media').getPublicUrl(path)
-pendingPhotos.push(urlData.publicUrl)
+pendingPhotos.push({file:uploadFile,preview:URL.createObjectURL(uploadFile)})
 }catch(e){console.error(e)}
 }
 renderPhotoStrip()
 }
 
-async function submitRequest(){
-const title=document.getElementById('m-title').value.trim()
-const category=document.getElementById('m-cat').value
-const _mdistrict=document.getElementById('m-district').value
-const _mcity=document.getElementById('m-city').value.trim()
-const location=_mdistrict?(_mcity?_mdistrict+' – '+_mcity:_mdistrict):''
-const description=document.getElementById('m-desc').value.trim()
-const bmin=document.getElementById('m-bmin').value
-const bmax=document.getElementById('m-bmax').value
-const urgent=document.getElementById('m-urgent').checked
-const btn=document.getElementById('submit-btn')
-document.getElementById('m-error').style.display='none'
-if(!title||!category||!location){
-const el=document.getElementById('m-error');el.textContent='Preenche título, categoria e zona.';el.style.display='block';return
+async function uploadPhotos(userId){
+const urls=[]
+for(const p of pendingPhotos){
+try{
+const ext=(p.file.name.split('.').pop()||'jpg').toLowerCase()
+const path=`requests/${userId}/${Date.now()}-${Math.random().toString(36).slice(2,7)}.${ext}`
+const{error}=await db.storage.from('proliga-media').upload(path,p.file,{contentType:p.file.type})
+if(error){console.error(error);continue}
+urls.push(db.storage.from('proliga-media').getPublicUrl(path).data.publicUrl)
+}catch(e){console.error(e)}
 }
-btn.disabled=true;btn.textContent='A publicar...'
-const{data:novo,error}=await db.from('requests').insert({
-client_id:session.user.id,title,category,location,
-description:description||null,
+return urls
+}
+
+function readRequest(){
+const district=document.getElementById('m-district').value
+const city=document.getElementById('m-city').value.trim()
+const bmin=document.getElementById('m-bmin').value,bmax=document.getElementById('m-bmax').value
+return{
+title:document.getElementById('m-title').value.trim(),
+category:document.getElementById('m-cat').value,
+location:district?(city?district+' – '+city:district):'',
+description:document.getElementById('m-desc').value.trim()||null,
 budget_from:bmin?parseFloat(bmin):null,
 budget_to:bmax?parseFloat(bmax):null,
-photo_urls:pendingPhotos,
-is_urgent:urgent
-}).select('id').single()
-btn.disabled=false;btn.textContent='Publicar'
-if(error){
-const el=document.getElementById('m-error');el.textContent='Erro ao publicar: '+error.message;el.style.display='block';return
+is_urgent:document.getElementById('m-urgent').checked
 }
-const el=document.getElementById('m-success');el.textContent='Pedido publicado com sucesso!';el.style.display='block'
+}
+
+async function submitRequest(){
+const r=readRequest()
+showMsg('error','')
+if(!r.title||!r.category||!r.location)return showMsg('error','Preenche o que precisas, a categoria e o distrito.')
+if(!session){
+saveDraft()
+showStep('account')
+setTimeout(()=>document.getElementById(accMode==='new'?'acc-name':'acc-email').focus(),50)
+return
+}
+const btn=document.getElementById('submit-btn')
+btn.disabled=true;btn.textContent='A publicar...'
+try{await publishRequest(r)}finally{btn.disabled=false;btn.textContent='Publicar'}
+}
+
+async function publishRequest(r){
+const photo_urls=await uploadPhotos(session.user.id)
+const{data:novo,error}=await db.from('requests').insert({client_id:session.user.id,...r,photo_urls}).select('id').single()
+if(error){showStep('request');return showMsg('error','Erro ao publicar: '+error.message)}
+clearDraft()
+showStep('request')
+showMsg('success','Pedido publicado! Vamos avisar os profissionais da tua zona; as propostas chegam às tuas mensagens e ao teu email.')
+if(window.flinkoTrack)window.flinkoTrack('pedido_publicado',{category:r.category})
 notifyMatchingProfessionals(novo&&novo.id)
 setTimeout(()=>{
 closeModal()
-document.getElementById('m-success').style.display='none'
-;['m-title','m-desc','m-bmin','m-bmax'].forEach(id=>document.getElementById(id).value='')
-document.getElementById('m-cat').value=''
-document.getElementById('m-district').value=''
-document.getElementById('m-city').value=''
+showMsg('success','')
+DRAFT_FIELDS.forEach(id=>{document.getElementById(id).value=''})
 document.getElementById('m-urgent').checked=false
+pendingPhotos.forEach(p=>URL.revokeObjectURL(p.preview))
 pendingPhotos=[]
 loadRequests()
-},1200)
+},2600)
+}
+
+function setAccMode(mode){
+accMode=mode
+document.querySelectorAll('.acc-tab').forEach(t=>{const on=t.dataset.acc===mode;t.classList.toggle('active',on);t.setAttribute('aria-selected',on?'true':'false')})
+document.getElementById('acc-name-group').hidden=mode!=='new'
+document.getElementById('acc-password').setAttribute('autocomplete',mode==='new'?'new-password':'current-password')
+}
+function backToRequest(){showMsg('error','');showStep('request')}
+function continueWithGoogle(){
+saveDraft()
+location.href='auth.html?tab=login&intent=client&redirect='+encodeURIComponent('pedidos.html?publicar=1')
+}
+function afterSignIn(s){
+session=s
+const g=document.getElementById('nav-guest'),u=document.getElementById('nav-user')
+if(g)g.style.display='none'
+if(u)u.style.display='flex'
+}
+
+async function accountAndPublish(){
+const name=document.getElementById('acc-name').value.trim()
+const email=document.getElementById('acc-email').value.trim()
+const password=document.getElementById('acc-password').value
+showMsg('error','')
+if((accMode==='new'&&!name)||!email||!password)return showMsg('error','Preenche '+(accMode==='new'?'o nome, ':'')+'o email e a password.')
+if(!/^\S+@\S+\.\S+$/.test(email))return showMsg('error','Esse email não parece válido.')
+if(password.length<6)return showMsg('error','A password tem de ter pelo menos 6 caracteres.')
+const btn=document.getElementById('acc-btn')
+btn.disabled=true;btn.textContent='A publicar...'
+try{
+let s=null
+if(accMode==='login'){
+const{data,error}=await db.auth.signInWithPassword({email,password})
+if(error)return showMsg('error','Email ou password errados. Se ainda não tens conta, escolhe "Criar conta".')
+s=data.session
+}else{
+const{data,error}=await db.auth.signUp({email,password,options:{data:{full_name:name}}})
+if(error){
+const m=(error.message||'').toLowerCase()
+return showMsg('error',m.includes('already')||m.includes('registered')?'Este email já tem conta. Escolhe "Já tenho conta".':'Não foi possível criar a conta: '+error.message)
+}
+s=data.session
+if(!s){const r2=await db.auth.signInWithPassword({email,password});s=r2.data&&r2.data.session}
+if(!s){
+// Conta criada mas o email tem de ser confirmado primeiro: o pedido fica
+// guardado e abre-se sozinho quando a pessoa voltar com sessão.
+saveDraft()
+return showMsg('success','Conta criada! Confirma o email que te enviámos para '+email+'. O teu pedido fica guardado e publicas com um clique quando voltares.')
+}
+await db.rpc('create_my_profile_if_missing',{p_name:name,p_account_type:'client'})
+if(window.flinkoTrack)window.flinkoTrack('conta_criada',{origem:'pedido'})
+}
+afterSignIn(s)
+await publishRequest(readRequest())
+}catch(e){
+showMsg('error','Erro de ligação. Tenta novamente.')
+}finally{
+btn.disabled=false;btn.textContent='Publicar pedido'
+}
 }
 
 // Nao lemos emails aqui. Mandamos so o id do pedido; o servidor confirma

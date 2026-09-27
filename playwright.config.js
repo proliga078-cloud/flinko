@@ -26,7 +26,7 @@ module.exports = defineConfig({
     trace: 'retain-on-failure',
   },
   webServer: {
-    command: `node scripts/build-categories.js && node tests/e2e/static-server.js`,
+    command: `node scripts/build-site-header.js && node scripts/build-categories.js && node tests/e2e/static-server.js`,
     port: Number(PORT),
     reuseExistingServer: !process.env.CI,
     env: { E2E_STATIC_PORT: String(PORT) },

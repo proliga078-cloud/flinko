@@ -12,6 +12,7 @@
 //  - categorias e cidades desconhecidas devolvem 404 a sério.
 const{createClient}=require('@supabase/supabase-js')
 const{SITE,DISTRITOS,slugify,esc,categoryBySlug,placesOf,loadPros,ordenar,profileUrl,combinacoes}=require('./_local')
+const{siteHeader,siteFooter}=require('../../scripts/site-header.js')
 
 const admin=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY)
 
@@ -106,7 +107,7 @@ exports.handler=async(event)=>{
     ?`${plural(total,'profissional','profissionais')} de ${servico.toLowerCase()} em ${placeName} na Flinko. Vê perfis, compara e contacta diretamente, sem comissões.`
     :`Ainda não há ${servico.toLowerCase()} em ${placeName} na Flinko. Publica um pedido grátis e os profissionais candidatam-se a ti.`
 
-  const pedidoUrl=`/pedidos.html?cat=${encodeURIComponent(servico)}`
+  const pedidoUrl=`/pedidos.html?publicar=1&amp;cat=${encodeURIComponent(servico)}`
   const faq=(cat.faq||[]).slice(0,4)
 
   const jsonLd=[
@@ -152,16 +153,17 @@ exports.handler=async(event)=>{
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site-header.js" defer></script>
+<script src="/assets/pwa.js" defer></script>
+<link rel="manifest" href="/manifest.json">
 ${jsonLdHtml}
 <style>
 :root{--ink:#132420;--soft:#4E5C57;--line:#E1EEE6;--surface:#F3FBF6;--accent:#E8720A;--accent-deep:#B85608;--fresh:#0F8B5F}
 *{box-sizing:border-box}
 body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--ink);background:#fff;line-height:1.55}
 a{color:inherit}
-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 5%;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:10}
-.logo{font-weight:800;font-size:22px;letter-spacing:-1px;text-decoration:none}.logo span{color:var(--accent)}
-nav .links a{margin-left:18px;text-decoration:none;font-size:14px;font-weight:600;color:var(--soft)}
 .wrap{max-width:1040px;margin:0 auto;padding:0 5%}
 .crumbs{font-size:13px;color:var(--soft);padding:18px 0 4px}.crumbs a{text-decoration:none}
 .hero{padding:10px 0 26px}
@@ -190,12 +192,10 @@ h2{font-size:1.25rem;margin:0 0 12px}
 details{border-bottom:1px solid var(--line);padding:12px 0}summary{cursor:pointer;font-weight:600}details p{color:var(--soft);margin:8px 0 0}
 .cta{background:var(--ink);color:#fff;border-radius:20px;padding:28px;margin:34px 0}
 .cta h2{margin:0 0 6px}.cta p{margin:0 0 16px;color:#cfe4d9}
-footer{border-top:1px solid var(--line);padding:24px 5%;font-size:13px;color:var(--soft);text-align:center}
-footer a{margin:0 8px}
 </style>
 </head>
 <body>
-<nav><a class="logo" href="/">Flink<span>o</span></a><div class="links"><a href="/categoria.html">Encontrar</a><a href="/pedidos.html">Pedidos</a><a href="/pricing.html">Preços</a><a href="/auth.html">Entrar</a></div></nav>
+${siteHeader('categoria')}
 <main class="wrap">
 <div class="crumbs"><a href="/">Flinko</a> › <a href="/${cat.slug}">${esc(servico)}</a> › ${esc(placeName)}</div>
 <header class="hero">
@@ -208,7 +208,7 @@ ${ligacoes}
 ${faqHtml}
 <div class="cta"><h2>És ${esc(servico.toLowerCase())} em ${esc(placeName)}?</h2><p>Cria o teu perfil grátis e recebe pedidos de clientes da tua zona.</p><a class="btn" href="/auth.html?tab=register">Criar perfil grátis</a></div>
 </main>
-<footer><a href="/sobre.html">Sobre</a><a href="/termos.html">Termos</a><a href="/privacidade.html">Privacidade</a><a href="/cookies.html">Cookies</a></footer>
+${siteFooter()}
 <script src="/assets/cookie-consent.js" defer></script>
 </body>
 </html>`

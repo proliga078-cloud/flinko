@@ -45,6 +45,15 @@ menos 1 profissional; sem ninguém abrem com `noindex`. O sitemap
 `/sitemap-local.xml` (`sitemap-local.js`) lista só as combinações com
 profissionais. Não precisa de manutenção: cresce com a base de dados.
 
+### Cabeçalho único e estilos partilhados
+
+O menu do site público vive só em `scripts/site-header.js`. O
+`npm run build` copia-o para dentro das marcas `<!-- fk:header -->` de cada
+página (e `<!-- fk:head -->` para o CSS/JS); as páginas locais usam-no
+diretamente. Estilos em `assets/site.css` (cores da marca como variáveis
+`--fk-*`), comportamento em `assets/site-header.js`. **Não edites o menu dentro
+das páginas**: o próximo build sobrescreve-o e o CI falha.
+
 ### Páginas de categoria são geradas
 
 `eletricistas.html`, `canalizadores.html`, etc. **não se editam à mão**: são
@@ -57,7 +66,7 @@ desatualizadas.
 
 ```bash
 npm ci                   # dependências
-npm run build:categories # gerar páginas de categoria
+npm run build            # cabeçalho único + páginas de categoria
 npm run check            # sintaxe de todo o JS (inclui scripts inline dos .html)
 npm run test:unit        # testes das Netlify Functions
 npx playwright install chromium && npm run test:e2e

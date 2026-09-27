@@ -55,7 +55,6 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <link rel="shortcut icon" href="/favicon.ico"/>
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#0f231b"/>
-<script src="/assets/pwa.js" defer></script>
 <script src="/assets/cookie-consent.js" defer></script>
 <meta property="og:title" content="Sobre nós – Flinko"/>
 <meta property="og:description" content="Conhece a equipa e a missão do Flinko: ligar clientes a profissionais de confiança."/>
@@ -67,11 +66,50 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <meta name="twitter:title" content="Sobre nós – Flinko"/>
 <meta name="twitter:description" content="Conhece a equipa e a missão do Flinko: ligar clientes a profissionais de confiança."/>
 <meta name="twitter:image" content="https://flinko.pt/assets/og-image.png"/>
+<!-- fk:head -->
+<link rel="stylesheet" href="/assets/site.css" />
+<script src="/assets/site-header.js" defer></script>
+<script src="/assets/pwa.js" defer></script>
+<!-- /fk:head -->
 </head>
 <body>
-<nav>
-<a href="index.html" class="logo">Flink<span>o</span></a>
-</nav>
+<!-- fk:header -->
+<div class="fk-header" id="fkHeader" role="banner">
+  <div class="fk-bar">
+    <a href="/" class="fk-logo" aria-label="Flinko — página inicial">Flink<span>o</span></a>
+    <div class="fk-links" role="navigation" aria-label="Navegação principal">
+      <a href="/categoria">Encontrar</a>
+      <a href="/pedidos">Pedidos</a>
+      <a href="/como-funciona">Como funciona</a>
+      <a href="/pricing">Preços</a>
+      <a href="/profissionais">Para profissionais</a>
+      <a href="/academia">Academia</a>
+    </div>
+    <div class="fk-actions">
+      <div id="nav-guest" class="fk-group">
+        <a href="/auth?tab=login" class="fk-btn fk-btn-ghost fk-hide-sm">Entrar</a>
+        <a href="/auth?tab=register" class="fk-btn fk-btn-dark">Criar conta grátis</a>
+      </div>
+      <div id="nav-user" class="fk-group" style="display:none">
+        <a href="/dashboard" class="fk-btn fk-btn-dark">O meu painel</a>
+        <a href="/dashboard" class="fk-avatar" id="nav-avatar" aria-label="O meu painel">?</a>
+      </div>
+      <button type="button" class="fk-toggle" id="fkToggle" aria-expanded="false" aria-controls="fkPanel" aria-label="Abrir menu"><span></span></button>
+    </div>
+  </div>
+  <div class="fk-panel" id="fkPanel" hidden>
+    <a href="/categoria">Encontrar</a>
+    <a href="/pedidos">Pedidos</a>
+    <a href="/como-funciona">Como funciona</a>
+    <a href="/pricing">Preços</a>
+    <a href="/profissionais">Para profissionais</a>
+    <a href="/academia">Academia</a>
+    <a href="/calculadora-orcamento">Calculadora de orçamento</a>
+    <a href="/auth?tab=login">Entrar</a>
+    <button type="button" class="fk-install" data-fk-install onclick="window.flinkoInstallApp&&window.flinkoInstallApp()">📲 Instalar a app no telemóvel</button>
+  </div>
+</div>
+<!-- /fk:header -->
 <div class="legal-hero">
 <h1>Sobre a Flinko</h1>
 <p>O marketplace que liga clientes a profissionais de confiança em Portugal.</p>
@@ -100,8 +138,22 @@ Acreditamos que encontrar um bom profissional não devia ser uma questão de sor
 <p>Tens alguma sugestão, dúvida ou queres ser profissional parceiro? Visita a nossa página de <a href="profissionais.html">Para profissionais</a>
 <a href="contacto.html">contacto</a> ou consulta <a href="como-funciona.html">como funciona</a> a plataforma.</p>
 </div>
-<footer>
-<p>© 2026 Flinko · <a href="termos.html">Termos</a> · <a href="privacidade.html">Privacidade</a> · <a href="cookies.html">Cookies</a> · <a href="rgpd.html">RGPD</a> · <a href="index.html">Voltar ao início</a></p>
-</footer>
+<!-- fk:footer -->
+<div class="fk-footer" role="contentinfo">
+  <div class="fk-ftop">
+    <div class="fk-fbrand">
+      <a href="/" class="fk-logo">Flink<span>o</span></a>
+      <p>Profissionais verificados em Portugal. Grátis para clientes, sem comissões para profissionais.</p>
+    </div>
+    <div class="fk-fcol"><h2>Para clientes</h2><ul><li><a href="/categoria">Encontrar profissional</a></li><li><a href="/pedidos?publicar=1">Publicar pedido</a></li><li><a href="/como-funciona">Como funciona</a></li><li><a href="/calculadora-orcamento">Calculadora de orçamento</a></li></ul></div>
+    <div class="fk-fcol"><h2>Para profissionais</h2><ul><li><a href="/profissionais">A Flinko para profissionais</a></li><li><a href="/auth?tab=register">Criar perfil grátis</a></li><li><a href="/pricing">Preços</a></li><li><a href="/dashboard">O meu painel</a></li></ul></div>
+    <div class="fk-fcol"><h2>Flinko</h2><ul><li><a href="/sobre">Sobre nós</a></li><li><a href="/academia">Academia</a></li><li><a href="/porque-escolher">Porquê a Flinko</a></li><li><a href="/contacto">Contacto</a></li></ul></div>
+  </div>
+  <div class="fk-fbottom">
+    <span>© 2026 Flinko · Portugal</span>
+    <span class="fk-legal"><a href="/termos">Termos</a><a href="/privacidade">Privacidade</a><a href="/cookies">Cookies</a><a href="/rgpd">RGPD</a></span>
+  </div>
+</div>
+<!-- /fk:footer -->
 </body>
 </html>

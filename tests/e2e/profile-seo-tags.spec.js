@@ -49,7 +49,7 @@ test.describe('profile.html — SEO (canonical, Open Graph, Twitter)', () => {
   test('perfil sem link próprio: canonical e og:url apontam para ?id=, título/descrição/imagem vêm do profissional', async ({ page }) => {
     await withFakeSupabase(page, profileConfig());
     await page.goto('/profile.html?id=pro-1');
-    await expect(page).toHaveTitle('Ana Jardineira – Flinko');
+    await expect(page).toHaveTitle('Ana Jardineira – Jardineiros em Lisboa | Flinko');
 
     const canonical = page.locator('#meta-canonical');
     await expect(canonical).toHaveAttribute('href', 'https://flinko.pt/profile.html?id=pro-1');
@@ -57,8 +57,8 @@ test.describe('profile.html — SEO (canonical, Open Graph, Twitter)', () => {
     const ogUrl = page.locator('#meta-og-url');
     await expect(ogUrl).toHaveAttribute('content', 'https://flinko.pt/profile.html?id=pro-1');
 
-    await expect(page.locator('#meta-og-title')).toHaveAttribute('content', 'Ana Jardineira – Flinko');
-    await expect(page.locator('#meta-twitter-title')).toHaveAttribute('content', 'Ana Jardineira – Flinko');
+    await expect(page.locator('#meta-og-title')).toHaveAttribute('content', 'Ana Jardineira – Jardineiros em Lisboa | Flinko');
+    await expect(page.locator('#meta-twitter-title')).toHaveAttribute('content', 'Ana Jardineira – Jardineiros em Lisboa | Flinko');
 
     // A bio real do profissional deve aparecer na descrição, não o texto genérico.
     const desc = await page.locator('#meta-description').getAttribute('content');

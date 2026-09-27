@@ -26,7 +26,6 @@
   <link rel="shortcut icon" href="/favicon.ico"/>
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#132420"/>
-<script src="/assets/pwa.js" defer></script>
 <script src="/assets/cookie-consent.js" defer></script>
 <script src="/assets/public-chat-widget.js" defer></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
@@ -299,23 +298,51 @@
 .similar-meta{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .similar-rating{font-size:11.5px;color:var(--gold);font-weight:700}
 </style>
+<!-- fk:head -->
+<link rel="stylesheet" href="/assets/site.css" />
+<script src="/assets/site-header.js" defer></script>
+<script src="/assets/pwa.js" defer></script>
+<!-- /fk:head -->
 </head>
 <body>
 
-<nav>
-  <a href="index.html" class="logo">Flink<span>o</span></a>
-  <nav style="display:flex;gap:8px;margin-left:auto;align-items:center;border:none;position:static;height:auto;padding:0;background:transparent">
-    <a href="categoria.html" class="btn btn-ghost" style="font-size:13px">← Voltar</a>
-    <div id="nav-guest" style="display:flex;gap:8px">
-      <a href="auth.html?tab=login" class="btn btn-ghost">Entrar</a>
-      <a href="auth.html?tab=register" class="btn btn-solid">Registar</a>
+<!-- fk:header -->
+<div class="fk-header" id="fkHeader" role="banner">
+  <div class="fk-bar">
+    <a href="/" class="fk-logo" aria-label="Flinko — página inicial">Flink<span>o</span></a>
+    <div class="fk-links" role="navigation" aria-label="Navegação principal">
+      <a href="/categoria">Encontrar</a>
+      <a href="/pedidos">Pedidos</a>
+      <a href="/como-funciona">Como funciona</a>
+      <a href="/pricing">Preços</a>
+      <a href="/profissionais">Para profissionais</a>
+      <a href="/academia">Academia</a>
     </div>
-    <div id="nav-user" style="display:none;align-items:center;gap:8px">
-      <a href="dashboard.html" class="btn btn-outline">Dashboard</a>
-      <div class="nav-avatar" id="nav-avatar" onclick="location.href='dashboard.html'">?</div>
+    <div class="fk-actions">
+      <div id="nav-guest" class="fk-group">
+        <a href="/auth?tab=login" class="fk-btn fk-btn-ghost fk-hide-sm">Entrar</a>
+        <a href="/auth?tab=register" class="fk-btn fk-btn-dark">Criar conta grátis</a>
+      </div>
+      <div id="nav-user" class="fk-group" style="display:none">
+        <a href="/dashboard" class="fk-btn fk-btn-dark">O meu painel</a>
+        <a href="/dashboard" class="fk-avatar" id="nav-avatar" aria-label="O meu painel">?</a>
+      </div>
+      <button type="button" class="fk-toggle" id="fkToggle" aria-expanded="false" aria-controls="fkPanel" aria-label="Abrir menu"><span></span></button>
     </div>
-  </nav>
-</nav>
+  </div>
+  <div class="fk-panel" id="fkPanel" hidden>
+    <a href="/categoria">Encontrar</a>
+    <a href="/pedidos">Pedidos</a>
+    <a href="/como-funciona">Como funciona</a>
+    <a href="/pricing">Preços</a>
+    <a href="/profissionais">Para profissionais</a>
+    <a href="/academia">Academia</a>
+    <a href="/calculadora-orcamento">Calculadora de orçamento</a>
+    <a href="/auth?tab=login">Entrar</a>
+    <button type="button" class="fk-install" data-fk-install onclick="window.flinkoInstallApp&&window.flinkoInstallApp()">📲 Instalar a app no telemóvel</button>
+  </div>
+</div>
+<!-- /fk:header -->
 
 <div id="cover" class="cover"><div class="cover-overlay"></div></div>
 
@@ -486,6 +513,24 @@
 </div>
 <div id="toast" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 20px;border-radius:99px;font-size:14px;font-weight:600;display:none;z-index:9999"></div>
 
+<!-- fk:footer -->
+<div class="fk-footer" role="contentinfo">
+  <div class="fk-ftop">
+    <div class="fk-fbrand">
+      <a href="/" class="fk-logo">Flink<span>o</span></a>
+      <p>Profissionais verificados em Portugal. Grátis para clientes, sem comissões para profissionais.</p>
+    </div>
+    <div class="fk-fcol"><h2>Para clientes</h2><ul><li><a href="/categoria">Encontrar profissional</a></li><li><a href="/pedidos?publicar=1">Publicar pedido</a></li><li><a href="/como-funciona">Como funciona</a></li><li><a href="/calculadora-orcamento">Calculadora de orçamento</a></li></ul></div>
+    <div class="fk-fcol"><h2>Para profissionais</h2><ul><li><a href="/profissionais">A Flinko para profissionais</a></li><li><a href="/auth?tab=register">Criar perfil grátis</a></li><li><a href="/pricing">Preços</a></li><li><a href="/dashboard">O meu painel</a></li></ul></div>
+    <div class="fk-fcol"><h2>Flinko</h2><ul><li><a href="/sobre">Sobre nós</a></li><li><a href="/academia">Academia</a></li><li><a href="/porque-escolher">Porquê a Flinko</a></li><li><a href="/contacto">Contacto</a></li></ul></div>
+  </div>
+  <div class="fk-fbottom">
+    <span>© 2026 Flinko · Portugal</span>
+    <span class="fk-legal"><a href="/termos">Termos</a><a href="/privacidade">Privacidade</a><a href="/cookies">Cookies</a><a href="/rgpd">RGPD</a></span>
+  </div>
+</div>
+<!-- /fk:footer -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/escape-html.js"></script>
 <script src="/assets/a11y-clickable.js" defer></script>
@@ -533,7 +578,8 @@ async function resolveSlug(){
 // título/descrição em todos os perfis, e a partilha no WhatsApp/redes
 // sociais nunca mostrava o nome nem a foto do profissional certo).
 function updateSeoTags(pro){
-  const titulo=`${pro.name} – Flinko`
+  // Mesmo formato que netlify/functions/profile-page.js escreve no servidor.
+  const titulo=`${pro.name} – ${pro.category||'Profissional'}${pro.location?` em ${pro.location}`:''} | Flinko`
   const descricao=pro.bio
     ?pro.bio.replace(/\s+/g,' ').trim().slice(0,155)
     :`Perfil de ${pro.category||'profissional'} em ${pro.location||'Portugal'}. Contacta diretamente pela Flinko.`
@@ -552,8 +598,9 @@ function updateSeoTags(pro){
 
 function injectStructuredData(pro){
     try{
-          const existing=document.getElementById('structured-data-ld')
-                if(existing) existing.remove()
+          // Se o servidor já escreveu os dados estruturados (com avaliações e
+          // serviços, ver profile-page.js), ficam esses, que são mais completos.
+          if(document.getElementById('structured-data-ld')) return
                       const url=pro.slug?`https://flinko.pt/${encodeURIComponent(pro.slug)}`:`https://flinko.pt/profile.html?id=${pro.id}`
                             const data={
                                     "@context":"https://schema.org",
@@ -594,8 +641,8 @@ async function init(){
   }
   proData=pro
   applyThemeColor(pro)
-  document.title=`${pro.name} – Flinko`
   updateSeoTags(pro)
+  document.title=document.getElementById('meta-og-title').getAttribute('content')
   injectStructuredData(pro)
 renderHeader(pro)
   document.getElementById('content-grid').style.display='grid'
@@ -1115,6 +1162,7 @@ async function checkReviewEligibility(){
 }
 
 async function startConversation(){
+if(window.flinkoTrack)window.flinkoTrack('perfil_contactar',{perfil:proId})
 const btn=document.getElementById('msg-btn')
 const{data:{session}}=await db.auth.getSession()
 if(!session){

@@ -20,7 +20,6 @@
  <link rel="shortcut icon" href="/favicon.ico"/>
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#132420"/>
-<script src="/assets/pwa.js" defer></script>
 <script src="/assets/cookie-consent.js" defer></script>
 <script src="/assets/a11y-clickable.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -264,28 +263,55 @@
  "url": "https://flinko.pt/cabeleireiros.html"
 }
 </script>
+<!-- fk:head -->
+<link rel="stylesheet" href="/assets/site.css" />
+<script src="/assets/site-header.js" defer></script>
+<script src="/assets/pwa.js" defer></script>
+<!-- /fk:head -->
 </head>
 <body>
 
-<nav>
- <a href="index.html" class="logo">Flink<span>o</span></a>
- <div class="nav-search">
+<!-- fk:header -->
+<div class="fk-header" id="fkHeader" role="banner">
+  <div class="fk-bar">
+    <a href="/" class="fk-logo" aria-label="Flinko — página inicial">Flink<span>o</span></a>
+    <div class="fk-links" role="navigation" aria-label="Navegação principal">
+      <a href="/categoria" aria-current="page">Encontrar</a>
+      <a href="/pedidos">Pedidos</a>
+      <a href="/como-funciona">Como funciona</a>
+      <a href="/pricing">Preços</a>
+      <a href="/profissionais">Para profissionais</a>
+      <a href="/academia">Academia</a>
+    </div>
+    <div class="fk-actions">
+      <div id="nav-guest" class="fk-group">
+        <a href="/auth?tab=login" class="fk-btn fk-btn-ghost fk-hide-sm">Entrar</a>
+        <a href="/auth?tab=register" class="fk-btn fk-btn-dark">Criar conta grátis</a>
+      </div>
+      <div id="nav-user" class="fk-group" style="display:none">
+        <a href="/dashboard" class="fk-btn fk-btn-dark">O meu painel</a>
+        <a href="/dashboard" class="fk-avatar" id="nav-avatar" aria-label="O meu painel">?</a>
+      </div>
+      <button type="button" class="fk-toggle" id="fkToggle" aria-expanded="false" aria-controls="fkPanel" aria-label="Abrir menu"><span></span></button>
+    </div>
+  </div>
+  <div class="fk-panel" id="fkPanel" hidden>
+    <a href="/categoria" aria-current="page">Encontrar</a>
+    <a href="/pedidos">Pedidos</a>
+    <a href="/como-funciona">Como funciona</a>
+    <a href="/pricing">Preços</a>
+    <a href="/profissionais">Para profissionais</a>
+    <a href="/academia">Academia</a>
+    <a href="/calculadora-orcamento">Calculadora de orçamento</a>
+    <a href="/auth?tab=login">Entrar</a>
+    <button type="button" class="fk-install" data-fk-install onclick="window.flinkoInstallApp&&window.flinkoInstallApp()">📲 Instalar a app no telemóvel</button>
+  </div>
+</div>
+<!-- /fk:header -->
+<div class="fk-searchbar"><div class="nav-search">
  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
  <input type="text" id="nav-q" placeholder="Procurar profissional..." onkeydown="if(event.key==='Enter')applySearch()"/>
- </div>
- <div class="nav-right">
- <a href="pedidos.html" class="btn btn-ghost" style="white-space:nowrap">Pedidos</a>
- <a href="como-funciona.html" class="btn btn-ghost" style="white-space:nowrap">Como Funciona</a>
- <div id="nav-guest" style="display:flex;gap:8px">
- <a href="auth.html?tab=login" class="btn btn-ghost">Entrar</a>
- <a href="auth.html?tab=register" class="btn btn-solid">Registar</a>
- </div>
- <div id="nav-user" style="display:none;align-items:center;gap:8px">
- <a href="dashboard.html" class="btn btn-outline">Dashboard</a>
- <div class="nav-avatar" id="nav-avatar" onclick="location.href='dashboard.html'">?</div>
- </div>
- </div>
-</nav>
+ </div></div>
 
 <div class="page-header">
  <div class="breadcrumb">
@@ -335,7 +361,7 @@
  <div class="sidebar-cta">
  <h3>Não encontraste quem procuras?</h3>
  <p>Publica um pedido em cabeleireiros e deixa os profissionais virem até ti.</p>
- <a href="pedidos.html?cat=Cabeleireiros">Publicar pedido</a>
+ <a href="pedidos.html?publicar=1&amp;cat=Cabeleireiros">Publicar pedido</a>
  </div>
  <div class="filter-card">
 <div class="filter-title">Distrito</div>
@@ -368,7 +394,6 @@
 
  <div class="filter-card">
  <div class="filter-title">Plano / Destaque</div>
- <label class="filter-label"><input type="checkbox" id="f-premium" onchange="loadPros()"> <span> Premium</span></label>
  <label class="filter-label"><input type="checkbox" id="f-pro" onchange="loadPros()"> <span> Pro</span></label>
 <label class="filter-label"><input type="checkbox" id="f-fast" onchange="loadPros()"> <span>⚡ Responde em menos de 1h</span></label>
  <label class="filter-label"><input type="checkbox" id="f-verified" onchange="loadPros()"> <span> Verificados</span></label>
@@ -456,13 +481,23 @@
  </div>
 </section>
 
-<footer>
- <div style="max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px">
- <span>© 2026 Flinko · Portugal</span>
- <span><a href="categoria.html">Ver todas as categorias</a> · <a href="index.html">Página inicial</a> · <a href="profissionais.html">Para profissionais</a>
-<a href="contacto.html">Contacto</a> · <a href="termos.html">Termos</a> · <a href="privacidade.html">Privacidade</a> · <a href="cookies.html">Cookies</a> · <a href="rgpd.html">RGPD</a></span>
- </div>
-</footer>
+<!-- fk:footer -->
+<div class="fk-footer" role="contentinfo">
+  <div class="fk-ftop">
+    <div class="fk-fbrand">
+      <a href="/" class="fk-logo">Flink<span>o</span></a>
+      <p>Profissionais verificados em Portugal. Grátis para clientes, sem comissões para profissionais.</p>
+    </div>
+    <div class="fk-fcol"><h2>Para clientes</h2><ul><li><a href="/categoria">Encontrar profissional</a></li><li><a href="/pedidos?publicar=1">Publicar pedido</a></li><li><a href="/como-funciona">Como funciona</a></li><li><a href="/calculadora-orcamento">Calculadora de orçamento</a></li></ul></div>
+    <div class="fk-fcol"><h2>Para profissionais</h2><ul><li><a href="/profissionais">A Flinko para profissionais</a></li><li><a href="/auth?tab=register">Criar perfil grátis</a></li><li><a href="/pricing">Preços</a></li><li><a href="/dashboard">O meu painel</a></li></ul></div>
+    <div class="fk-fcol"><h2>Flinko</h2><ul><li><a href="/sobre">Sobre nós</a></li><li><a href="/academia">Academia</a></li><li><a href="/porque-escolher">Porquê a Flinko</a></li><li><a href="/contacto">Contacto</a></li></ul></div>
+  </div>
+  <div class="fk-fbottom">
+    <span>© 2026 Flinko · Portugal</span>
+    <span class="fk-legal"><a href="/termos">Termos</a><a href="/privacidade">Privacidade</a><a href="/cookies">Cookies</a><a href="/rgpd">RGPD</a></span>
+  </div>
+</div>
+<!-- /fk:footer -->
 
 <script src="/assets/escape-html.js"></script>
 <script src="/assets/pros-search.js"></script>
@@ -581,6 +616,7 @@ async function loadCatStats(){
 }
 
 function applySearch(){
+ if(window.flinkoTrack)window.flinkoTrack('pesquisa',{q:document.getElementById('nav-q').value,origem:'cabeleireiros'})
  location.href='categoria.html?q='+encodeURIComponent(document.getElementById('nav-q').value)
 }
 
@@ -591,8 +627,7 @@ async function loadPros(){
  const _verificado=!!document.getElementById('f-verified')?.checked
  const _sort=document.getElementById('sort-select')?.value||'plan'
  const _planos=[]
- if(document.getElementById('f-premium')?.checked)_planos.push('premium')
- if(document.getElementById('f-pro')?.checked)_planos.push('pro')
+  if(document.getElementById('f-pro')?.checked)_planos.push('pro','premium')
  const _rapido=!!document.getElementById('f-fast')?.checked
  const _pMin=document.getElementById('price-min')?.value,_pMax=document.getElementById('price-max')?.value
  // Quando qualquer filtro/ordenacao muda, volta a pagina 1 (mudar so de pagina nao mexe nesta chave).
@@ -608,7 +643,7 @@ async function loadPros(){
  if(error){container.innerHTML=`<p style="color:red;padding:20px">Erro: ${escapeHtml(error.message)}</p>`;return}
 
  if(!data||!data.length){
- container.innerHTML=`<div class="pros-list"><div class="empty-state"><h3>Nenhum profissional encontrado ainda</h3><p>Ainda não há cabeleireiros nesta zona. Publica um pedido grátis e os profissionais desta categoria candidatam-se a ti, ou experimenta outro distrito.</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><a href="pedidos.html?cat=Cabeleireiros" class="btn btn-solid">Publicar pedido grátis</a><a href="categoria.html" class="btn btn-outline">Ver todos os profissionais</a></div></div></div>`
+ container.innerHTML=`<div class="pros-list"><div class="empty-state"><h3>Nenhum profissional encontrado ainda</h3><p>Ainda não há cabeleireiros nesta zona. Publica um pedido grátis e os profissionais desta categoria candidatam-se a ti, ou experimenta outro distrito.</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><a href="pedidos.html?publicar=1&amp;cat=Cabeleireiros" class="btn btn-solid">Publicar pedido grátis</a><a href="categoria.html" class="btn btn-outline">Ver todos os profissionais</a></div></div></div>`
  document.getElementById('results-count').textContent='0 resultados'
  const tb0=document.getElementById('tb-count'); if(tb0)tb0.textContent='0 profissionais'
  document.getElementById('pagination').innerHTML=''
@@ -623,7 +658,7 @@ async function loadPros(){
  // filtro lateral, mais alto. Em vez de um espaço em branco, mostramos
  // aqui um cartão a convidar a publicar um pedido — reaproveita o
  // padding-gap normal da .pros-list por ser mais um item da mesma lista.
- const sparseNudge=total>0&&total<=2?`<div class="sparse-nudge"><div class="sparse-nudge-text"><h3>${total===1?'Só há 1 profissional':'Só há '+total+' profissionais'} nesta categoria por agora</h3><p>Publica um pedido grátis e sê dos primeiros a ser contactado assim que mais profissionais desta categoria se juntarem à Flinko.</p></div><a href="pedidos.html?cat=Cabeleireiros" class="btn btn-solid">Publicar pedido grátis</a></div>`:''
+ const sparseNudge=total>0&&total<=2?`<div class="sparse-nudge"><div class="sparse-nudge-text"><h3>${total===1?'Só há 1 profissional':'Só há '+total+' profissionais'} nesta categoria por agora</h3><p>Publica um pedido grátis e sê dos primeiros a ser contactado assim que mais profissionais desta categoria se juntarem à Flinko.</p></div><a href="pedidos.html?publicar=1&amp;cat=Cabeleireiros" class="btn btn-solid">Publicar pedido grátis</a></div>`:''
 
  container.innerHTML=`<div class="pros-list">${filtered.map(pro=>{
  const r=rMap[pro.id];const avg=r?(r.s/r.c).toFixed(1):null;const n=r?Math.round(r.s/r.c):0
@@ -699,7 +734,6 @@ function clearFilters(){
  filters.loc='';filters.q='';filters.minRating=0;filters.page=1
  document.getElementById('f-loc-select').value=''
  document.querySelectorAll('input[name="rating"]')[0].checked=true
- document.getElementById('f-premium').checked=false
  document.getElementById('f-pro').checked=false
 {const _ff=document.getElementById('f-fast');if(_ff)_ff.checked=false}
  document.getElementById('f-verified').checked=false

@@ -111,7 +111,7 @@ function drawQr(){
   const alvo=document.getElementById('slug-qr')
   if(!alvo)return
   alvo.innerHTML=''
-  if(typeof QRCode==='undefined'){alvo.innerHTML='<div style="font-size:11px;color:var(--muted-2);padding:8px">QR indisponível</div>';return}
+  if(typeof QRCode==='undefined'){loadLib('qrcode').then(drawQr).catch(()=>{alvo.innerHTML='<div style="font-size:11px;color:var(--muted-2);padding:8px">QR indisponível</div>'});return}
   new QRCode(alvo,{text:slugUrl(),width:120,height:120,correctLevel:QRCode.CorrectLevel.M})
 }
 

@@ -43,6 +43,19 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // Limite diário por conta (ver a migração limite_uso_ia): sem isto, uma
+    // conta podia chamar a função em ciclo e gastar créditos da Anthropic.
+    // Se a função da base de dados não existir, segue (e fica em log) para
+    // não partir o assistente.
+    const { data: dentroDoLimite, error: quotaErr } = await supabase.rpc("ai_consume", { p_fn: "ai-assistant", p_limit: 40 });
+    if (quotaErr) console.error("ai_consume:", quotaErr.message);
+    if (dentroDoLimite === false) {
+      return new Response(JSON.stringify({ error: "rate_limited" }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
     if (!apiKey) {
       return new Response(JSON.stringify({ error: "not_configured" }), {

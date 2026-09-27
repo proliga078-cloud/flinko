@@ -1,4 +1,4 @@
-// profissionais.html: página para profissionais (cabeçalho e hero próprios, distintos da página de clientes).
+// profissionais.html: página para profissionais (aviso e hero próprios; o cabeçalho é o do resto do site).
 const { test, expect } = require('@playwright/test');
 const path = require('path');
 
@@ -15,7 +15,7 @@ test('avisa que é a área de profissionais e dá saída para clientes', async (
   await abrir(page);
   await expect(page.locator('.promo')).toContainText('profissionais');
   await expect(page.locator('.promo a')).toHaveAttribute('href', 'index.html');
-  await expect(page.locator('.ptag')).toHaveText('PARA PROFISSIONAIS');
+  await expect(page.locator('#fkHeader .fk-links a[aria-current="page"]')).toHaveText('Para profissionais');
 });
 
 test('escolher o ofício muda a palavra do título e o texto', async ({ page }) => {
@@ -28,10 +28,17 @@ test('escolher o ofício muda a palavra do título e o texto', async ({ page }) 
   await expect(page.getByRole('button', { name: 'Todos' })).toHaveAttribute('aria-pressed', 'false');
 });
 
-test('com sessão iniciada, "Entrar" passa a "Dashboard"', async ({ page }) => {
-  await abrir(page, { access_token: 'tok', user: { id: 'u1', email: 'a@example.com' } });
-  await expect(page.locator('#nav-login')).toHaveText('Dashboard');
-  await expect(page.locator('#nav-login')).toHaveAttribute('href', 'dashboard.html');
+test('com sessão iniciada, "Entrar" dá lugar a "O meu painel"', async ({ page }) => {
+  // A página já não carrega o SDK do Supabase: o cabeçalho lê a sessão que o
+  // SDK guarda no browser (assets/site-header.js).
+  await page.addInitScript(() => {
+    localStorage.setItem('sb-cdwinidhtfxfxowflize-auth-token', JSON.stringify({ access_token: 'tok', expires_at: Math.floor(Date.now() / 1000) + 3600, user: { id: 'u1', user_metadata: { full_name: 'Ana Silva' } } }));
+  });
+  await abrir(page);
+  await expect(page.locator('#nav-avatar')).toHaveText('AS');
+  await expect(page.locator('#nav-guest')).toBeHidden();
+  await expect(page.locator('#nav-user a.fk-btn')).toHaveText('O meu painel');
+  await expect(page.locator('#nav-user a.fk-btn')).toHaveAttribute('href', '/dashboard');
 });
 
 test('os botões de registo levam ao registo e os preços têm 3 planos + Empresas', async ({ page }) => {

@@ -354,7 +354,7 @@ try { pending = JSON.parse(sessionStorage.getItem('flinko_oauth_pending') || 'nu
 
 if (pending) {
 sessionStorage.removeItem('flinko_oauth_pending')
-const name = session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email
+const name = nameFromSession(session)
 await insertProfile(session.user.id, name, session.user.email, pending.accountType || 'professional')
 if (pending.ref) { refCode = pending.ref; await applyReferral(session.user.id) }
 location.href = (pending.redirect && safeRedirect(pending.redirect)) || postAuthDestination(pending.accountType)
@@ -369,7 +369,7 @@ if (isAdminSession === true) { location.href = 'admin.html'; return }
 // seguro chamar em todos os logins. Preserva a intenção de 'cliente' vinda do link de
 // contacto (?intent=client), senão mantém o default 'professional' de sempre.
 try {
-const name = session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email
+const name = nameFromSession(session)
 const intentParam2 = params.get('intent')
 await db.rpc('create_my_profile_if_missing', intentParam2 === 'client' ? { p_name: name, p_account_type: 'client' } : { p_name: name })
 } catch (e) {}
@@ -451,6 +451,7 @@ if (signUpData.session) {
 await insertProfile(userId, name, email, regAccountType)
 await applyReferral(userId)
 showMsg('reg-msg', 'Conta criada! A redirecionar...', 'success')
+if(window.flinkoTrack)window.flinkoTrack('conta_criada', { tipo: regAccountType, origem: 'registo' })
 setTimeout(() => location.href = postAuthDestination(regAccountType), 800)
 return
 }
@@ -461,6 +462,7 @@ if (!signInError && signInData?.session) {
 await insertProfile(signInData.user.id, name, email, regAccountType)
 await applyReferral(signInData.user.id)
 showMsg('reg-msg', 'Conta criada! A redirecionar...', 'success')
+if(window.flinkoTrack)window.flinkoTrack('conta_criada', { tipo: regAccountType, origem: 'registo' })
 setTimeout(() => location.href = postAuthDestination(regAccountType), 800)
 return
 }
@@ -474,6 +476,17 @@ showMsg('reg-msg', 'Erro de ligação. Tenta novamente.', 'error')
 btn.disabled = false
 btn.textContent = 'Criar conta'
 }
+}
+
+// O nome do perfil é público: nunca pode ser o email. Quando a conta Google não
+// traz nome, usa a parte antes do "@" ("ana.silva@gmail.com" -> "Ana Silva").
+// A base de dados aplica a mesma regra (trigger profiles_nome_sem_email_trg).
+function nameFromSession(session) {
+const meta = session.user.user_metadata || {}
+const name = String(meta.full_name || meta.name || '').trim()
+if (name && !name.includes('@')) return name
+const local = String(name || session.user.email || '').split('@')[0].replace(/[._+\d-]+/g, ' ').trim()
+return local ? local.replace(/\S+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()) : 'Profissional'
 }
 
 async function insertProfile(userId, name, email, accountType) {

@@ -13,6 +13,18 @@
      fiquem na mesma zona do ecra — sem isto, um botao "Criar conta" ou
      "Enviar pedido" perto do fundo ficava por baixo do banner e nao dava
      para clicar nele enquanto a pessoa nao decidisse sobre os cookies. */
+// Eventos do funil (pesquisar, contactar, publicar pedido...): as páginas
+// chamam window.flinkoTrack(nome, dados). Ficam numa fila e só são enviados se
+// houver consentimento de análise: assets/tracking.js esvazia a fila e passa a
+// enviar diretamente. Sem consentimento, a fila nunca sai do browser.
+if(!window.flinkoTrack){
+  window.__fkq=window.__fkq||[];
+  window.flinkoTrack=function(name,props){
+    window.__fkq.push([name,props||{},location.pathname]);
+    if(window.__fkq.length>50)window.__fkq.shift();
+  };
+}
+
 (function(){
   'use strict';
   var STORAGE_KEY = 'flinko_cookie_consent';

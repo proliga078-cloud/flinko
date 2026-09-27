@@ -42,7 +42,7 @@ test.describe('jardineiros.html — cartão de sugestão quando há poucos profi
     const nudge = page.locator('.sparse-nudge');
     await expect(nudge).toBeVisible();
     await expect(nudge.locator('h3')).toHaveText('Só há 1 profissional nesta categoria por agora');
-    await expect(nudge.locator('a.btn-solid')).toHaveAttribute('href', 'pedidos.html?cat=Jardineiros');
+    await expect(nudge.locator('a.btn-solid')).toHaveAttribute('href', 'pedidos.html?publicar=1&cat=Jardineiros');
   });
 
   test('2 resultados: mostra o cartão de sugestão no plural', async ({ page }) => {

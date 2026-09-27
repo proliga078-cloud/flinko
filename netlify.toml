@@ -1,11 +1,11 @@
 [build]
   publish = "."
-  # Regenera as paginas de categoria (eletricistas.html, canalizadores.html,
+  # Aplica o cabecalho unico (scripts/site-header.js) e regenera as paginas de categoria (eletricistas.html, canalizadores.html,
   # etc.) a partir de templates/categoria.template.html + scripts/categories-data.json
   # antes de cada deploy. So mexas nesses dois ficheiros para mudar conteudo
   # de categorias — nao edites as paginas .html diretamente, sao geradas e
   # o proximo deploy sobrescreve-as. Ver scripts/build-categories.js.
-  command = "node scripts/build-categories.js"
+  command = "npm run build"
 
 [functions]
   directory = "netlify/functions"
@@ -20,6 +20,11 @@
 [functions."weather-alert"]
   schedule = "0 6 * * *"
 
+# A pagina de perfil servida com o essencial ja no HTML (ver
+# netlify/functions/profile-page.js) le o profile.html do proprio deploy.
+[functions."profile-page"]
+  included_files = ["profile.html"]
+
 # Sitemap dinamico dos perfis de profissionais (netlify/functions/sitemap-profiles.js).
 # Gerado a pedido a partir da base de dados, porque perfis sao criados/
 # atualizados todos os dias — um sitemap estatico ficaria desatualizado.
@@ -29,6 +34,24 @@
   from = "/sitemap-profiles.xml"
   to = "/.netlify/functions/sitemap-profiles"
   status = 200
+
+# Perfis abertos por id (a maioria: o link proprio /o-nome-dele e so do
+# Pro). Passam pela mesma funcao que os perfis com link proprio, para o
+# titulo, a descricao, a imagem de partilha e os dados estruturados virem ja
+# no HTML. force=true porque profile.html existe como ficheiro.
+[[redirects]]
+  from = "/profile.html"
+  query = {id = ":id"}
+  to = "/.netlify/functions/profile-page?id=:id"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/profile"
+  query = {id = ":id"}
+  to = "/.netlify/functions/profile-page?id=:id"
+  status = 200
+  force = true
 
 # Pagina antiga para profissionais (fase de lancamento) — substituida por
 # /profissionais. Redirect permanente para nao perder links nem o Google.
@@ -62,6 +85,20 @@
   status = 200
   force = false
 
+# O painel antigo (admin-classico.html) foi apagado em set/2026: tudo o que
+# fazia esta no painel de gestao (admin.html).
+[[redirects]]
+  from = "/admin-classico.html"
+  to = "/admin.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/admin-classico"
+  to = "/admin.html"
+  status = 301
+  force = true
+
 # O Blog foi renomeado para Academia (set/2026). Mantem vivos os links e
 # favoritos antigos em vez de dar 404.
 [[redirects]]
@@ -74,7 +111,8 @@
   to = "/academia.html"
   status = 301
 
-# Link proprio dos profissionais Pro: flinko.pt/o-nome-dele
+# Link proprio dos profissionais Pro: flinko.pt/o-nome-dele (servido pela
+# funcao profile-page, que devolve 404 a caminhos que nao sao de ninguem).
 # Esta regra e a ULTIMA de proposito. O Netlify serve sempre os ficheiros
 # reais primeiro, por isso /pricing, /eletricistas e companhia continuam a
 # funcionar; so os caminhos que nao correspondem a nada e que chegam aqui.
@@ -82,17 +120,19 @@
 # ninguem consiga registar um slug que colida com elas.
 [[redirects]]
   from = "/:slug"
-  to = "/profile.html?u=:slug"
+  to = "/.netlify/functions/profile-page/:slug"
   status = 200
   force = false
 
 # Cabecalhos de seguranca para todas as paginas.
-# A CSP esta em modo "Report-Only": o browser NAO bloqueia nada, so regista no
-# consola (F12) o que bloquearia. Navega o site com a consola aberta; se nao
-# aparecer nenhum aviso legitimo, troca o nome do cabecalho para
-# Content-Security-Policy para passar a bloquear a serio. Mantem
-# 'unsafe-inline' porque as paginas usam <script> e onclick= inline — o
-# objetivo a medio prazo e removê-los e tirar o 'unsafe-inline'.
+# A CSP esta ATIVA (desde set/2026): o browser recusa scripts, estilos,
+# ligacoes e iframes de origens que nao estejam nesta lista. Se juntares um
+# servico novo (outra CDN, um mapa, um video...), acrescenta a origem aqui,
+# senao deixa de funcionar. Atencao: o Simple Analytics nao esta no codigo,
+# e injetado pelo Netlify (Snippet injection); por isso esta aqui a mao.
+# Mantem 'unsafe-inline' porque as paginas usam
+# <script> e onclick= inline; o objetivo a medio prazo e remove-los e tirar o
+# 'unsafe-inline'.
 [[headers]]
   for = "/*"
   [headers.values]
@@ -101,7 +141,7 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(self), payment=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"
-    Content-Security-Policy-Report-Only = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.open-meteo.com; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://scripts.simpleanalyticscdn.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.open-meteo.com https://queue.simpleanalyticscdn.com; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
 
 # Cache de assets estaticos no browser do visitante. Os nomes dos ficheiros
 # NAO tem hash de versao, por isso os tempos sao propositadamente moderados

@@ -416,6 +416,7 @@ async function generateQuotePdf(){
     showAlert('quote-error',msg,'error')
     return
   }
+  try{await loadLib('jspdf')}catch(e){showAlert('quote-error','O orçamento foi guardado, mas não foi possível gerar o PDF agora. Descarrega-o de novo na lista.','error');return}
   const doc=buildQuotePdf({client,items,subtotal,validDays,notes})
   doc.save('Orcamento-'+client.replace(/[^a-zA-Z0-9]+/g,'-')+'.pdf')
   closeQuoteModal()
@@ -440,9 +441,10 @@ async function loadQuotes(){
   }).join('')
 }
 
-function redownloadQuote(i){
+async function redownloadQuote(i){
   const q=quotesCache[i]
   if(!q)return
+  try{await loadLib('jspdf')}catch(e){alert('Não foi possível gerar o PDF agora. Verifica a ligação e tenta outra vez.');return}
   const doc=buildQuotePdf({client:q.client_name,items:q.items,subtotal:q.subtotal,validDays:q.valid_days,notes:q.notes})
   doc.save('Orcamento-'+q.client_name.replace(/[^a-zA-Z0-9]+/g,'-')+'.pdf')
 }

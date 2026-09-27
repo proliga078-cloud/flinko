@@ -30,17 +30,20 @@ utilizador, por isso usam `--no-verify-jwt`.
 
 ## Estado
 
-Todas as funções desta pasta coincidem com a produção (`send-notifications`
-v11 e `public-assistant` v6 publicadas a 19/09/2026):
+Todas as funções desta pasta coincidem com a produção (publicadas a 27/09/2026:
+`ai-assistant` v11, `ai-profile-builder` v7, `send-notifications` v12;
+`public-assistant` v6 de 19/09/2026):
 
-- **`send-notifications`**: marca e domínio Flinko. O `?diag=1` só funciona
-  quando `PROLIGA_HOOK_SECRET` está definido.
+- **`ai-assistant`** e **`ai-profile-builder`**: limite diário por conta (40 e
+  30 pedidos), contado na base de dados por `ai_consume()` (migração
+  `20260927011414_limite_uso_ia.sql`).
+- **`send-notifications`**: marca e domínio Flinko, botões na cor da marca. O
+  `?diag=1` só funciona quando `PROLIGA_HOOK_SECRET` está definido.
 - **`public-assistant`**: limite de 20 pedidos por hora por IP (em memória, por
   instância; não substitui um limite persistente).
 
 ## Problemas conhecidos
 
-- **`ai-assistant` não tem limite de utilização.** Exige sessão, mas um
-  utilizador autenticado pode chamá-lo em ciclo e gastar créditos da Anthropic.
+- **`public-assistant`** só tem o limite por IP em memória (por instância).
 - **`send-notifications` fica aberta se `PROLIGA_HOOK_SECRET` não estiver
   definido** (o trigger da BD não envia esse cabeçalho). Só processa a fila.

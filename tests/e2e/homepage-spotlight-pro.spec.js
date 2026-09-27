@@ -28,7 +28,7 @@ const pro = (extra) => ({
 });
 
 test.describe('index.html — profissionais em destaque', () => {
-  test('quem vem de spotlight_pros() aparece primeiro; o resto completa até 3 sem repetir', async ({ page }) => {
+  test('quem vem de spotlight_pros() aparece primeiro; o resto completa até 6 sem repetir', async ({ page }) => {
     const bruno = pro({ id: 'p1', name: 'Bruno Pro', category: 'Pintores', location: 'Porto', plan: 'pro' });
     const ana = pro({ id: 'f1', name: 'Ana Grátis', category: 'Jardineiros', location: 'Lisboa', plan: 'free' });
     const rui = pro({ id: 'f2', name: 'Rui Grátis', category: 'Limpeza', location: 'Braga', plan: 'free' });
@@ -64,7 +64,7 @@ test.describe('index.html — profissionais em destaque', () => {
     });
     await page.goto('/index.html');
     await expect(page.locator('#proGrid .pro-card')).toHaveCount(2);
-    const hrefs = await page.locator('#proGrid .pro-card a.btn').evaluateAll((els) => els.map((e) => e.getAttribute('href')));
+    const hrefs = await page.locator('#proGrid a.pro-card').evaluateAll((els) => els.map((e) => e.getAttribute('href')));
     expect(hrefs).toContain('/com-slug');
     expect(hrefs).toContain('/profile.html?id=p2');
   });

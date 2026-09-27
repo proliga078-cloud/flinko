@@ -343,6 +343,9 @@ async function loadAll() {
   const res = await Promise.all(keys.map(k => loadTable(k).catch(e => { LOADERR.push(k + ": " + e.message); return []; })));
   D = Object.fromEntries(keys.map((k, i) => [k, res[i]]));
   D.audit = DEMO ? [] : await api("admin_audit?select=*&order=at.desc&limit=500").catch(e => { if (!missing(e)) LOADERR.push("admin_audit: " + e.message); return []; });
+  // Eventos do funil de clientes (pesquisas, contactos, pedidos começados), já
+  // contados por dia no servidor. Sem a migração eventos_funil fica vazio.
+  D.events = DEMO ? [] : await api("rpc/admin_event_counts?p_days=90").catch(e => { if (!missing(e)) LOADERR.push("admin_event_counts: " + e.message); return []; });
   await loadStore();
   compute();
   takeSnapshot().catch(() => { });
@@ -1601,6 +1604,23 @@ function funnelHtml(f) {
   const top = f[0][1] || 1;
   return f.map((s, i) => `<div class="fun"><span>${esc(s[0])}</span><div class="fb"><i style="width:${s[1] / top * 100}%"></i></div><span class="n"><b>${s[1]}</b> <span class="mut">${pct(s[1], top)}%</span></span></div>${i < f.length - 1 && f[i][1] ? `` : ""}`).join("");
 }
+const appEvents = n => { const dia30 = dkey(new Date(now() - 30 * DAY).toISOString()); return (D.events || []).filter(e => e.name === n && String(e.day) >= dia30).reduce((s, e) => s + (+e.n || 0), 0); };
+// Funil de clientes dos últimos 30 dias: da visita ao trabalho fechado.
+function clientFunnel() {
+  const d30 = now() - 30 * DAY, dia30 = dkey(new Date(d30).toISOString());
+  const ev = n => (D.events || []).filter(e => e.name === n && String(e.day) >= dia30).reduce((s, e) => s + (+e.n || 0), 0);
+  const recent = (arr, k) => arr.filter(x => x[k] && new Date(x[k]).getTime() >= d30).length;
+  return [
+    ["Visitantes únicos", M.u30 || 0],
+    ["Pesquisaram", ev("pesquisa")],
+    ["Perfis vistos", D.pviews.filter(v => String(v.viewed_at) >= dia30).length],
+    ["Carregaram em contactar", ev("perfil_contactar")],
+    ["Conversas começadas", recent(D.conversations, "created_at")],
+    ["Começaram um pedido", ev("pedido_iniciado")],
+    ["Pedidos publicados", recent(D.requests, "created_at")],
+    ["Trabalhos fechados", D.jobs.filter(j => ["concluido", "pago"].includes(j.status) && new Date(j.paid_at || j.created_at).getTime() >= d30).length]
+  ];
+}
 const vGrowth = () => {
   const f = M.funnel; let worst = null;
   for (let i = 1; i < f.length; i++) { const lost = f[i - 1][1] - f[i][1]; if (!worst || lost > worst.lost) worst = { lost, from: f[i - 1][0], to: f[i][0] }; }
@@ -1611,6 +1631,9 @@ const vGrowth = () => {
   return head("Crescimento e funil", "Onde perdes profissionais entre o registo e a atividade real") +
     `<div class="grid g2"><div class="card"><h3>Funil de ativação</h3>${funnelHtml(f)}${worst && worst.lost > 0 ? `<div class="note" style="margin:12px 0 0">Maior perda: <b>${worst.lost}</b> profissionais entre “${esc(worst.from)}” e “${esc(worst.to)}”.</div>` : ""}</div>
     <div class="card"><h3>Registos por semana</h3>${lineChart([{ name: "Todos os registos", data: M.signWeeks, color: COL[0] }, { name: "Pedidos", data: M.reqWeeks, color: COL[2] }, { name: "Conversas", data: M.convWeeks, color: COL[3] }], { area: true })}</div></div>
+    <div class="card" style="margin-top:14px"><h3>Funil de clientes (últimos 30 dias)</h3>${funnelHtml(clientFunnel())}
+      <p style="margin:12px 0 0">📲 App: <b>${appEvents("app_instalar_clique")}</b> cliques em “Instalar a app” e <b>${appEvents("app_instalada")}</b> instalações nos últimos 30 dias.</p>
+      <p class="mut" style="margin:10px 0 0">Pesquisas, cliques em “contactar” e pedidos começados só contam quem aceitou cookies de análise; visitas, perfis vistos, conversas, pedidos e trabalhos vêm da base de dados.${(D.events || []).length ? "" : " <b>Ainda sem eventos:</b> falta aplicar a migração eventos_funil no Supabase, ou ainda ninguém com consentimento passou por esses passos."}</p></div>
     <div class="grid g4" style="margin-top:14px">
       ${kpi("Visitas (30 dias)", num(M.v30), `${num(M.u30)} visitantes únicos`)}
       ${kpi("Visitas por visitante", M.u30 ? (M.v30 / M.u30).toFixed(1) : "—", "engagement dos últimos 30 dias")}
@@ -2077,8 +2100,7 @@ function teamCard() {
   const body = !TEAM ? `<span class="mut">A carregar…</span>` : TEAM.err ? `<span class="pill warn">${esc(TEAM.err)}</span>` :
     `<div class="tw"><table><tr><th>Pessoa</th><th>Acesso</th><th></th></tr>${TEAM.map(m => `<tr><td><b>${esc(m.name || "—")}</b><br><span class="mut">${esc(m.email || "")}</span></td><td>${isOwner() && !DEMO ? `<select style="width:auto" onchange="setRole('${esc(m.email)}',this.value)">${Object.entries(ROLEL).map(([k, v]) => `<option value="${k}" ${m.admin_role === k ? "selected" : ""}>${v}</option>`).join("")}</select>` : esc(ROLEL[m.admin_role] || m.admin_role)}</td><td>${isOwner() && !DEMO ? `<button class="btn sec sm" onclick="setRole('${esc(m.email)}','none')">Tirar acesso</button>` : ""}</td></tr>`).join("")}</table></div>`;
   return `<div class="card" style="margin-top:14px" id="teamCard"><h3>👥 Equipa com acesso ao painel <span class="sp"></span>${isOwner() && !DEMO ? `<button class="btn sm" onclick="addMember()">+ Dar acesso</button>` : ""}</h3>${body}
-    <p class="mut" style="margin:10px 0 0"><b>Dono</b>: tudo, incluindo planos, reembolsos, receita do Stripe, RGPD, emails em grupo e esta lista. <b>Apoio</b>: vê o painel e trata verificações, moderação e pedidos de apoio, mas não mexe em dinheiro nem em permissões (a base de dados bloqueia-o, não é só o botão escondido). Tem de ficar sempre pelo menos um dono.</p>
-    <p class="mut" style="margin:6px 0 0">O painel antigo continua disponível em <a href="/admin-classico.html">admin-classico.html</a>, caso precises dele.</p></div>`;
+    <p class="mut" style="margin:10px 0 0"><b>Dono</b>: tudo, incluindo planos, reembolsos, receita do Stripe, RGPD, emails em grupo e esta lista. <b>Apoio</b>: vê o painel e trata verificações, moderação e pedidos de apoio, mas não mexe em dinheiro nem em permissões (a base de dados bloqueia-o, não é só o botão escondido). Tem de ficar sempre pelo menos um dono.</p></div>`;
 }
 
 const vSet = () => {
