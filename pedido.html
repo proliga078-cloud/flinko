@@ -97,6 +97,23 @@ nav{flex-wrap:wrap;height:auto;padding:10px 4%;row-gap:8px}
 .offer-mine{background:var(--fresh-soft);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--fresh-deep);line-height:1.6;margin-top:16px}
 
 .offers-section{margin-top:34px}
+.offers-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.offers-head h2{margin:0}
+.offers-sort{font-size:13px;color:var(--ink-mute);display:flex;align-items:center;gap:6px}
+.offers-sort select{border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-size:13px}
+.offers-note{font-size:13px;color:var(--ink-soft);margin:0 0 14px}
+.oc-price{font-size:18px;font-weight:800;margin:4px 0 6px}
+.oc-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.oc-chip{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700;background:var(--fresh-soft,#E6F4EC);color:var(--ink);border-radius:999px;padding:3px 9px}
+.oc-chip em{font-style:normal;color:var(--ink-mute)}
+.oc-star{background:#FFF4E0;color:#9A5B00}
+.oc-msg{font-size:13.5px;color:var(--ink-soft);line-height:1.5;margin-bottom:10px;white-space:pre-wrap}
+.oc-actions{display:flex;gap:8px;flex-wrap:wrap}
+.oc-state{display:inline-flex;font-size:12px;font-weight:800;border-radius:999px;padding:3px 9px}
+.oc-state.ok{background:#D7F5E4;color:#0A6B49}
+.oc-state.no{background:#EEF0EF;color:#6B7671}
+.offer-card.chosen{border:2px solid #0F8B5F}
+.offer-card.faded{opacity:.65}
 .offers-section h2{font-size:18px;font-weight:800;margin-bottom:14px}
 .offer-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;gap:12px;margin-bottom:10px;box-shadow:var(--shadow);position:relative;isolation:isolate;overflow:hidden;transition:transform .22s cubic-bezier(.22,1,.36,1),box-shadow .22s cubic-bezier(.22,1,.36,1)}
 .offer-card::before{content:'';position:absolute;inset:0;background:radial-gradient(200px circle at var(--mx,50%) var(--my,50%),rgba(15,139,95,.08),transparent 70%);opacity:0;transition:opacity .3s;pointer-events:none;z-index:0}
@@ -265,10 +282,63 @@ document.title='Pedido não encontrado – Flinko'
 }
 
 async function loadOffers(){
-const{data}=await db.from('request_offers').select('*,profiles:professional_id(name,photo_url,category,verified)').eq('request_id',reqId)
+const{data}=await db.from('request_offers').select('*,profiles:professional_id(name,photo_url,category,verified,slug,avg_response_minutes,response_sample_count)').eq('request_id',reqId)
 currentOffers=data||[]
 if(session)myOffer=currentOffers.find(o=>o.professional_id===session.user.id)||null
+// avaliações de quem respondeu (para comparar)
+const ids=[...new Set(currentOffers.map(o=>o.professional_id))]
+offerRatings={}
+if(ids.length&&session&&currentRequest&&session.user.id===currentRequest.client_id){
+const{data:rv}=await db.from('reviews').select('professional_id,rating').in('professional_id',ids)
+;(rv||[]).forEach(r=>{if(!ids.includes(r.professional_id))return;const x=offerRatings[r.professional_id]=offerRatings[r.professional_id]||{s:0,n:0};x.s+=Number(r.rating)||0;x.n++})
 }
+}
+let offerRatings={},offerSort='rec'
+function precoTxt(o){return o.price_from?('€'+Number(o.price_from).toLocaleString('pt-PT')+(o.price_to&&o.price_to!==o.price_from?' – €'+Number(o.price_to).toLocaleString('pt-PT'):'')):'Preço a combinar'}
+function ofertasOrdenadas(){
+const L=currentOffers.slice()
+const rating=o=>{const r=offerRatings[o.professional_id];return r?r.s/r.n:0}
+const preco=o=>o.price_from?Number(o.price_from):Infinity
+if(offerSort==='preco')L.sort((a,b)=>preco(a)-preco(b))
+else if(offerSort==='aval')L.sort((a,b)=>rating(b)-rating(a)||preco(a)-preco(b))
+else L.sort((a,b)=>{const pa=(a.profiles&&a.profiles.verified?1:0)+rating(a)/5,pb=(b.profiles&&b.profiles.verified?1:0)+rating(b)/5;return pb-pa||preco(a)-preco(b)})
+return L.sort((a,b)=>(b.status==='accepted')-(a.status==='accepted'))
+}
+function offerCardHtml(o,fechado){
+const p=o.profiles||{}
+const name=p.name||'Profissional'
+const initials=name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase()
+const foto=safeUrl(p.photo_url)
+const avatar=foto?'<img src="'+escapeHtml(foto)+'" alt=""/>':escapeHtml(initials)
+const r=offerRatings[o.professional_id]
+const aval=r?'<span class="oc-chip oc-star">★ '+(r.s/r.n).toFixed(1).replace('.',',')+' <em>('+r.n+')</em></span>':'<span class="oc-chip">Sem avaliações ainda</span>'
+const resp=(p.response_sample_count>0&&p.avg_response_minutes!=null)?'<span class="oc-chip">⚡ Responde em ~'+(p.avg_response_minutes<60?Math.round(p.avg_response_minutes)+' min':Math.round(p.avg_response_minutes/60)+' h')+'</span>':''
+const perfil=p.slug?'/'+encodeURIComponent(p.slug):'profile.html?id='+encodeURIComponent(o.professional_id)
+const estado=o.status==='accepted'?'<span class="oc-state ok">✓ Escolhida</span>':(o.status==='declined'?'<span class="oc-state no">Não escolhida</span>':'')
+const acoes=fechado?'':'<button class="btn btn-solid btn-sm" onclick="escolherProposta(\''+o.id+'\')">Escolher esta proposta</button>'
+return '<div class="offer-card'+(o.status==='accepted'?' chosen':'')+(o.status==='declined'?' faded':'')+'"><div class="oc-avatar">'+avatar+'</div><div class="oc-body">'+
+'<div class="oc-name-row"><span class="oc-name">'+escapeHtml(name)+'</span>'+(p.verified?'<span class="oc-verified">✓ Verificado</span>':'')+estado+'</div>'+
+'<div class="oc-price">'+escapeHtml(precoTxt(o))+'</div>'+
+'<div class="oc-chips">'+aval+resp+'</div>'+
+(o.message?'<div class="oc-msg">'+escapeHtml(o.message)+'</div>':'')+
+'<div class="oc-actions">'+acoes+'<a class="btn btn-outline btn-sm" href="'+perfil+'" target="_blank" rel="noopener">Ver perfil</a><a class="btn btn-outline btn-sm" href="messages.html?with='+encodeURIComponent(o.professional_id)+'">Mensagem</a></div>'+
+'</div></div>'
+}
+// Escolher: fecha o pedido, abre a conversa e cria o trabalho do profissional
+// (tudo no servidor, em escolher_proposta), e avisa o profissional.
+async function escolherProposta(id){
+const o=currentOffers.find(x=>x.id===id);if(!o)return
+const nome=(o.profiles&&o.profiles.name)||'este profissional'
+if(!confirm('Escolher a proposta de '+nome+' ('+precoTxt(o)+')?\n\nO pedido fica fechado a novas propostas e vais para a conversa com '+nome.split(' ')[0]+' para combinar os detalhes.'))return
+const{data:conv,error}=await db.rpc('escolher_proposta',{p_offer:id})
+if(error){alert('Não foi possível escolher: '+error.message);return}
+try{
+const{data:{session:s}}=await db.auth.getSession()
+if(s&&conv)await fetch('/.netlify/functions/notify-message',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+s.access_token},body:JSON.stringify({conversationId:conv,preview:'Escolhi a tua proposta para «'+currentRequest.title+'»'})})
+}catch(e){}
+location.href=conv?'messages.html?c='+encodeURIComponent(conv):'messages.html'
+}
+function setOfferSort(v){offerSort=v;render()}
 
 function render(){
 const r=currentRequest
@@ -287,6 +357,8 @@ const gallery=photos.length
 let footer=''
 if(isOwner){
 footer=`<div class="detail-actions"><a class="btn btn-outline" href="dashboard.html">📋 Ver no dashboard</a></div>`
+}else if((r.status||'open')!=='open'&&!myOffer){
+footer='<div class="detail-actions"><span class="pill">Este pedido já está fechado</span></div>'
 }else{
 footer=`<div class="detail-actions">
 <button class="btn btn-fresh" onclick="contactClient('${r.client_id}')">💬 Contactar</button>
@@ -298,17 +370,14 @@ ${myOffer?offerMineHtml(myOffer):offerFormHtml()}
 }
 
 let offersSection=''
-if(isOwner){
-offersSection=`<div class="offers-section"><h2>Propostas recebidas (${currentOffers.length})</h2>${
-currentOffers.length?currentOffers.map(o=>{
-const p=o.profiles||{}
-const name=p.name||'Profissional'
-const initials=name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase()
-const avatar=p.photo_url?`<img src="${escapeHtml(p.photo_url)}" alt=""/>`:initials
-const preco=o.price_from?('€'+o.price_from+(o.price_to?' – €'+o.price_to:'')):'Sem preço indicado'
-return `<div class="offer-card"><div class="oc-avatar">${avatar}</div><div class="oc-body"><div class="oc-name-row"><span class="oc-name">${escapeHtml(name)}</span>${p.verified?'<span class="oc-verified">✓ Verificado</span>':''}</div><div class="oc-cat">${escapeHtml(p.category||'')}</div><div class="oc-price">${preco}</div>${o.message?'<div class="oc-msg">'+escapeHtml(o.message)+'</div>':''}</div></div>`
-}).join(''):'<div class="oc-empty">Ainda não há propostas para este pedido.</div>'
-}</div>`
+const fechado=(r.status||'open')!=='open'
+if(isOwner&&currentOffers.length){
+offersSection='<div class="offers-section"><div class="offers-head"><h2>'+(fechado?'Propostas':'Compara e escolhe')+' ('+currentOffers.length+')</h2>'+
+(currentOffers.length>1?'<label class="offers-sort">Ordenar <select onchange="setOfferSort(this.value)"><option value="rec"'+(offerSort==='rec'?' selected':'')+'>Recomendadas</option><option value="preco"'+(offerSort==='preco'?' selected':'')+'>Mais baratas</option><option value="aval"'+(offerSort==='aval'?' selected':'')+'>Mais bem avaliadas</option></select></label>':'')+'</div>'+
+(fechado?'<p class="offers-note">Este pedido está fechado.'+(currentOffers.some(o=>o.status==='accepted')?' Já escolheste um profissional: combina tudo nas mensagens.':'')+'</p>':'<p class="offers-note">Fala com quem quiseres antes de decidir. Quando escolheres, o pedido fecha e seguem para a conversa.</p>')+
+ofertasOrdenadas().map(o=>offerCardHtml(o,fechado)).join('')+'</div>'
+}else if(isOwner){
+offersSection='<div class="offers-section"><h2>Propostas</h2><div class="oc-empty">Ainda não há propostas. Avisámos os profissionais desta área; quando alguém responder, recebes um email e aparece aqui.</div></div>'
 }
 
 document.getElementById('detail-root').innerHTML=`<div class="detail-grid">
@@ -345,8 +414,11 @@ return `<div class="price-hint" id="price-hint"></div>
 
 function offerMineHtml(o){
 const preco=o.price_from?('€'+o.price_from+(o.price_to?' – €'+o.price_to:'')):'Sem preço indicado'
-return `<div class="offer-mine"><strong>${preco}</strong><br>${escapeHtml(o.message||'(sem mensagem)')}</div>
-<button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="editMyOffer()">Editar proposta</button>`
+const estado=o.status==='accepted'?'<div class="oc-state ok" style="margin-bottom:6px">🎉 O cliente escolheu a tua proposta! Vê as mensagens para combinar.</div>'
+  :o.status==='declined'?'<div class="oc-state no" style="margin-bottom:6px">O cliente escolheu outra proposta.</div>'
+  :'<div style="font-size:12px;margin-bottom:6px">À espera da decisão do cliente.</div>'
+return `<div class="offer-mine">${estado}<strong>${preco}</strong><br>${escapeHtml(o.message||'(sem mensagem)')}</div>
+${o.status==='pending'?'<button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="editMyOffer()">Editar proposta</button>':(o.status==='accepted'?'<a class="btn btn-fresh btn-sm" style="margin-top:10px" href="messages.html">Abrir mensagens</a>':'')}`
 }
 
 function editMyOffer(){
@@ -382,6 +454,7 @@ box.innerHTML=`💡 Outros profissionais propuseram entre <strong>€${Number(da
 }
 
 async function sendOffer(){
+const nova=!myOffer
 const msg=document.getElementById('offer-msg').value.trim()
 const from=document.getElementById('offer-from').value
 const to=document.getElementById('offer-to').value
@@ -393,8 +466,21 @@ price_to:to?parseFloat(to):null
 },{onConflict:'request_id,professional_id'})
 if(error){alert('Erro ao enviar proposta: '+error.message);return}
 await loadOffers()
+if(nova&&myOffer)notifyOffer(myOffer.id)
 render()
 }
+
+// Avisa o cliente de uma proposta nova (email + push). O servidor confirma que
+// a proposta é nossa e só avisa uma vez.
+async function notifyOffer(offerId){
+if(!offerId)return
+try{
+const{data:{session:s}}=await db.auth.getSession()
+if(!s)return
+fetch('/.netlify/functions/notify-offer',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+s.access_token},body:JSON.stringify({offerId})})
+}catch(e){}
+}
+
 
 function contactClient(clientId){
 if(!session){location.href='auth.html?tab=login&redirect='+encodeURIComponent('messages.html?with='+clientId)+'&intent=professional';return}

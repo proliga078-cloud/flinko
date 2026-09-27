@@ -59,6 +59,7 @@ async function loadMyRequests(){
       ${photos}
       ${offersHtml}${reviewCta}
       <div class="list-item-actions">
+        ${(!resolved&&myOffers.length)?`<a class="btn btn-primary btn-sm" href="pedido.html?id=${encodeURIComponent(r.id)}">Comparar e escolher</a>`:''}
         <button class="btn btn-outline btn-sm" onclick="toggleRequestStatus('${r.id}','${resolved?'open':'resolved'}')">${resolved?'↩️ Reabrir':'✅ Marcar como resolvido'}</button>
         <button class="btn btn-danger btn-sm" onclick="deleteMyRequest('${r.id}')"><svg class="ic" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/><path d="M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/></svg> Eliminar</button>
       </div>
