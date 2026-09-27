@@ -48,6 +48,7 @@ function siteHeader(page = '') {
     ${LINKS.map(l => link(l)).join('\n    ')}
     <a href="/calculadora-orcamento">Calculadora de orçamento</a>
     <a href="/auth?tab=login">Entrar</a>
+    <button type="button" class="fk-install" data-fk-install onclick="window.flinkoInstallApp&&window.flinkoInstallApp()">📲 Instalar a app no telemóvel</button>
   </div>
 </div>`
 }

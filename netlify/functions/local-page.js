@@ -156,6 +156,8 @@ exports.handler=async(event)=>{
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/site-header.js" defer></script>
+<script src="/assets/pwa.js" defer></script>
+<link rel="manifest" href="/manifest.json">
 ${jsonLdHtml}
 <style>
 :root{--ink:#132420;--soft:#4E5C57;--line:#E1EEE6;--surface:#F3FBF6;--accent:#E8720A;--accent-deep:#B85608;--fresh:#0F8B5F}

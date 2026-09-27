@@ -1604,6 +1604,7 @@ function funnelHtml(f) {
   const top = f[0][1] || 1;
   return f.map((s, i) => `<div class="fun"><span>${esc(s[0])}</span><div class="fb"><i style="width:${s[1] / top * 100}%"></i></div><span class="n"><b>${s[1]}</b> <span class="mut">${pct(s[1], top)}%</span></span></div>${i < f.length - 1 && f[i][1] ? `` : ""}`).join("");
 }
+const appEvents = n => { const dia30 = dkey(new Date(now() - 30 * DAY).toISOString()); return (D.events || []).filter(e => e.name === n && String(e.day) >= dia30).reduce((s, e) => s + (+e.n || 0), 0); };
 // Funil de clientes dos últimos 30 dias: da visita ao trabalho fechado.
 function clientFunnel() {
   const d30 = now() - 30 * DAY, dia30 = dkey(new Date(d30).toISOString());
@@ -1631,6 +1632,7 @@ const vGrowth = () => {
     `<div class="grid g2"><div class="card"><h3>Funil de ativação</h3>${funnelHtml(f)}${worst && worst.lost > 0 ? `<div class="note" style="margin:12px 0 0">Maior perda: <b>${worst.lost}</b> profissionais entre “${esc(worst.from)}” e “${esc(worst.to)}”.</div>` : ""}</div>
     <div class="card"><h3>Registos por semana</h3>${lineChart([{ name: "Todos os registos", data: M.signWeeks, color: COL[0] }, { name: "Pedidos", data: M.reqWeeks, color: COL[2] }, { name: "Conversas", data: M.convWeeks, color: COL[3] }], { area: true })}</div></div>
     <div class="card" style="margin-top:14px"><h3>Funil de clientes (últimos 30 dias)</h3>${funnelHtml(clientFunnel())}
+      <p style="margin:12px 0 0">📲 App: <b>${appEvents("app_instalar_clique")}</b> cliques em “Instalar a app” e <b>${appEvents("app_instalada")}</b> instalações nos últimos 30 dias.</p>
       <p class="mut" style="margin:10px 0 0">Pesquisas, cliques em “contactar” e pedidos começados só contam quem aceitou cookies de análise; visitas, perfis vistos, conversas, pedidos e trabalhos vêm da base de dados.${(D.events || []).length ? "" : " <b>Ainda sem eventos:</b> falta aplicar a migração eventos_funil no Supabase, ou ainda ninguém com consentimento passou por esses passos."}</p></div>
     <div class="grid g4" style="margin-top:14px">
       ${kpi("Visitas (30 dias)", num(M.v30), `${num(M.u30)} visitantes únicos`)}

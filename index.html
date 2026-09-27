@@ -947,12 +947,46 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   .how-num,.how-line-fill,.how-dot{transition:none}
   .cat-slide{transition:none}
 }
+/* ============ APP NO TELEMÓVEL ============ */
+.app-section{background:var(--bg-tint)}
+.app-inner{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center}
+.app-inner h2{font-size:clamp(1.8rem,3.4vw,2.6rem);line-height:1.1;margin-bottom:14px}
+.app-lead{color:var(--muted);font-size:1.05rem;line-height:1.6;max-width:520px;margin-bottom:24px}
+.app-benefits{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px}
+.app-benefit{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:14px}
+.app-benefit .ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;background:#FFE7CE}
+.app-benefit strong{display:block;font-size:.95rem;margin-bottom:2px}
+.app-benefit span{font-size:.85rem;color:var(--muted);line-height:1.45}
+.app-cta{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.app-cta .btn{font-size:1rem}
+.app-hint{font-size:.85rem;color:var(--muted)}
+.app-done{display:none;font-weight:700;color:var(--mint-dark)}
+.app-section.is-installed .app-cta .btn,.app-section.is-installed .app-hint{display:none}
+.app-section.is-installed .app-done{display:inline-flex}
+.phone{position:relative;width:290px;height:560px;margin:0 auto;border-radius:40px;background:#0b1512;padding:12px;box-shadow:var(--shadow),0 0 0 2px #1F4538 inset}
+.phone-screen{position:relative;height:100%;border-radius:30px;overflow:hidden;background:linear-gradient(170deg,#1F4538,#132420 60%);padding:40px 16px 16px;color:#fff}
+.phone-screen::before{content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);width:90px;height:22px;border-radius:12px;background:#0b1512}
+.phone-time{text-align:center;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:2.6rem;letter-spacing:-.02em;margin:8px 0 2px}
+.phone-date{text-align:center;font-size:.78rem;opacity:.75;margin-bottom:22px}
+.phone-notif{background:rgba(255,255,255,.94);color:var(--ink);border-radius:16px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;box-shadow:0 8px 20px rgba(0,0,0,.25);margin-bottom:10px}
+.phone-notif img{width:30px;height:30px;border-radius:8px;flex-shrink:0}
+.phone-notif>div{flex:1;min-width:0}
+.phone-notif b{display:block;font-size:.78rem}
+.phone-notif span{display:block;font-size:.76rem;color:var(--muted);line-height:1.35}
+.phone-notif small{margin-left:auto;font-size:.66rem;color:var(--muted);white-space:nowrap}
+.phone-dock{position:absolute;left:16px;right:16px;bottom:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:rgba(255,255,255,.14);border-radius:22px;padding:10px}
+.phone-dock i{display:block;aspect-ratio:1;border-radius:12px;background:rgba(255,255,255,.22)}
+.phone-dock img{width:100%;border-radius:12px;box-shadow:0 0 0 2px var(--orange)}
+.app-mock-note{text-align:center;font-size:.75rem;color:var(--muted);margin-top:10px}
+@media (max-width:960px){.app-inner{grid-template-columns:1fr;gap:36px}}
+@media (max-width:520px){.app-benefits{grid-template-columns:1fr}.phone{width:250px;height:430px}.phone-time{font-size:2.2rem}.phone-date{margin-bottom:16px}.phone-notif+.phone-notif{display:none}.app-cta .btn{width:100%;justify-content:center}}
 </style>
 <script src="/assets/cookie-consent.js" defer></script>
 <script src="/assets/public-chat-widget.js" defer></script>
 <!-- fk:head -->
 <link rel="stylesheet" href="/assets/site.css" />
 <script src="/assets/site-header.js" defer></script>
+<script src="/assets/pwa.js" defer></script>
 <!-- /fk:head -->
 </head>
 <body>
@@ -1000,6 +1034,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
     <a href="/academia">Academia</a>
     <a href="/calculadora-orcamento">Calculadora de orçamento</a>
     <a href="/auth?tab=login">Entrar</a>
+    <button type="button" class="fk-install" data-fk-install onclick="window.flinkoInstallApp&&window.flinkoInstallApp()">📲 Instalar a app no telemóvel</button>
   </div>
 </div>
 <!-- /fk:header -->
@@ -1177,6 +1212,40 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
       <div class="how-cta" data-reveal>
         <p>Já sabes que a Flinko verifica cada profissional manualmente. Vê quem está disponível perto de ti.</p>
         <a href="/categoria" class="btn btn-orange">Ver profissionais <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- APP NO TELEMÓVEL -->
+  <section class="app-section" id="app">
+    <div class="wrap app-inner">
+      <div data-reveal>
+        <span class="kicker">App Flinko</span>
+        <h2>A Flinko no teu telemóvel, como uma <span class="hi-block">app</span></h2>
+        <p class="app-lead">Instala em 10 segundos, sem ir à loja de apps. Fica no ecrã principal, abre num toque e avisa-te quando alguém te responde.</p>
+        <div class="app-benefits">
+          <div class="app-benefit"><span class="ic">🔔</span><div><strong>Avisos na hora</strong><span>Mensagens e propostas chegam como notificação.</span></div></div>
+          <div class="app-benefit"><span class="ic">⚡</span><div><strong>Abre num toque</strong><span>Em ecrã inteiro, sem procurar o site no browser.</span></div></div>
+          <div class="app-benefit"><span class="ic">🧰</span><div><strong>Para profissionais</strong><span>Pedidos da tua zona, agenda e orçamentos sempre à mão.</span></div></div>
+          <div class="app-benefit"><span class="ic">🪶</span><div><strong>Grátis e leve</strong><span>Não ocupa espaço como uma app normal.</span></div></div>
+        </div>
+        <div class="app-cta">
+          <button type="button" class="btn btn-orange" data-fk-install onclick="window.flinkoInstallApp&&window.flinkoInstallApp()">📲 Instalar a app</button>
+          <span class="app-hint">No iPhone: Partilhar → “Adicionar ao ecrã principal”.</span>
+          <span class="app-done">✓ Já tens a app Flinko instalada</span>
+        </div>
+      </div>
+      <div data-reveal="d1">
+        <div class="phone" aria-hidden="true">
+          <div class="phone-screen">
+            <div class="phone-time">9:41</div>
+            <div class="phone-date">quarta-feira, 30 de setembro</div>
+            <div class="phone-notif"><img src="/icon-192.png" alt=""><div><b>Flinko</b><span>Nova proposta para o teu pedido “Trocar quadro elétrico”.</span></div><small>agora</small></div>
+            <div class="phone-notif"><img src="/icon-192.png" alt=""><div><b>Flinko · Mensagem</b><span>Posso passar amanhã às 10h para ver o trabalho.</span></div><small>2 min</small></div>
+            <div class="phone-dock"><i></i><i></i><img src="/icon-192.png" alt=""><i></i></div>
+          </div>
+        </div>
+        <p class="app-mock-note">Exemplo de notificações da app.</p>
       </div>
     </div>
   </section>
@@ -1938,6 +2007,14 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
     .catch(function(){
       grid.innerHTML = emptyStateHtml();
     });
+})();
+</script>
+<script>
+(function(){
+  var sec=document.getElementById('app');
+  function marcar(){ if(sec&&window.flinkoIsInstalled&&window.flinkoIsInstalled()) sec.classList.add('is-installed'); }
+  window.addEventListener('load', marcar);
+  document.addEventListener('flinko:installed', marcar);
 })();
 </script>
 </body>

@@ -1,4 +1,5 @@
 {
+  "id": "/",
   "name": "Flinko — Serviços e Profissionais",
   "short_name": "Flinko",
   "description": "Encontra profissionais de confiança em Portugal, ou gere o teu negócio se és profissional.",
@@ -27,6 +28,41 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Publicar um pedido",
+      "short_name": "Publicar pedido",
+      "url": "/pedidos?publicar=1&pwa=1",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Mensagens",
+      "short_name": "Mensagens",
+      "url": "/messages.html?pwa=1",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "O meu painel",
+      "short_name": "Painel",
+      "url": "/dashboard?pwa=1",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

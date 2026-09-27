@@ -14,7 +14,7 @@ const { siteHeader, siteFooter } = require('./site-header.js')
 
 const ROOT = path.join(__dirname, '..')
 const CATEGORY_SLUGS = new Set(require('./categories-data.json').map(c => c.slug))
-const HEAD = '<link rel="stylesheet" href="/assets/site.css" />\n<script src="/assets/site-header.js" defer></script>'
+const HEAD = '<link rel="stylesheet" href="/assets/site.css" />\n<script src="/assets/site-header.js" defer></script>\n<script src="/assets/pwa.js" defer></script>'
 
 function apply(html, page) {
   return html

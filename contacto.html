@@ -60,7 +60,6 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <link rel="shortcut icon" href="/favicon.ico"/>
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#0f231b"/>
-<script src="/assets/pwa.js" defer></script>
 <script src="/assets/cookie-consent.js" defer></script>
 <script src="/assets/support-form.js"></script>
 <meta property="og:title" content="Contacto – Flinko"/>
@@ -76,6 +75,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <!-- fk:head -->
 <link rel="stylesheet" href="/assets/site.css" />
 <script src="/assets/site-header.js" defer></script>
+<script src="/assets/pwa.js" defer></script>
 <!-- /fk:head -->
 </head>
 <body>
@@ -112,6 +112,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
     <a href="/academia">Academia</a>
     <a href="/calculadora-orcamento">Calculadora de orçamento</a>
     <a href="/auth?tab=login">Entrar</a>
+    <button type="button" class="fk-install" data-fk-install onclick="window.flinkoInstallApp&&window.flinkoInstallApp()">📲 Instalar a app no telemóvel</button>
   </div>
 </div>
 <!-- /fk:header -->

@@ -13,7 +13,6 @@
 <link rel="shortcut icon" href="/favicon.ico"/>
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#132420"/>
-<script src="/assets/pwa.js" defer></script>
 <script src="/assets/cookie-consent.js" defer></script>
 <script src="/assets/a11y-clickable.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -226,6 +225,7 @@ nav{flex-wrap:wrap;height:auto;padding:10px 4%;row-gap:8px}
 <!-- fk:head -->
 <link rel="stylesheet" href="/assets/site.css" />
 <script src="/assets/site-header.js" defer></script>
+<script src="/assets/pwa.js" defer></script>
 <!-- /fk:head -->
 </head>
 <body>
@@ -263,6 +263,7 @@ nav{flex-wrap:wrap;height:auto;padding:10px 4%;row-gap:8px}
     <a href="/academia">Academia</a>
     <a href="/calculadora-orcamento">Calculadora de orçamento</a>
     <a href="/auth?tab=login">Entrar</a>
+    <button type="button" class="fk-install" data-fk-install onclick="window.flinkoInstallApp&&window.flinkoInstallApp()">📲 Instalar a app no telemóvel</button>
   </div>
 </div>
 <!-- /fk:header -->

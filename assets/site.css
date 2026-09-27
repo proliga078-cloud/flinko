@@ -63,6 +63,10 @@
 .fk-panel a{padding:13px 4px;font-weight:600;font-size:1rem;color:var(--fk-ink)!important;text-decoration:none!important;border-bottom:1px solid var(--fk-line)}
 .fk-panel a:last-child{border-bottom:none}
 .fk-panel a[aria-current="page"]{color:var(--fk-orange-dark)!important}
+.fk-install{margin-top:12px;width:100%;padding:12px;border-radius:999px;border:1.5px solid var(--fk-line);background:var(--fk-tint);color:var(--fk-ink);font-family:var(--fk-font);font-weight:700;font-size:.95rem;cursor:pointer}
+.fk-install:hover{border-color:var(--fk-ink)}
+/* Já a correr como app instalada: não faz sentido oferecer a instalação. */
+@media (display-mode:standalone){.fk-install,[data-fk-install]{display:none!important}}
 
 /* Pesquisa por baixo do cabeçalho (páginas de categoria). */
 .fk-searchbar{max-width:1180px;margin:0 auto;padding:14px 24px 0}
