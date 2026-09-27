@@ -7,7 +7,7 @@ import { PGlite } from '@electric-sql/pglite'
 import fs from 'node:fs'
 import assert from 'node:assert/strict'
 
-const MIGRATION = new URL('../../supabase/migrations/20260927100000_limite_uso_ia.sql', import.meta.url)
+const MIGRATION = new URL('../../supabase/migrations/20260927011414_limite_uso_ia.sql', import.meta.url)
 
 test('migração limite_uso_ia: quota diária por conta e por assistente', async () => {
   const db = new PGlite()

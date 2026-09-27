@@ -7,7 +7,7 @@ import { PGlite } from '@electric-sql/pglite'
 import fs from 'node:fs'
 import assert from 'node:assert/strict'
 
-const MIGRATION = new URL('../../supabase/migrations/20260926100000_nome_nunca_e_email.sql', import.meta.url)
+const MIGRATION = new URL('../../supabase/migrations/20260927011353_nome_nunca_e_email.sql', import.meta.url)
 
 test('migração nome_nunca_e_email: o nome do perfil nunca é um email', async () => {
   const db = new PGlite()

@@ -8,7 +8,7 @@ import { PGlite } from '@electric-sql/pglite'
 import fs from 'node:fs'
 import assert from 'node:assert/strict'
 
-const MIGRATION = new URL('../../supabase/migrations/20260927110000_eventos_funil.sql', import.meta.url)
+const MIGRATION = new URL('../../supabase/migrations/20260927011416_eventos_funil.sql', import.meta.url)
 
 test('migração eventos_funil: registar, não ler, e contagens só para admins', async () => {
   const db = new PGlite()
