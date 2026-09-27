@@ -437,26 +437,6 @@ footer{background:var(--surface);border-top:1px solid var(--line)}
 </div>
 <!-- /fk:footer -->
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
-const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
-const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
-db.auth.getSession().then(({data:{session}})=>{
-if(session){
-document.getElementById('nav-guest').style.display='none'
-const u=document.getElementById('nav-user')
-if(u)u.style.display='flex'
-}
-})
-function toggleMobileNav(){
-const p=document.getElementById('mobile-nav-panel')
-if(p)p.classList.toggle('open')
-}
-window.addEventListener('resize',()=>{
-if(window.innerWidth>=900){const p=document.getElementById('mobile-nav-panel');if(p)p.classList.remove('open')}
-})
-</script>
 <script>
 (function(){
 var els = document.querySelectorAll('.reveal');

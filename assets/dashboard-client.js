@@ -75,7 +75,8 @@ loadRecommendedPros()
 let chartClientSpend=null
 function renderClientSpendChart(){
 const ctx=document.getElementById('chart-client-spend')
-if(!ctx||typeof Chart==='undefined')return
+if(!ctx)return
+if(typeof Chart==='undefined'){loadLib('chart').then(renderClientSpendChart).catch(()=>{});return}
 const months=[]
 for(let i=5;i>=0;i--){
 const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-i)

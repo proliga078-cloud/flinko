@@ -29,7 +29,13 @@ test('escolher o ofício muda a palavra do título e o texto', async ({ page }) 
 });
 
 test('com sessão iniciada, "Entrar" dá lugar a "O meu painel"', async ({ page }) => {
-  await abrir(page, { access_token: 'tok', user: { id: 'u1', email: 'a@example.com' } });
+  // A página já não carrega o SDK do Supabase: o cabeçalho lê a sessão que o
+  // SDK guarda no browser (assets/site-header.js).
+  await page.addInitScript(() => {
+    localStorage.setItem('sb-cdwinidhtfxfxowflize-auth-token', JSON.stringify({ access_token: 'tok', expires_at: Math.floor(Date.now() / 1000) + 3600, user: { id: 'u1', user_metadata: { full_name: 'Ana Silva' } } }));
+  });
+  await abrir(page);
+  await expect(page.locator('#nav-avatar')).toHaveText('AS');
   await expect(page.locator('#nav-guest')).toBeHidden();
   await expect(page.locator('#nav-user a.fk-btn')).toHaveText('O meu painel');
   await expect(page.locator('#nav-user a.fk-btn')).toHaveAttribute('href', '/dashboard');

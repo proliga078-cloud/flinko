@@ -411,11 +411,7 @@ footer{background:var(--dark);color:rgba(255,255,255,.7);padding:48px 0 28px;fon
 
 <div class="sticky"><a href="auth.html?tab=register" class="btn btn-o">Criar perfil grátis &rarr;</a></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
-const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
-const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
 
 function tog(el){
 const a=el.nextElementSibling
@@ -438,17 +434,6 @@ var st=document.querySelector('.sticky')
 if(st)st.classList.toggle('on',window.scrollY>520)
 },{passive:true})
 
-async function init(){
-try{
-const{data:{session}}=await db.auth.getSession()
-if(session){
-const g=document.getElementById('nav-guest'),u=document.getElementById('nav-user')
-if(g)g.style.display='none'
-if(u)u.style.display='flex'
-}
-}catch(e){}
-}
-init()
 </script>
 </body>
 </html>

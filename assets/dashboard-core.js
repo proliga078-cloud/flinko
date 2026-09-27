@@ -9,6 +9,27 @@ let aiChatOpen=false
 let pendingAiAction=null
 let quoteJobId=null,quotesCache=[]
 
+// Bibliotecas pesadas (gráficos, PDF, QR) só quando são precisas. Antes eram
+// todas descarregadas à entrada do dashboard, mesmo por quem nunca abre as
+// estatísticas nem gera um orçamento.
+const LIBS={
+  chart:['https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js',()=>typeof Chart!=='undefined'],
+  jspdf:['https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',()=>!!window.jspdf],
+  qrcode:['https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',()=>typeof QRCode!=='undefined']
+}
+const _libLoads={}
+function loadLib(name){
+  const[src,ready]=LIBS[name]
+  if(ready())return Promise.resolve()
+  return _libLoads[name]||(_libLoads[name]=new Promise((resolve,reject)=>{
+    const s=document.createElement('script')
+    s.src=src;s.async=true
+    s.onload=()=>resolve()
+    s.onerror=()=>{delete _libLoads[name];reject(new Error('Não foi possível carregar '+name))}
+    document.head.appendChild(s)
+  }))
+}
+
 ;(()=>{
 const main=document.querySelector('.main-content')
 if(!main)return
