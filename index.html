@@ -31,15 +31,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
 <link rel="preload" as="image" href="assets/hero-team.jpg" fetchpriority="high" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
-{"@type":"Question","name":"A Flinko cobra alguma comissão?","acceptedAnswer":{"@type":"Answer","text":"Não sobre trabalhos fechados. Os profissionais têm um plano gratuito para sempre; os planos pagos existem só para quem quer mais visibilidade."}},
-{"@type":"Question","name":"Como são verificados os profissionais?","acceptedAnswer":{"@type":"Answer","text":"A nossa equipa revê manualmente cada perfil novo antes de o marcar como Verificado. Perfis suspeitos ou incompletos não são aprovados."}},
-{"@type":"Question","name":"Preciso de pagar para contactar um profissional?","acceptedAnswer":{"@type":"Answer","text":"Não. Criar conta, procurar profissionais e enviar mensagens é sempre gratuito para clientes."}},
-{"@type":"Question","name":"Quanto custa um serviço, mais ou menos?","acceptedAnswer":{"@type":"Answer","text":"Depende do trabalho e da zona. A calculadora de orçamento da Flinko dá uma ideia antes de pedir orçamento; o preço final é sempre combinado com o profissional."}},
-{"@type":"Question","name":"Sou profissional. Quanto custa estar na Flinko?","acceptedAnswer":{"@type":"Answer","text":"Criar o perfil e receber pedidos é grátis e sem comissões. Os planos pagos (a partir de 9,99 euros por mês) dão mais visibilidade e ferramentas."}}
-]}
-</script>
-<script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Flinko","url":"https://flinko.pt/","logo":"https://flinko.pt/icon-512.png","image":"https://flinko.pt/assets/og-image.png","description":"Marketplace de profissionais verificados manualmente em Portugal. Eletricistas, canalizadores, pintores, jardineiros, designers e muito mais.","areaServed":{"@type":"Country","name":"Portugal"}}
 </script>
 <script type="application/ld+json">
@@ -505,43 +496,9 @@ section{padding:96px 0}
 }
 
 /* Para Profissionais teaser */
-.pros-benefits{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media (max-width:640px){ .pros-benefits{grid-template-columns:1fr} }
-.pros-benefit{
-  display:flex;align-items:flex-start;gap:14px;padding:18px;
-  border:1.5px solid rgba(255,255,255,.14);border-radius:var(--radius-md);
-  transition:border-color .2s ease,background .2s ease,transform .2s ease;
-}
-.pros-benefit:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.05);transform:translateY(-3px)}
-.pros-benefit .check{width:30px;height:30px;border-radius:50%;background:rgba(15,139,95,.16);color:var(--mint);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.pros-benefit strong{display:block;color:#fff;font-size:.98rem}
-.pros-benefit span{display:block;color:rgba(255,255,255,.6);font-size:.86rem;margin-top:3px;line-height:1.5}
 
-/* FAQ */
-.faq-grid{display:grid;grid-template-columns:.62fr 1.38fr;gap:56px;align-items:start}
-.faq-side h2{margin-top:6px}
-.faq-side p{margin-top:14px;color:var(--muted);font-size:1rem}
-.faq-side .btn{margin-top:20px}
-.faq-list{display:flex;flex-direction:column;gap:14px}
-.faq-item{border:1.5px solid var(--line);border-radius:var(--radius-md);overflow:hidden}
-.faq-q{
-  width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;
-  padding:22px 24px;font-weight:700;font-size:1rem;text-align:left;
-}
-.faq-q .idx{color:var(--muted);font-weight:800;margin-right:10px;font-size:.85rem}
-.faq-q .chev{transition:transform .2s ease;flex-shrink:0;color:var(--muted)}
-.faq-item[data-open="true"] .chev{transform:rotate(180deg)}
-.faq-a{max-height:0;overflow:hidden;transition:max-height .25s ease}
-.faq-a p{padding:0 24px 22px 58px;color:var(--muted);font-size:.94rem;line-height:1.6}
 
-/* Final CTA */
-.final-cta{
-  background:linear-gradient(135deg,var(--dark) 0%,var(--dark-3) 100%);
-  border-radius:var(--radius-lg);padding:64px 40px;text-align:center;color:#fff;
-}
-.final-cta h2{color:#fff;font-size:clamp(1.9rem,3.6vw,2.6rem)}
-.final-cta p{margin-top:14px;color:rgba(255,255,255,.72);font-size:1.02rem}
-.final-cta .ctas{margin-top:30px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
 
 /* Footer */
 footer{background:var(--dark);color:rgba(255,255,255,.75);border-top:3px solid var(--orange)}
@@ -575,7 +532,6 @@ footer{background:var(--dark);color:rgba(255,255,255,.75);border-top:3px solid v
   .cat-slide{width:240px;min-height:300px}
   .pro-card{grid-template-columns:1fr;gap:12px}
   .pro-card .btn{width:100%;justify-content:center}
-  .faq-grid{grid-template-columns:1fr;gap:24px}
   .footer-top{grid-template-columns:1fr 1fr}
 }
 @media (max-width:720px){
@@ -704,8 +660,6 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
 .spotlight:hover .glow-spot{opacity:1}
 
 /* ambient orbs reused on trust-band + final-cta */
-.final-cta{position:relative;overflow:hidden}
-.final-cta>*:not(.hero-orbs){position:relative;z-index:2}
 
 /* idle bounce on category icons */
 .cat-slide .ic{animation:icon-bob 3.4s ease-in-out infinite}
@@ -796,15 +750,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
 
 /* trust pillars: colored top accent per card, matching the stats above */
 
-/* price rows: left accent colored to match each service's icon */
 
-/* FAQ index becomes a colored number chip instead of plain grey text */
-.faq-q .idx{
-  display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;
-  color:#fff;font-weight:800;margin-right:12px;font-size:.72rem;background:var(--dark);flex-shrink:0;
-}
-.faq-item:nth-child(2) .idx{background:var(--orange)}
-.faq-item:nth-child(3) .idx{background:var(--mint-dark)}
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -861,6 +807,36 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
 .app-mock-note{text-align:center;font-size:.75rem;color:var(--muted);margin-top:10px}
 @media (max-width:960px){.app-inner{grid-template-columns:1fr;gap:36px}}
 @media (max-width:520px){.app-benefits{grid-template-columns:1fr}.phone{width:250px;height:430px}.phone-time{font-size:2.2rem}.phone-date{margin-bottom:16px}.phone-notif+.phone-notif{display:none}.app-cta .btn{width:100%;justify-content:center}}
+/* ============ PROFISSIONAIS (cartões) ============ */
+.pros-section .pro-grid{grid-template-columns:repeat(3,1fr);gap:18px}
+.pros-section a.pro-card{display:flex;flex-direction:column;gap:12px;padding:20px;border-radius:var(--radius-lg);background:#fff;border:1px solid var(--line);color:inherit;text-decoration:none}
+.pros-section .pro-top{min-width:0}
+.pros-section .pro-avatar{width:56px;height:56px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;background:var(--dark)}
+.pros-section .pro-photo{object-fit:cover;border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}
+.pros-section .pro-id{min-width:0}
+.pros-section .pro-name-row{display:flex;align-items:center;gap:6px;min-width:0}
+.pros-section .pro-name{font-size:1.02rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pros-section .pro-name-row .verified{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;padding:0;border-radius:50%;background:var(--mint);color:#fff;font-size:.7rem;flex-shrink:0}
+.pros-section .pro-stats{gap:6px}
+.pc-chip{display:inline-flex;align-items:center;gap:4px;font-size:.76rem;font-weight:700;color:var(--ink);background:var(--bg-tint);border:1px solid var(--line);border-radius:999px;padding:4px 10px}
+.pc-chip em{font-style:normal;color:var(--muted);font-weight:600}
+.pc-star{color:#9A5B00;background:#FFF4E0;border-color:#FBE3BB}
+.pros-section a.pro-card p.bio{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:.88rem}
+.pro-foot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:12px;border-top:1px solid var(--line);font-size:.85rem}
+.pro-price{color:var(--muted)}
+.pro-price b{color:var(--ink)}
+.pro-go{font-weight:700;color:var(--orange-dark);display:inline-flex;gap:4px}
+.pro-go .arrow{transition:transform .2s ease}
+.pros-section a.pro-card:hover .pro-go .arrow{transform:translateX(3px)}
+@media (max-width:960px){.pros-section .pro-grid{grid-template-columns:1fr 1fr}}
+/* No telemóvel os cartões passam de lado (com o dedo), em vez de ocuparem 6 ecrãs. */
+@media (max-width:640px){
+  .pros-section .pro-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;margin:0 -24px;padding:4px 24px 12px;scrollbar-width:none}
+  .pros-section .pro-grid::-webkit-scrollbar{display:none}
+  .pros-section a.pro-card{flex:0 0 82%;scroll-snap-align:start}
+  .pros-section .pro-grid > p,.pros-section .pro-grid > div.pro-card{flex:0 0 100%}
+}
+
 /* Homepage mais curta no telemóvel. */
 @media (max-width:720px){.app-section .phone,.app-mock-note{display:none}.app-inner{gap:0}}
 @media (max-width:520px){.value-card{grid-template-columns:1fr 1fr!important}.value-item{padding:12px!important}.value-item span{display:none}.value-item:not(:last-child){border-bottom:none!important}}
@@ -1092,15 +1068,15 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   <section class="pros-section">
     <div class="wrap">
       <div class="section-head center" data-reveal>
-        <span class="kicker">Profissionais</span>
-        <h2>Quem já está na <span class="hi-block mint">plataforma</span></h2>
-        <p>Somos uma plataforma nova. Preferimos poucos perfis verificados a muitos por verificar.</p>
+        <span class="kicker">Profissionais verificados</span>
+        <h2>Quem já está na <span class="hi-block mint">Flinko</span></h2>
+        <p>Cada perfil é revisto à mão pela nossa equipa antes de receber o selo de verificado. Vê as avaliações, os preços e fala diretamente.</p>
       </div>
       <div id="sponsoredContainer"></div>
       <div class="pro-grid" id="proGrid" aria-live="polite">
         <p style="grid-column:1/-1;text-align:center;color:var(--muted)">A carregar profissionais…</p>
       </div>
-      <div class="pro-more" data-reveal><a href="/categoria" class="btn btn-orange">Ver todos os profissionais <span class="arrow">→</span></a></div>
+      <div class="pro-more" data-reveal><a href="/categoria" class="btn btn-ghost">Ver todos os profissionais <span class="arrow">→</span></a></div>
     </div>
   </section>
 
@@ -1134,66 +1110,6 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
           </div>
         </div>
         <p class="app-mock-note">Exemplo de notificações da app.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section class="faq-section" style="background:var(--bg-tint)">
-    <div class="wrap faq-grid">
-      <div class="faq-side" data-reveal>
-        <span class="kicker">Dúvidas</span>
-        <h2>Perguntas<br/>frequentes</h2>
-        <p>Não encontraste o que procuravas?</p>
-        <a href="mailto:flinkogeral@gmail.com" class="btn btn-ghost btn-sm">Fala connosco <span class="arrow">→</span></a>
-      </div>
-      <div class="faq-list" id="faqList" data-reveal="d1">
-        <div class="faq-item" data-open="false">
-          <button class="faq-q"><span><span class="idx">01</span>A Flinko cobra alguma comissão?</span>
-            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
-          </button>
-          <div class="faq-a"><p>Não sobre trabalhos fechados. Os profissionais têm um plano gratuito para sempre; os planos pagos existem só para quem quer mais visibilidade.</p></div>
-        </div>
-        <div class="faq-item" data-open="false">
-          <button class="faq-q"><span><span class="idx">02</span>Como são verificados os profissionais?</span>
-            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
-          </button>
-          <div class="faq-a"><p>A nossa equipa revê manualmente cada perfil novo antes de o marcar como Verificado. Perfis suspeitos ou incompletos não são aprovados.</p></div>
-        </div>
-        <div class="faq-item" data-open="false">
-          <button class="faq-q"><span><span class="idx">03</span>Preciso de pagar para contactar um profissional?</span>
-            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
-          </button>
-          <div class="faq-a"><p>Não. Criar conta, procurar profissionais e enviar mensagens é sempre gratuito para clientes.</p></div>
-        </div>
-        <div class="faq-item" data-open="false">
-          <button class="faq-q"><span><span class="idx">04</span>Quanto custa um serviço, mais ou menos?</span>
-            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
-          </button>
-          <div class="faq-a"><p>Depende do trabalho e da zona. Para teres uma ideia antes de pedir orçamento, usa a <a href="/calculadora-orcamento" style="color:var(--orange-dark);font-weight:700">calculadora de orçamento</a>; o preço final é sempre combinado com o profissional.</p></div>
-        </div>
-        <div class="faq-item" data-open="false">
-          <button class="faq-q"><span><span class="idx">05</span>Sou profissional. Quanto custa estar na Flinko?</span>
-            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
-          </button>
-          <div class="faq-a"><p>Criar o perfil e receber pedidos é grátis e sem comissões. Os planos pagos (a partir de €9,99/mês) dão mais visibilidade e ferramentas. Vê <a href="/profissionais" style="color:var(--orange-dark);font-weight:700">a Flinko para profissionais</a>.</p></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FINAL CTA -->
-  <section>
-    <div class="wrap">
-      <div class="final-cta spotlight" data-reveal>
-        <div class="hero-orbs" aria-hidden="true"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span></div><div class="glow-spot" aria-hidden="true"></div>
-        <span class="kicker mint">Começa agora</span>
-        <h2>O que precisas <span class="hi-block mint">hoje</span>?</h2>
-        <p>Quer precises de um profissional, quer sejas tu o profissional, começa em menos de um minuto.</p>
-        <div class="ctas">
-          <a href="/pedidos?publicar=1" class="btn btn-orange magnetic">Publicar pedido <span class="arrow">→</span></a>
-          <a href="/auth?tab=register" class="btn btn-ghost-dark">Criar perfil grátis <span class="arrow">→</span></a>
-        </div>
       </div>
     </div>
   </section>
@@ -1487,22 +1403,6 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
     });
   }
 
-  var items = document.querySelectorAll('.faq-item');
-  items.forEach(function(item){
-    var btn = item.querySelector('.faq-q');
-    var panel = item.querySelector('.faq-a');
-    btn.addEventListener('click', function(){
-      var isOpen = item.getAttribute('data-open') === 'true';
-      items.forEach(function(other){
-        other.setAttribute('data-open','false');
-        other.querySelector('.faq-a').style.maxHeight = null;
-      });
-      if(!isOpen){
-        item.setAttribute('data-open','true');
-        panel.style.maxHeight = panel.scrollHeight + 'px';
-      }
-    });
-  });
 })();
 </script>
 
@@ -1649,16 +1549,21 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   }
   loadCategoryCounts();
 
-  function statsHtml(p){
+  // Cartões dos profissionais: foto (ou iniciais), zona, avaliação real,
+  // tempo de resposta e preço "a partir de" vindos da base de dados. O cartão
+  // inteiro é o link para o perfil.
+  function cidade(loc){ var p = String(loc || '').split(/\s[–-]\s/); return (p[1] || p[0] || '').trim(); }
+  function euros(v){ var n = Number(v); return isFinite(n) && n > 0 ? n.toLocaleString('pt-PT', {style:'currency', currency:'EUR', maximumFractionDigits:0}) : ''; }
+  function chipsHtml(p){
+    var out = [];
+    if(p._rating) out.push('<span class="pc-chip pc-star">★ ' + p._rating.toFixed(1).replace('.', ',') + ' <em>(' + p._reviews + ')</em></span>');
     if(p.response_sample_count > 0 && p.avg_response_minutes != null){
       var mins = Math.round(p.avg_response_minutes);
-      var label = mins < 60 ? ('~' + mins + 'min') : ('~' + Math.round(mins/60) + 'h');
-      return '<div class="pro-stats"><span><b>' + label + '</b> tempo médio de resposta</span></div>';
+      out.push('<span class="pc-chip">⚡ Responde em ~' + (mins < 60 ? mins + ' min' : Math.round(mins/60) + ' h') + '</span>');
+    } else if(p.experience_years > 0){
+      out.push('<span class="pc-chip">' + esc(p.experience_years) + ' anos de experiência</span>');
     }
-    if(p.experience_years > 0){
-      return '<div class="pro-stats"><span><b>' + esc(p.experience_years) + '</b> anos de experiência</span></div>';
-    }
-    return '';
+    return out.length ? '<div class="pro-stats">' + out.join('') + '</div>' : '';
   }
   function cardHtml(p, i){
     // Nota: sem data-reveal de propósito — o IntersectionObserver da pagina
@@ -1666,22 +1571,40 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
     // antes deste fetch assincrono terminar. Cartoes injetados depois nunca
     // seriam observados e ficariam com opacity:0 para sempre.
     var style = AVATAR_STYLES[i % AVATAR_STYLES.length];
+    var foto = /^https:\/\//i.test(String(p.photo_url || '')) ? p.photo_url : '';
+    var avatar = foto
+      ? '<img class="pro-avatar pro-photo" src="' + esc(foto) + '" alt="" loading="lazy" width="56" height="56">'
+      : '<div class="pro-avatar"' + (style ? ' style="' + style + '"' : '') + '>' + esc(initials(p.name)) + '</div>';
+    var zona = cidade(p.location);
     return '' +
-      '<div class="pro-card"><span class="glow-spot"></span>' +
-        '<div class="pro-top">' +
-          '<div class="pro-avatar"' + (style ? ' style="' + style + '"' : '') + '>' + esc(initials(p.name)) + '</div>' +
-          '<div>' +
-            '<div class="pro-name">' + esc(p.name) + '</div>' +
-            '<div class="pro-meta">' + esc(p.category) + (p.location ? (' · ' + esc(p.location)) : '') + '</div>' +
+      '<a class="pro-card" href="' + profileHref(p) + '"><span class="glow-spot"></span>' +
+        '<div class="pro-top">' + avatar +
+          '<div class="pro-id">' +
+            '<div class="pro-name-row"><div class="pro-name">' + esc(p.name) + '</div>' + (p.verified ? '<span class="verified" title="Verificado pela Flinko" aria-label="Verificado">✓</span>' : '') + '</div>' +
+            '<div class="pro-meta">' + esc(p.category) + (zona ? (' · ' + esc(zona)) : '') + '</div>' +
           '</div>' +
         '</div>' +
-        '<div class="pro-bio-wrap">' +
-          (p.verified ? '<span class="verified">✓ Verificado</span>' : '') +
-          '<p class="bio">' + (p.bio ? esc(p.bio.length > 140 ? p.bio.slice(0,137) + '…' : p.bio) : 'Perfil verificado pela equipa da Flinko. Vê os serviços e contacta diretamente.') + '</p>' +
-          statsHtml(p) +
+        chipsHtml(p) +
+        '<p class="bio">' + (p.bio ? esc(p.bio.length > 120 ? p.bio.slice(0,117) + '…' : p.bio) : 'Perfil verificado pela equipa da Flinko. Vê os serviços e contacta diretamente.') + '</p>' +
+        '<div class="pro-foot">' +
+          (p._from ? '<span class="pro-price">A partir de <b>' + euros(p._from) + '</b></span>' : '<span class="pro-price">Orçamento grátis</span>') +
+          '<span class="pro-go">Ver perfil <span class="arrow">→</span></span>' +
         '</div>' +
-        '<a href="' + profileHref(p) + '" class="btn btn-ghost">Ver perfil</a>' +
-      '</div>';
+      '</a>';
+  }
+  // Junta a avaliação média, o nº de avaliações e o preço mais baixo de cada um.
+  function enrich(list){
+    var ids = list.map(function(p){ return p.id; });
+    if(!ids.length) return Promise.resolve(list);
+    return Promise.all([
+      db.from('reviews').select('professional_id,rating').in('professional_id', ids).then(function(r){ return (r && r.data) || []; }, function(){ return []; }),
+      db.from('services').select('professional_id,price_from').in('professional_id', ids).then(function(r){ return (r && r.data) || []; }, function(){ return []; })
+    ]).then(function(res){
+      var rev = {}, from = {};
+      res[0].forEach(function(r){ if(ids.indexOf(r.professional_id) === -1) return; var x = rev[r.professional_id] = rev[r.professional_id] || {s:0, n:0}; x.s += Number(r.rating) || 0; x.n++; });
+      res[1].forEach(function(sv){ var v = Number(sv.price_from); if(ids.indexOf(sv.professional_id) === -1 || !(v > 0)) return; if(!from[sv.professional_id] || v < from[sv.professional_id]) from[sv.professional_id] = v; });
+      return list.map(function(p){ var r = rev[p.id]; return Object.assign({}, p, { _rating: r ? r.s / r.n : 0, _reviews: r ? r.n : 0, _from: from[p.id] || 0 }); });
+    });
   }
   function emptyStateHtml(){
     return '<div class="pro-card" style="text-align:center;grid-column:1/-1">' +
@@ -1731,11 +1654,11 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   loadSponsoredHome();
 
   Promise.resolve()
-    .then(function(){ return db.rpc('spotlight_pros', {limite: 3}); })
+    .then(function(){ return db.rpc('spotlight_pros', {limite: 6}); })
     .then(function(res){
       var spotlight = (res && res.data) || [];
       var have = spotlight.length;
-      if(have >= 3) return spotlight;
+      if(have >= 6) return spotlight.slice(0, 6);
       var excludeIds = spotlight.map(function(p){ return p.id; });
       return db.from('profiles')
         .select('id,name,bio,photo_url,category,location,verified,slug,experience_years,avg_response_minutes,response_sample_count,account_type')
@@ -1746,7 +1669,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
         .not('category', 'is', null)
         .neq('category', '')
         .order('created_at', {ascending: false})
-        .limit(12 + excludeIds.length)
+        .limit(18 + excludeIds.length)
         .then(function(res2){
           // Primeiro os perfis mais completos (descrição e foto): são os que
           // passam confiança na montra. Os outros só completam se faltar.
@@ -1756,11 +1679,12 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
             .map(function(p, i){ return {p: p, i: i}; })
             .sort(function(a, b){ return completo(b.p) - completo(a.p) || a.i - b.i; })
             .map(function(x){ return x.p; });
-          return spotlight.concat(extra).slice(0, 3);
+          return spotlight.concat(extra).slice(0, 6);
         });
     })
     .then(function(list){
-      grid.innerHTML = list.length ? list.map(cardHtml).join('') : emptyStateHtml();
+      if(!list.length){ grid.innerHTML = emptyStateHtml(); return; }
+      return enrich(list).then(function(full){ grid.innerHTML = full.map(cardHtml).join(''); }, function(){ grid.innerHTML = list.map(cardHtml).join(''); });
     })
     .catch(function(){
       grid.innerHTML = emptyStateHtml();
