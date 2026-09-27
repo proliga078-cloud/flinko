@@ -1,4 +1,4 @@
-﻿// Valida a migraÃ§Ã£o eventos_funil num Postgres em memÃ³ria (PGlite): qualquer
+// Valida a migraÃ§Ã£o eventos_funil num Postgres em memÃ³ria (PGlite): qualquer
 // visitante regista eventos, ninguÃ©m os lÃª pela API e sÃ³ os admins veem as
 // contagens agregadas.
 //
