@@ -268,6 +268,22 @@ body.is-offline .offline{display:block}
 .sk{height:64px;margin:6px 16px;border-radius:12px;background:linear-gradient(90deg,#EEF3F0 25%,#F7FAF8 50%,#EEF3F0 75%);background-size:200% 100%;animation:sh 1.2s infinite}
 @keyframes sh{to{background-position:-200% 0}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* segurança: aviso de burla, bloquear, denunciar */
+.warn{margin-top:5px;max-width:340px;background:#FFF6E8;border:1px solid #F2D3A4;color:#7A4A10;font-size:.78rem;line-height:1.45;padding:8px 11px;border-radius:12px}
+.warn b{display:block;margin-bottom:2px}
+.warn button{background:none;border:0;padding:0;margin-top:3px;color:var(--red);font:inherit;font-weight:700;cursor:pointer;text-decoration:underline}
+.blocked-bar{padding:16px;text-align:center;font-size:.88rem;color:var(--muted);background:var(--white);border-top:1px solid var(--line)}
+.blocked-bar button{margin-left:8px}
+.btn-danger{background:var(--white);color:var(--red);border:1.5px solid #F0C9C5}
+.btn-danger:hover{background:#FDF1F0}
+.confirm-box{background:#FDF1F0;border-radius:12px;padding:12px;font-size:.84rem;line-height:1.45;color:var(--ink)}
+.confirm-box .row2{display:flex;gap:8px;margin-top:10px}
+.confirm-box .row2 .btn{flex:1}
+.report label.opt{display:flex;gap:10px;align-items:flex-start;padding:9px 0;font-size:.9rem;cursor:pointer;border-bottom:1px solid var(--line)}
+.report label.opt input{margin-top:3px;accent-color:var(--red)}
+.report textarea{width:100%;min-height:80px;margin-top:12px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;font:inherit;font-size:.9rem;resize:vertical}
+.report .note{font-size:.76rem;color:var(--muted);line-height:1.45;margin:10px 0}
+.report .err{color:var(--red);font-size:.82rem;font-weight:700;margin:8px 0}
 </style>
 </head>
 <body>
@@ -323,6 +339,7 @@ body.is-offline .offline{display:block}
         </div>
         <input type="file" id="file" accept="image/*" multiple hidden/>
       </div>
+      <div class="blocked-bar" id="blockedBar" hidden></div>
       <div class="drop" id="drop">Larga aqui as fotos</div>
     </div>
   </main>
@@ -385,7 +402,8 @@ const S={
   online:new Set(),
   typingUntil:0,typingCh:null,lastTypingSent:0,
   newWhileUp:0,
-  quick:false
+  quick:false,
+  blocked:new Set()    // pessoas que eu bloqueei
 }
 
 /* ============ utilitários ============ */
@@ -428,6 +446,17 @@ function snippet(m){
   const n=(m.attachments||[]).length
   return n>1?'📷 '+n+' fotos':'📷 Foto'
 }
+// Aviso de segurança por baixo de mensagens recebidas que pedem pagamento
+// adiantado, dados bancários ou códigos. Só aparece a quem recebe; não bloqueia
+// nada (há profissionais honestos que pedem MB WAY no fim do trabalho).
+const RISCO_PAGAMENTO=/\biban\b|\bPT\s?50(?:[\s.]?\d){10,}|\bmb\s?way\b|adiantad|adiantamento|\bsinal\b.{0,30}(pag|transfer|€|eur)|(pag|transfer).{0,30}\bsinal\b|western\s?union|moneygram|paysafe|bitcoin|cripto|transfer[êe]ncia\s+(antes|primeiro|j[áa])/i
+const RISCO_CODIGO=/c[óo]digo.{0,25}(sms|verifica|confirma|recebe|cheg)|\bcvv\b|dados\s+do\s+cart[ãa]o|n[úu]mero\s+do\s+cart[ãa]o|palavra[-\s]passe|password/i
+function riscoAviso(texto){
+  const t=String(texto||'')
+  if(RISCO_CODIGO.test(t))return '<b>⚠️ Nunca partilhes códigos, cartões ou palavras-passe.</b>A Flinko e os profissionais nunca precisam deles.'
+  if(RISCO_PAGAMENTO.test(t))return '<b>⚠️ Cuidado com pagamentos adiantados.</b>Paga só depois de o trabalho estar combinado (de preferência, feito). Desconfia de quem pede dinheiro antes de te conhecer.'
+  return ''
+}
 function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('on'),2200)}
 const TICK='<svg class="tick" viewBox="0 0 16 12"><path d="M1 6.5 4.5 10 11 2"/></svg>'
 const TICKS='<svg class="tick" viewBox="0 0 16 12"><path d="M1 6.5 4.5 10 11 2"/><path d="M6 9.5 7 10 14 2"/></svg>'
@@ -448,6 +477,8 @@ async function init(){
   S.iAmPro=!!(me&&String(me.category||'').trim())
   $('quickBtn').hidden=!S.iAmPro
 
+  const{data:bl}=await db.from('user_blocks').select('blocked_id').eq('blocker_id',S.me)
+  S.blocked=new Set((bl||[]).map(b=>b.blocked_id))
   await loadConversations()
   subscribe()
   presence()
@@ -508,6 +539,7 @@ function renderList(){
     const act=S.active&&((c.id&&S.active.id===c.id)||(c.draft&&S.active.draft))
     const typing=c.id&&S.active&&S.active.id===c.id&&S.typingUntil>Date.now()
     const prev=c.draft?'<span class="txt">Nova conversa</span>'
+      :S.blocked.has(c.other.id)?'<span class="txt">🚫 Bloqueado</span>'
       :typing?'<span class="txt">a escrever…</span>'
       :(c.lastMine?'<span class="'+(c.lastRead?'tick read':'')+'" style="display:inline-flex;color:'+(c.lastRead?'var(--mint)':'var(--muted)')+'">'+(c.lastRead?TICKS:TICK)+'</span>':'')+'<span class="txt">'+esc(c.last_message||'Conversa iniciada')+'</span>'
     return '<button class="conv'+(act?' active':'')+(c.unread?' unread':'')+'" role="listitem" onclick="openConv(\''+(c.id||'draft')+'\')">'+
@@ -551,6 +583,7 @@ async function openConv(id,opts){
   if(opts.replace)history.replaceState({chat:true},'',url);else history.pushState({chat:true},'',url)
   renderHead()
   renderList()
+  renderBlocked()
   $('input').value=loadDraftText()
   autoGrow();updateSend()
   if(!conv.id){renderFeed();renderChips();return}
@@ -665,8 +698,10 @@ function bubbleHtml(m,first,last){
     reacts='<div class="reacts">'+Object.keys(g).map(e=>'<button class="react'+(g[e].includes(S.me)?' me':'')+'" onclick="event.stopPropagation();toggleReact(\''+m.id+'\',\''+e+'\')" aria-label="Reação '+e+'">'+e+(g[e].length>1?'<em>'+g[e].length+'</em>':'')+'</button>').join('')+'</div>'
   }
   const acts=String(m.id).startsWith('tmp-')?'':'<div class="acts"><button onclick="event.stopPropagation();startReply(\''+m.id+'\')" aria-label="Responder"><svg class="ico" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 6 6v5"/></svg></button><button onclick="event.stopPropagation();openPop(\''+m.id+'\',this)" aria-label="Reagir"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></button></div>'
-  const fail=m._status==='failed'?'<button class="fail" onclick="retry(\''+m.id+'\')">Não enviada. Toca para tentar de novo</button>':''
-  return '<div class="'+cls+'" data-id="'+esc(m.id)+'">'+acts+'<div class="bw"><div class="bubble'+(atts.length&&!text&&!m.reply_to?' photo-only':'')+'">'+inner+'</div>'+reacts+fail+'</div></div>'
+  const fail=m._status==='failed'?(m._err?'<div class="fail">'+esc(m._err)+'</div>':'<button class="fail" onclick="retry(\''+m.id+'\')">Não enviada. Toca para tentar de novo</button>'):''
+  const aviso=!mine&&text?riscoAviso(text):''
+  const warn=aviso?'<div class="warn" role="note">'+aviso+'<br><button onclick="event.stopPropagation();openReport()">Denunciar esta conversa</button></div>':''
+  return '<div class="'+cls+'" data-id="'+esc(m.id)+'">'+acts+'<div class="bw"><div class="bubble'+(atts.length&&!text&&!m.reply_to?' photo-only':'')+'">'+inner+'</div>'+reacts+fail+warn+'</div></div>'
 }
 
 function nearBottom(){const f=$('feed');return f.scrollHeight-f.scrollTop-f.clientHeight<140}
@@ -828,6 +863,7 @@ async function deliver(tmp){
     notify(convId,snippet(real))
   }catch(e){
     tmp._status='failed'
+    if(/Não é possível enviar/.test(String(e&&e.message||'')))tmp._err='Não é possível enviar mensagens nesta conversa.'
     if(S.active===conv)renderFeed()
     if(!navigator.onLine)document.body.classList.add('is-offline')
   }
@@ -1013,6 +1049,10 @@ async function openInfo(){
     h+='<div class="info-sec"><h4>Ações</h4><div class="info-actions"><a class="btn btn-dark" href="dashboard.html?page=orcamento&cliente='+encodeURIComponent(o.name||'')+'">Criar orçamento</a><a class="btn btn-ghost" href="dashboard.html?page=agenda&cliente='+encodeURIComponent(o.name||'')+'">Marcar visita</a></div></div>'
   }
   if(fotos.length)h+='<div class="info-sec"><h4>Fotos ('+fotos.length+')</h4><div class="gal">'+fotos.slice(-30).map(x=>'<button onclick="closeInfo();openLb(\''+x.m+'\','+x.k+')"><img src="'+esc(x.u)+'" alt="" loading="lazy"></button>').join('')+'</div></div>'
+  const nome=esc(firstName(o.name)||'esta pessoa')
+  h+='<div class="info-sec"><h4>Segurança</h4><div class="info-actions" id="safety">'+
+    (S.blocked.has(o.id)?'<button class="btn btn-ghost" onclick="unblockUser()">Desbloquear '+nome+'</button>':'<button class="btn btn-danger" onclick="askBlock()">Bloquear '+nome+'</button>')+
+    '<button class="btn btn-danger" onclick="openReport()">Denunciar</button></div></div>'
   h+='<div class="info-sec" style="font-size:.8rem;color:var(--muted);line-height:1.5">🔒 Só tu e '+esc(firstName(o.name)||'esta pessoa')+' veem esta conversa e as fotos. Se algo não estiver bem, <a href="/contacto" style="color:var(--orange-dark);font-weight:700">fala connosco</a>.</div>'
   $('infoBody').innerHTML=h
   $('info').classList.add('open');$('scrim').classList.add('on')
@@ -1024,6 +1064,67 @@ async function openInfo(){
       :[['Serviço',esc(j.title||'—')],['Orçamento',j.quote_amount!=null?eur(j.quote_amount):'Por enviar'],['Visita',j.scheduled_at?esc(new Date(j.scheduled_at).toLocaleString('pt-PT',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})):'Sem data'],['Recebido',j.paid_amount!=null?eur(j.paid_amount):'—']]
         .map(r=>'<div class="kv"><span class="k">'+r[0]+'</span><span class="v">'+r[1]+'</span></div>').join('')
   }
+}
+/* ============ bloquear e denunciar ============ */
+function renderBlocked(){
+  const o=S.active&&S.active.other,b=!!(o&&S.blocked.has(o.id))
+  $('composer').hidden=b
+  $('blockedBar').hidden=!b
+  if(b)$('blockedBar').innerHTML='Bloqueaste '+esc(o.name||'esta pessoa')+'. Nenhum de vocês pode enviar mensagens.<button class="btn btn-ghost" onclick="unblockUser()">Desbloquear</button>'
+}
+function askBlock(){
+  const o=S.active.other
+  $('safety').innerHTML='<div class="confirm-box"><b>Bloquear '+esc(firstName(o.name)||'esta pessoa')+'?</b><br>Deixam de poder enviar mensagens um ao outro. A pessoa não é avisada. Podes desbloquear quando quiseres.<div class="row2"><button class="btn btn-ghost" onclick="openInfo()">Cancelar</button><button class="btn btn-dark" onclick="blockUser()">Bloquear</button></div></div>'
+}
+async function blockUser(silent){
+  const o=S.active.other
+  const{error}=await db.from('user_blocks').insert({blocker_id:S.me,blocked_id:o.id})
+  if(error&&!/duplicate|23505/.test(error.message||'')){toast('Não foi possível bloquear');return false}
+  S.blocked.add(o.id)
+  renderBlocked();renderList()
+  if(!silent){closeInfo();toast((firstName(o.name)||'Utilizador')+' foi bloqueado')}
+  return true
+}
+async function unblockUser(){
+  const o=S.active.other
+  const{error}=await db.from('user_blocks').delete().eq('blocker_id',S.me).eq('blocked_id',o.id)
+  if(error){toast('Não foi possível desbloquear');return}
+  S.blocked.delete(o.id)
+  renderBlocked();renderList();closeInfo()
+  toast('Desbloqueado')
+}
+const MOTIVOS=['Pede pagamento adiantado ou dados bancários','Parece burla ou perfil falso','Linguagem ofensiva ou assédio','Spam ou publicidade','Outro motivo']
+function openReport(){
+  if(!S.active)return
+  const o=S.active.other
+  if(!$('info').classList.contains('open')){$('info').classList.add('open');$('scrim').classList.add('on')}
+  $('infoBody').innerHTML='<form class="report" id="reportForm" onsubmit="event.preventDefault();sendReport()"><div class="info-sec" style="border:0"><h4>Denunciar '+esc(o.name||'utilizador')+'</h4>'+
+    MOTIVOS.map((m,i)=>'<label class="opt"><input type="radio" name="motivo" value="'+i+'"'+(i===0&&S.msgs.some(x=>x.sender_id!==S.me&&riscoAviso(x.content))?' checked':'')+'>'+esc(m)+'</label>').join('')+
+    '<label class="sr" for="repTxt">Detalhes</label><textarea id="repTxt" maxlength="1500" placeholder="Conta-nos o que aconteceu (opcional)"></textarea>'+
+    '<label class="opt" style="border:0"><input type="checkbox" id="repBlock" checked>Bloquear também esta pessoa</label>'+
+    '<p class="note">A equipa da Flinko recebe a denúncia com as últimas mensagens desta conversa, para poder analisar. A pessoa não é avisada.</p>'+
+    '<div class="err" id="repErr" hidden></div>'+
+    '<div class="info-actions"><button class="btn btn-dark" id="repBtn" type="submit">Enviar denúncia</button><button class="btn btn-ghost" type="button" onclick="openInfo()">Cancelar</button></div></div></form>'
+}
+async function sendReport(){
+  const o=S.active.other,err=$('repErr'),btn=$('repBtn')
+  const sel=document.querySelector('#reportForm input[name=motivo]:checked')
+  err.hidden=true
+  if(!sel){err.textContent='Escolhe um motivo.';err.hidden=false;return}
+  btn.disabled=true
+  const{data:{session}}=await db.auth.getSession()
+  const recentes=S.msgs.filter(m=>!String(m.id).startsWith('tmp-')).slice(-12)
+    .map(m=>'['+new Date(m.created_at).toLocaleString('pt-PT')+'] '+(m.sender_id===S.me?'Denunciante':(o.name||'Denunciado'))+': '+(String(m.content||'').trim()||'(foto)')).join('\n')
+  const detalhe=$('repTxt').value.trim()
+  const texto=('Motivo: '+MOTIVOS[+sel.value]+(detalhe?'\n\n'+detalhe:'')+(recentes?'\n\nÚltimas mensagens:\n'+recentes:'')).slice(0,4900)
+  const{error}=await db.from('support_tickets').insert({kind:'denuncia',name:(S.myName||'Utilizador').slice(0,120),email:(session&&session.user&&session.user.email)||'',
+    subject:('Denúncia nas mensagens: '+MOTIVOS[+sel.value]).slice(0,200),message:texto,target_profile_id:o.id,reporter_id:S.me,
+    page:('messages.html'+(S.active.id?'?c='+S.active.id:'')).slice(0,300)})
+  btn.disabled=false
+  if(error){err.textContent=/limite|limit|demasiad/i.test(error.message||'')?'Já enviaste várias denúncias na última hora. Tenta mais tarde.':'Não foi possível enviar a denúncia. Tenta outra vez.';err.hidden=false;return}
+  if($('repBlock').checked&&!S.blocked.has(o.id))await blockUser(true)
+  closeInfo()
+  toast('Denúncia enviada. Obrigado, vamos analisar.')
 }
 function closeInfo(){$('info').classList.remove('open');if(!$('sheet').classList.contains('open'))$('scrim').classList.remove('on')}
 
