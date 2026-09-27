@@ -1,5 +1,5 @@
-// Valida a migração eventos_funil num Postgres em memória (PGlite): qualquer
-// visitante regista eventos, ninguém os lê pela API e só os admins veem as
+﻿// Valida a migraÃ§Ã£o eventos_funil num Postgres em memÃ³ria (PGlite): qualquer
+// visitante regista eventos, ninguÃ©m os lÃª pela API e sÃ³ os admins veem as
 // contagens agregadas.
 //
 // Uso: npm run test:db
@@ -9,9 +9,9 @@ import fs from 'node:fs'
 import assert from 'node:assert/strict'
 
 const MIGRATION = new URL('../../supabase/migrations/20260927011416_eventos_funil.sql', import.meta.url)
-const MIGRATION_APP = new URL('../../supabase/migrations/20260927120000_eventos_app.sql', import.meta.url)
+const MIGRATION_APP = new URL('../../supabase/migrations/20260927012758_eventos_app.sql', import.meta.url)
 
-test('migração eventos_funil: registar, não ler, e contagens só para admins', async () => {
+test('migraÃ§Ã£o eventos_funil: registar, nÃ£o ler, e contagens sÃ³ para admins', async () => {
   const db = new PGlite()
   const q = async (sql, params) => (await db.query(sql, params)).rows
   await db.exec(`
@@ -30,7 +30,7 @@ test('migração eventos_funil: registar, não ler, e contagens só para admins'
   await db.exec(fs.readFileSync(MIGRATION, 'utf8')) // idempotente
   await db.exec(fs.readFileSync(MIGRATION_APP, 'utf8'))
   await db.exec(fs.readFileSync(MIGRATION_APP, 'utf8')) // idempotente
-  await db.exec('grant insert, select, update, delete on public.site_events to anon, authenticated') // como o Supabase faz por omissão
+  await db.exec('grant insert, select, update, delete on public.site_events to anon, authenticated') // como o Supabase faz por omissÃ£o
 
   const as = async (uid, sql, params) => {
     await db.exec('begin')
@@ -47,14 +47,14 @@ test('migração eventos_funil: registar, não ler, e contagens só para admins'
   await ins(null, 'pesquisa')
   await ins(null, 'pesquisa')
   await ins(USER, 'pedido_publicado', USER)
-  await ins(null, 'app_instalada') // aceite depois da migração eventos_app
-  // nomes fora da lista e eventos em nome de outra pessoa são recusados
+  await ins(null, 'app_instalada') // aceite depois da migraÃ§Ã£o eventos_app
+  // nomes fora da lista e eventos em nome de outra pessoa sÃ£o recusados
   await assert.rejects(() => ins(null, 'qualquer_coisa'), /check constraint/)
   await assert.rejects(() => ins(USER, 'pesquisa', ADMIN), /row-level security/)
-  // ninguém lê pela API
+  // ninguÃ©m lÃª pela API
   assert.equal((await as(USER, 'select * from public.site_events')).length, 0)
   assert.equal((await as(null, 'select * from public.site_events')).length, 0)
-  // contagens: admin vê, os outros não
+  // contagens: admin vÃª, os outros nÃ£o
   const rows = await as(ADMIN, 'select name, n::int as n from public.admin_event_counts(30) order by name')
   assert.deepEqual(rows, [{ name: 'app_instalada', n: 1 }, { name: 'pedido_publicado', n: 1 }, { name: 'pesquisa', n: 2 }])
   assert.equal((await as(USER, 'select * from public.admin_event_counts(30)')).length, 0)
