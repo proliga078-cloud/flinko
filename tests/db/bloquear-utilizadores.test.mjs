@@ -6,7 +6,7 @@ import { PGlite } from '@electric-sql/pglite'
 import fs from 'node:fs'
 import assert from 'node:assert/strict'
 
-const MIGRATION = new URL('../../supabase/migrations/20260927180000_bloquear_utilizadores.sql', import.meta.url)
+const MIGRATION = new URL('../../supabase/migrations/20260927180440_bloquear_utilizadores.sql', import.meta.url)
 
 test('migração bloquear_utilizadores: bloqueio impede mensagens nos dois sentidos', async () => {
   const db = new PGlite()

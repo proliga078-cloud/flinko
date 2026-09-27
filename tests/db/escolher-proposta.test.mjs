@@ -6,7 +6,7 @@ import { PGlite } from '@electric-sql/pglite'
 import fs from 'node:fs'
 import assert from 'node:assert/strict'
 
-const MIGRATION = new URL('../../supabase/migrations/20260927160000_escolher_proposta.sql', import.meta.url)
+const MIGRATION = new URL('../../supabase/migrations/20260927180405_escolher_proposta.sql', import.meta.url)
 
 test('migração escolher_proposta: só o cliente escolhe, tudo numa transação, estados protegidos', async () => {
   const db = new PGlite()
