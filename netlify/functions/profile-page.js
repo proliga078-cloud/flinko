@@ -18,6 +18,7 @@
 const fs = require('fs')
 const path = require('path')
 const { createClient } = require('@supabase/supabase-js')
+const { categories, placesOf } = require('./_local')
 
 const SITE = 'https://flinko.pt'
 const admin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
@@ -129,7 +130,24 @@ function render(html, pro, { services = [], ratings = [] } = {}) {
       ${servicos ? `<h2 style="font-size:1.05rem;margin:8px 0">Serviços</h2><ul style="padding-left:18px">${servicos}</ul>` : ''}
     </div>`
   out = out.replace(/(<div id="profile-header" class="profile-header">)\s*<div class="loading"><div class="spinner"><\/div><\/div>/, `$1\n    ${resumo}`)
-  return out
+  return migalhas(out, pro, url)
+}
+
+// Caminho "Flinko › Eletricistas › Braga" por cima do perfil, com ligações
+// para a categoria e para a página local (/eletricistas/braga), mais o
+// BreadcrumbList para o Google. Fica fora do bloco que o JS substitui.
+function migalhas(html, pro, url) {
+  const cat = categories.find((c) => c.serviceType === oneLine(pro.category))
+  if (!cat) return html
+  const zona = placesOf(pro)[0]
+  const passos = [{ nome: 'Flinko', url: SITE + '/' }, { nome: cat.serviceType, url: `${SITE}/${cat.slug}` }]
+  if (zona) passos.push({ nome: zona.name, url: `${SITE}/${cat.slug}/${zona.slug}` })
+  passos.push({ nome: oneLine(pro.name), url })
+  const nav = `<nav class="fk-crumbs" aria-label="Caminho" style="max-width:1100px;margin:0 auto;padding:14px 5% 0;font-size:13px;color:#5E6B66">${passos.map((p, i) => i === passos.length - 1 ? `<span aria-current="page">${esc(p.nome)}</span>` : `<a href="${esc(p.url.replace(SITE, '') || '/')}" style="color:inherit">${esc(p.nome)}</a>`).join(' › ')}</nav>`
+  const ld = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: passos.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: p.nome, item: p.url })) }
+  return html
+    .replace('</head>', `<script type="application/ld+json">${jsonScript(ld)}</script>\n</head>`)
+    .replace(/(<div id="profile-header" class="profile-header">)/, `${nav}\n$1`)
 }
 
 function page(statusCode, body, cache) {

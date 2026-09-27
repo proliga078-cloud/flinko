@@ -56,3 +56,40 @@ test('cartaz: id inválido mostra mensagem em vez de rebentar', async ({ page })
   await page.goto('/cartaz.html?id=<script>');
   await expect(page.locator('.err')).toContainText('Perfil não encontrado');
 });
+
+test('cartões de visita: 10 por folha A4, com nome escapado, zona e endereço', async ({ page }) => {
+  const p = perfil({});
+  await fake(page, { session: null, tableData: { profiles: { data: [p] } } });
+  await page.goto('/cartaz.html?formato=cartoes&id=' + p.id);
+  await expect(page.getByRole('tab', { name: 'Cartões de visita' })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('.cv')).toHaveCount(10);
+  await expect(page.locator('.cv-nome').first()).toHaveText('Ana <b>Teste</b>');
+  expect(await page.locator('.cv-nome b').count()).toBe(0);
+  await expect(page.locator('.cv-url').first()).toContainText('profile.html?id=' + p.id);
+  await expect(page.locator('#poster')).toBeHidden();
+});
+
+test('imagem para redes: desenha a imagem e oferece o PNG para descarregar', async ({ page }) => {
+  const p = perfil({ slug: 'ana-eletricista' });
+  await fake(page, { session: null, tableData: { profiles: { data: [p] } } });
+  await page.goto('/cartaz.html?id=' + p.id);
+  await page.getByRole('tab', { name: 'Imagem para WhatsApp e Instagram' }).click();
+  const dl = page.locator('#img-download');
+  await expect(dl).toHaveAttribute('href', /^data:image\/png;base64,/);
+  await expect(dl).toHaveAttribute('download', 'flinko-ana-eletricista.png');
+  // a imagem não ficou em branco: há pixels escuros no topo (faixa da Flinko)
+  const escuro = await page.evaluate(() => { const d = document.getElementById('social-canvas').getContext('2d').getImageData(20, 20, 1, 1).data; return d[0] < 60 && d[1] < 60; });
+  expect(escuro).toBe(true);
+});
+
+test('dashboard: atalhos para os cartões de visita e a imagem', async ({ page }) => {
+  const p = perfil({});
+  await fake(page, {
+    session: { access_token: 'tok', user: { id: p.id, email: 'a@example.com' } },
+    rpcResults: { get_my_profile: [p] },
+    tableData: { plan_limits: { data: [] } },
+  });
+  await page.goto('/dashboard.html');
+  await expect(page.locator('#share-cards')).toHaveAttribute('href', 'cartaz.html?formato=cartoes&id=' + p.id);
+  await expect(page.locator('#share-image')).toHaveAttribute('href', 'cartaz.html?formato=imagem&id=' + p.id);
+});
