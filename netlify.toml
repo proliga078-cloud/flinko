@@ -85,6 +85,20 @@
   status = 200
   force = false
 
+# O painel antigo (admin-classico.html) foi apagado em set/2026: tudo o que
+# fazia esta no painel de gestao (admin.html).
+[[redirects]]
+  from = "/admin-classico.html"
+  to = "/admin.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/admin-classico"
+  to = "/admin.html"
+  status = 301
+  force = true
+
 # O Blog foi renomeado para Academia (set/2026). Mantem vivos os links e
 # favoritos antigos em vez de dar 404.
 [[redirects]]

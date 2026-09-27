@@ -2077,8 +2077,7 @@ function teamCard() {
   const body = !TEAM ? `<span class="mut">A carregar…</span>` : TEAM.err ? `<span class="pill warn">${esc(TEAM.err)}</span>` :
     `<div class="tw"><table><tr><th>Pessoa</th><th>Acesso</th><th></th></tr>${TEAM.map(m => `<tr><td><b>${esc(m.name || "—")}</b><br><span class="mut">${esc(m.email || "")}</span></td><td>${isOwner() && !DEMO ? `<select style="width:auto" onchange="setRole('${esc(m.email)}',this.value)">${Object.entries(ROLEL).map(([k, v]) => `<option value="${k}" ${m.admin_role === k ? "selected" : ""}>${v}</option>`).join("")}</select>` : esc(ROLEL[m.admin_role] || m.admin_role)}</td><td>${isOwner() && !DEMO ? `<button class="btn sec sm" onclick="setRole('${esc(m.email)}','none')">Tirar acesso</button>` : ""}</td></tr>`).join("")}</table></div>`;
   return `<div class="card" style="margin-top:14px" id="teamCard"><h3>👥 Equipa com acesso ao painel <span class="sp"></span>${isOwner() && !DEMO ? `<button class="btn sm" onclick="addMember()">+ Dar acesso</button>` : ""}</h3>${body}
-    <p class="mut" style="margin:10px 0 0"><b>Dono</b>: tudo, incluindo planos, reembolsos, receita do Stripe, RGPD, emails em grupo e esta lista. <b>Apoio</b>: vê o painel e trata verificações, moderação e pedidos de apoio, mas não mexe em dinheiro nem em permissões (a base de dados bloqueia-o, não é só o botão escondido). Tem de ficar sempre pelo menos um dono.</p>
-    <p class="mut" style="margin:6px 0 0">O painel antigo continua disponível em <a href="/admin-classico.html">admin-classico.html</a>, caso precises dele.</p></div>`;
+    <p class="mut" style="margin:10px 0 0"><b>Dono</b>: tudo, incluindo planos, reembolsos, receita do Stripe, RGPD, emails em grupo e esta lista. <b>Apoio</b>: vê o painel e trata verificações, moderação e pedidos de apoio, mas não mexe em dinheiro nem em permissões (a base de dados bloqueia-o, não é só o botão escondido). Tem de ficar sempre pelo menos um dono.</p></div>`;
 }
 
 const vSet = () => {
