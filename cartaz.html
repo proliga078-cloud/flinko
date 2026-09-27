@@ -9,12 +9,17 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--orange:#E8720A;--dark:#132420;--mint:#0F7B55;--muted:#5B6270;--bg:#F7F8FA}
+[hidden]{display:none!important}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px}
-.bar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
-.btn{font-family:inherit;font-size:15px;font-weight:700;padding:12px 22px;border-radius:10px;border:0;cursor:pointer;text-decoration:none}
+.tabs{display:flex;gap:6px;background:#fff;border:1.5px solid #E3E5E8;border-radius:12px;padding:4px;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
+.tab{font-family:inherit;font-size:14px;font-weight:700;padding:9px 14px;border-radius:9px;border:0;background:none;color:var(--muted);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--dark);color:#fff}
+.bar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
+.btn{font-family:inherit;font-size:15px;font-weight:700;padding:12px 22px;border-radius:10px;border:0;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
 .btn-p{background:var(--orange);color:#fff}
 .btn-l{background:#fff;color:var(--dark);border:1.5px solid #E3E5E8}
-.hint{font-size:13px;color:var(--muted);text-align:center;max-width:420px;margin-bottom:18px}
+.hint{font-size:13px;color:var(--muted);text-align:center;max-width:460px;margin-bottom:18px}
+/* cartaz A4 */
 .poster{width:100%;max-width:560px;aspect-ratio:210/297;background:#fff;border-radius:18px;box-shadow:0 10px 40px rgba(19,36,32,.15);display:flex;flex-direction:column;overflow:hidden}
 .top{background:var(--dark);color:#fff;padding:7% 8% 6%;position:relative}
 .top::after{content:'';position:absolute;left:0;right:0;bottom:0;height:6px;background:linear-gradient(90deg,var(--orange),var(--mint))}
@@ -31,23 +36,53 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--dark);min-h
 .url{font-size:clamp(14px,3.6vw,22px);font-weight:800;color:var(--orange);overflow-wrap:anywhere}
 .foot{background:var(--bg);text-align:center;font-size:clamp(11px,2.4vw,14px);color:var(--muted);padding:3.5% 6%}
 .err{color:#b42318;text-align:center;font-weight:600}
+/* cartões de visita: 85 × 55 mm, 10 por folha A4 */
+.sheet{display:grid;grid-template-columns:repeat(2,85mm);gap:4mm;justify-content:center;background:#fff;padding:8mm;border-radius:14px;box-shadow:0 10px 40px rgba(19,36,32,.15);max-width:100%;overflow:auto}
+.cv{width:85mm;height:55mm;border:1px dashed #D5D8DC;border-radius:3mm;display:flex;overflow:hidden;background:#fff}
+.cv-l{flex:1;padding:4.5mm 3mm 4mm 5mm;display:flex;flex-direction:column;min-width:0}
+.cv-logo{font-weight:800;font-size:11pt}
+.cv-logo em{font-style:normal;color:var(--orange)}
+.cv-nome{font-weight:800;font-size:12pt;line-height:1.15;margin-top:auto;overflow-wrap:anywhere}
+.cv-meta{font-size:8pt;color:var(--muted);margin-top:1mm}
+.cv-url{font-size:7.5pt;font-weight:800;color:var(--orange);margin-top:2mm;overflow-wrap:anywhere}
+.cv-r{width:30mm;background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5mm;color:#fff;font-size:6.5pt;text-align:center;padding:2mm}
+.cv-r img{width:23mm;height:23mm;background:#fff;padding:1mm;border-radius:1.5mm}
+/* imagem para redes */
+.social{display:flex;flex-direction:column;align-items:center;gap:14px}
+#social-canvas{width:min(92vw,360px);height:auto;border-radius:16px;box-shadow:0 10px 40px rgba(19,36,32,.15);background:#fff}
 @media print{
   @page{size:A4;margin:0}
   body{background:#fff;padding:0;display:block}
-  .bar,.hint{display:none}
+  .bar,.hint,.tabs,.social{display:none!important}
   .poster{max-width:none;width:210mm;height:297mm;aspect-ratio:auto;border-radius:0;box-shadow:none}
   #qr img,#qr canvas{width:70mm!important}
-  .top,.foot{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .top,.foot,.cv-r{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .sheet{box-shadow:none;border-radius:0;padding:10mm 0;gap:3mm}
+  body.modo-cartoes #poster,body.modo-cartaz .sheet{display:none!important}
 }
 </style>
 </head>
-<body>
-<div class="bar">
+<body class="modo-cartaz">
+<div class="tabs" role="tablist" aria-label="Formato">
+  <button class="tab" role="tab" aria-selected="true" data-modo="cartaz">Cartaz A4</button>
+  <button class="tab" role="tab" aria-selected="false" data-modo="cartoes">Cartões de visita</button>
+  <button class="tab" role="tab" aria-selected="false" data-modo="imagem">Imagem para WhatsApp e Instagram</button>
+</div>
+<div class="bar" id="bar-print">
   <button class="btn btn-p" onclick="window.print()">Imprimir / guardar em PDF</button>
   <a class="btn btn-l" href="dashboard.html">Voltar ao dashboard</a>
 </div>
-<p class="hint">Imprime em A4 e afixa na carrinha, na loja ou à porta. Quem ler o código vai direto ao teu perfil.</p>
+<p class="hint" id="hint">Imprime em A4 e afixa na carrinha, na loja ou à porta. Quem ler o código vai direto ao teu perfil.</p>
 <div id="poster" class="poster"><p class="err" style="margin:auto">A carregar…</p></div>
+<div id="cartoes" class="sheet" hidden></div>
+<div id="imagem" class="social" hidden>
+  <canvas id="social-canvas" width="1080" height="1350" aria-label="Imagem do perfil para partilhar"></canvas>
+  <div class="bar">
+    <button class="btn btn-p" id="img-share" hidden>Partilhar</button>
+    <a class="btn btn-p" id="img-download" download="flinko-perfil.png" href="#">Descarregar imagem</a>
+    <a class="btn btn-l" href="dashboard.html">Voltar ao dashboard</a>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -57,14 +92,126 @@ const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
 const SUPABASE_KEY='sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
 const box=document.getElementById('poster')
+const HINTS={
+  cartaz:'Imprime em A4 e afixa na carrinha, na loja ou à porta. Quem ler o código vai direto ao teu perfil.',
+  cartoes:'10 cartões de visita (85 × 55 mm) numa folha A4. Imprime em papel grosso e corta pelas linhas.',
+  imagem:'Publica no estado do WhatsApp, no Instagram ou no Facebook. Quem ler o código vai direto ao teu perfil.'
+}
+let P=null,URL_PERFIL='',QR_DATA=''
 function erro(msg){box.innerHTML='<p class="err" style="margin:auto;padding:24px">'+escapeHtml(msg)+'</p>'}
+
+// QR como imagem (data URL), para reutilizar nos cartões e na imagem.
+function qrDataUrl(text){
+  if(typeof QRCode==='undefined')return ''
+  const tmp=document.createElement('div')
+  new QRCode(tmp,{text,width:480,height:480,correctLevel:QRCode.CorrectLevel.M})
+  const c=tmp.querySelector('canvas')
+  try{return c?c.toDataURL('image/png'):''}catch(e){return ''}
+}
+
+function setModo(m){
+  document.body.className='modo-'+m
+  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.modo===m?'true':'false'))
+  box.hidden=m!=='cartaz'
+  document.getElementById('cartoes').hidden=m!=='cartoes'
+  document.getElementById('imagem').hidden=m!=='imagem'
+  document.getElementById('bar-print').hidden=m==='imagem'
+  document.getElementById('hint').textContent=HINTS[m]
+  if(P&&m==='cartoes')renderCartoes()
+  if(P&&m==='imagem')renderImagem()
+}
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>setModo(t.dataset.modo)))
+
+function renderCartoes(){
+  const meta=[P.category,P.location].filter(Boolean).join(' · ')
+  const qr=QR_DATA?'<img src="'+QR_DATA+'" alt="Código QR do perfil">':''
+  const um='<div class="cv"><div class="cv-l"><div class="cv-logo">Flink<em>o</em></div>'+
+    '<div class="cv-nome">'+escapeHtml(P.name||'')+'</div><div class="cv-meta">'+escapeHtml(meta)+'</div>'+
+    '<div class="cv-url">'+escapeHtml(URL_PERFIL.replace(/^https?:\/\//,''))+'</div></div>'+
+    '<div class="cv-r">'+qr+'<span>Pede orçamento grátis</span></div></div>'
+  document.getElementById('cartoes').innerHTML=um.repeat(10)
+}
+
+// Imagem 1080 × 1350 (formato de publicação do Instagram, serve no estado do WhatsApp).
+function linhas(ctx,texto,maxW){
+  const palavras=String(texto||'').split(/\s+/),out=[]
+  let l=''
+  for(const w of palavras){const t=l?l+' '+w:w;if(ctx.measureText(t).width>maxW&&l){out.push(l);l=w}else l=t}
+  if(l)out.push(l)
+  return out
+}
+function cabe(ctx,texto,peso,max,min,maxW){
+  let s=max
+  for(;s>min;s-=2){ctx.font=peso+' '+s+'px Inter, Arial, sans-serif';if(linhas(ctx,texto,maxW).length<=2)break}
+  return s
+}
+async function renderImagem(){
+  const cv=document.getElementById('social-canvas'),ctx=cv.getContext('2d'),W=1080,H=1350
+  try{await document.fonts.ready}catch(e){}
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H)
+  // topo escuro com a pergunta
+  ctx.fillStyle='#132420';ctx.fillRect(0,0,W,420)
+  const g=ctx.createLinearGradient(0,0,W,0);g.addColorStop(0,'#E8720A');g.addColorStop(1,'#0F7B55')
+  ctx.fillStyle=g;ctx.fillRect(0,414,W,12)
+  ctx.textBaseline='alphabetic';ctx.textAlign='left'
+  ctx.font='800 52px Inter, Arial, sans-serif';ctx.fillStyle='#fff';ctx.fillText('Flink',80,130)
+  ctx.fillStyle='#E8720A';ctx.fillText('o',80+ctx.measureText('Flink').width,130)
+  const pergunta='Precisas de '+(P.category||'um profissional')+'?'
+  const s=cabe(ctx,pergunta,'800',86,48,W-160)
+  ctx.font='800 '+s+'px Inter, Arial, sans-serif';ctx.fillStyle='#fff'
+  linhas(ctx,pergunta,W-160).slice(0,2).forEach((l,i)=>ctx.fillText(l,80,250+i*(s*1.12)))
+  // nome e zona
+  ctx.textAlign='center'
+  const sn=cabe(ctx,P.name||'','800',68,40,W-140)
+  ctx.font='800 '+sn+'px Inter, Arial, sans-serif';ctx.fillStyle='#132420'
+  const ln=linhas(ctx,P.name||'',W-140).slice(0,2)
+  ln.forEach((l,i)=>ctx.fillText(l,W/2,530+i*(sn*1.1)))
+  let y=530+(ln.length-1)*(sn*1.1)+60
+  const meta=[P.category,P.location].filter(Boolean).join(' · ')
+  if(meta){ctx.font='600 34px Inter, Arial, sans-serif';ctx.fillStyle='#5B6270';ctx.fillText(meta.length>48?meta.slice(0,47)+'…':meta,W/2,y);y+=30}
+  // QR
+  const lado=380,qx=(W-lado)/2,qy=Math.max(y+30,660)
+  ctx.fillStyle='#fff';ctx.strokeStyle='#ECECE9';ctx.lineWidth=4
+  ctx.beginPath();if(ctx.roundRect)ctx.roundRect(qx-24,qy-24,lado+48,lado+48,28);else ctx.rect(qx-24,qy-24,lado+48,lado+48);ctx.fill();ctx.stroke()
+  if(QR_DATA){
+    const img=new Image();img.src=QR_DATA
+    try{await img.decode()}catch(e){}
+    ctx.drawImage(img,qx,qy,lado,lado)
+  }
+  ctx.font='600 30px Inter, Arial, sans-serif';ctx.fillStyle='#5B6270'
+  ctx.fillText('Lê o código ou visita',W/2,qy+lado+80)
+  const u=URL_PERFIL.replace(/^https?:\/\//,'')
+  const su=cabe(ctx,u,'800',44,26,W-120)
+  ctx.font='800 '+su+'px Inter, Arial, sans-serif';ctx.fillStyle='#E8720A';ctx.fillText(u,W/2,qy+lado+136)
+  // rodapé
+  ctx.fillStyle='#F7F8FA';ctx.fillRect(0,H-90,W,90)
+  ctx.font='600 28px Inter, Arial, sans-serif';ctx.fillStyle='#5B6270'
+  ctx.fillText('Pede orçamento grátis · 0% de comissões',W/2,H-35)
+  // descarregar / partilhar
+  const nome='flinko-'+(P.slug||'perfil')+'.png'
+  const dl=document.getElementById('img-download')
+  try{dl.href=cv.toDataURL('image/png');dl.download=nome}catch(e){}
+  const sh=document.getElementById('img-share')
+  if(navigator.canShare&&cv.toBlob){
+    cv.toBlob(b=>{
+      if(!b)return
+      const f=new File([b],nome,{type:'image/png'})
+      if(!navigator.canShare({files:[f]}))return
+      sh.hidden=false
+      sh.onclick=()=>navigator.share({files:[f],text:'Pede-me orçamento grátis na Flinko: '+URL_PERFIL}).catch(()=>{})
+    },'image/png')
+  }
+}
+
 async function init(){
   const id=new URLSearchParams(location.search).get('id')||''
   if(!/^[0-9a-fA-F-]{20,40}$/.test(id))return erro('Perfil não encontrado. Abre o cartaz a partir do teu dashboard.')
   const{data,error}=await db.from('profiles').select('id,name,category,location,slug').eq('id',id).limit(1)
   const p=data&&data[0]
   if(error||!p)return erro('Perfil não encontrado. Abre o cartaz a partir do teu dashboard.')
-  const url=location.origin+(p.slug?'/'+encodeURIComponent(p.slug):'/profile.html?id='+encodeURIComponent(p.id))
+  P=p
+  URL_PERFIL=location.origin+(p.slug?'/'+encodeURIComponent(p.slug):'/profile.html?id='+encodeURIComponent(p.id))
+  const url=URL_PERFIL
   const cat=p.category?escapeHtml(p.category):'um profissional'
   box.innerHTML=
     '<div class="top"><div class="logo">Flink<em>o</em></div><h1>Precisas de <span>'+cat+'</span>?</h1></div>'+
@@ -79,7 +226,10 @@ async function init(){
   const qr=document.getElementById('qr')
   if(typeof QRCode==='undefined'){qr.innerHTML='<div class="scan" style="padding:20px">QR indisponível — usa o endereço abaixo.</div>'}
   else new QRCode(qr,{text:url,width:240,height:240,correctLevel:QRCode.CorrectLevel.M})
+  QR_DATA=qrDataUrl(url)
   document.title='Cartaz – '+(p.name||'Flinko')
+  const m=new URLSearchParams(location.search).get('formato')
+  if(m==='cartoes'||m==='imagem')setModo(m)
 }
 init()
 </script>

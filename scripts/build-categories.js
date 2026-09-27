@@ -17,6 +17,8 @@ const TEMPLATE_PATH = path.join(ROOT, 'templates', 'categoria.template.html');
 const DATA_PATH = path.join(__dirname, 'categories-data.json');
 
 const categories = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
+// Mesma lista de distritos e mesmos slugs das páginas locais (/eletricistas/braga).
+const { DISTRITOS, slugify } = require('../netlify/functions/_local.js');
 const template = fs.readFileSync(TEMPLATE_PATH, 'utf8');
 
 function escHtml(s) {
@@ -33,6 +35,12 @@ function buildNavChips(activeSlug) {
     );
   }
   return items.join('\n');
+}
+
+// Ligações para as páginas locais da categoria, por distrito. Sem elas o
+// Google só as conhecia pelo sitemap; com ligações internas ganham peso.
+function buildZonasHtml(cat) {
+  return DISTRITOS.map((d) => ` <a href="/${cat.slug}/${slugify(d)}" class="cat-chip">${escHtml(d)}</a>`).join('\n');
 }
 
 function buildFaqHtml(faq) {
@@ -81,6 +89,7 @@ for (const cat of categories) {
     '{{COMO_CONTRATAR_HEADING}}': cat.comoContratarHeading,
     '{{PERGUNTAS_HEADING}}': cat.perguntasHeading,
     '{{FAQ_HTML}}': buildFaqHtml(cat.faq),
+    '{{ZONAS_HTML}}': buildZonasHtml(cat),
     '{{EMPTY_STATE_SENTENCE}}': cat.emptyStateSentence,
   };
   for (const [token, value] of Object.entries(tokens)) {

@@ -25,6 +25,11 @@
 [functions."profile-reminders"]
   schedule = "0 9 * * *"
 
+# Lembrete ao profissional de mensagens de clientes por responder (2h a 24h),
+# ver netlify/functions/reply-reminders.js. De hora a hora; nao envia de noite.
+[functions."reply-reminders"]
+  schedule = "15 * * * *"
+
 # A pagina de perfil servida com o essencial ja no HTML (ver
 # netlify/functions/profile-page.js) le o profile.html do proprio deploy.
 [functions."profile-page"]

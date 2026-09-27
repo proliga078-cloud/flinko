@@ -19,6 +19,9 @@ function renderShare(){
   }
   const poster=document.getElementById('share-poster')
   if(poster&&profileId)poster.href='cartaz.html?id='+encodeURIComponent(profileId)
+  const cards=document.getElementById('share-cards'),img=document.getElementById('share-image')
+  if(cards&&profileId)cards.href='cartaz.html?formato=cartoes&id='+encodeURIComponent(profileId)
+  if(img&&profileId)img.href='cartaz.html?formato=imagem&id='+encodeURIComponent(profileId)
 }
 
 function copyShareUrl(){
