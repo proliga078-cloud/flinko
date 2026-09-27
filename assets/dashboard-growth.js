@@ -214,6 +214,16 @@ async function initWhatsAppPref(){
   document.getElementById('wa-phone').textContent=n?'+'+n:'ainda sem telemóvel: adiciona-o em Dados'
   document.getElementById('wa-toggle').checked=!!(data&&data.whatsapp_visivel)
   row.style.display='flex'
+  loadWhatsAppCount()
+}
+// Quantas vezes os clientes (ou a Flinko) carregaram em "Contactar pelo WhatsApp".
+async function loadWhatsAppCount(){
+  const el=document.getElementById('wa-count');if(!el)return
+  const{data,error}=await db.from('whatsapp_contactos').select('created_at,source').eq('professional_id',profileId)
+  if(error)return
+  const L=data||[],d30=L.filter(c=>Date.now()-new Date(c.created_at)<30*864e5).length
+  el.textContent=L.length?'📲 Contactado '+L.length+(L.length===1?' vez':' vezes')+' pelo WhatsApp ('+d30+' nos últimos 30 dias)':'📲 Ainda ninguém te contactou pelo WhatsApp'
+  el.style.display='block'
 }
 async function saveWhatsAppPref(){
   const el=document.getElementById('wa-toggle'),on=el.checked

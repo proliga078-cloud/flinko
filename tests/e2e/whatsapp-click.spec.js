@@ -95,3 +95,32 @@ test('painel: sem telemóvel válido não liga e explica o que falta', async ({ 
   await expect(page.locator('#notif-error')).toContainText('adiciona um telemóvel válido');
   await expect(page.locator('#wa-toggle')).not.toBeChecked();
 });
+
+test('contador: carregar no botão regista o contacto (registar_contacto_whatsapp) e abre o WhatsApp', async ({ page, context }) => {
+  await context.route('https://wa.me/**', (r) => r.fulfill({ status: 200, body: 'wa' }));
+  await abrirPedido(page, CLI, [{ professional_id: RUI, phone: '912345678' }]);
+  const popup = page.waitForEvent('popup');
+  await page.locator('.offer-card', { hasText: 'Rui Alves' }).getByRole('link', { name: 'Contactar pelo WhatsApp' }).click();
+  expect((await popup).url()).toContain('https://wa.me/351912345678?text=');
+  await expect.poll(() => page.evaluate(() => (window.__rpcCalls || []).find((c) => c.fnName === 'registar_contacto_whatsapp'))).toBeTruthy();
+  const call = await page.evaluate(() => window.__rpcCalls.find((c) => c.fnName === 'registar_contacto_whatsapp'));
+  expect(call.args).toEqual({ p_professional: RUI, p_request: 'req-1' });
+});
+
+test('contador no painel: mostra quantas vezes o profissional foi contactado', async ({ page }) => {
+  await page.route(SUPABASE_CDN_URL, (r) => r.fulfill({ path: FAKE_SDK_PATH, contentType: 'text/javascript' }));
+  const profile = { id: 'pro-1', slug: 'rui', name: 'Rui Alves', plan: 'free', account_type: 'professional', category: 'Eletricistas', location: 'Braga – Braga' };
+  const dias = (d) => new Date(Date.now() - d * 864e5).toISOString();
+  await page.addInitScript((c) => { window.__testAuthConfig = c; }, {
+    session: { access_token: 'tok', user: { id: 'pro-1', email: 'rui@example.com' } },
+    rpcResults: { get_my_profile: [profile] },
+    tableData: {
+      plan_limits: { data: [] },
+      profile_private: { data: [{ profile_id: 'pro-1', phone: '912345678', whatsapp_visivel: true }] },
+      whatsapp_contactos: { data: [{ created_at: dias(1), source: 'proposta' }, { created_at: dias(5), source: 'admin' }, { created_at: dias(60), source: 'proposta' }] },
+    },
+  });
+  await page.goto('/dashboard.html');
+  await page.evaluate(() => showPage('profile'));
+  await expect(page.locator('#wa-count')).toHaveText('📲 Contactado 3 vezes pelo WhatsApp (2 nos últimos 30 dias)');
+});

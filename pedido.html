@@ -310,8 +310,10 @@ const r=currentRequest||{}
 const txt=tel&&flinkoWhatsApp.mensagemPedido({intro:'Olá! Vi a tua proposta na Flinko para o meu pedido.',servico:r.title+(r.category?' ('+r.category+')':''),localizacao:r.location,descricao:r.description,url:'https://flinko.pt/pedido.html?id='+encodeURIComponent(r.id||reqId),fecho:'Obrigado!'})
 const href=tel&&flinkoWhatsApp.link(tel,txt)
 if(!href)return '<span class="oc-nowa">'+escapeHtml(flinkoWhatsApp.SEM_NUMERO)+'</span>'
-return '<a class="btn btn-outline btn-sm btn-wa" href="'+escapeHtml(href)+'" target="_blank" rel="noopener noreferrer">'+WA_ICON+'Contactar pelo WhatsApp</a>'
+return '<a class="btn btn-outline btn-sm btn-wa" href="'+escapeHtml(href)+'" target="_blank" rel="noopener noreferrer" onclick="registarWa(\''+o.professional_id+'\')">'+WA_ICON+'Contactar pelo WhatsApp</a>'
 }
+// Conta o contacto (para o contador do profissional). Não trava a abertura do WhatsApp.
+function registarWa(pid){try{db.rpc('registar_contacto_whatsapp',{p_professional:pid,p_request:reqId}).then(()=>{},()=>{})}catch(e){}}
 function precoTxt(o){return o.price_from?('€'+Number(o.price_from).toLocaleString('pt-PT')+(o.price_to&&o.price_to!==o.price_from?' – €'+Number(o.price_to).toLocaleString('pt-PT'):'')):'Preço a combinar'}
 function ofertasOrdenadas(){
 const L=currentOffers.slice()
