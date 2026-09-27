@@ -1,65 +1,3 @@
-// ===== NOTIFICAÇÕES PUSH (PWA) =====
-const VAPID_PUBLIC_KEY='BA2gyreUT3GkDevWZvkMxc3zW-DLTEnbn9LQwrNkdLDSRlcPbi-5luCy6AxWwSdpXpDbo201QbhfgRvq4pvXAnM'
-const PUSH_DISMISS_KEY='proliga_push_dismissed_at'
-const PUSH_DISMISS_DAYS=14
-
-function urlBase64ToUint8Array(base64String){
-  const padding='='.repeat((4-base64String.length%4)%4)
-  const base64=(base64String+padding).replace(/-/g,'+').replace(/_/g,'/')
-  const rawData=atob(base64)
-  const outputArray=new Uint8Array(rawData.length)
-  for(let i=0;i<rawData.length;i++)outputArray[i]=rawData.charCodeAt(i)
-  return outputArray
-}
-
-function maybeShowPushBanner(){
-  if(!('serviceWorker' in navigator)||!('PushManager' in window))return
-  if(Notification.permission!=='default')return
-  const t=localStorage.getItem(PUSH_DISMISS_KEY)
-  if(t&&(Date.now()-Number(t))/86400000<PUSH_DISMISS_DAYS)return
-  if(document.getElementById('push-banner'))return
-
-  const el=document.createElement('div')
-  el.id='push-banner'
-  el.setAttribute('style','position:fixed;left:14px;right:14px;bottom:14px;z-index:9999;background:var(--ink,#132420);color:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.3);display:flex;align-items:center;gap:12px;font-family:inherit;max-width:420px;margin:0 auto')
-  el.innerHTML=
-    '<div style="width:38px;height:38px;border-radius:10px;background:#E8720A;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px">🔔</div>'+
-    '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">Ativar notificações</div><div style="font-size:11.5px;color:rgba(255,255,255,.65)">Sabe logo quando chega um pedido ou mensagem nova.</div></div>'+
-    '<button id="push-enable-btn" style="background:#E8720A;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap">Ativar</button>'+
-    '<button id="push-close-btn" aria-label="Fechar" style="background:transparent;border:none;color:rgba(255,255,255,.5);font-size:18px;cursor:pointer;padding:0 2px;line-height:1">&times;</button>'
-  document.body.appendChild(el)
-
-  document.getElementById('push-enable-btn').addEventListener('click',async()=>{
-    el.remove()
-    await enablePushNotifications()
-  })
-  document.getElementById('push-close-btn').addEventListener('click',()=>{
-    localStorage.setItem(PUSH_DISMISS_KEY,String(Date.now()))
-    el.remove()
-  })
-}
-
-async function enablePushNotifications(){
-  try{
-    const perm=await Notification.requestPermission()
-    if(perm!=='granted')return
-    const reg=await navigator.serviceWorker.ready
-    const sub=await reg.pushManager.subscribe({
-      userVisibleOnly:true,
-      applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-    })
-    const json=sub.toJSON()
-    await db.from('push_subscriptions').upsert({
-      profile_id:profileId,
-      endpoint:json.endpoint,
-      p256dh:json.keys.p256dh,
-      auth:json.keys.auth
-    },{onConflict:'endpoint'})
-  }catch(e){
-    console.error('push subscribe error:',e)
-  }
-}
-
 // ===== REDE DE REFERÊNCIA ENTRE PROFISSIONAIS =====
 function openReferModal(jobId){
   refJobId=jobId||null
@@ -262,6 +200,40 @@ async function saveNotifyPref(){
   if(error){showAlert('notif-error','Não foi possível guardar: '+error.message,'error');return}
   profileData={...profileData,notify_email:on}
   showAlert('notif-success', on?'Vais receber email quando um cliente te escrever.':'Deixaste de receber avisos por email.')
+}
+
+// Alertas no WhatsApp: a opção só aparece quando a Flinko tiver o WhatsApp
+// ligado (whatsapp-status). O número é o telemóvel do perfil.
+function waPhone(v){
+  let t=String(v||'').replace(/[\s().-]/g,'')
+  if(t.startsWith('00'))t='+'+t.slice(2)
+  if(/^9\d{8}$/.test(t))t='+351'+t
+  if(/^\+3519\d{8}$/.test(t))return t
+  return /^\+(?!351)[1-9]\d{7,14}$/.test(t)?t:null
+}
+async function initWhatsAppPref(){
+  const row=document.getElementById('wa-row')
+  if(!row||!profileId||profileData?.account_type==='client')return
+  try{
+    const r=await fetch('/.netlify/functions/whatsapp-status')
+    const s=await r.json()
+    if(!s||!s.enabled)return
+  }catch(e){return}
+  const{data}=await db.from('profile_private').select('phone,whatsapp_alerts').eq('profile_id',profileId).maybeSingle()
+  const tel=waPhone(data&&data.phone)
+  document.getElementById('wa-phone').textContent=tel||'ainda sem telemóvel: adiciona-o em O meu perfil'
+  document.getElementById('wa-toggle').checked=!!(data&&data.whatsapp_alerts)
+  row.style.display='flex'
+}
+async function saveWhatsAppPref(){
+  const el=document.getElementById('wa-toggle'),on=el.checked
+  if(on){
+    const{data}=await db.from('profile_private').select('phone').eq('profile_id',profileId).maybeSingle()
+    if(!waPhone(data&&data.phone)){el.checked=false;showAlert('notif-error','Para receber alertas no WhatsApp, adiciona um telemóvel válido em O meu perfil.','error');return}
+  }
+  const{error}=await db.from('profile_private').update({whatsapp_alerts:on,whatsapp_opt_in_at:on?new Date().toISOString():null}).eq('profile_id',profileId)
+  if(error){el.checked=!on;showAlert('notif-error','Não foi possível guardar: '+error.message,'error');return}
+  showAlert('notif-success',on?'Vais receber os pedidos novos e as mensagens de clientes no WhatsApp.':'Deixaste de receber alertas no WhatsApp.')
 }
 
 // PRIVACIDADE E RGPD

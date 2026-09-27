@@ -13,6 +13,7 @@
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#0f231b"/>
 <script src="/assets/pwa.js" defer></script>
+<script src="/assets/push-optin.js" defer></script>
 <script src="/assets/cookie-consent.js" defer></script>
 <script src="/assets/a11y-clickable.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -599,7 +600,7 @@ Letras minúsculas, números e hífenes. Entre 3 e 30 caracteres.
 <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;gap:14px;flex-wrap:wrap">
 <div style="flex:1;min-width:220px">
 <div style="font-size:14px;font-weight:600">Avisar-me por email de novas mensagens</div>
-<div style="font-size:12px;color:var(--muted);line-height:1.5">Recebes um email quando um cliente te escreve, para não perderes contactos. No máximo um aviso por conversa a cada 15 minutos.</div>
+<div style="font-size:12px;color:var(--muted);line-height:1.5">Recebes um email quando um cliente te escreve, para não perderes contactos. No máximo um aviso por conversa a cada 30 minutos.</div>
 </div>
 <label class="switch" for="notif-toggle">
 <input type="checkbox" id="notif-toggle" onchange="saveNotifyPref()"/>
@@ -613,6 +614,16 @@ Letras minúsculas, números e hífenes. Entre 3 e 30 caracteres.
 </div>
 <label class="switch" for="notif-digest-toggle">
 <input type="checkbox" id="notif-digest-toggle" onchange="saveDigestPref()"/>
+<span class="slider"></span>
+</label>
+</div>
+<div id="wa-row" style="display:none;align-items:center;justify-content:space-between;padding:10px 0;gap:14px;flex-wrap:wrap;border-top:1px solid var(--border)">
+<div style="flex:1;min-width:220px">
+<div style="font-size:14px;font-weight:600">Alertas no WhatsApp</div>
+<div style="font-size:12px;color:var(--muted);line-height:1.5">Recebe no WhatsApp os pedidos novos da tua categoria e as mensagens de clientes. Usamos o telemóvel do teu perfil (<span id="wa-phone">sem telemóvel</span>). Podes desligar quando quiseres.</div>
+</div>
+<label class="switch" for="wa-toggle">
+<input type="checkbox" id="wa-toggle" onchange="saveWhatsAppPref()"/>
 <span class="slider"></span>
 </label>
 </div>

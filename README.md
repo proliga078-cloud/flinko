@@ -85,6 +85,7 @@ repositório). Para as funções Netlify a sério, usa `netlify dev`.
 | `STRIPE_PRICE_STARTER_MONTHLY/YEARLY`, `STRIPE_PRICE_PRO_MONTHLY/YEARLY` | Preços vendidos; o webhook também os usa para saber o plano de uma subscrição |
 | `RESEND_API_KEY`, `RESEND_FROM` | Emails de novas mensagens/pedidos |
 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | Notificações push (`VAPID_SUBJECT` = `mailto:` de contacto) |
+| `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_WHATSAPP_FROM`, `TWILIO_TPL_PEDIDO`, `TWILIO_TPL_MENSAGEM` | Alertas no WhatsApp para profissionais (opcional; sem elas fica desligado). Os `TWILIO_TPL_*` são os ContentSid (HX…) dos modelos aprovados pela Meta — ver `netlify/functions/_whatsapp.js` |
 | `URL` | Definida pelo próprio Netlify |
 
 ## Segurança — regras do projeto

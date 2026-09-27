@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet"/>
 <script src="/assets/pwa.js" defer></script>
+<script src="/assets/push-optin.js"></script>
 <script src="/assets/cookie-consent.js" defer></script>
 <style>
 /* ============================================================
@@ -480,6 +481,7 @@ async function init(){
   const{data:bl}=await db.from('user_blocks').select('blocked_id').eq('blocker_id',S.me)
   S.blocked=new Set((bl||[]).map(b=>b.blocked_id))
   await loadConversations()
+  if(window.flinkoPushEnsure)flinkoPushEnsure(db,S.me)
   subscribe()
   presence()
 
@@ -861,6 +863,10 @@ async function deliver(tmp){
     conv.last_message=snippet(real);conv.last_message_at=real.created_at;conv.lastMine=true;conv.lastRead=false;conv.count=(conv.count||0)+1
     renderList()
     notify(convId,snippet(real))
+    // acabou de enviar: é quando faz sentido querer saber da resposta
+    if(window.flinkoPushAsk&&!S.pushAsked){S.pushAsked=true;flinkoPushAsk({db,userId:S.me,delay:1200,
+      title:'Queres saber quando '+(firstName(conv.other.name)||'te')+' responder?',
+      text:'Ativa as notificações e recebes a resposta logo, mesmo com a Flinko fechada.'})}
   }catch(e){
     tmp._status='failed'
     if(/Não é possível enviar/.test(String(e&&e.message||'')))tmp._err='Não é possível enviar mensagens nesta conversa.'

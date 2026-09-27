@@ -446,6 +446,7 @@ nav{flex-wrap:wrap;height:auto;padding:10px 4%;row-gap:8px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/escape-html.js"></script>
+<script src="/assets/push-optin.js"></script>
 <script src="/assets/resize-image.js"></script>
 <script>
 const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
@@ -856,6 +857,9 @@ showStep('request')
 showMsg('success','Pedido publicado! Vamos avisar os profissionais da tua zona; as propostas chegam às tuas mensagens e ao teu email.')
 if(window.flinkoTrack)window.flinkoTrack('pedido_publicado',{category:r.category})
 notifyMatchingProfessionals(novo&&novo.id)
+if(window.flinkoPushAsk)flinkoPushAsk({db,userId:session.user.id,delay:2900,
+title:'Avisamos-te quando chegar uma proposta',
+text:'Ativa as notificações e vês as propostas dos profissionais assim que chegam, mesmo com a Flinko fechada.'})
 setTimeout(()=>{
 closeModal()
 showMsg('success','')

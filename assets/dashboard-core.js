@@ -150,7 +150,7 @@ loadQuotes()
 loadMarketPricing()
 loadPlanLimits()
 subscribeJobsRealtime()
-setTimeout(maybeShowPushBanner, 2000)
+if(window.flinkoPushEnsure)flinkoPushEnsure(db,user.id)
 }
 checkUpgrade();if(typeof renderAiBuilderBanner==='function'){renderAiBuilderBanner();handleAiBuilderCheckoutReturn()};if(profileData?.account_type==='client'){
 var qc=document.getElementById('quick-calc-card');if(qc)qc.style.display='none';
@@ -190,6 +190,7 @@ const nt=document.getElementById('notif-toggle')
 if(nt)nt.checked=profileData?.notify_email!==false
 const ndt=document.getElementById('notif-digest-toggle')
 if(ndt)ndt.checked=profileData?.notify_digest!==false
+if(typeof initWhatsAppPref==='function')initWhatsAppPref()
 const dt=document.getElementById('hd-date')
 if(dt)dt.textContent=new Date().toLocaleDateString('pt-PT',{weekday:'long',day:'numeric',month:'long'})
 renderSetup()

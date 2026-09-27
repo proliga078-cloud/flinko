@@ -25,6 +25,8 @@ module.exports = defineConfig({
           // O guia "Completa o teu perfil" abre sozinho por cima do dashboard e
           // taparia os cliques dos outros testes; só dashboard-guia-perfil o abre.
           { name: 'fk_onb_snooze_until', value: String(4102444800000) },
+          // O mesmo para o convite a ativar notificações (só push-optin o testa).
+          { name: 'fk_push_ask_until', value: String(4102444800000) },
         ],
       }],
     },

@@ -267,6 +267,14 @@
     document.removeEventListener('keydown', escClose)
     if(snooze) try{ localStorage.setItem(SNOOZE_KEY, String(Date.now() + 864e5)) }catch(e){}
     if(typeof renderSetup === 'function') renderSetup()
+    if(!missing().length) pedirPush()
+  }
+  // Perfil completo: é agora que vale a pena ser avisado dos pedidos.
+  function pedirPush(){
+    if(!window.flinkoPushAsk || !isPro() || typeof user === 'undefined' || !user) return
+    window.flinkoPushAsk({ db: db, userId: user.id, delay: 1500,
+      title: 'Recebe os pedidos de clientes na hora',
+      text: 'Quem responde primeiro fica com mais trabalhos. Ativa as notificações e sabes logo quando chega um pedido ou uma mensagem.' })
   }
   window.closeOnboarding = closeOnboarding
 
@@ -277,7 +285,8 @@
     abriu = true
     var forcar = /[?&]completar=1\b/.test(location.search)
     var ate = 0; try{ ate = Number(localStorage.getItem(SNOOZE_KEY) || 0) }catch(e){}
+    if(!missing().length){ pedirPush(); return }
     if(!forcar && ate > Date.now()) return
-    if(missing().length) window.openOnboarding()
+    window.openOnboarding()
   }
 })()
