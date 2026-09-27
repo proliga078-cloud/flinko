@@ -1,6 +1,5 @@
 const{createClient}=require('@supabase/supabase-js')
 const{sendPush}=require('./_push')
-const{sendWhatsApp}=require('./_whatsapp')
 
 const RESEND_API_KEY=process.env.RESEND_API_KEY
 const FROM=process.env.RESEND_FROM||'Flinko <onboarding@resend.dev>'
@@ -93,8 +92,6 @@ exports.handler=async(event)=>{
       url:'/pedidos.html',
       tag:'request-'+pedido.id
     })))
-    // WhatsApp: só a quem ligou os alertas no painel (desligado sem Twilio).
-    await sendWhatsApp(candidatos.map(p=>p.id),'pedido',()=>[pedido.category,pedido.title,pedido.location||'Portugal']).catch(()=>{})
 
     // Os emails vem do auth, nao de profiles.
     const{data:enderecos}=await admin.rpc('emails_for',{ids:candidatos.map(p=>p.id)})

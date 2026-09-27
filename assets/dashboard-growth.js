@@ -202,38 +202,28 @@ async function saveNotifyPref(){
   showAlert('notif-success', on?'Vais receber email quando um cliente te escrever.':'Deixaste de receber avisos por email.')
 }
 
-// Alertas no WhatsApp: a opção só aparece quando a Flinko tiver o WhatsApp
-// ligado (whatsapp-status). O número é o telemóvel do perfil.
-function waPhone(v){
-  let t=String(v||'').replace(/[\s().-]/g,'')
-  if(t.startsWith('00'))t='+'+t.slice(2)
-  if(/^9\d{8}$/.test(t))t='+351'+t
-  if(/^\+3519\d{8}$/.test(t))return t
-  return /^\+(?!351)[1-9]\d{7,14}$/.test(t)?t:null
-}
+// Botão "Contactar pelo WhatsApp" nas propostas (links wa.me, sem custos).
+// O profissional escolhe se o seu telemóvel aparece aos clientes a quem
+// enviou propostas (profile_private.whatsapp_visivel).
+function waNumero(v){return window.flinkoWhatsApp?flinkoWhatsApp.numero(v):null}
 async function initWhatsAppPref(){
   const row=document.getElementById('wa-row')
   if(!row||!profileId||profileData?.account_type==='client')return
-  try{
-    const r=await fetch('/.netlify/functions/whatsapp-status')
-    const s=await r.json()
-    if(!s||!s.enabled)return
-  }catch(e){return}
-  const{data}=await db.from('profile_private').select('phone,whatsapp_alerts').eq('profile_id',profileId).maybeSingle()
-  const tel=waPhone(data&&data.phone)
-  document.getElementById('wa-phone').textContent=tel||'ainda sem telemóvel: adiciona-o em O meu perfil'
-  document.getElementById('wa-toggle').checked=!!(data&&data.whatsapp_alerts)
+  const{data}=await db.from('profile_private').select('phone,whatsapp_visivel').eq('profile_id',profileId).maybeSingle()
+  const n=waNumero(data&&data.phone)
+  document.getElementById('wa-phone').textContent=n?'+'+n:'ainda sem telemóvel: adiciona-o em Dados'
+  document.getElementById('wa-toggle').checked=!!(data&&data.whatsapp_visivel)
   row.style.display='flex'
 }
 async function saveWhatsAppPref(){
   const el=document.getElementById('wa-toggle'),on=el.checked
   if(on){
     const{data}=await db.from('profile_private').select('phone').eq('profile_id',profileId).maybeSingle()
-    if(!waPhone(data&&data.phone)){el.checked=false;showAlert('notif-error','Para receber alertas no WhatsApp, adiciona um telemóvel válido em O meu perfil.','error');return}
+    if(!waNumero(data&&data.phone)){el.checked=false;showAlert('notif-error','Para mostrar o botão de WhatsApp, adiciona um telemóvel válido em O meu perfil › Dados.','error');return}
   }
-  const{error}=await db.from('profile_private').update({whatsapp_alerts:on,whatsapp_opt_in_at:on?new Date().toISOString():null}).eq('profile_id',profileId)
+  const{error}=await db.from('profile_private').update({whatsapp_visivel:on,whatsapp_visivel_at:on?new Date().toISOString():null}).eq('profile_id',profileId)
   if(error){el.checked=!on;showAlert('notif-error','Não foi possível guardar: '+error.message,'error');return}
-  showAlert('notif-success',on?'Vais receber os pedidos novos e as mensagens de clientes no WhatsApp.':'Deixaste de receber alertas no WhatsApp.')
+  showAlert('notif-success',on?'Os clientes a quem envias propostas já podem falar contigo pelo WhatsApp.':'O botão de WhatsApp deixou de aparecer nas tuas propostas.')
 }
 
 // PRIVACIDADE E RGPD

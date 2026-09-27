@@ -1,6 +1,5 @@
 const{createClient}=require('@supabase/supabase-js')
 const{sendPush}=require('./_push')
-const{sendWhatsApp}=require('./_whatsapp')
 
 const RESEND_API_KEY=process.env.RESEND_API_KEY
 const FROM=process.env.RESEND_FROM||'Flinko <onboarding@resend.dev>'
@@ -98,8 +97,6 @@ exports.handler=async(event)=>{
 
     // Esperar pelo push: numa funcao serverless, o que fica por esperar pode nunca chegar a correr.
     await sendPush(destinatarioId,{title:`Nova mensagem de ${nomeRaw}`,body:previewRaw||'Enviou-te uma mensagem na Flinko.',url:'/messages.html',tag:'message-'+conversationId}).catch(()=>{})
-    // WhatsApp só para profissionais (um novo contacto é trabalho) e com a mesma trava de 30 minutos.
-    if(destinatarioId===conv.professional_id)await sendWhatsApp([destinatarioId],'mensagem',()=>[nomeRaw,previewRaw||'Enviou-te uma mensagem']).catch(()=>{})
 
     return{statusCode:200,body:JSON.stringify({sent:true})}
   }catch(err){
