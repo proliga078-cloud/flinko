@@ -161,6 +161,7 @@ svg text{fill:var(--mut);font-size:10px}
 <div id="drawer" class="hidden"></div>
 <div id="modal" class="hidden"></div>
 
+<script src="/assets/whatsapp-link.js"></script>
 <script>
 "use strict";
 /* ============ CONFIG ============ */
@@ -345,6 +346,8 @@ async function loadAll() {
   D.audit = DEMO ? [] : await api("admin_audit?select=*&order=at.desc&limit=500").catch(e => { if (!missing(e)) LOADERR.push("admin_audit: " + e.message); return []; });
   // Eventos do funil de clientes (pesquisas, contactos, pedidos começados), já
   // contados por dia no servidor. Sem a migração eventos_funil fica vazio.
+  // Cliques nos botões "Contactar pelo WhatsApp" (contador por profissional e por pedido).
+  D.waclicks = DEMO ? [] : await api("whatsapp_contactos?select=professional_id,request_id,source,created_at&order=id&limit=10000").catch(e => { if (!missing(e)) LOADERR.push("whatsapp_contactos: " + e.message); return []; });
   D.events = DEMO ? [] : await api("rpc/admin_event_counts?p_days=90").catch(e => { if (!missing(e)) LOADERR.push("admin_event_counts: " + e.message); return []; });
   await loadStore();
   compute();
@@ -716,7 +719,24 @@ function consentCsv() {
 // Bloqueia modelos promocionais para quem não consentiu.
 const promoBlocked = (t, ref) => t && t.promo && !hasConsent(ref);
 DEFAULT_TPL[0].byCat = FIRST_BY_CAT;
-const waOpen = (phone, text) => { const d = String(phone || "").replace(/\D/g, ""); if (!d) { toast("Sem telemóvel"); return; } window.open("https://wa.me/" + (d.length === 9 ? "351" + d : d) + "?text=" + encodeURIComponent(text), "_blank", "noopener"); };
+// Click to WhatsApp (wa.me): abre o WhatsApp com o texto escrito; quem envia é o admin.
+const waOpen = (phone, text) => { const u = flinkoWhatsApp.link(phone, text); if (!u) { toast("Sem número de WhatsApp válido"); return; } window.open(u, "_blank", "noopener"); };
+// Reencaminhar um pedido de cliente a um profissional da mesma categoria.
+async function waPedido(id) {
+  const r = D.requests.find(x => x.id === id); if (!r) return;
+  const L = D.profiles.filter(p => p.category && p.category === r.category && !p.suspended && flinkoWhatsApp.numero(M.phone[p.id]));
+  if (!L.length) return toast(flinkoWhatsApp.SEM_NUMERO.replace("Este profissional não tem", "Nenhum profissional de " + (r.category || "esta categoria") + " tem"));
+  const f = await form("Enviar pedido por WhatsApp", [{ k: "p", label: "Profissional (" + L.length + " com WhatsApp)", type: "select", opts: L.map(p => [p.id, p.name + (p.location ? " · " + p.location : "")]) }], {}, "Abrir WhatsApp");
+  if (!f) return;
+  waOpen(M.phone[f.p], flinkoWhatsApp.mensagemPedido({ servico: r.title + (r.category ? " (" + r.category + ")" : ""), localizacao: r.location, descricao: r.description, url: "https://flinko.pt/pedido.html?id=" + encodeURIComponent(r.id) }));
+  try {
+    const novo = DEMO ? true : await api("rpc/registar_contacto_whatsapp", { method: "POST", body: { p_professional: f.p, p_request: r.id } });
+    if (novo) { (D.waclicks = D.waclicks || []).push({ professional_id: f.p, request_id: r.id, source: "admin", created_at: new Date().toISOString() }); render(); }
+  } catch (e) { }
+}
+// Contadores dos botões de WhatsApp.
+const waCount = (key, val) => (D.waclicks || []).filter(c => c[key] === val).length;
+const waProTxt = id => { const L = (D.waclicks || []).filter(c => c.professional_id === id); if (!L.length) return "0"; const d30 = L.filter(c => now() - new Date(c.created_at) < 30 * DAY).length, pr = L.filter(c => c.source === "proposta").length; return `${L.length} <span class="mut">(${d30} nos últimos 30 dias · ${pr} de clientes · ${L.length - pr} da Flinko)</span>`; };
 async function waChoose(o, phone, ctx) {
   const r = await form("Mensagem de WhatsApp", [{ k: "t", label: "Modelo", type: "select", opts: tpls().map(t => [t.id, t.name + (t.promo ? " (promocional)" : "") + (SEQS[t.id] ? " · com seguimento" : "")]) }], {}, "Abrir WhatsApp");
   if (!r) return; const t = tpls().find(x => x.id === r.t);
@@ -1682,14 +1702,14 @@ function proTable() {
   return `<table><tr><th>Nome</th><th>Categoria</th><th>Zona</th><th>Perfil</th><th>Vistas</th><th>Conv.</th><th>Fase CRM</th><th>Registo</th></tr>${L.map(p => `<tr class="clk" onclick="openPro('${p.id}')"><td><b>${esc(p.name)}</b> ${p.verified ? `<span class="pill ok">✓</span>` : `<span class="pill warn">por verificar</span>`}${p.suspended ? ` <span class="pill bad">suspenso</span>` : ""}${p.plan !== "free" ? ` <span class="pill acc">${esc(p.plan)}</span>` : ""}</td><td>${esc(p.category || "—")}</td><td>${esc(p.location || "—")}</td><td style="min-width:110px"><div class="row" style="gap:6px"><div style="flex:1">${bar(p._score, 100, sc(p._score))}</div><span class="mut">${p._score}</span></div></td><td>${p._views}</td><td>${p._conv}</td><td>${STAGES[stageOf(p)]}</td><td class="mut">${fdate(p.created_at)}</td></tr>`).join("") || `<tr><td colspan="8" class="mut">Nenhum resultado.</td></tr>`}</table>`;
 }
 function renderTable() { $("#ptable").innerHTML = proTable(); $(".top .sub").textContent = `${proList().length} de ${M.pros.length} profissionais`; }
-function waLink(ph) { const d = String(ph || "").replace(/\D/g, ""); if (!d) return ""; return "https://wa.me/" + (d.length === 9 ? "351" + d : d); }
+function waLink(ph) { return flinkoWhatsApp.link(ph) || ""; }
 function openPro(id) {
   const p = D.profiles.find(x => x.id === id); if (!p) return;
   const c = store.crm[id] || {}, tasks = store.tasks.filter(t => t.profile_id === id);
   const ph = M.phone[id] || "";
   openDrawer(`<div class="row" style="justify-content:space-between"><h2 style="font-size:19px">${esc(p.name)}</h2><button class="btn sec sm" onclick="closeDrawer()">✕</button></div>
     <div class="row" style="margin-top:6px">${p.verified ? `<span class="pill ok">verificado</span>` : `<span class="pill warn">por verificar</span>`}${p.suspended ? `<span class="pill bad">suspenso</span>` : ""}<span class="pill">${esc(p.plan || "free")}</span>${p.suspended ? `<span class="pill" title="O webhook do Stripe suspende automaticamente perfis com uma contestação de pagamento (disputa). Se foi isso, resolve a disputa no Stripe antes de reativar.">pode ser disputa Stripe</span>` : ""}</div>
-    <div class="kv"><span>Categoria</span><span>${esc(p.category || "—")}</span><span>Zona</span><span>${esc(p.location || "—")}</span><span>Telemóvel</span><span>${ph ? `${esc(ph)} · <a href="tel:${esc(ph)}">ligar</a> · <a target="_blank" rel="noopener" href="${waLink(ph)}">WhatsApp</a>` : "—"}</span><span>Registo</span><span>${fdate(p.created_at)} (${ago(p.created_at)})</span><span>Vistas do perfil</span><span>${p._views}</span><span>Conversas</span><span>${p._conv}</span><span>Serviços</span><span>${p._svc}</span></div>
+    <div class="kv"><span>Categoria</span><span>${esc(p.category || "—")}</span><span>Zona</span><span>${esc(p.location || "—")}</span><span>Telemóvel</span><span>${ph ? `${esc(ph)} · <a href="tel:${esc(ph)}">ligar</a>${waLink(ph) ? ` · <a target="_blank" rel="noopener" href="${esc(waLink(ph))}">WhatsApp</a>` : ""}` : "—"}</span><span>Registo</span><span>${fdate(p.created_at)} (${ago(p.created_at)})</span><span>Vistas do perfil</span><span>${p._views}</span><span>Contactos por WhatsApp</span><span>${waProTxt(p.id)}</span><span>Conversas</span><span>${p._conv}</span><span>Serviços</span><span>${p._svc}</span></div>
     <h3 style="margin:14px 0 6px">Qualidade do perfil: ${p._score}/100</h3>${bar(p._score, 100, sc(p._score))}
     <div class="row" style="margin-top:8px">${p._chk.map(k => `<span class="pill ${k[2] ? "ok" : "bad"}">${k[2] ? "✓" : "✗"} ${k[0]}</span>`).join("")}</div>
     <h3 style="margin:18px 0 6px">CRM</h3>
@@ -1934,7 +1954,7 @@ const vMod = () => {
       <div class="tw"><table><tr><th>Quem avaliou</th><th>Profissional</th><th>Nota</th><th>Comentário</th><th>Data</th><th></th></tr>${RV.slice(0, 100).map(r => `<tr><td><b>${esc(r.reviewer_name || "—")}</b>${r.client_id ? `<br><span class="mut">conta de cliente</span>` : `<br><span class="mut">sem conta</span>`}</td><td><a href="#" onclick="openPro('${r.professional_id}');return false">${esc(nameOf(r.professional_id))}</a></td><td style="color:#d97706;white-space:nowrap">${stars(r.rating)}</td><td>${esc((r.comment || "(sem comentário)").slice(0, 300))}${r._f.length ? `<br>${r._f.map(x => `<span class="pill ${/★$/.test(x) ? "warn" : "bad"}">${esc(x)}</span>`).join(" ")}` : ""}</td><td class="mut">${fdate(r.created_at)}</td><td><button class="btn sec sm" onclick="delReview('${r.id}')">Apagar</button></td></tr>`).join("") || `<tr><td colspan="6" class="mut">${modRev === "flag" ? "Nenhuma avaliação suspeita." : "Sem avaliações."}</td></tr>`}</table></div>
       <p class="mut" style="margin:10px 0 0">Suspeitas: linguagem ofensiva, ligações, autoavaliação ou a mesma pessoa a avaliar várias vezes. Avaliações negativas legítimas não se apagam: dão credibilidade às positivas.</p></div>
     <div class="card" style="margin-top:14px" id="reqCard"><h3>🧾 Pedidos de clientes <span class="sp"></span><select style="width:auto" onchange="modReq=this.value;render()">${[["open", "Abertos"], ["closed", "Fechados"], ["all", "Todos"]].map(o => `<option value="${o[0]}" ${modReq === o[0] ? "selected" : ""}>${o[1]}</option>`).join("")}</select></h3>
-      <div class="tw"><table><tr><th>Pedido</th><th>Cliente</th><th>Categoria / zona</th><th>Propostas</th><th>Data</th><th></th></tr>${RQ.slice(0, 100).map(r => `<tr><td><b>${esc(r.title)}</b> ${r.is_urgent ? `<span class="pill bad">urgente</span>` : ""}<br><span class="mut">${esc((r.description || "").slice(0, 160))}</span></td><td><a href="#" onclick="openAny('${r.client_id}');return false">${esc(nameOf(r.client_id))}</a></td><td>${esc(r.category || "—")}<br><span class="mut">${esc(r.location || "")}</span></td><td>${offN(r.id) || `<span class="pill bad">0</span>`}</td><td class="mut">${fdate(r.created_at)}<br>${esc(r.status)}</td><td style="white-space:nowrap">${r.status === "open" ? `<button class="btn sec sm" onclick="setReqStatus('${r.id}','resolved')">Fechar</button>` : `<button class="btn sec sm" onclick="setReqStatus('${r.id}','open')">Reabrir</button>`} <button class="btn sec sm" onclick="delRequest('${r.id}')">Apagar (spam)</button></td></tr>`).join("") || `<tr><td colspan="6" class="mut">Sem pedidos.</td></tr>`}</table></div></div>
+      <div class="tw"><table><tr><th>Pedido</th><th>Cliente</th><th>Categoria / zona</th><th>Propostas</th><th>Data</th><th></th></tr>${RQ.slice(0, 100).map(r => `<tr><td><b>${esc(r.title)}</b> ${r.is_urgent ? `<span class="pill bad">urgente</span>` : ""}<br><span class="mut">${esc((r.description || "").slice(0, 160))}</span></td><td><a href="#" onclick="openAny('${r.client_id}');return false">${esc(nameOf(r.client_id))}</a></td><td>${esc(r.category || "—")}<br><span class="mut">${esc(r.location || "")}</span></td><td>${offN(r.id) || `<span class="pill bad">0</span>`}</td><td class="mut">${fdate(r.created_at)}<br>${esc(r.status)}</td><td style="white-space:nowrap">${r.status === "open" ? `<button class="btn sec sm" onclick="setReqStatus('${r.id}','resolved')">Fechar</button>` : `<button class="btn sec sm" onclick="setReqStatus('${r.id}','open')">Reabrir</button>`} <button class="btn sec sm" onclick="delRequest('${r.id}')">Apagar (spam)</button> <button class="btn sec sm" onclick="waPedido('${r.id}')" title="Profissionais contactados por WhatsApp sobre este pedido">📲 WhatsApp a profissional${waCount("request_id", r.id) ? " · " + waCount("request_id", r.id) : ""}</button></td></tr>`).join("") || `<tr><td colspan="6" class="mut">Sem pedidos.</td></tr>`}</table></div></div>
     <div class="card" style="margin-top:14px"><h3>💬 Conversas assinaladas</h3>${M.flags.map(f => `<div class="sug"><span class="t"><b>${esc(nameOf(f.c.professional_id))}</b> ↔ ${esc(nameOf(f.c.client_id))}<br><span class="mut">“${esc((f.c.last_message || "").slice(0, 100))}” · ${esc(f.why)} · ${ago(f.c.last_message_at)}</span></span><button class="btn sec sm" onclick="openPro('${f.c.professional_id}')">Profissional</button><button class="btn sec sm" onclick="openAny('${f.c.client_id}')">Cliente</button></div>`).join("") || `<span class="pill ok">Nada a assinalar</span>`}</div>`;
 };
 

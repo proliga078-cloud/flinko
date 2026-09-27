@@ -446,6 +446,7 @@ nav{flex-wrap:wrap;height:auto;padding:10px 4%;row-gap:8px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/escape-html.js"></script>
+<script src="/assets/push-optin.js"></script>
 <script src="/assets/resize-image.js"></script>
 <script>
 const SUPABASE_URL='https://cdwinidhtfxfxowflize.supabase.co'
@@ -702,15 +703,27 @@ async function sendOffer(reqId){
 const msg=document.getElementById('offer-msg-'+reqId).value.trim()
 const from=document.getElementById('offer-from-'+reqId).value
 const to=document.getElementById('offer-to-'+reqId).value
-const{error}=await db.from('request_offers').upsert({
+const{data:oferta,error}=await db.from('request_offers').upsert({
 request_id:reqId,professional_id:session.user.id,
 message:msg||null,
 price_from:from?parseFloat(from):null,
 price_to:to?parseFloat(to):null
-},{onConflict:'request_id,professional_id'})
+},{onConflict:'request_id,professional_id'}).select('id').single()
 if(error){alert('Erro ao enviar proposta: '+error.message);return}
+notifyOffer(oferta&&oferta.id)
 await loadOfferCounts()
 renderList()
+}
+
+// Avisa o cliente de uma proposta nova (email + push). O servidor confirma que
+// a proposta é nossa e só avisa uma vez.
+async function notifyOffer(offerId){
+if(!offerId)return
+try{
+const{data:{session:s}}=await db.auth.getSession()
+if(!s)return
+fetch('/.netlify/functions/notify-offer',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+s.access_token},body:JSON.stringify({offerId})})
+}catch(e){}
 }
 
 
@@ -844,6 +857,9 @@ showStep('request')
 showMsg('success','Pedido publicado! Vamos avisar os profissionais da tua zona; as propostas chegam às tuas mensagens e ao teu email.')
 if(window.flinkoTrack)window.flinkoTrack('pedido_publicado',{category:r.category})
 notifyMatchingProfessionals(novo&&novo.id)
+if(window.flinkoPushAsk)flinkoPushAsk({db,userId:session.user.id,delay:2900,
+title:'Avisamos-te quando chegar uma proposta',
+text:'Ativa as notificações e vês as propostas dos profissionais assim que chegam, mesmo com a Flinko fechada.'})
 setTimeout(()=>{
 closeModal()
 showMsg('success','')

@@ -20,6 +20,11 @@
 [functions."weather-alert"]
   schedule = "0 6 * * *"
 
+# Lembretes a profissionais com o perfil por completar (dia 1, 3 e 7),
+# ver netlify/functions/profile-reminders.js. 9h UTC = 10h em Portugal (verao).
+[functions."profile-reminders"]
+  schedule = "0 9 * * *"
+
 # A pagina de perfil servida com o essencial ja no HTML (ver
 # netlify/functions/profile-page.js) le o profile.html do proprio deploy.
 [functions."profile-page"]

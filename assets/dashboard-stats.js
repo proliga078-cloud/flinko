@@ -51,7 +51,9 @@ async function loadStats(){
   // podia aparecer como pendente mesmo quando o profissional já tem
   // serviços publicados. Agora que servicesCount está atualizado, voltamos
   // a desenhar o cartão para refletir o estado real.
+  window.__statsLoaded=true
   renderSetup()
+  if(typeof maybeAutoOnboarding==='function')maybeAutoOnboarding()
 }
 
 function renderViewsChart(views){

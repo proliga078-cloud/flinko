@@ -37,6 +37,11 @@ function makeQueryableSupabase(scenario) {
           const r = await run();
           return { data: Array.isArray(r.data) ? (r.data[0] || null) : r.data, error: r.error || null };
         };
+        builder.single = async () => {
+          const r = await run();
+          const row = Array.isArray(r.data) ? r.data[0] : r.data;
+          return row ? { data: row, error: r.error || null } : { data: null, error: r.error || { message: 'No rows found' } };
+        };
         builder.then = (resolve, reject) => run().then(resolve, reject);
         return builder;
       },

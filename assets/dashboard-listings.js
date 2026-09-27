@@ -213,7 +213,9 @@ loadPortfolio()
 }
 
 // REVIEWS
+const SRC_LABEL={trabalho:'✓ Trabalho feito pela Flinko',convite:'Cliente convidado pelo profissional'}
 async function loadReviews(){
+loadReviewInvites()
 const{data}=await db.from('reviews').select('*').eq('professional_id',profileId).order('created_at',{ascending:false})
 const el=document.getElementById('reviews-list')
 if(!data||!data.length){el.innerHTML='<div class="empty">Sem avaliações ainda.</div>';return}
@@ -226,9 +228,30 @@ el.innerHTML=`<div style="background:var(--white);border-radius:16px;padding:20p
 <div class="list-item">
 <div class="list-item-body">
 <div class="list-item-title">${escapeHtml(r.reviewer_name)} <span style="color:var(--gold)">${'★'.repeat(r.rating)+'☆'.repeat(5-r.rating)}</span> <span style="font-size:12px;color:var(--muted);font-weight:400">${new Date(r.created_at).toLocaleDateString('pt-PT')}</span></div>
-<div class="list-item-sub">${escapeHtml(r.comment||'(sem comentário)')}</div>
+<div class="list-item-sub">${escapeHtml(r.comment||'(sem comentário)')}</div>${SRC_LABEL[r.source]?'<div style="font-size:12px;color:var(--muted);margin-top:4px">'+SRC_LABEL[r.source]+'</div>':''}
 </div>
 </div>`).join('')
+}
+
+// Convites de avaliação para clientes antigos (review_invites, uso único).
+async function createReviewInvite(){
+  const erro=document.getElementById('inv-error'),btn=document.getElementById('inv-btn')
+  const nome=document.getElementById('inv-name').value.trim()
+  erro.style.display='none'
+  if(!nome){erro.textContent='Escreve o nome do cliente.';erro.style.display='block';return}
+  btn.disabled=true
+  const{data,error}=await db.from('review_invites').insert({professional_id:profileId,client_name:nome}).select('token').single()
+  btn.disabled=false
+  if(error||!data){erro.textContent='Não foi possível criar o link: '+((error&&error.message)||'erro');erro.style.display='block';return}
+  document.getElementById('inv-name').value=''
+  showReviewLink('https://flinko.pt/avaliar.html?t='+data.token,nome)
+  loadReviewInvites()
+}
+async function loadReviewInvites(){
+  const el=document.getElementById('inv-list');if(!el)return
+  const{data}=await db.from('review_invites').select('token,client_name,source,created_at,used_at').eq('professional_id',profileId).order('created_at',{ascending:false}).limit(8)
+  const L=(data||[]).filter(i=>i.source==='convite')
+  el.innerHTML=L.length?'<div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px">Links enviados</div>'+L.map(i=>'<div class="fin-row"><div style="flex:1;min-width:0"><div class="fr-t">'+escapeHtml(i.client_name||'Cliente')+'</div><div class="fr-s">'+new Date(i.created_at).toLocaleDateString('pt-PT')+'</div></div>'+(i.used_at?'<span style="color:var(--green);font-weight:700;font-size:13px">✓ Avaliou</span>':'<button class="btn btn-outline btn-sm" onclick="showReviewLink(\'https://flinko.pt/avaliar.html?t='+i.token+'\',\''+escapeHtml(String(i.client_name||'').replace(/[\\']/g,''))+'\')">Reenviar</button>')+'</div>').join(''):''
 }
 
 function showPage(name){

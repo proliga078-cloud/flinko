@@ -349,35 +349,39 @@ async function updateJobStatus(id,status){
   loadJobs()
 }
 
-// Pede avaliacao automaticamente assim que um trabalho fica pago (e quando a taxa de resposta e mais alta)
+// Pede avaliacao assim que um trabalho fica pago: o servidor (review-request)
+// cria um link de avaliação de uso único e, se o cliente tem conta, envia-lhe
+// email com as estrelas, push e uma mensagem na conversa. Se o cliente não tem
+// conta, mostramos o link para o profissional o enviar à mão.
 async function requestReviewForJob(jobId){
-  try{
-    const job=allJobs.find(j=>j.id===jobId)
-    if(!job||!job.conversation_id)return
-    const{data:already}=await db.from('messages').select('id').eq('conversation_id',job.conversation_id).ilike('content','%deixa a tua avaliação%').limit(1).maybeSingle()
-    if(already)return
-    const link=profileData?.slug?('https://flinko.pt/'+profileData.slug):('https://flinko.pt/profile.html?id='+profileId)
-    const content='Obrigado! O trabalho foi concluído e pago. Se puderes, deixa a tua avaliação aqui: '+link
-    await db.from('messages').insert({conversation_id:job.conversation_id,sender_id:profileId,content})
-    await db.from('conversations').update({last_message:content,last_message_at:new Date().toISOString()}).eq('id',job.conversation_id)
-    notifyReviewRequest(job.conversation_id,content)
-  }catch(e){}
-}
-
-// Sem isto, o pedido de avaliação fica só dentro do chat e o cliente só o
-// vê se voltar a abrir a Flinko por iniciativa própria — a mesma Netlify
-// Function que avisa por email/push em mensagens normais (messages.html)
-// tem de ser chamada aqui também, senão o pedido automático fica mudo.
-async function notifyReviewRequest(conversationId,content){
   try{
     const{data:{session}}=await db.auth.getSession()
     if(!session)return
-    await fetch('/.netlify/functions/notify-message',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
-      body:JSON.stringify({conversationId,preview:content})
-    })
+    const res=await fetch('/.netlify/functions/review-request',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},body:JSON.stringify({jobId})})
+    const d=await res.json().catch(()=>({}))
+    if(!res.ok||!d.link)return
+    const job=allJobs.find(j=>j.id===jobId)
+    if(d.sent)reviewToast('Pedimos a avaliação ao cliente por email. ⭐')
+    else if(job&&!job.client_id)showReviewLink(d.link,job.client_name)
   }catch(e){}
+}
+function reviewToast(t){
+  const el=document.createElement('div');el.setAttribute('role','status');el.textContent=t
+  el.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#132420;color:#fff;padding:12px 20px;border-radius:12px;font-weight:600;font-size:14px;z-index:9999;box-shadow:0 10px 30px rgba(0,0,0,.25)'
+  document.body.appendChild(el);setTimeout(()=>el.remove(),3500)
+}
+// Link de avaliação para enviar ao cliente (copiar ou WhatsApp).
+function showReviewLink(link,nome){
+  const txt='Olá'+(nome?' '+String(nome).split(' ')[0]:'')+'! Obrigado pela confiança. Podes avaliar o meu trabalho na Flinko? Demora 10 segundos: '+link
+  const box=document.createElement('div')
+  box.setAttribute('role','dialog');box.setAttribute('aria-label','Pedir avaliação')
+  box.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);width:min(440px,calc(100% - 24px));background:#fff;border-radius:16px;box-shadow:0 20px 50px rgba(0,0,0,.3);padding:16px;z-index:9999;font-size:14px'
+  box.innerHTML='<div style="font-weight:800;margin-bottom:6px">⭐ Pede a avaliação ao cliente</div><div style="color:var(--muted);margin-bottom:10px">Envia-lhe este link (é de uso único):</div>'+
+    '<input readonly value="'+escapeHtml(link)+'" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;font-size:13px;margin-bottom:10px">'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn-primary btn-sm" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent(txt)+'">Enviar no WhatsApp</a><button class="btn btn-outline btn-sm" data-copy>Copiar</button><button class="btn btn-outline btn-sm" data-close style="margin-left:auto">Fechar</button></div>'
+  document.body.appendChild(box)
+  box.querySelector('[data-copy]').onclick=async()=>{try{await navigator.clipboard.writeText(txt);box.querySelector('[data-copy]').textContent='Copiado ✓'}catch(e){}}
+  box.querySelector('[data-close]').onclick=()=>box.remove()
 }
 
 async function deleteJob(id){

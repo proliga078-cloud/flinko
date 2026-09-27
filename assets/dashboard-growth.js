@@ -1,65 +1,3 @@
-// ===== NOTIFICAÇÕES PUSH (PWA) =====
-const VAPID_PUBLIC_KEY='BA2gyreUT3GkDevWZvkMxc3zW-DLTEnbn9LQwrNkdLDSRlcPbi-5luCy6AxWwSdpXpDbo201QbhfgRvq4pvXAnM'
-const PUSH_DISMISS_KEY='proliga_push_dismissed_at'
-const PUSH_DISMISS_DAYS=14
-
-function urlBase64ToUint8Array(base64String){
-  const padding='='.repeat((4-base64String.length%4)%4)
-  const base64=(base64String+padding).replace(/-/g,'+').replace(/_/g,'/')
-  const rawData=atob(base64)
-  const outputArray=new Uint8Array(rawData.length)
-  for(let i=0;i<rawData.length;i++)outputArray[i]=rawData.charCodeAt(i)
-  return outputArray
-}
-
-function maybeShowPushBanner(){
-  if(!('serviceWorker' in navigator)||!('PushManager' in window))return
-  if(Notification.permission!=='default')return
-  const t=localStorage.getItem(PUSH_DISMISS_KEY)
-  if(t&&(Date.now()-Number(t))/86400000<PUSH_DISMISS_DAYS)return
-  if(document.getElementById('push-banner'))return
-
-  const el=document.createElement('div')
-  el.id='push-banner'
-  el.setAttribute('style','position:fixed;left:14px;right:14px;bottom:14px;z-index:9999;background:var(--ink,#132420);color:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.3);display:flex;align-items:center;gap:12px;font-family:inherit;max-width:420px;margin:0 auto')
-  el.innerHTML=
-    '<div style="width:38px;height:38px;border-radius:10px;background:#E8720A;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px">🔔</div>'+
-    '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">Ativar notificações</div><div style="font-size:11.5px;color:rgba(255,255,255,.65)">Sabe logo quando chega um pedido ou mensagem nova.</div></div>'+
-    '<button id="push-enable-btn" style="background:#E8720A;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap">Ativar</button>'+
-    '<button id="push-close-btn" aria-label="Fechar" style="background:transparent;border:none;color:rgba(255,255,255,.5);font-size:18px;cursor:pointer;padding:0 2px;line-height:1">&times;</button>'
-  document.body.appendChild(el)
-
-  document.getElementById('push-enable-btn').addEventListener('click',async()=>{
-    el.remove()
-    await enablePushNotifications()
-  })
-  document.getElementById('push-close-btn').addEventListener('click',()=>{
-    localStorage.setItem(PUSH_DISMISS_KEY,String(Date.now()))
-    el.remove()
-  })
-}
-
-async function enablePushNotifications(){
-  try{
-    const perm=await Notification.requestPermission()
-    if(perm!=='granted')return
-    const reg=await navigator.serviceWorker.ready
-    const sub=await reg.pushManager.subscribe({
-      userVisibleOnly:true,
-      applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-    })
-    const json=sub.toJSON()
-    await db.from('push_subscriptions').upsert({
-      profile_id:profileId,
-      endpoint:json.endpoint,
-      p256dh:json.keys.p256dh,
-      auth:json.keys.auth
-    },{onConflict:'endpoint'})
-  }catch(e){
-    console.error('push subscribe error:',e)
-  }
-}
-
 // ===== REDE DE REFERÊNCIA ENTRE PROFISSIONAIS =====
 function openReferModal(jobId){
   refJobId=jobId||null
@@ -262,6 +200,40 @@ async function saveNotifyPref(){
   if(error){showAlert('notif-error','Não foi possível guardar: '+error.message,'error');return}
   profileData={...profileData,notify_email:on}
   showAlert('notif-success', on?'Vais receber email quando um cliente te escrever.':'Deixaste de receber avisos por email.')
+}
+
+// Botão "Contactar pelo WhatsApp" nas propostas (links wa.me, sem custos).
+// O profissional escolhe se o seu telemóvel aparece aos clientes a quem
+// enviou propostas (profile_private.whatsapp_visivel).
+function waNumero(v){return window.flinkoWhatsApp?flinkoWhatsApp.numero(v):null}
+async function initWhatsAppPref(){
+  const row=document.getElementById('wa-row')
+  if(!row||!profileId||profileData?.account_type==='client')return
+  const{data}=await db.from('profile_private').select('phone,whatsapp_visivel').eq('profile_id',profileId).maybeSingle()
+  const n=waNumero(data&&data.phone)
+  document.getElementById('wa-phone').textContent=n?'+'+n:'ainda sem telemóvel: adiciona-o em Dados'
+  document.getElementById('wa-toggle').checked=!!(data&&data.whatsapp_visivel)
+  row.style.display='flex'
+  loadWhatsAppCount()
+}
+// Quantas vezes os clientes (ou a Flinko) carregaram em "Contactar pelo WhatsApp".
+async function loadWhatsAppCount(){
+  const el=document.getElementById('wa-count');if(!el)return
+  const{data,error}=await db.from('whatsapp_contactos').select('created_at,source').eq('professional_id',profileId)
+  if(error)return
+  const L=data||[],d30=L.filter(c=>Date.now()-new Date(c.created_at)<30*864e5).length
+  el.textContent=L.length?'📲 Contactado '+L.length+(L.length===1?' vez':' vezes')+' pelo WhatsApp ('+d30+' nos últimos 30 dias)':'📲 Ainda ninguém te contactou pelo WhatsApp'
+  el.style.display='block'
+}
+async function saveWhatsAppPref(){
+  const el=document.getElementById('wa-toggle'),on=el.checked
+  if(on){
+    const{data}=await db.from('profile_private').select('phone').eq('profile_id',profileId).maybeSingle()
+    if(!waNumero(data&&data.phone)){el.checked=false;showAlert('notif-error','Para mostrar o botão de WhatsApp, adiciona um telemóvel válido em O meu perfil › Dados.','error');return}
+  }
+  const{error}=await db.from('profile_private').update({whatsapp_visivel:on,whatsapp_visivel_at:on?new Date().toISOString():null}).eq('profile_id',profileId)
+  if(error){el.checked=!on;showAlert('notif-error','Não foi possível guardar: '+error.message,'error');return}
+  showAlert('notif-success',on?'Os clientes a quem envias propostas já podem falar contigo pelo WhatsApp.':'O botão de WhatsApp deixou de aparecer nas tuas propostas.')
 }
 
 // PRIVACIDADE E RGPD
