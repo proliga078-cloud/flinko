@@ -113,7 +113,7 @@ exports.handler=async(event)=>{
   const jsonLd=[
     {'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:[
       {'@type':'ListItem',position:1,name:'Flinko',item:SITE+'/'},
-      {'@type':'ListItem',position:2,name:servico,item:`${SITE}/${cat.slug}`},
+      {'@type':'ListItem',position:2,name:servico,item:`${SITE}/${cat.slug}.html`},
       {'@type':'ListItem',position:3,name:placeName,item:canonical},
     ]},
     ...(total?[{'@context':'https://schema.org','@type':'ItemList',name:`${servico} em ${placeName}`,
@@ -197,11 +197,11 @@ details{border-bottom:1px solid var(--line);padding:12px 0}summary{cursor:pointe
 <body>
 ${siteHeader('categoria')}
 <main class="wrap">
-<div class="crumbs"><a href="/">Flinko</a> › <a href="/${cat.slug}">${esc(servico)}</a> › ${esc(placeName)}</div>
+<div class="crumbs"><a href="/">Flinko</a> › <a href="/${cat.slug}.html">${esc(servico)}</a> › ${esc(placeName)}</div>
 <header class="hero">
 <h1>${esc(servico)} em ${esc(placeName)}</h1>
 <p class="lead">${total?`${esc(plural(total,'profissional','profissionais'))} em ${esc(placeName)}. Vê os perfis, compara e fala diretamente com quem quiseres, sem comissões e sem intermediários.`:`Ainda não temos ${esc(servico.toLowerCase())} em ${esc(placeName)}, mas podes publicar um pedido grátis e receber propostas.`}</p>
-<a class="btn" href="${pedidoUrl}">Publicar pedido grátis</a><a class="btn ghost" href="/${cat.slug}">Ver todo o país</a>
+<a class="btn" href="${pedidoUrl}">Publicar pedido grátis</a><a class="btn ghost" href="/${cat.slug}.html">Ver todo o país</a>
 </header>
 ${lista}
 ${ligacoes}

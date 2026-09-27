@@ -118,9 +118,9 @@ test('caminho Flinko › Categoria › Zona: ligações para a categoria e para 
   reset({ profile: pro({ slug: 'rui-braga' }) });
   const res = await handler({ path: '/rui-braga' });
   const nav = res.body.match(/<nav class="fk-crumbs"[\s\S]*?<\/nav>/)[0];
-  assert.match(nav, /<a href="\/"[^>]*>Flinko<\/a> › <a href="\/eletricistas"[^>]*>Eletricistas<\/a> › <a href="\/eletricistas\/braga"[^>]*>Braga<\/a> › <span aria-current="page">Rui Braga<\/span>/);
+  assert.match(nav, /<a href="\/"[^>]*>Flinko<\/a> › <a href="\/eletricistas\.html"[^>]*>Eletricistas<\/a> › <a href="\/eletricistas\/braga"[^>]*>Braga<\/a> › <span aria-current="page">Rui Braga<\/span>/);
   const ld = JSON.parse(res.body.match(/<script type="application\/ld\+json">(\{"@context":"https:\/\/schema.org","@type":"BreadcrumbList".*?)<\/script>/)[1]);
-  assert.deepEqual(ld.itemListElement.map((i) => i.item), ['https://flinko.pt/', 'https://flinko.pt/eletricistas', 'https://flinko.pt/eletricistas/braga', 'https://flinko.pt/rui-braga']);
+  assert.deepEqual(ld.itemListElement.map((i) => i.item), ['https://flinko.pt/', 'https://flinko.pt/eletricistas.html', 'https://flinko.pt/eletricistas/braga', 'https://flinko.pt/rui-braga']);
   // categoria desconhecida: sem caminho (nunca um link partido)
   reset({ profile: pro({ category: 'Astronautas' }) });
   assert.doesNotMatch((await handler({ queryStringParameters: { id: ID } })).body, /fk-crumbs/);
