@@ -1161,6 +1161,7 @@ async function checkReviewEligibility(){
 }
 
 async function startConversation(){
+if(window.flinkoTrack)window.flinkoTrack('perfil_contactar',{perfil:proId})
 const btn=document.getElementById('msg-btn')
 const{data:{session}}=await db.auth.getSession()
 if(!session){

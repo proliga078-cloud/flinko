@@ -451,6 +451,7 @@ if (signUpData.session) {
 await insertProfile(userId, name, email, regAccountType)
 await applyReferral(userId)
 showMsg('reg-msg', 'Conta criada! A redirecionar...', 'success')
+if(window.flinkoTrack)window.flinkoTrack('conta_criada', { tipo: regAccountType, origem: 'registo' })
 setTimeout(() => location.href = postAuthDestination(regAccountType), 800)
 return
 }
@@ -461,6 +462,7 @@ if (!signInError && signInData?.session) {
 await insertProfile(signInData.user.id, name, email, regAccountType)
 await applyReferral(signInData.user.id)
 showMsg('reg-msg', 'Conta criada! A redirecionar...', 'success')
+if(window.flinkoTrack)window.flinkoTrack('conta_criada', { tipo: regAccountType, origem: 'registo' })
 setTimeout(() => location.href = postAuthDestination(regAccountType), 800)
 return
 }

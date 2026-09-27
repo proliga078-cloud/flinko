@@ -739,6 +739,7 @@ document.getElementById('modal-account').hidden=step!=='account'
 
 function openModal(cat){
 showMsg('error','');showMsg('success','')
+if(window.flinkoTrack)window.flinkoTrack('pedido_iniciado',{categoria:cat||''})
 showStep('request')
 renderPhotoStrip()
 document.getElementById('modal-overlay').classList.add('open')

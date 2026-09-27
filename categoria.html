@@ -396,6 +396,7 @@ updateHeader();loadPros()
 }
 
 function applySearch(){
+if(window.flinkoTrack)window.flinkoTrack('pesquisa',{q:document.getElementById('nav-q').value,origem:'categoria'})
 filters.q=document.getElementById('nav-q').value;filters.page=1;loadPros()
 }
 

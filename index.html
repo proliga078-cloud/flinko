@@ -1603,6 +1603,8 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   if(modeToggle){
     var modeBtns = modeToggle.querySelectorAll('.mode-btn');
     var heroForm = document.getElementById('heroSearchForm');
+    // Funil: conta a pesquisa (só é enviada com consentimento de análise).
+    if(heroForm) heroForm.addEventListener('submit', function(){ var f = new FormData(heroForm); if(window.flinkoTrack)window.flinkoTrack('pesquisa', { q: f.get('q'), local: f.get('local'), origem: 'home' }); });
     var heroQ = document.getElementById('heroSearchQ');
     var heroLocalField = document.getElementById('heroLocalField');
     var heroBtn = document.getElementById('heroSearchBtn');

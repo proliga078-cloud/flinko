@@ -615,6 +615,7 @@ async function loadCatStats(){
 }
 
 function applySearch(){
+ if(window.flinkoTrack)window.flinkoTrack('pesquisa',{q:document.getElementById('nav-q').value,origem:'programadores'})
  location.href='categoria.html?q='+encodeURIComponent(document.getElementById('nav-q').value)
 }
 

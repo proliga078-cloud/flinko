@@ -38,7 +38,8 @@ const EXPORT_TABLES=[
   ['saved_professionals','client_id'],
   ['gdpr_requests','profile_id'],
   ['verification_requests','profile_id'],
-  ['support_tickets','reporter_id']
+  ['support_tickets','reporter_id'],
+  ['site_events','user_id']
 ]
 
 // Pastas onde o site guarda ficheiros de cada conta (ver os upload() em assets/).
