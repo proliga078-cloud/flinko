@@ -1,6 +1,6 @@
 async function loadStats(){
   const[{count:mc},{count:rc},{data:revs},{count:sc}]=await Promise.all([
-    db.from('conversations').select('*',{count:'exact',head:true}).eq('professional_id',profileId),
+    db.from('conversations').select('*',{count:'exact',head:true}).eq('professional_id',profileId).eq('is_flinko',false),
     db.from('reviews').select('*',{count:'exact',head:true}).eq('professional_id',profileId),
     db.from('reviews').select('rating').eq('professional_id',profileId),
     db.from('services').select('*',{count:'exact',head:true}).eq('professional_id',profileId)
@@ -319,7 +319,7 @@ function subscribeJobsRealtime(){
 }
 
 async function loadRecentMsgs(){
-  const{data}=await db.from('conversations').select('id,client_id,last_message,last_message_at').eq('professional_id',profileId).order('last_message_at',{ascending:false}).limit(3)
+  const{data}=await db.from('conversations').select('id,client_id,last_message,last_message_at,is_flinko').eq('professional_id',profileId).order('last_message_at',{ascending:false}).limit(3)
   const el=document.getElementById('recent-msgs')
   if(!data||!data.length){el.innerHTML='<div class="tc-empty"><div class="ico" style="background:var(--green-light,#EAF7EE);color:var(--green)"><svg class="ic" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><p>Ainda sem mensagens.<br/><span>Avisamos-te por email quando chegarem.</span></p></div>';return}
   const clientIds=data.map(c=>c.client_id)
@@ -327,8 +327,8 @@ async function loadRecentMsgs(){
   const nameMap={}
   clients&&clients.forEach(c=>nameMap[c.id]=c.name)
   el.innerHTML=data.map(m=>`
-    <div class="msg-item" onclick="location.href='messages.html'">
-      <div class="msg-header"><div class="msg-from">${escapeHtml(nameMap[m.client_id]||'Cliente')}</div><div class="msg-date">${new Date(m.last_message_at).toLocaleDateString('pt-PT')}</div></div>
+    <div class="msg-item" onclick="location.href='messages.html?c=${encodeURIComponent(m.id)}'">
+      <div class="msg-header"><div class="msg-from">${m.is_flinko?'Flinko ✓':escapeHtml(nameMap[m.client_id]||'Cliente')}</div><div class="msg-date">${new Date(m.last_message_at).toLocaleDateString('pt-PT')}</div></div>
       <div class="msg-preview">${escapeHtml((m.last_message||'').slice(0,120))}</div>
     </div>`).join('')
 }

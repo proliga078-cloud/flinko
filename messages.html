@@ -273,6 +273,7 @@ body.is-offline .offline{display:block}
 .warn{margin-top:5px;max-width:340px;background:#FFF6E8;border:1px solid #F2D3A4;color:#7A4A10;font-size:.78rem;line-height:1.45;padding:8px 11px;border-radius:12px}
 .warn b{display:block;margin-bottom:2px}
 .warn button{background:none;border:0;padding:0;margin-top:3px;color:var(--red);font:inherit;font-weight:700;cursor:pointer;text-decoration:underline}
+.official{display:inline-flex;align-items:center;margin-left:4px;padding:0 6px;border-radius:999px;background:#E8720A;color:#fff;font-size:.66rem;font-weight:800;line-height:1.5;vertical-align:1px}
 .blocked-bar{padding:16px;text-align:center;font-size:.88rem;color:var(--muted);background:var(--white);border-top:1px solid var(--line)}
 .blocked-bar button{margin-left:8px}
 .btn-danger{background:var(--white);color:var(--red);border:1.5px solid #F0C9C5}
@@ -514,10 +515,13 @@ async function loadConversations(){
     })
   }
   const keep=S.convs.filter(c=>c.draft)
+  // Conversa oficial (enviada pelo admin): do lado do profissional aparece como "Flinko".
+  const flinko=oid=>({id:oid,name:'Flinko',photo_url:location.origin+'/icon-192.png',category:'Equipa Flinko',flinko:true})
   S.convs=rows.map(c=>{
     const oid=c.professional_id===S.me?c.client_id:c.professional_id
     const x=meta[c.id]||{unread:0,last:null,count:0}
-    return Object.assign({},c,{other:map[oid]||{id:oid,name:'Utilizador'},unread:x.unread,count:x.count,
+    const other=c.is_flinko&&c.client_id!==S.me?flinko(oid):(map[oid]||{id:oid,name:'Utilizador'})
+    return Object.assign({},c,{other,unread:x.unread,count:x.count,
       lastMine:!!(x.last&&x.last.sender_id===S.me),lastRead:!!(x.last&&x.last.read)})
   }).concat(keep)
   renderList()
@@ -546,7 +550,7 @@ function renderList(){
       :(c.lastMine?'<span class="'+(c.lastRead?'tick read':'')+'" style="display:inline-flex;color:'+(c.lastRead?'var(--mint)':'var(--muted)')+'">'+(c.lastRead?TICKS:TICK)+'</span>':'')+'<span class="txt">'+esc(c.last_message||'Conversa iniciada')+'</span>'
     return '<button class="conv'+(act?' active':'')+(c.unread?' unread':'')+'" role="listitem" onclick="openConv(\''+(c.id||'draft')+'\')">'+
       avatarHtml(c.other)+
-      '<span class="conv-body"><span class="conv-l1"><span class="conv-name">'+esc(c.other.name)+'</span><span class="conv-time">'+listTime(c.last_message_at)+'</span></span>'+
+      '<span class="conv-body"><span class="conv-l1"><span class="conv-name">'+esc(c.other.name)+(c.other.flinko?' <span class="official" title="Conta oficial">✓</span>':c.is_flinko?' <span class="official" title="Enviada como Flinko">Flinko</span>':'')+'</span><span class="conv-time">'+listTime(c.last_message_at)+'</span></span>'+
       '<span class="conv-l2"><span class="conv-prev'+(typing?' is-typing':'')+'">'+prev+'</span>'+(c.unread?'<span class="badge" aria-label="'+c.unread+' por ler">'+c.unread+'</span>':'')+'</span></span></button>'
   }).join('')
   updateTitle()
@@ -1045,7 +1049,7 @@ document.addEventListener('keydown',e=>{
 /* ============ detalhes da conversa ============ */
 async function openInfo(){
   if(!S.active)return
-  const o=S.active.other,isPro=!!String(o.category||'').trim()
+  const o=S.active.other,isPro=!o.flinko&&!!String(o.category||'').trim()
   const fotos=[];S.msgs.forEach(m=>(m.attachments||[]).forEach((a,k)=>{const u=S.urls[a.path]||a._local;if(u)fotos.push({u,m:m.id,k})}))
   let h='<div class="info-who">'+avatarHtml(o,'lg')+'<h3>'+esc(o.name||'')+'</h3><div style="color:var(--muted);font-size:.88rem">'+esc(o.category||(isPro?'':'Cliente'))+'</div>'
   if(isPro)h+='<a class="btn btn-ghost" style="margin-top:8px" href="'+(o.slug?'/'+encodeURIComponent(o.slug):'/profile.html?id='+encodeURIComponent(o.id))+'">Ver perfil</a>'
@@ -1056,7 +1060,8 @@ async function openInfo(){
   }
   if(fotos.length)h+='<div class="info-sec"><h4>Fotos ('+fotos.length+')</h4><div class="gal">'+fotos.slice(-30).map(x=>'<button onclick="closeInfo();openLb(\''+x.m+'\','+x.k+')"><img src="'+esc(x.u)+'" alt="" loading="lazy"></button>').join('')+'</div></div>'
   const nome=esc(firstName(o.name)||'esta pessoa')
-  h+='<div class="info-sec"><h4>Segurança</h4><div class="info-actions" id="safety">'+
+  if(o.flinko)h+='<div class="info-sec" style="font-size:.86rem;line-height:1.5">✓ Conversa oficial com a equipa Flinko. Podes responder aqui a qualquer momento.</div>'
+  else h+='<div class="info-sec"><h4>Segurança</h4><div class="info-actions" id="safety">'+
     (S.blocked.has(o.id)?'<button class="btn btn-ghost" onclick="unblockUser()">Desbloquear '+nome+'</button>':'<button class="btn btn-danger" onclick="askBlock()">Bloquear '+nome+'</button>')+
     '<button class="btn btn-danger" onclick="openReport()">Denunciar</button></div></div>'
   h+='<div class="info-sec" style="font-size:.8rem;color:var(--muted);line-height:1.5">🔒 Só tu e '+esc(firstName(o.name)||'esta pessoa')+' veem esta conversa e as fotos. Se algo não estiver bem, <a href="/contacto" style="color:var(--orange-dark);font-weight:700">fala connosco</a>.</div>'
