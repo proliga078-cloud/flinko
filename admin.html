@@ -301,7 +301,7 @@ const TABLES = {
   services: "services?select=id,professional_id,price_from,price_to,created_at&order=id",
   portfolio: "portfolio_items?select=id,professional_id,created_at&order=id",
   reviews: "reviews?select=id,professional_id,client_id,reviewer_name,rating,comment,created_at&order=created_at.desc,id",
-  conversations: "conversations?select=id,professional_id,client_id,last_message,last_message_at,created_at&order=last_message_at.desc.nullslast,id",
+  conversations: "conversations?select=id,professional_id,client_id,last_message,last_message_at,created_at,is_flinko&order=last_message_at.desc.nullslast,id",
   messages: "messages?select=id,conversation_id,sender_id,read,created_at&order=id",
   requests: "requests?select=id,client_id,title,description,category,location,status,is_urgent,budget_from,budget_to,created_at&order=created_at.desc,id",
   offers: "request_offers?select=id,request_id,professional_id,created_at&order=id",
@@ -343,6 +343,10 @@ async function loadAll() {
   const keys = Object.keys(TABLES);
   const res = await Promise.all(keys.map(k => loadTable(k).catch(e => { LOADERR.push(k + ": " + e.message); return []; })));
   D = Object.fromEntries(keys.map((k, i) => [k, res[i]]));
+  // Conversas oficiais da Flinko (admin → profissional) não são procura de clientes: ficam fora das métricas.
+  const flk = new Set((D.conversations || []).filter(c => c.is_flinko).map(c => c.id));
+  D.flinkoConvs = (D.conversations || []).filter(c => c.is_flinko);
+  if (flk.size) { D.conversations = D.conversations.filter(c => !flk.has(c.id)); D.messages = (D.messages || []).filter(m => !flk.has(m.conversation_id)); }
   D.audit = DEMO ? [] : await api("admin_audit?select=*&order=at.desc&limit=500").catch(e => { if (!missing(e)) LOADERR.push("admin_audit: " + e.message); return []; });
   // Eventos do funil de clientes (pesquisas, contactos, pedidos começados), já
   // contados por dia no servidor. Sem a migração eventos_funil fica vazio.
@@ -1300,6 +1304,52 @@ async function contactVia(pid, ch) {
   } catch (e) { toast("Erro: " + e.message); }
   refreshContact();
 }
+// Mensagem da Flinko (dentro da plataforma) a um ou vários profissionais, pelo
+// servidor (admin-flinko-message). Cada um recebe na sua conversa com a
+// "Flinko" e pode responder; as respostas chegam às tuas Mensagens.
+async function sendFlinkoMessage(L) {
+  L = (L || []).filter(Boolean); if (!L.length) return toast("Ninguém neste grupo");
+  if (L.length > 500) return toast("No máximo 500 profissionais por envio. Filtra o grupo.");
+  const r = await form(L.length === 1 ? "Mensagem da Flinko para " + L[0].name : `Mensagem da Flinko para ${L.length} profissionais`, [{ k: "text", label: "Mensagem (podes usar {nome} e {categoria})", type: "textarea", rows: 8, req: 1 }], { text: L.length === 1 ? "Olá {nome}! " : "" }, "Continuar");
+  if (!r || !String(r.text || "").trim()) return;
+  const ids = L.map(p => p.id);
+  try {
+    const pv = await fn("admin-flinko-message", { action: "preview", profileIds: ids });
+    const why = {}; (pv.skipped || []).forEach(x => { why[x.reason] = (why[x.reason] || 0) + 1; });
+    const out = Object.entries(why).map(([k, n]) => `${n} ${k}`).join(", ");
+    if (!pv.recipients) return toast("Ninguém deste grupo pode receber" + (out ? " (" + out + ")" : ""));
+    if (!await ask("Enviar mensagem da Flinko", `Vai ser enviada uma mensagem a ${pv.recipients} profissional(is), na conversa com a Flinko (com aviso por notificação e email)${out ? `. Ficam de fora: ${out}` : ""}. As respostas chegam às tuas Mensagens.`, "Enviar a " + pv.recipients)) return;
+    const j = await fn("admin-flinko-message", { action: "send", profileIds: ids, message: r.text });
+    (D.audit = D.audit || []).unshift({ at: new Date().toISOString(), action: "mensagem_flinko", actor_email: session?.user?.email, summary: `Mensagem da Flinko enviada a ${j.sent} profissional(is)`, details: { sent: j.sentIds || [] } });
+    try { for (const id of j.sentIds || []) await logContact({ kind: "pro", id }, { id: "flinko", name: "Mensagem da Flinko" }, "mensagem na Flinko"); } catch (e) { }
+    toast(`Mensagem enviada a ${j.sent} profissional(is)`); render();
+    // Quem não entra há 14+ dias dificilmente vê a notificação: reforço por WhatsApp.
+    const sentSet = new Set(j.sentIds || []);
+    const parados = L.filter(p => sentSet.has(p.id) && (!p._last || now() - p._last > 14 * DAY) && flinkoWhatsApp.numero(M.phone[p.id]));
+    if (parados.length) waFollowUp(parados, r.text);
+  } catch (e) { toast("Erro: " + e.message); }
+}
+// Reforço por WhatsApp (Click to WhatsApp, sem custos): abre o WhatsApp de cada
+// profissional com o aviso já escrito; quem envia és tu, um a um. Nada é
+// enviado automaticamente, por isso não há risco de bloqueio do número.
+function waFollowUp(L, texto) {
+  const fnm = n => String(n || "").trim().split(/\s+/)[0] || "";
+  const trecho = t => { t = String(t || "").replace(/\s+/g, " ").trim(); return t.length > 220 ? t.slice(0, 217) + "…" : t; };
+  const msgFor = p => `Olá ${fnm(p.name)}! Aqui é a equipa Flinko 👋\n\nDeixámos-te uma mensagem na tua conta:\n«${trecho(String(texto).replace(/\{nome\}/g, fnm(p.name)).replace(/\{categoria\}/g, (p.category || "a tua área").toLowerCase()))}»\n\nVê e responde aqui: https://flinko.pt/messages`;
+  const m = $("#modal"); m.classList.remove("hidden");
+  m.innerHTML = `<div class="mb" style="max-height:92vh;overflow:auto" role="dialog" aria-label="Reforçar por WhatsApp"><h3 style="font-size:17px;margin-bottom:6px">📲 Reforçar por WhatsApp</h3>
+    <p class="mut" style="margin:0 0 12px">${L.length} destes profissionais não entra na Flinko há mais de 14 dias e pode não ver a notificação. Carrega em cada um: o WhatsApp abre com o aviso já escrito e és tu que envias.</p>
+    <div id="wafu">${L.map(p => `<div class="row" style="justify-content:space-between;padding:8px 0;border-top:1px solid var(--line,#eee)"><span><b>${esc(p.name)}</b><br><span class="mut">${p._last ? "visto " + ago(new Date(p._last)) : "nunca visto"}</span></span><a class="btn sm" target="_blank" rel="noopener noreferrer" data-pid="${p.id}" href="${esc(flinkoWhatsApp.link(M.phone[p.id], msgFor(p)))}">Abrir WhatsApp</a></div>`).join("")}</div>
+    <div class="row" style="justify-content:flex-end;margin-top:16px"><button class="btn sec" id="wafuok">Fechar</button></div></div>`;
+  m.querySelectorAll("#wafu a[data-pid]").forEach(a => a.addEventListener("click", () => {
+    a.textContent = "✓ Aberto"; a.classList.add("sec");
+    logContact({ kind: "pro", id: a.dataset.pid }, { id: "flinko", name: "Mensagem da Flinko (reforço)" }, "WhatsApp").catch(() => { });
+  }));
+  $("#wafuok").onclick = () => { m.classList.add("hidden"); m.innerHTML = ""; };
+}
+const sendGroupMessage = () => sendFlinkoMessage(contactList());
+const msgPro = id => sendFlinkoMessage([D.profiles.find(p => p.id === id)]);
+
 // Envio de email a todo o grupo, pelo servidor (admin-send-campaign). Cada
 // pessoa recebe o texto já preenchido com os dados dela ({nome}, {falta}…).
 async function sendGroupEmail() {
@@ -1345,7 +1395,7 @@ const vContact = () => {
       <div class="note" id="cprev" style="margin:12px 0 0"></div></div>
     <div class="card"><h3>Ações do grupo <span class="sp"></span><span class="pill" id="ccount"></span></h3>
       <div class="row"><button class="btn" onclick="contactNext()">Próximo por contactar (WhatsApp)</button>
-      <button class="btn sec" onclick="copyPhones()">Copiar números</button><button class="btn sec" onclick="copyEmails()">Copiar emails</button>${isOwner() ? `<button class="btn sec" onclick="sendGroupEmail()">✉ Enviar email a este grupo</button>` : ""}</div>
+      <button class="btn" onclick="sendGroupMessage()">💬 Mensagem da Flinko a este grupo</button><button class="btn sec" onclick="copyPhones()">Copiar números</button><button class="btn sec" onclick="copyEmails()">Copiar emails</button>${isOwner() ? `<button class="btn sec" onclick="sendGroupEmail()">✉ Enviar email a este grupo</button>` : ""}</div>
       <label class="f">Filtrar por nome, categoria ou zona</label><input value="${esc(cst.q)}" oninput="cst.q=this.value;refreshContact()" placeholder="Pesquisar…">
       <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" style="width:auto" ${cst.hide ? "checked" : ""} onchange="cst.hide=this.checked;refreshContact()"> Esconder quem já contactei nos últimos 7 dias</label>
       <p class="mut" style="margin:10px 0 0">Ao contactar, a fase do CRM passa a “Contactado” e fica um próximo contacto agendado para daqui a 3 dias.</p></div></div>
@@ -1721,6 +1771,7 @@ function openPro(id) {
     <h3 style="margin:18px 0 6px">Tarefas (${tasks.length})</h3>${tasks.map(t => `<div class="sug"><span class="t">${esc(t.title)}<br><span class="mut">${t.status === "done" ? "feita" : t.due_date ? "até " + fdate(t.due_date) : "sem prazo"}</span></span></div>`).join("") || `<span class="mut">Nenhuma.</span>`}
     <h3 style="margin:18px 0 6px">Ações</h3>
     <div class="row"><button class="btn sec" onclick="toggleVerify('${id}')">${p.verified ? "Remover verificação" : "Verificar profissional"}</button>
+    <button class="btn sec" onclick="msgPro('${id}')">💬 Mensagem da Flinko</button>
     <button class="btn sec" onclick="waPro('${id}')">WhatsApp com modelo</button>
     <button class="btn sec" onclick="mailPro('${id}')">Email / SMS</button>
     <button class="btn sec" onclick="toggleSuspend('${id}')">${p.suspended ? "Reativar conta" : "Suspender conta"}</button></div>
