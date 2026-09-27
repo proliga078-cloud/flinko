@@ -30,7 +30,7 @@ utilizador, por isso usam `--no-verify-jwt`.
 
 ## Estado
 
-Todas as funções desta pasta coincidem com a produção (`send-notifications`
+Até 27/09/2026 todas as funções desta pasta coincidiam com a produção (`send-notifications`
 v11 e `public-assistant` v6 publicadas a 19/09/2026):
 
 - **`send-notifications`**: marca e domínio Flinko. O `?diag=1` só funciona
@@ -38,9 +38,21 @@ v11 e `public-assistant` v6 publicadas a 19/09/2026):
 - **`public-assistant`**: limite de 20 pedidos por hora por IP (em memória, por
   instância; não substitui um limite persistente).
 
+## Por publicar (27/09/2026)
+
+Estas alterações estão no repositório mas **ainda não foram publicadas** no
+Supabase. Para ficarem ativas: aplicar a migração
+`20260927100000_limite_uso_ia.sql` e depois publicar as funções.
+
+- **`ai-assistant`** e **`ai-profile-builder`**: limite diário por conta (40 e
+  30 pedidos), contado na base de dados pela função `ai_consume()`. Sem a
+  migração aplicada, as funções continuam a responder (sem limite) e deixam o
+  erro em log.
+- **`send-notifications`**: botões dos emails na cor da marca (laranja), como
+  os emails enviados pelas funções Netlify.
+
 ## Problemas conhecidos
 
-- **`ai-assistant` não tem limite de utilização.** Exige sessão, mas um
-  utilizador autenticado pode chamá-lo em ciclo e gastar créditos da Anthropic.
+- **`public-assistant`** só tem o limite por IP em memória (por instância).
 - **`send-notifications` fica aberta se `PROLIGA_HOOK_SECRET` não estiver
   definido** (o trigger da BD não envia esse cabeçalho). Só processa a fila.

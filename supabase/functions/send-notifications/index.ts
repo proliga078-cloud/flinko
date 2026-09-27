@@ -40,7 +40,7 @@ function shell(inner: string) {
   <div style="background:#fff;border-radius:14px;padding:26px;box-shadow:0 2px 12px rgba(20,24,31,.06)">
     ${inner}
   </div>
-  <p style="font-size:12px;color:#707580;text-align:center;margin-top:20px;line-height:1.6">Recebeste este email porque tens uma conta na Flinko.<br/>Podes desligar estes avisos no teu <a href="${SITE}/dashboard.html" style="color:#1E4FD6">dashboard</a>.</p>
+  <p style="font-size:12px;color:#707580;text-align:center;margin-top:20px;line-height:1.6">Recebeste este email porque tens uma conta na Flinko.<br/>Podes desligar estes avisos no teu <a href="${SITE}/dashboard.html" style="color:#B85608">dashboard</a>.</p>
 </div></body></html>`
 }
 
@@ -50,7 +50,7 @@ function templateNewMessage(name: string, sender: string, preview: string) {
     <p style="margin:0 0 14px;font-size:15px;color:#14181F">${saudacao}</p>
     <p style="margin:0 0 18px;font-size:15px;color:#14181F;line-height:1.6">Tens uma nova mensagem de <strong>${esc(sender)}</strong> na Flinko.</p>
     <div style="background:#F7F8FA;border-radius:10px;padding:14px;font-size:14px;color:#5B6270;line-height:1.6;margin-bottom:22px">"${esc(preview)}"</div>
-    <a href="${SITE}/messages.html" style="display:inline-block;background:#1E4FD6;color:#fff;font-size:15px;font-weight:700;text-decoration:none;padding:12px 24px;border-radius:9px">Ver e responder</a>
+    <a href="${SITE}/messages.html" style="display:inline-block;background:#E8720A;color:#fff;font-size:15px;font-weight:700;text-decoration:none;padding:12px 24px;border-radius:9px">Ver e responder</a>
     <p style="margin:20px 0 0;font-size:13px;color:#707580;line-height:1.6">Responder rápido aumenta as tuas hipóteses de fechar o trabalho.</p>
   `)
 }
@@ -61,7 +61,7 @@ function templateVerificationRequest(name: string, sender: string, preview: stri
     <p style="margin:0 0 14px;font-size:15px;color:#14181F">${saudacao}</p>
     <p style="margin:0 0 18px;font-size:15px;color:#14181F;line-height:1.6"><strong>${esc(sender)}</strong> pediu verificação de perfil na Flinko.</p>
     <div style="background:#F7F8FA;border-radius:10px;padding:14px;font-size:14px;color:#5B6270;line-height:1.6;margin-bottom:22px">${esc(preview)}</div>
-    <a href="${SITE}/admin" style="display:inline-block;background:#1E4FD6;color:#fff;font-size:15px;font-weight:700;text-decoration:none;padding:12px 24px;border-radius:9px">Rever pedido no admin</a>
+    <a href="${SITE}/admin" style="display:inline-block;background:#E8720A;color:#fff;font-size:15px;font-weight:700;text-decoration:none;padding:12px 24px;border-radius:9px">Rever pedido no admin</a>
     <p style="margin:20px 0 0;font-size:13px;color:#707580;line-height:1.6">Revê os documentos e aprova ou rejeita o pedido.</p>
   `)
 }

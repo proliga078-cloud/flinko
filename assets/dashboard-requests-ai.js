@@ -482,6 +482,7 @@ function answerLocally(question){
 async function answerWithClaude(question){
   const{data,error}=await db.functions.invoke('ai-assistant',{body:{question}})
   if(error||!data||data.error){
+    if(data&&data.error==='rate_limited')return 'Chegaste ao limite de perguntas ao assistente por hoje. Amanhã há mais.'
     return data&&data.error==='not_configured'
       ?'O assistente de IA com Claude ainda não foi ativado. Configura ANTHROPIC_API_KEY no Supabase.'
       :'Não consegui responder agora. Tenta novamente daqui a pouco.'
