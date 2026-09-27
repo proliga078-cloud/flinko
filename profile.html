@@ -836,7 +836,7 @@ async function loadReviews(){
     return`<div class="review-item">
       <div class="review-header">
         <div class="review-avatar">${initials}</div>
-        <div style="flex:1"><div class="review-name">${escapeHtml(r.reviewer_name)}</div><div class="review-meta">${date}</div></div>
+        <div style="flex:1"><div class="review-name">${escapeHtml(r.reviewer_name)}</div><div class="review-meta">${date}${r.source==='trabalho'?' · <span style="color:var(--green);font-weight:700">✓ Trabalho feito pela Flinko</span>':(r.source==='convite'?' · Cliente convidado':'')}</div></div>
         <div class="review-stars">${stars}</div>
       </div>
       ${r.comment?`<div class="review-text">${escapeHtml(r.comment)}</div>`:''}

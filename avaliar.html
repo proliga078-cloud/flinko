@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Avaliar – Flinko</title>
+<meta name="robots" content="noindex, nofollow"/>
+<meta name="theme-color" content="#132420"/>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
+<link rel="manifest" href="/manifest.json"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet"/>
+<script src="/assets/cookie-consent.js" defer></script>
+<style>
+/* Avaliar um profissional a partir de um link de avaliação (email, WhatsApp,
+   mensagem). Uma coisa só: escolher as estrelas e publicar. */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#132420;--muted:#5E6B66;--line:#E3ECE7;--tint:#F3FBF6;--orange:#E8720A;--orange-d:#B85608;--mint:#0F8B5F;--star:#F5A623}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--tint);min-height:100vh;display:flex;flex-direction:column}
+main{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:28px 16px 48px}
+.card{background:#fff;border-radius:22px;box-shadow:0 20px 45px -25px rgba(19,36,32,.45);width:100%;max-width:460px;padding:28px 24px;text-align:center}
+.av{width:84px;height:84px;border-radius:50%;margin:0 auto 12px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.6rem;overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover}
+h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.45rem;letter-spacing:-.02em;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:22px}
+.stars{display:flex;justify-content:center;gap:4px;margin-bottom:6px}
+.stars button{background:none;border:none;cursor:pointer;font-size:2.7rem;line-height:1;color:#D9E2DD;padding:2px 4px;transition:transform .12s,color .12s}
+.stars button.on{color:var(--star)}
+.stars button:hover{transform:scale(1.12)}
+.stars button:focus-visible{outline:3px solid var(--orange);border-radius:10px}
+.label{height:22px;font-weight:700;color:var(--orange-d);margin-bottom:18px}
+label{display:block;text-align:left;font-size:.85rem;font-weight:700;margin:14px 0 6px}
+textarea,input{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;font:inherit;font-size:.95rem}
+textarea{min-height:96px;resize:vertical}
+textarea:focus,input:focus{outline:none;border-color:var(--mint)}
+.btn{display:inline-flex;align-items:center;justify-content:center;width:100%;margin-top:18px;padding:14px;border:none;border-radius:999px;background:var(--orange);color:#fff;font:inherit;font-weight:800;font-size:1rem;cursor:pointer;text-decoration:none}
+.btn:disabled{opacity:.6;cursor:default}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.err{display:none;margin-top:12px;background:#FDECEA;color:#9B2C22;border-radius:10px;padding:10px 12px;font-size:.88rem}
+.note{font-size:.78rem;color:var(--muted);margin-top:14px;line-height:1.5}
+.big{font-size:3rem;margin-bottom:8px}
+.spin{width:36px;height:36px;border:3px solid var(--line);border-top-color:var(--orange);border-radius:50%;margin:30px auto;animation:s 1s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+</style>
+<!-- fk:head -->
+<link rel="stylesheet" href="/assets/site.css" />
+<script src="/assets/site-header.js" defer></script>
+<script src="/assets/pwa.js" defer></script>
+<!-- /fk:head -->
+</head>
+<body>
+<!-- fk:header -->
+<div class="fk-header" id="fkHeader" role="banner">
+  <div class="fk-bar">
+    <a href="/" class="fk-logo" aria-label="Flinko — página inicial">Flink<span>o</span></a>
+    <div class="fk-links" role="navigation" aria-label="Navegação principal">
+      <a href="/categoria">Encontrar</a>
+      <a href="/pedidos">Pedidos</a>
+      <a href="/como-funciona">Como funciona</a>
+      <a href="/pricing">Preços</a>
+      <a href="/profissionais">Para profissionais</a>
+      <a href="/academia">Academia</a>
+    </div>
+    <div class="fk-actions">
+      <div id="nav-guest" class="fk-group">
+        <a href="/auth?tab=login" class="fk-btn fk-btn-ghost fk-hide-sm">Entrar</a>
+        <a href="/auth?tab=register" class="fk-btn fk-btn-dark">Criar conta grátis</a>
+      </div>
+      <div id="nav-user" class="fk-group" style="display:none">
+        <a href="/dashboard" class="fk-btn fk-btn-dark">O meu painel</a>
+        <a href="/dashboard" class="fk-avatar" id="nav-avatar" aria-label="O meu painel">?</a>
+      </div>
+      <button type="button" class="fk-toggle" id="fkToggle" aria-expanded="false" aria-controls="fkPanel" aria-label="Abrir menu"><span></span></button>
+    </div>
+  </div>
+  <div class="fk-panel" id="fkPanel" hidden>
+    <a href="/categoria">Encontrar</a>
+    <a href="/pedidos">Pedidos</a>
+    <a href="/como-funciona">Como funciona</a>
+    <a href="/pricing">Preços</a>
+    <a href="/profissionais">Para profissionais</a>
+    <a href="/academia">Academia</a>
+    <a href="/calculadora-orcamento">Calculadora de orçamento</a>
+    <a href="/auth?tab=login">Entrar</a>
+    <button type="button" class="fk-install" data-fk-install onclick="window.flinkoInstallApp&&window.flinkoInstallApp()">📲 Instalar a app no telemóvel</button>
+  </div>
+</div>
+<!-- /fk:header -->
+<main><div class="card" id="card"><div class="spin" aria-label="A carregar"></div></div></main>
+<!-- fk:footer -->
+<div class="fk-footer" role="contentinfo">
+  <div class="fk-ftop">
+    <div class="fk-fbrand">
+      <a href="/" class="fk-logo">Flink<span>o</span></a>
+      <p>Profissionais verificados em Portugal. Grátis para clientes, sem comissões para profissionais.</p>
+    </div>
+    <div class="fk-fcol"><h2>Para clientes</h2><ul><li><a href="/categoria">Encontrar profissional</a></li><li><a href="/pedidos?publicar=1">Publicar pedido</a></li><li><a href="/como-funciona">Como funciona</a></li><li><a href="/calculadora-orcamento">Calculadora de orçamento</a></li></ul></div>
+    <div class="fk-fcol"><h2>Para profissionais</h2><ul><li><a href="/profissionais">A Flinko para profissionais</a></li><li><a href="/auth?tab=register">Criar perfil grátis</a></li><li><a href="/pricing">Preços</a></li><li><a href="/dashboard">O meu painel</a></li></ul></div>
+    <div class="fk-fcol"><h2>Flinko</h2><ul><li><a href="/sobre">Sobre nós</a></li><li><a href="/academia">Academia</a></li><li><a href="/porque-escolher">Porquê a Flinko</a></li><li><a href="/contacto">Contacto</a></li></ul></div>
+  </div>
+  <div class="fk-fbottom">
+    <span>© 2026 Flinko · Portugal</span>
+    <span class="fk-legal"><a href="/termos">Termos</a><a href="/privacidade">Privacidade</a><a href="/cookies">Cookies</a><a href="/rgpd">RGPD</a></span>
+  </div>
+</div>
+<!-- /fk:footer -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/escape-html.js"></script>
+<script>
+const db=supabase.createClient('https://cdwinidhtfxfxowflize.supabase.co','sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk')
+const params=new URLSearchParams(location.search)
+const token=(params.get('t')||'').replace(/[^0-9a-f]/gi,'')
+const LABELS=['','Muito mau','Mau','Razoável','Bom','Excelente']
+let nota=Math.max(0,Math.min(5,parseInt(params.get('s'),10)||0)),info=null
+const card=document.getElementById('card')
+const perfilUrl=()=>info.pro_slug?'/'+encodeURIComponent(info.pro_slug):'/profile.html?id='+encodeURIComponent(info.professional_id)
+function avatar(){const u=safeUrl(info.pro_photo);return '<div class="av">'+(u?'<img src="'+escapeHtml(u)+'" alt="">':escapeHtml(String(info.pro_name||'?').split(/\s+/).map(p=>p[0]).slice(0,2).join('').toUpperCase()))+'</div>'}
+function msg(icon,title,text,extra){card.innerHTML='<div class="big">'+icon+'</div><h1>'+title+'</h1><p class="sub">'+text+'</p>'+(extra||'')}
+
+async function init(){
+  if(!token){msg('🔍','Link inválido','Este link de avaliação não está completo. Confirma que o copiaste inteiro.');return}
+  const{data,error}=await db.rpc('review_invite_info',{p_token:token})
+  info=Array.isArray(data)?data[0]:data
+  if(error||!info){msg('🔍','Link inválido','Este link de avaliação não existe ou já expirou.','<a class="btn ghost" href="/">Ir para a Flinko</a>');return}
+  if(info.used){msg('💚','Obrigado!','Esta avaliação já foi publicada.','<a class="btn ghost" href="'+perfilUrl()+'">Ver o perfil de '+escapeHtml(String(info.pro_name).split(' ')[0])+'</a>');return}
+  let nome=info.client_name||''
+  if(!nome){try{const{data:{session}}=await db.auth.getSession();const m=session&&session.user&&session.user.user_metadata;nome=(m&&(m.full_name||m.name))||''}catch(e){}}
+  card.innerHTML=avatar()+
+    '<h1>Como correu com '+escapeHtml(String(info.pro_name||'').split(' ')[0])+'?</h1>'+
+    '<p class="sub">'+escapeHtml(info.pro_name||'')+(info.pro_category?' · '+escapeHtml(info.pro_category):'')+'</p>'+
+    '<div class="stars" role="radiogroup" aria-label="Classificação">'+[1,2,3,4,5].map(n=>'<button type="button" role="radio" aria-label="'+n+' estrela'+(n>1?'s':'')+' – '+LABELS[n]+'" data-n="'+n+'">★</button>').join('')+'</div>'+
+    '<div class="label" id="lbl"></div>'+
+    '<label for="com">Conta como foi (opcional)</label><textarea id="com" maxlength="2000" placeholder="Ex: Chegou a horas, explicou tudo e deixou tudo limpo."></textarea>'+
+    '<label for="nome">O teu nome</label><input id="nome" maxlength="80" autocomplete="name" value="'+escapeHtml(nome)+'" placeholder="Ex: Ana S.">'+
+    '<button class="btn" id="pub" type="button">Publicar avaliação</button><div class="err" id="err" role="alert"></div>'+
+    '<p class="note">A avaliação fica pública no perfil, com o teu primeiro nome. Não mostramos o teu email.</p>'
+  card.querySelectorAll('.stars button').forEach(b=>b.addEventListener('click',()=>{nota=+b.dataset.n;pintar()}))
+  document.getElementById('pub').addEventListener('click',publicar)
+  pintar()
+}
+function pintar(){
+  card.querySelectorAll('.stars button').forEach(b=>{const on=+b.dataset.n<=nota;b.classList.toggle('on',on);b.setAttribute('aria-checked',+b.dataset.n===nota?'true':'false')})
+  const l=document.getElementById('lbl');if(l)l.textContent=LABELS[nota]||'Toca nas estrelas'
+}
+async function publicar(){
+  const err=document.getElementById('err'),btn=document.getElementById('pub')
+  const mostrar=t=>{err.textContent=t;err.style.display=t?'block':'none'}
+  mostrar('')
+  const nome=document.getElementById('nome').value.trim()
+  if(!nota)return mostrar('Escolhe de 1 a 5 estrelas.')
+  if(!nome)return mostrar('Escreve o teu nome.')
+  btn.disabled=true;btn.textContent='A publicar…'
+  const{error}=await db.rpc('submit_review_invite',{p_token:token,p_rating:nota,p_comment:document.getElementById('com').value,p_name:nome})
+  if(error){btn.disabled=false;btn.textContent='Publicar avaliação';return mostrar(String(error.message||'Não foi possível publicar. Tenta de novo.'))}
+  msg('🎉','Obrigado, '+escapeHtml(nome.split(' ')[0])+'!','A tua avaliação já aparece no perfil de '+escapeHtml(info.pro_name||'')+'. Ajudas outras pessoas a escolher bem.',
+    '<a class="btn" href="'+perfilUrl()+'">Ver a avaliação</a><a class="btn ghost" href="/categoria">Precisas de outro profissional?</a>')
+}
+init()
+</script>
+</body>
+</html>

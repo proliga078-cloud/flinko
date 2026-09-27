@@ -949,6 +949,14 @@ Letras minúsculas, números e hífenes. Entre 3 e 30 caracteres.
 <!-- REVIEWS -->
 <div id="page-reviews" class="page-section">
 <h1 class="page-title">Avaliações</h1>
+<div class="form-section" id="invite-card">
+<div class="form-title">Pede avaliações a clientes antigos</div>
+<p style="color:var(--muted);font-size:13px;margin:-8px 0 14px;max-width:560px">Cria um link para cada cliente e envia-o pelo WhatsApp. É de uso único e demora 10 segundos a preencher. No teu perfil estas avaliações aparecem como “cliente convidado”. Os trabalhos marcados como pagos pedem a avaliação sozinhos.</p>
+<div class="alert error" id="inv-error"></div>
+<div class="form-grid"><div class="form-group"><label for="inv-name">Nome do cliente</label><input id="inv-name" maxlength="80" placeholder="Ex: Carlos Mendes"/></div></div>
+<button class="btn btn-primary" id="inv-btn" onclick="createReviewInvite()">Criar link de avaliação</button>
+<div id="inv-list" style="margin-top:14px"></div>
+</div>
 <div id="reviews-list"></div>
 </div>
 
