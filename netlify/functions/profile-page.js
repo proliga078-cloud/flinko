@@ -53,7 +53,11 @@ function loadTemplate() {
 function whoFrom(event) {
   const q = event.queryStringParameters || {}
   if (q.id) return UUID.test(q.id) ? { id: q.id } : null
-  const raw = q.slug || String(event.path || '').split('/profile-page/')[1] || ''
+  // Nas reescritas (/o-nome -> função), o Netlify tanto pode passar o caminho
+  // da função (/.netlify/functions/profile-page/o-nome) como o original
+  // (/o-nome): aceita os dois.
+  const p = String(event.path || '')
+  const raw = q.slug || (p.includes('/profile-page/') ? p.split('/profile-page/')[1] : p.replace(/^\/+/, '')) || ''
   let slug = ''
   try { slug = decodeURIComponent(raw).toLowerCase().replace(/\/+$/, '') } catch (e) { return null }
   return SLUG.test(slug) ? { slug } : null

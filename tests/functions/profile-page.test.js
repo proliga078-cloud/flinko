@@ -59,6 +59,14 @@ test('perfil por link próprio (/o-nome): lê o slug do caminho, como o Netlify 
   assert.deepEqual(filtros('profiles').at(-1), ['slug', 'rui-braga']);
 });
 
+test('REGRESSÃO: também aceita o caminho original (/o-nome), como o Netlify o passa nas reescritas', async () => {
+  reset({ profile: pro({ slug: 'deixaqueeureparo' }) });
+  const res = await handler({ path: '/deixaqueeureparo' });
+  assert.equal(res.statusCode, 200);
+  assert.deepEqual(filtros('profiles').at(-1), ['slug', 'deixaqueeureparo']);
+  assert.equal((await handler({ path: '/.netlify/functions/profile-page' })).statusCode, 404);
+});
+
 test('sem avaliações nem bio: sem aggregateRating e com descrição de reserva', async () => {
   reset({ profile: pro({ bio: null, photo_url: null }) });
   const res = await handler({ queryStringParameters: { id: ID } });
