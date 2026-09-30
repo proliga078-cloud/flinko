@@ -62,6 +62,8 @@ transition: background .2s; margin-top: 8px;
 .hint { font-size: 12px; color: #5B6270; margin-top: 6px }
 .card-title { font-size: 17px; font-weight: 800; margin-bottom: 6px }
 .card-sub { font-size: 13px; color: #64748b; margin-bottom: 22px; line-height: 1.5 }
+.google-note { font-size: 11.5px; color: #94a3b8; text-align: center; margin: 8px 4px 0; line-height: 1.45 }
+button.intent-card { background: #fff; font: inherit; color: inherit; width: 100% }
 
 .pw-wrap{position:relative;display:block}
 .pw-wrap input{width:100%;padding-right:44px}
@@ -145,6 +147,7 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.5 0 10.4-1.9 14.1-5.1l-6.5-5.5C29.6 35.4 26.9 36 24 36c-5.3 0-9.7-3.4-11.3-8l-6.6 5.1C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4 5.6l6.5 5.5C41.5 35.9 44 30.5 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
 Continuar com Google
 </button>
+<p class="google-note">No ecrã da Google aparece "cdwinidhtfxfxowflize.supabase.co": é o servidor seguro onde a Flinko guarda as contas. Podes continuar.</p>
 </div>
 
 <!-- REGISTER -->
@@ -169,6 +172,7 @@ Continuar com Google
 <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.5 0 10.4-1.9 14.1-5.1l-6.5-5.5C29.6 35.4 26.9 36 24 36c-5.3 0-9.7-3.4-11.3-8l-6.6 5.1C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4 5.6l6.5 5.5C41.5 35.9 44 30.5 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
 Continuar com Google
 </button>
+<p class="google-note">No ecrã da Google aparece "cdwinidhtfxfxowflize.supabase.co": é o servidor seguro onde a Flinko guarda as contas. Podes continuar.</p>
 <div class="oauth-divider">ou preenche os teus dados</div>
 <div class="form-group">
 <label for="reg-name">Nome completo</label>
@@ -189,6 +193,17 @@ Continuar com Google
 <div class="hint">Toca no olho para veres o que escreveste.</div>
 </div>
 <button class="btn-submit" id="reg-btn" onclick="doRegister()">Criar conta</button>
+</div>
+</div>
+
+<!-- FALTA UM PASSO: conta sem perfil (registo que ficou a meio) -->
+<div id="form-choose" class="form-body" style="display:none">
+<div class="card-title">Falta só um passo 👋</div>
+<div class="card-sub">Para acabarmos o teu registo, diz-nos o que procuras na Flinko.</div>
+<div class="msg hidden" id="choose-msg"></div>
+<div class="intent-grid" role="group" aria-label="O que procuras?">
+<button type="button" class="intent-card" id="choose-client" onclick="chooseAndFinish('client')"><svg class="ic" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><div class="it">Contratar</div><div class="is">Procuro um profissional</div></button>
+<button type="button" class="intent-card" id="choose-professional" onclick="chooseAndFinish('professional')"><svg class="ic" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><div class="it">Oferecer serviços</div><div class="is">Sou profissional</div></button>
 </div>
 </div>
 
@@ -304,6 +319,8 @@ setTimeout(() => location.href = 'admin.html', 800)
 return
 }
 
+// Conta sem perfil (registo que ficou a meio): pergunta o tipo antes de seguir.
+if (data && data.session && !(await hasProfile())) { redirected = true; showMsg('login-msg', '', 'hidden'); return askAccountType(data.session, params.get('redirect')) }
 showMsg('login-msg', 'Bem-vindo! A redirecionar...', 'success')
 setTimeout(() => location.href = safeRedirect(params.get('redirect')) || 'dashboard.html', 800)
 } catch (e) {
@@ -355,6 +372,10 @@ try { pending = JSON.parse(sessionStorage.getItem('flinko_oauth_pending') || 'nu
 if (pending) {
 sessionStorage.removeItem('flinko_oauth_pending')
 const name = nameFromSession(session)
+if (!pending.accountType && !(await hasProfile())) {
+if (pending.ref) refCode = pending.ref
+return askAccountType(session, pending.redirect)
+}
 await insertProfile(session.user.id, name, session.user.email, pending.accountType || 'professional')
 if (pending.ref) { refCode = pending.ref; await applyReferral(session.user.id) }
 location.href = (pending.redirect && safeRedirect(pending.redirect)) || postAuthDestination(pending.accountType)
@@ -371,9 +392,36 @@ if (isAdminSession === true) { location.href = 'admin.html'; return }
 try {
 const name = nameFromSession(session)
 const intentParam2 = params.get('intent')
-await db.rpc('create_my_profile_if_missing', intentParam2 === 'client' ? { p_name: name, p_account_type: 'client' } : { p_name: name })
+if (intentParam2 !== 'client' && intentParam2 !== 'professional' && !(await hasProfile())) return askAccountType(session, params.get('redirect'))
+await db.rpc('create_my_profile_if_missing', intentParam2 === 'client' ? { p_name: name, p_account_type: 'client' } : { p_name: name, p_account_type: intentParam2 || 'professional' })
 } catch (e) {}
 location.href = safeRedirect(params.get('redirect')) || 'dashboard.html'
+}
+
+// Conta sem perfil (registo que ficou a meio, ou Google sem escolher o tipo):
+// antes de criar o perfil pergunta se a pessoa quer contratar ou oferecer
+// serviços, em vez de a tornar profissional por omissão.
+async function hasProfile() {
+try { const { data } = await db.rpc('get_my_profile'); return !!(data && data[0]) } catch (e) { return true }
+}
+let chooseCtx = null
+function askAccountType(session, redirect) {
+chooseCtx = { session, redirect }
+document.getElementById('tabs-wrap').style.display = 'none'
+document.getElementById('form-choose').style.display = 'block'
+}
+async function chooseAndFinish(type) {
+if (!chooseCtx) return
+document.querySelectorAll('#form-choose .intent-card').forEach(b => { b.disabled = true })
+try {
+await insertProfile(chooseCtx.session.user.id, nameFromSession(chooseCtx.session), chooseCtx.session.user.email, type)
+if (refCode) await applyReferral(chooseCtx.session.user.id)
+} catch (e) {
+document.querySelectorAll('#form-choose .intent-card').forEach(b => { b.disabled = false })
+showMsg('choose-msg', 'Não foi possível acabar o registo. Tenta outra vez.', 'error')
+return
+}
+location.href = (chooseCtx.redirect && safeRedirect(chooseCtx.redirect)) || postAuthDestination(type)
 }
 
 // Detect password recovery flow (user clicked the reset link in their email)

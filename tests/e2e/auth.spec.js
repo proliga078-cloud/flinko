@@ -45,7 +45,7 @@ test.describe('auth.html — login', () => {
   test('login bem-sucedido redireciona para dashboard.html', async ({ page }) => {
     await withFakeSupabase(page, {
       loginUser: { id: 'user-1', email: 'user@example.com' },
-      loginSession: { access_token: 'tok-1', user: { id: 'user-1', email: 'user@example.com' } },
+      loginSession: { access_token: 'tok-1', user: { id: 'user-1', email: 'user@example.com' } }, rpcResults: { get_my_profile: [{ id: 'user-1' }] },
     });
     await page.goto('/auth.html');
     await page.fill('#login-email', 'user@example.com');
@@ -70,7 +70,7 @@ test.describe('auth.html — login', () => {
   test('?redirect= para um caminho do próprio site é respeitado', async ({ page }) => {
     await withFakeSupabase(page, {
       loginUser: { id: 'user-1', email: 'user@example.com' },
-      loginSession: { access_token: 'tok-1', user: { id: 'user-1', email: 'user@example.com' } },
+      loginSession: { access_token: 'tok-1', user: { id: 'user-1', email: 'user@example.com' } }, rpcResults: { get_my_profile: [{ id: 'user-1' }] },
     });
     await page.goto('/auth.html?redirect=%2Fpedidos.html');
     await page.fill('#login-email', 'user@example.com');
@@ -82,7 +82,7 @@ test.describe('auth.html — login', () => {
   test('SEGURANÇA: ?redirect= para um domínio externo é ignorado (proteção anti open-redirect)', async ({ page }) => {
     await withFakeSupabase(page, {
       loginUser: { id: 'user-1', email: 'user@example.com' },
-      loginSession: { access_token: 'tok-1', user: { id: 'user-1', email: 'user@example.com' } },
+      loginSession: { access_token: 'tok-1', user: { id: 'user-1', email: 'user@example.com' } }, rpcResults: { get_my_profile: [{ id: 'user-1' }] },
     });
     await page.goto('/auth.html?redirect=https%3A%2F%2Fsite-malicioso-qualquer.com%2Fphishing');
     await page.fill('#login-email', 'user@example.com');
@@ -164,5 +164,59 @@ test.describe('auth.html — registo', () => {
     const rpcCalls = await page.evaluate(() => window.__rpcCalls || []);
     expect(rpcCalls.some((c) => c.fnName === 'create_my_profile_if_missing')).toBe(true);
     await page.waitForURL('**/pedidos.html');
+  });
+});
+
+// Registo que ficou a meio (conta sem perfil): antes de criar o perfil,
+// pergunta se a pessoa quer contratar ou oferecer serviços.
+test.describe('auth.html — conta sem perfil', () => {
+  // As chamadas ao servidor ficam também em sessionStorage, para as ler depois de a página mudar.
+  const guardaRpc = (page) => page.addInitScript(() => { const a = []; a.push = function (x) { Array.prototype.push.call(this, x); try { const s = JSON.parse(sessionStorage.getItem('rpc') || '[]'); s.push(x); sessionStorage.setItem('rpc', JSON.stringify(s)); } catch (e) {} return this.length; }; window.__rpcCalls = a; });
+  const rpcs = (page) => page.evaluate(() => JSON.parse(sessionStorage.getItem('rpc') || '[]'));
+  const SESS = { access_token: 'tok-9', user: { id: 'user-9', email: 'ana.silva@example.com', user_metadata: { name: 'Ana Silva' } } };
+
+  test('login com conta sem perfil pergunta o tipo; "Contratar" cria perfil de cliente', async ({ page }) => {
+    await guardaRpc(page);
+    await withFakeSupabase(page, { loginUser: SESS.user, loginSession: SESS, rpcResults: { get_my_profile: [] } });
+    await page.goto('/auth.html');
+    await page.fill('#login-email', 'ana.silva@example.com');
+    await page.fill('#login-password', 'segredo123');
+    await page.click('#login-btn');
+    await expect(page.locator('#form-choose')).toBeVisible();
+    await expect(page.locator('#form-choose')).toContainText('Falta só um passo');
+    await expect(page.locator('#tabs-wrap')).toBeHidden();
+    await page.getByRole('button', { name: /Contratar/ }).click();
+    await page.waitForURL('**/pedidos.html');
+    const rpc = (await rpcs(page)).filter((c) => c.fnName === 'create_my_profile_if_missing');
+    expect(rpc).toEqual([{ fnName: 'create_my_profile_if_missing', args: { p_name: 'Ana Silva', p_account_type: 'client' } }]);
+  });
+
+  test('"Oferecer serviços" cria perfil de profissional e vai para o painel', async ({ page }) => {
+    await guardaRpc(page);
+    await withFakeSupabase(page, { loginUser: SESS.user, loginSession: SESS, rpcResults: { get_my_profile: [] } });
+    await page.goto('/auth.html');
+    await page.fill('#login-email', 'ana.silva@example.com');
+    await page.fill('#login-password', 'segredo123');
+    await page.click('#login-btn');
+    await page.getByRole('button', { name: /Oferecer serviços/ }).click();
+    await page.waitForURL('**/dashboard.html');
+    const rpc = (await rpcs(page)).find((c) => c.fnName === 'create_my_profile_if_missing');
+    expect(rpc.args).toEqual({ p_name: 'Ana Silva', p_account_type: 'professional' });
+  });
+
+  test('conta com perfil: entra direto, sem perguntar', async ({ page }) => {
+    await withFakeSupabase(page, { loginUser: SESS.user, loginSession: SESS, rpcResults: { get_my_profile: [{ id: 'user-9' }] } });
+    await page.goto('/auth.html');
+    await page.fill('#login-email', 'ana.silva@example.com');
+    await page.fill('#login-password', 'segredo123');
+    await page.click('#login-btn');
+    await page.waitForURL('**/dashboard.html');
+    expect(await page.evaluate(() => (window.__rpcCalls || []).some((c) => c.fnName === 'create_my_profile_if_missing'))).toBe(false);
+  });
+
+  test('nota sob o botão da Google explica o endereço do servidor', async ({ page }) => {
+    await withFakeSupabase(page, {});
+    await page.goto('/auth.html');
+    await expect(page.locator('#form-login .google-note')).toContainText('supabase.co');
   });
 });
