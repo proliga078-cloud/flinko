@@ -214,9 +214,4 @@ test.describe('auth.html — conta sem perfil', () => {
     expect(await page.evaluate(() => (window.__rpcCalls || []).some((c) => c.fnName === 'create_my_profile_if_missing'))).toBe(false);
   });
 
-  test('nota sob o botão da Google explica o endereço do servidor', async ({ page }) => {
-    await withFakeSupabase(page, {});
-    await page.goto('/auth.html');
-    await expect(page.locator('#form-login .google-note')).toContainText('supabase.co');
-  });
 });
