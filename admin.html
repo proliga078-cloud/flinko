@@ -352,6 +352,8 @@ async function loadAll() {
   // contados por dia no servidor. Sem a migração eventos_funil fica vazio.
   // Cliques nos botões "Contactar pelo WhatsApp" (contador por profissional e por pedido).
   D.waclicks = DEMO ? [] : await api("whatsapp_contactos?select=professional_id,request_id,source,created_at&order=id&limit=10000").catch(e => { if (!missing(e)) LOADERR.push("whatsapp_contactos: " + e.message); return []; });
+  // Contas criadas que nunca chegaram a ter perfil (registo a meio). Só donos.
+  D.incompletos = DEMO || !isOwner() ? null : await fn("admin-registos-a-meio", { action: "preview" }).catch(() => null);
   D.events = DEMO ? [] : await api("rpc/admin_event_counts?p_days=90").catch(e => { if (!missing(e)) LOADERR.push("admin_event_counts: " + e.message); return []; });
   await loadStore();
   compute();
@@ -435,6 +437,7 @@ function compute() {
   const nv = pros.filter(p => !p.verified); if (nv.length) alerts.push({ lvl: "warn", txt: `${nv.length} profissional(is) por verificar`, go: "pros" });
   const nc = pros.filter(p => !p.category); if (nc.length) alerts.push({ lvl: "warn", txt: `${nc.length} profissionais sem categoria (invisíveis nas pesquisas)`, go: "pros" });
   const failedN = D.notif.filter(n => n.status === "failed").length; if (failedN) alerts.push({ lvl: "bad", txt: `${failedN} notificações falharam o envio`, go: "ops" });
+  if (D.incompletos && D.incompletos.porConvidar) alerts.push({ lvl: "warn", txt: `${D.incompletos.porConvidar} pessoa(s) criaram conta mas o registo ficou a meio (sem perfil, não aparecem no painel)`, go: "alerts" });
   const openReq = D.requests.filter(r => r.status === "open" && !D.offers.some(o => o.request_id === r.id)); if (openReq.length) alerts.push({ lvl: "bad", txt: `${openReq.length} pedido(s) de clientes abertos sem nenhuma proposta`, go: "demand" });
   const expiring = activePaid.filter(p => p.plan_expires_at && new Date(p.plan_expires_at) < t + 7 * DAY); if (expiring.length) alerts.push({ lvl: "warn", txt: `${expiring.length} subscrição(ões) a expirar em 7 dias`, go: "fin" });
 
@@ -1403,13 +1406,14 @@ const vContact = () => {
 };
 
 /* ============ AVISOS ============ */
-const ALERT_RULES = [["gdpr", "Pedidos RGPD em aberto"], ["verif", "Pedidos de verificação por tratar"], ["unver", "Profissionais por verificar"], ["nocat", "Profissionais sem categoria"], ["notif", "Notificações que falharam"], ["req", "Pedidos de clientes sem proposta há mais de 24 h"], ["exp", "Subscrições a expirar"], ["ticket", "Apoio fora do prazo (48 h)"], ["den", "Denúncias de perfis por resolver"], ["inv", "Faturas vencidas"], ["task", "Tarefas atrasadas"], ["lead", "Leads por contactar"], ["seg", "Seguimentos para enviar"], ["crm", "Contactos agendados no CRM"], ["reg", "Sem novos registos em 7 dias"]];
+const ALERT_RULES = [["gdpr", "Pedidos RGPD em aberto"], ["regmeio", "Registos a meio (contas sem perfil)"], ["verif", "Pedidos de verificação por tratar"], ["unver", "Profissionais por verificar"], ["nocat", "Profissionais sem categoria"], ["notif", "Notificações que falharam"], ["req", "Pedidos de clientes sem proposta há mais de 24 h"], ["exp", "Subscrições a expirar"], ["ticket", "Apoio fora do prazo (48 h)"], ["den", "Denúncias de perfis por resolver"], ["inv", "Faturas vencidas"], ["task", "Tarefas atrasadas"], ["lead", "Leads por contactar"], ["seg", "Seguimentos para enviar"], ["crm", "Contactos agendados no CRM"], ["reg", "Sem novos registos em 7 dias"]];
 function liveAlerts(all) {
   const A = [], t = now(), td = today(), off = new Set((setting("alertrules") || {}).off || []);
   const sn = new Set(items("snooze").filter(s => s.until >= td).map(s => s.key));
   const add = (rule, key, lvl, txt, go) => { if (!off.has(rule)) A.push({ rule, key: rule + ":" + key, lvl, txt, go }); };
   M.gp.forEach(g => { const d = Math.floor((t - new Date(g.created_at)) / DAY); add("gdpr", g.id, d > 20 ? "bad" : "warn", `Pedido RGPD (${g.request_type === "delete" ? "eliminação" : "exportação"}) em aberto há ${d} dias — prazo legal de 30 dias`, "ops"); });
   if (M.vp.length) add("verif", "all", M.vp.some(v => t - new Date(v.created_at) > 3 * DAY) ? "bad" : "warn", `${M.vp.length} pedido(s) de verificação por tratar`, "ops");
+  if (D.incompletos && D.incompletos.porConvidar) add("regmeio", "all", "warn", `${D.incompletos.porConvidar} pessoa(s) criaram conta mas o registo ficou a meio (sem perfil, não aparecem no painel)`, "alerts");
   const nv = M.pros.filter(p => !p.verified).length; if (nv) add("unver", "all", "warn", `${nv} profissional(is) por verificar`, "pros");
   const nc = M.pros.filter(p => !p.category).length; if (nc) add("nocat", "all", "warn", `${nc} profissionais sem categoria (invisíveis nas pesquisas)`, "contact");
   const fn_ = D.notif.filter(n => n.status === "failed").length; if (fn_) add("notif", "all", "bad", `${fn_} notificações falharam o envio`, "ops");
@@ -1428,12 +1432,31 @@ function liveAlerts(all) {
 const alertRow = a => `<div class="sug"><span class="pill ${a.lvl}">${a.lvl === "bad" ? "urgente" : "atenção"}</span><span class="t">${esc(a.txt)}</span><button class="btn sec sm" onclick="go('${a.go}')">Ver</button><button class="btn sec sm" title="Esconder durante 7 dias" onclick="snoozeAlert('${esc(a.key)}')">Adiar 7 dias</button></div>`;
 async function snoozeAlert(key) { await saveItem("snooze", { key, until: dkey(now() + 7 * DAY) }); render(); }
 async function toggleRule(id, on) { const cur = new Set((setting("alertrules") || {}).off || []); on ? cur.delete(id) : cur.add(id); await saveSetting("alertrules", { off: [...cur] }); render(); }
+// Registos a meio: lista e convite para acabarem o registo (admin-registos-a-meio).
+function incompletosCard() {
+  const I = D.incompletos; if (!I || !I.total) return "";
+  return `<div class="card" style="margin-top:14px" id="incompletosCard"><h3>🧩 Registos a meio (${I.total}) <span class="sp"></span>${I.porConvidar ? `<button class="btn sm" onclick="convidarIncompletos()">Enviar convite a ${I.porConvidar}</button>` : ""}</h3>
+    <p class="mut" style="margin:0 0 8px">Criaram conta e confirmaram o email, mas nunca ficaram com perfil (falha no registo, já corrigida). Ao voltarem a entrar, a página pergunta se querem contratar ou oferecer serviços e cria o perfil.</p>
+    <div class="tw"><table><tr><th>Conta criada</th><th>Email</th><th>Entrou com</th><th>Convite</th></tr>${I.contas.map(c => `<tr><td>${fdate(c.criada)}</td><td>${esc(c.email)}</td><td>${c.via === "google" ? "Google" : "email"}</td><td class="mut">${c.convidado ? "enviado " + fdate(c.convidado) : "por enviar"}</td></tr>`).join("")}</table></div></div>`;
+}
+async function convidarIncompletos() {
+  const I = D.incompletos; if (!I || !I.porConvidar) return;
+  const ex = I.exemplo || {};
+  if (!await ask("Enviar convite para acabar o registo", `Vai ser enviado um email a ${I.porConvidar} pessoa(s):\n\nAssunto: ${ex.assunto || ""}\n\n${ex.texto || ""}`, "Enviar " + I.porConvidar + " email(s)")) return;
+  try {
+    const j = await fn("admin-registos-a-meio", { action: "send" });
+    toast(`Convite enviado a ${j.sent} pessoa(s)${j.failed ? " · " + j.failed + " falharam" : ""}`);
+    D.incompletos = await fn("admin-registos-a-meio", { action: "preview" }).catch(() => D.incompletos);
+    compute(); render();
+  } catch (e) { toast("Erro: " + e.message); }
+}
 const vAlerts = () => {
   const A = liveAlerts(), bad = A.filter(a => a.lvl === "bad"), warn = A.filter(a => a.lvl !== "bad"), off = new Set((setting("alertrules") || {}).off || []);
   const hasPush = !DEMO && session?.user && D.push.some(x => x.profile_id === session.user.id);
   return head("Avisos", "O que precisa da tua atenção agora, sem teres de andar à procura") +
     `<div class="grid g4">${kpi("Urgentes", bad.length, bad.length ? "resolve primeiro" : "nada urgente")}${kpi("Atenção", warn.length, "para ver hoje")}${kpi("Adiados", liveAlerts(true).length - A.length, "escondidos 7 dias")}${kpi("Avisos no telemóvel", hasPush ? "Ativos" : "Por ativar", hasPush ? "recebes push com o resumo" : "ver abaixo")}</div>
     <div class="card" style="margin-top:14px"><h3>Agora</h3>${A.map(alertRow).join("") || `<span class="mut">Tudo em ordem. 🎉</span>`}</div>
+    ${incompletosCard()}
     <div class="grid g2" style="margin-top:14px"><div class="card"><h3>Que avisos queres receber?</h3>${ALERT_RULES.map(([k, l]) => `<label style="display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)"><input type="checkbox" style="width:auto" ${off.has(k) ? "" : "checked"} onchange="toggleRule('${k}',this.checked)"> ${esc(l)}</label>`).join("")}</div>
     <div class="card"><h3>Avisos automáticos</h3>
       <p style="margin:0 0 8px"><b>No painel:</b> o número de avisos aparece no menu e no título do separador, e ao entrares recebes um resumo.</p>
@@ -1621,7 +1644,7 @@ const sc = s => s >= 80 ? "ok" : s >= 50 ? "warn" : "bad";
 function ask(title, msg, okLabel = "Confirmar", danger = false) {
   return new Promise(res => {
     const m = $("#modal"); m.classList.remove("hidden");
-    m.innerHTML = `<div class="mb"><h3 style="font-size:17px;margin-bottom:8px">${esc(title)}</h3><p class="mut" style="margin:0 0 18px">${esc(msg)}</p><div class="row" style="justify-content:flex-end"><button class="btn sec" id="mno">Cancelar</button><button class="btn ${danger ? "bad" : ""}" id="myes">${esc(okLabel)}</button></div></div>`;
+    m.innerHTML = `<div class="mb"><h3 style="font-size:17px;margin-bottom:8px">${esc(title)}</h3><p class="mut" style="margin:0 0 18px;white-space:pre-line;max-height:60vh;overflow:auto">${esc(msg)}</p><div class="row" style="justify-content:flex-end"><button class="btn sec" id="mno">Cancelar</button><button class="btn ${danger ? "bad" : ""}" id="myes">${esc(okLabel)}</button></div></div>`;
     const done = v => { m.classList.add("hidden"); m.innerHTML = ""; res(v); };
     $("#mno").onclick = () => done(false); $("#myes").onclick = () => done(true);
   });

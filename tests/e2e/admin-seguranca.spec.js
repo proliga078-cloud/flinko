@@ -43,5 +43,5 @@ test('SEGURANÇA: caminho malicioso de um documento de verificação não execut
   await card.getByRole('button', { name: /Documento/ }).click();
   await (await popup).close();
   expect(await page.evaluate(() => window.__pwn)).toBeUndefined();
-  expect(calls.some((c) => c.path.startsWith('/storage/v1/object/sign/verification-docs/'))).toBe(true);
+  expect(calls.some((c) => c.path && c.path.startsWith('/storage/v1/object/sign/verification-docs/'))).toBe(true);
 });

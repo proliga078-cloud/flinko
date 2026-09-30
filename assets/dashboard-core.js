@@ -167,6 +167,10 @@ console.error('init error:',e)
 }
 
 function renderClientWelcome(){var host=document.getElementById('page-myrequests');if(!host||document.getElementById('client-welcome'))return;var first=(profileData&&profileData.name)?profileData.name.split(' ')[0]:'';var el=document.createElement('div');el.id='client-welcome';el.style.cssText='background:linear-gradient(135deg,#0f231b,#1a3a2c);border-radius:16px;padding:20px 22px;margin-bottom:20px;color:#fff;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px';var txt=document.createElement('div');var h=document.createElement('div');h.style.cssText='font-size:19px;font-weight:800';h.textContent='Olá'+(first?', '+first:'')+'!';var p=document.createElement('div');p.style.cssText='font-size:13px;color:rgba(255,255,255,.75);margin-top:4px;max-width:420px';p.textContent='Publica o que precisas abaixo, ou procura diretamente um profissional perto de ti.';txt.appendChild(h);txt.appendChild(p);var btn=document.createElement('button');btn.className='btn';btn.style.cssText='background:#fff;color:#0f231b;white-space:nowrap';btn.textContent='🔎 Procurar profissionais';btn.onclick=function(){location.href='index.html#heroSearchForm'};el.appendChild(txt);el.appendChild(btn);host.insertBefore(el,host.firstChild)}async function createProfile(){
+// Conta sem perfil (registo que ficou a meio): a página de entrada pergunta
+// primeiro se a pessoa quer contratar ou oferecer serviços. Só uma vez, para
+// nunca ficar em ciclo; se voltar sem perfil, cria como até aqui.
+try{if(!sessionStorage.getItem('fk_escolher_tipo')){sessionStorage.setItem('fk_escolher_tipo','1');location.replace('auth.html?redirect=dashboard.html');return}}catch(e){}
 const name=user.user_metadata?.name||user.email.split('@')[0]
 const{error}=await db.rpc('create_my_profile_if_missing',{p_name:name})
 if(error){

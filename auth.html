@@ -62,6 +62,7 @@ transition: background .2s; margin-top: 8px;
 .hint { font-size: 12px; color: #5B6270; margin-top: 6px }
 .card-title { font-size: 17px; font-weight: 800; margin-bottom: 6px }
 .card-sub { font-size: 13px; color: #64748b; margin-bottom: 22px; line-height: 1.5 }
+button.intent-card { background: #fff; font: inherit; color: inherit; width: 100% }
 
 .pw-wrap{position:relative;display:block}
 .pw-wrap input{width:100%;padding-right:44px}
@@ -192,6 +193,17 @@ Continuar com Google
 </div>
 </div>
 
+<!-- FALTA UM PASSO: conta sem perfil (registo que ficou a meio) -->
+<div id="form-choose" class="form-body" style="display:none">
+<div class="card-title">Falta só um passo 👋</div>
+<div class="card-sub">Para acabarmos o teu registo, diz-nos o que procuras na Flinko.</div>
+<div class="msg hidden" id="choose-msg"></div>
+<div class="intent-grid" role="group" aria-label="O que procuras?">
+<button type="button" class="intent-card" id="choose-client" onclick="chooseAndFinish('client')"><svg class="ic" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><div class="it">Contratar</div><div class="is">Procuro um profissional</div></button>
+<button type="button" class="intent-card" id="choose-professional" onclick="chooseAndFinish('professional')"><svg class="ic" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><div class="it">Oferecer serviços</div><div class="is">Sou profissional</div></button>
+</div>
+</div>
+
 <!-- RECOVERY: define nova password (aberto a partir do link de email) -->
 <div id="form-recovery" class="form-body" style="display:none">
 <div class="card-title">🔑 Define uma nova password</div>
@@ -304,6 +316,8 @@ setTimeout(() => location.href = 'admin.html', 800)
 return
 }
 
+// Conta sem perfil (registo que ficou a meio): pergunta o tipo antes de seguir.
+if (data && data.session && !(await hasProfile())) { redirected = true; showMsg('login-msg', '', 'hidden'); return askAccountType(data.session, params.get('redirect')) }
 showMsg('login-msg', 'Bem-vindo! A redirecionar...', 'success')
 setTimeout(() => location.href = safeRedirect(params.get('redirect')) || 'dashboard.html', 800)
 } catch (e) {
@@ -355,6 +369,10 @@ try { pending = JSON.parse(sessionStorage.getItem('flinko_oauth_pending') || 'nu
 if (pending) {
 sessionStorage.removeItem('flinko_oauth_pending')
 const name = nameFromSession(session)
+if (!pending.accountType && !(await hasProfile())) {
+if (pending.ref) refCode = pending.ref
+return askAccountType(session, pending.redirect)
+}
 await insertProfile(session.user.id, name, session.user.email, pending.accountType || 'professional')
 if (pending.ref) { refCode = pending.ref; await applyReferral(session.user.id) }
 location.href = (pending.redirect && safeRedirect(pending.redirect)) || postAuthDestination(pending.accountType)
@@ -371,9 +389,36 @@ if (isAdminSession === true) { location.href = 'admin.html'; return }
 try {
 const name = nameFromSession(session)
 const intentParam2 = params.get('intent')
-await db.rpc('create_my_profile_if_missing', intentParam2 === 'client' ? { p_name: name, p_account_type: 'client' } : { p_name: name })
+if (intentParam2 !== 'client' && intentParam2 !== 'professional' && !(await hasProfile())) return askAccountType(session, params.get('redirect'))
+await db.rpc('create_my_profile_if_missing', intentParam2 === 'client' ? { p_name: name, p_account_type: 'client' } : { p_name: name, p_account_type: intentParam2 || 'professional' })
 } catch (e) {}
 location.href = safeRedirect(params.get('redirect')) || 'dashboard.html'
+}
+
+// Conta sem perfil (registo que ficou a meio, ou Google sem escolher o tipo):
+// antes de criar o perfil pergunta se a pessoa quer contratar ou oferecer
+// serviços, em vez de a tornar profissional por omissão.
+async function hasProfile() {
+try { const { data } = await db.rpc('get_my_profile'); return !!(data && data[0]) } catch (e) { return true }
+}
+let chooseCtx = null
+function askAccountType(session, redirect) {
+chooseCtx = { session, redirect }
+document.getElementById('tabs-wrap').style.display = 'none'
+document.getElementById('form-choose').style.display = 'block'
+}
+async function chooseAndFinish(type) {
+if (!chooseCtx) return
+document.querySelectorAll('#form-choose .intent-card').forEach(b => { b.disabled = true })
+try {
+await insertProfile(chooseCtx.session.user.id, nameFromSession(chooseCtx.session), chooseCtx.session.user.email, type)
+if (refCode) await applyReferral(chooseCtx.session.user.id)
+} catch (e) {
+document.querySelectorAll('#form-choose .intent-card').forEach(b => { b.disabled = false })
+showMsg('choose-msg', 'Não foi possível acabar o registo. Tenta outra vez.', 'error')
+return
+}
+location.href = (chooseCtx.redirect && safeRedirect(chooseCtx.redirect)) || postAuthDestination(type)
 }
 
 // Detect password recovery flow (user clicked the reset link in their email)
