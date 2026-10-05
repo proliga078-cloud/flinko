@@ -12,13 +12,13 @@
     "test:db": "node --test \"tests/db/**/*.test.mjs\""
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.4",
+    "@supabase/supabase-js": "^2.117.2",
     "stripe": "^17.4.0",
     "web-push": "^3.6.7"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.3.16",
-    "@playwright/test": "^1.56.0"
+    "@electric-sql/pglite": "^0.5.8",
+    "@playwright/test": "^1.63.0"
   },
   "engines": {
     "node": ">=22"
