@@ -905,8 +905,11 @@ if(accMode==='login'){
 const{data,error}=await db.auth.signInWithPassword({email,password})
 if(error)return showMsg('error','Email ou password errados. Se ainda não tens conta, escolhe "Criar conta".')
 s=data.session
+// Conta sem perfil (registo que ficou a meio): quem publica um pedido é cliente.
+// Não faz nada se o perfil já existir.
+if(s){const m=s.user.user_metadata||{};await db.rpc('create_my_profile_if_missing',{p_name:m.full_name||m.name||email.split('@')[0],p_account_type:'client'})}
 }else{
-const{data,error}=await db.auth.signUp({email,password,options:{data:{full_name:name}}})
+const{data,error}=await db.auth.signUp({email,password,options:{data:{full_name:name,account_type:'client'}}})
 if(error){
 const m=(error.message||'').toLowerCase()
 return showMsg('error',m.includes('already')||m.includes('registered')?'Este email já tem conta. Escolhe "Já tenho conta".':'Não foi possível criar a conta: '+error.message)
