@@ -71,7 +71,10 @@ test('conta que precisa de confirmar email: o pedido fica guardado e volta preen
   await page.fill('#acc-email', 'ana@example.com');
   await page.fill('#acc-password', 'segredo123');
   await page.click('#acc-btn');
-  await expect(page.locator('#m-success')).toContainText('Confirma o email');
+  // Lê as duas mensagens juntas: este teste falha de vez em quando no GitHub com
+  // #m-success vazio, e assim a falha mostra também o erro que a página deu.
+  await expect.poll(() => page.evaluate(() => ['m-success', 'm-error'].map((id) => document.getElementById(id).textContent).join(' | erro: ')))
+    .toContain('Confirma o email');
   expect(await page.evaluate(() => (window.__insertCalls || []).length)).toBe(0);
 
   // volta já com sessão (depois de confirmar): o formulário abre sozinho, preenchido
