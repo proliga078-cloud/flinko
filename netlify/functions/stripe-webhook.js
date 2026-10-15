@@ -43,11 +43,14 @@ try{
 if(stripeEvent.type==='checkout.session.completed'){
 const session=stripeEvent.data.object
 const userId=session.client_reference_id
-let plan='pro'
-if(session.subscription){
-const sub=await stripe.subscriptions.retrieve(session.subscription)
-plan=planOf(sub)
+// So os checkouts de subscricao mudam o plano. O Construtor IA (2,99 EUR,
+// pagamento unico) chega tambem aqui e e tratado pela edge function
+// stripe-webhook-ai-builder; antes dava plano Pro para sempre.
+if(session.mode!=='subscription'||!session.subscription){
+return{statusCode:200,body:JSON.stringify({received:true,ignored:true})}
 }
+const sub=await stripe.subscriptions.retrieve(session.subscription)
+const plan=planOf(sub)
 if(userId){
 await updateProfiles({plan,stripe_customer_id:session.customer,stripe_subscription_id:session.subscription},'id',userId)
 }else{

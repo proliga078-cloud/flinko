@@ -52,7 +52,7 @@ test('checkout.session.completed com subscrição: lê o plano dos metadados da 
   resetScenario();
   scenario.constructEvent = () => ({
     type: 'checkout.session.completed',
-    data: { object: { client_reference_id: 'user-42', customer: 'cus_42', subscription: 'sub_42' } },
+    data: { object: { mode: 'subscription', client_reference_id: 'user-42', customer: 'cus_42', subscription: 'sub_42' } },
   });
   scenario.subscriptionsRetrieve = async (id) => {
     assert.equal(id, 'sub_42');
@@ -74,7 +74,7 @@ test('checkout.session.completed sem client_reference_id: não atualiza nenhum p
   resetScenario();
   scenario.constructEvent = () => ({
     type: 'checkout.session.completed',
-    data: { object: { client_reference_id: null, customer: 'cus_x', subscription: 'sub_x' } },
+    data: { object: { mode: 'subscription', client_reference_id: null, customer: 'cus_x', subscription: 'sub_x' } },
   });
   // A função ainda consulta a subscrição no Stripe mesmo sem
   // client_reference_id (só decide não escrever na BD mais tarde).
@@ -82,6 +82,18 @@ test('checkout.session.completed sem client_reference_id: não atualiza nenhum p
   const res = await handler(baseEvent());
   assert.equal(res.statusCode, 200);
   assert.equal(scenario.updateCalls.length, 0, 'sem userId não há forma segura de saber a quem atribuir o plano');
+});
+
+test('checkout.session.completed de pagamento único (Construtor IA): não mexe no plano', async () => {
+  resetScenario();
+  scenario.constructEvent = () => ({
+    type: 'checkout.session.completed',
+    data: { object: { mode: 'payment', client_reference_id: 'user-9', customer: 'cus_9', subscription: null, metadata: { product: 'ai_profile_builder' } } },
+  });
+  scenario.subscriptionsRetrieve = async () => { throw new Error('não devia consultar subscrições'); };
+  const res = await handler(baseEvent());
+  assert.equal(res.statusCode, 200);
+  assert.equal(scenario.updateCalls.length, 0, 'pagar o Construtor IA não pode dar plano Pro');
 });
 
 test('customer.subscription.updated: active -> mantém/atribui o plano pago', async () => {
@@ -193,7 +205,7 @@ test('erro a processar o evento -> 500', async () => {
   resetScenario();
   scenario.constructEvent = () => ({
     type: 'checkout.session.completed',
-    data: { object: { client_reference_id: 'user-1', subscription: 'sub_1' } },
+    data: { object: { mode: 'subscription', client_reference_id: 'user-1', subscription: 'sub_1' } },
   });
   scenario.subscriptionsRetrieve = async () => { throw new Error('falha a consultar a subscrição'); };
   const res = await handler(baseEvent());
@@ -224,7 +236,7 @@ test('checkout.session.completed de Starter grava plan="starter"', async () => {
   resetScenario();
   scenario.constructEvent = () => ({
     type: 'checkout.session.completed',
-    data: { object: { client_reference_id: 'user-7', customer: 'cus_7', subscription: 'sub_7' } },
+    data: { object: { mode: 'subscription', client_reference_id: 'user-7', customer: 'cus_7', subscription: 'sub_7' } },
   });
   scenario.subscriptionsRetrieve = async () => ({ metadata: {}, items: { data: [{ price: { id: 'price_starter_m' } }] } });
   await handler(baseEvent());
