@@ -24,7 +24,7 @@ test('cartão de profissional sem bio mostra texto de apoio e não fica vazio', 
   const bios = await page.locator('#proGrid .pro-card .bio').allTextContents();
   expect(bios).toHaveLength(3);
   expect(bios.every((t) => t.trim().length > 20)).toBe(true);
-  expect(bios.filter((t) => /Perfil verificado pela equipa/.test(t))).toHaveLength(2);
+  expect(bios.filter((t) => /Perfil revisto pela equipa/.test(t))).toHaveLength(2);
 });
 
 test('sem pedidos recentes o cartão "Pedidos recentes" do topo desaparece em vez de dizer que não há nada', async ({ page }) => {

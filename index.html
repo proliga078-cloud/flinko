@@ -25,821 +25,184 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 <link rel="shortcut icon" href="/favicon.ico" />
 <link rel="manifest" href="/manifest.json" />
-<meta name="theme-color" content="#132420" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-<link rel="preload" as="image" href="assets/hero-team.jpg" fetchpriority="high" />
+<meta name="theme-color" content="#FBF6EF" />
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Flinko","url":"https://flinko.pt/","logo":"https://flinko.pt/icon-512.png","image":"https://flinko.pt/assets/og-image.png","description":"Marketplace de profissionais verificados manualmente em Portugal. Eletricistas, canalizadores, pintores, jardineiros, designers e muito mais.","areaServed":{"@type":"Country","name":"Portugal"}}
 </script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebSite","name":"Flinko","url":"https://flinko.pt/","inLanguage":"pt-PT"}
 </script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
+/* Página inicial, direção "calorosa e local" (out/2026): papel creme,
+   terracota, títulos em serifa e conteúdo real (pedidos e perfis) em vez de
+   fotos de banco de imagens. Sem animações de entrada nem efeitos de luz. */
 :root{
-  --dark:#132420;
-  --dark-2:#19352C;
-  --dark-3:#1F4538;
-  --orange:#E8720A;
-  --orange-dark:#B85608;
-  --mint:#0F8B5F;
-  --mint-dark:#0A6B49;
-  --ink:#132420;
-  --muted:#4E5C57;
-  --line:#E1EEE6;
-  --bg-tint:#F3FBF6;
-  --paper:#ffffff;
-  --radius-lg:22px;
-  --radius-md:14px;
-  --radius-sm:10px;
-  --shadow:0 20px 45px -25px rgba(19,36,32,.45);
-  font-size:16px;
+  --papel:#FBF6EF;
+  --papel-2:#F4ECE1;
+  --linha:#E6D9CB;
+  --tinta:#2B2118;
+  --tinta-2:#6B5A4C;
+  --terracota:#B9502A;
+  --terracota-2:#9A3F1F;
+  --laranja:#E8720A;
+  --serifa:'Fraunces',Georgia,'Times New Roman',serif;
+  --texto:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-  font-family:'Inter',system-ui,-apple-system,sans-serif;
-  color:var(--ink);
-  background:var(--paper);
-  line-height:1.5;
-  -webkit-font-smoothing:antialiased;
-}
-h1,h2,h3,h4{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
-img{display:block;max-width:100%}
-a{color:inherit;text-decoration:none}
-button{font:inherit;cursor:pointer;background:none;border:none;color:inherit}
-ul{list-style:none}
-.wrap{max-width:1180px;margin-inline:auto;padding-inline:24px}
-.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.skip-link{position:absolute;left:16px;top:-60px;background:var(--dark);color:#fff;padding:10px 16px;border-radius:8px;z-index:200;transition:top .2s}
-.skip-link:focus{top:16px}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:auto}
+body{margin:0;background:var(--papel);color:var(--tinta);font-family:var(--texto);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img{max-width:100%;display:block}
+.skip-link{position:absolute;left:-9999px;top:8px;background:var(--tinta);color:#fff;padding:8px 14px;border-radius:6px;z-index:999}
+.skip-link:focus{left:12px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
 
-/* Buttons */
-.btn{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:14px 24px;border-radius:999px;
-  font-weight:700;font-size:.95rem;
-  transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
-  white-space:nowrap;
-}
-.btn:active{transform:translateY(1px)}
-.btn-orange{background:var(--orange);color:#fff;box-shadow:0 12px 24px -10px rgba(232,114,10,.65)}
-.btn-orange:hover{background:var(--orange-dark)}
-.btn-dark{background:var(--dark);color:#fff}
-.btn-dark:hover{background:var(--dark-3)}
-.btn-ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
-.btn-ghost:hover{border-color:var(--ink)}
-.btn-ghost-dark{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.35)}
-.btn-ghost-dark:hover{border-color:#fff}
-.btn-sm{padding:10px 18px;font-size:.85rem}
+/* O cabeçalho é o mesmo do resto do site; aqui só fica no tom da página. */
+.fk-header{background:rgba(251,246,239,.94);border-bottom-color:var(--linha)}
+.fk-header::after{display:none}
+.fk-footer{background:var(--tinta);margin-top:0}
 
-/* Eyebrow / kicker */
-.kicker{
-  display:inline-flex;align-items:center;gap:7px;font-size:.72rem;font-weight:800;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--orange-dark);margin-bottom:14px;
-  background:#FFE7CE;padding:6px 14px 6px 12px;border-radius:999px;
-}
-.kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
-.kicker.mint{color:var(--mint);background:rgba(15,139,95,.14)}
+h1,h2,h3{font-family:var(--serifa);font-weight:600;letter-spacing:-.01em;color:var(--tinta);margin:0}
+h2{font-size:clamp(1.7rem,3.2vw,2.3rem);line-height:1.15}
+.sec{padding:72px 0}
+.sec + .sec{border-top:1px solid var(--linha)}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+.sec-head p{margin:6px 0 0;color:var(--tinta-2);max-width:560px}
+.link-seta{color:var(--terracota);font-weight:600;text-decoration:none;white-space:nowrap}
+.link-seta:hover{text-decoration:underline;text-underline-offset:3px}
 
-/* Promo bar */
-.promo-bar{background:linear-gradient(100deg,var(--bg-tint),#D7F5E4)}
-.promo-bar-inner{display:flex;align-items:center;justify-content:center;gap:14px;padding:11px 24px;font-size:.85rem;font-weight:600;flex-wrap:wrap;text-align:center}
-.promo-bar-inner a{font-weight:800;color:#fff;background:var(--orange);text-decoration:none;padding:6px 14px;border-radius:999px;display:inline-flex;align-items:center;gap:4px;transition:background .2s ease,transform .2s ease}
-.promo-bar-inner a:hover{background:var(--orange-dark);transform:translateY(-1px)}
-.promo-bar-inner .promo-dot{width:7px;height:7px;border-radius:50%;background:var(--mint-dark);flex-shrink:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border-radius:999px;border:0;font:600 .98rem/1.2 var(--texto);text-decoration:none;cursor:pointer}
+.btn-terracota{background:var(--terracota);color:#fff}
+.btn-terracota:hover{background:var(--terracota-2)}
+.btn-linha{background:transparent;color:var(--tinta);border:1.5px solid var(--tinta)}
+.btn-linha:hover{background:var(--tinta);color:var(--papel)}
+.btn-claro{background:var(--papel);color:var(--tinta)}
+.btn-claro:hover{background:#fff}
 
-/* Header */
-header{
-  position:sticky;top:0;z-index:100;background:rgba(255,255,255,.9);
-  backdrop-filter:saturate(180%) blur(14px);
-  border-bottom:1px solid var(--line);
-}
-header::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:3px;background:linear-gradient(90deg,var(--orange),var(--mint))}
-.nav{display:flex;align-items:center;justify-content:space-between;height:76px;gap:24px}
-.logo{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.4rem;color:var(--ink)}
-.logo span{color:var(--orange)}
-.nav-links{display:flex;align-items:center;gap:22px;font-weight:600;font-size:.9rem;color:var(--ink)}
-.nav-links a{opacity:.8;transition:opacity .15s;white-space:nowrap}
-.nav-links a:hover{opacity:1}
-.nav-actions{display:flex;align-items:center;gap:12px}
-.nav-toggle{display:none;width:44px;height:44px;border-radius:10px;align-items:center;justify-content:center;border:1.5px solid var(--line)}
-.nav-toggle span,.nav-toggle span::before,.nav-toggle span::after{
-  content:"";display:block;width:20px;height:2px;background:var(--ink);position:relative;transition:.2s;
-}
-.nav-toggle span::before{position:absolute;top:-6px}
-.nav-toggle span::after{position:absolute;top:6px}
-.mobile-panel{display:none;flex-direction:column;gap:4px;padding:16px 24px 24px;border-top:1px solid var(--line);background:#fff}
-.mobile-panel a{padding:12px 4px;font-weight:600;border-bottom:1px solid var(--line)}
-.mobile-panel .btn{margin-top:12px;justify-content:center}
-body.menu-open .mobile-panel{display:flex}
-body.menu-open .nav-toggle span{background:transparent}
-body.menu-open .nav-toggle span::before{transform:rotate(45deg);top:0}
-body.menu-open .nav-toggle span::after{transform:rotate(-45deg);top:0}
+/* ---------- Topo ---------- */
+.topo{padding:56px 0 64px}
+.topo-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:56px;align-items:start}
+body.sem-pedidos .topo-grid{grid-template-columns:minmax(0,1fr);max-width:760px}
+.topo h1{font-size:clamp(2.3rem,5.4vw,3.9rem);line-height:1.04;font-weight:600;margin-bottom:20px}
+.topo h1 em{font-style:italic;font-weight:400;color:var(--terracota)}
+.topo .lead{font-size:1.12rem;color:var(--tinta-2);max-width:540px;margin:0 0 28px}
 
-/* Hero */
-.hero-shell{background:var(--paper);padding:26px 0 0}
-.hero-shell .wrap{max-width:1440px}
-.hero{
-  position:relative;overflow:hidden;color:#fff;
-  background:linear-gradient(180deg,var(--dark) 0%,var(--dark-2) 100%);
-  border-radius:28px;
-}
-.hero-pad{padding:56px 48px}
-@media (max-width:720px){ .hero-pad{padding:34px 22px} }
-.hero::before{
-  content:"";position:absolute;inset:0;
-  background:url('assets/hero-team.jpg') center 26%/cover no-repeat;
-  filter:saturate(.85);
-}
-@media (max-width:720px){
-  .hero::before{
-    background-position:center top;
-    background-size:100% auto;
-  }
-}
-.hero::after{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(100deg,rgba(19,36,32,.97) 26%,rgba(19,36,32,.62) 60%,rgba(19,36,32,.22) 100%);
-}
-.hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1.08fr .92fr;gap:56px;align-items:center}
-.badge-pill{
-  display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;
-  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);
-  font-size:.82rem;font-weight:700;margin-bottom:22px;
-}
-.badge-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--orange)}
-.hero h1{font-size:clamp(2.6rem,5.6vw,4.6rem);line-height:.98;color:#fff;max-width:14ch;font-weight:900}
-.hero h1 .accent{color:var(--mint)}
-.hero h1 .hw.hi{position:relative;padding:0 12px;margin:0 -6px}
-.hero h1 .hw.hi::before{content:"";position:absolute;inset:6px -2px;background:var(--orange);z-index:0;transform:skewX(-6deg)}
-.hero h1 .hw.hi span{position:relative;z-index:1;color:#fff}
-.hero-ribbon{
-  position:absolute;z-index:4;top:38px;right:-84px;width:300px;text-align:center;
-  background:var(--mint);color:var(--dark);font-weight:800;font-size:.78rem;letter-spacing:.02em;padding:8px 0;
-  transform:rotate(38deg);box-shadow:0 14px 30px -10px rgba(0,0,0,.4);
-}
-@media (max-width:960px){ .hero-ribbon{display:none} }
-.hero p.lead{margin-top:20px;font-size:1.08rem;color:rgba(255,255,255,.78);max-width:46ch;line-height:1.6}
-.search-card{
-  margin-top:32px;background:#fff;border-radius:18px;padding:10px;
-  display:flex;gap:8px;box-shadow:0 30px 60px -30px rgba(0,0,0,.55);
-}
-.search-field{flex:1;display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px}
-.search-field + .search-field{border-left:1px solid var(--line)}
-.search-field input{border:none;outline:none;font:inherit;width:100%;color:var(--ink);font-size:.95rem}
-.search-field svg{flex-shrink:0;color:var(--muted)}
-.search-card .btn{flex-shrink:0}
-.mode-toggle{display:inline-flex;padding:4px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);margin-top:24px}
-.mode-btn{padding:10px 20px;border-radius:999px;font-weight:700;font-size:.86rem;color:rgba(255,255,255,.65);transition:background .2s ease,color .2s ease}
-.mode-btn.active{background:#fff;color:var(--ink)}
-.trust-row{margin-top:20px;display:flex;flex-wrap:wrap;gap:10px}
-.trust-chip{
-  display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;
-  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);
-  font-size:.82rem;font-weight:600;color:rgba(255,255,255,.9);
-}
-.trust-chip:nth-child(1){background:rgba(232,114,10,.16);border-color:rgba(232,114,10,.4);color:#ffdcb0}
-.trust-chip:nth-child(2){background:rgba(15,139,95,.14);border-color:rgba(15,139,95,.4);color:#c9f5e0}
-.trust-chip:nth-child(3){background:rgba(109,89,232,.18);border-color:rgba(109,89,232,.48);color:#ddd7fc}
-.trust-chip-urgent{background:rgba(232,114,10,.22);border-color:rgba(232,114,10,.55);color:#ffd9b3}
-.hero-ctas{margin-top:26px;display:flex;flex-wrap:wrap;gap:12px}
+.modos{display:flex;gap:22px;margin-bottom:14px;font-size:.95rem}
+.modo{background:none;border:0;padding:0 0 4px;font:500 .95rem var(--texto);color:var(--tinta-2);cursor:pointer;border-bottom:2px solid transparent}
+.modo.active{color:var(--tinta);border-bottom-color:var(--terracota)}
 
-.hero-side{position:relative}
-.live-card{
-  background:#fff;color:var(--ink);border-radius:var(--radius-md);padding:18px;
-  box-shadow:0 34px 70px -26px rgba(0,0,0,.55);max-width:340px;margin-left:auto;
-  border-top:3px solid var(--mint);
-}
-.live-card .head{display:flex;align-items:center;justify-content:space-between;font-size:.75rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.live-dot{display:inline-flex;align-items:center;gap:6px;color:var(--mint-dark)}
-.live-dot::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px rgba(15,139,95,.25)}
-.live-feed{position:relative;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);min-height:70px}
-.live-req{display:flex;gap:12px;align-items:flex-start;opacity:0;transform:translateY(10px);transition:opacity .45s ease,transform .45s ease;pointer-events:none}
-.live-req.is-active{position:relative;opacity:1;transform:none;pointer-events:auto}
-.live-req:not(.is-active){position:absolute;top:0;left:0;right:0}
-.live-req .ic{width:38px;height:38px;border-radius:10px;background:#FFE7CE;color:var(--orange-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.live-req strong{font-size:.95rem}
-.live-req span{display:block;font-size:.8rem;color:var(--muted);margin-top:2px}
-.live-feed-dots{display:flex;gap:5px;margin-top:12px}
-.live-feed-dots span{width:5px;height:5px;border-radius:50%;background:var(--line);transition:.25s}
-.live-feed-dots span.active{background:var(--mint-dark);width:14px;border-radius:3px}
+.procura{display:flex;gap:0;background:#fff;border:1.5px solid var(--tinta);border-radius:14px;overflow:hidden;max-width:620px}
+.procura label{flex:1;display:flex;align-items:center;min-width:0}
+.procura label + label{border-left:1px solid var(--linha)}
+.procura input{width:100%;border:0;background:transparent;padding:16px 18px;font:400 1rem var(--texto);color:var(--tinta);outline:none;min-width:0}
+.procura input::placeholder{color:#9C8B7D}
+.procura button{border-radius:0;padding:0 26px}
+.procura:focus-within{box-shadow:0 0 0 4px rgba(185,80,42,.18)}
+.topo-depois{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:center;margin-top:18px;font-size:.95rem;color:var(--tinta-2)}
+.topo-depois a{color:var(--tinta);font-weight:600}
+.contagem{display:inline-flex;align-items:center;gap:8px}
+.contagem::before{content:"";width:8px;height:8px;border-radius:50%;background:#3E8E5E}
 
-.avatars-row{
-  margin-top:22px;display:flex;align-items:center;gap:12px;
-  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);
-  border-radius:999px;padding:8px 16px 8px 8px;max-width:340px;margin-left:auto;
-}
-.avatars-row .stack{display:flex}
-.avatars-row .stack span{
-  width:30px;height:30px;border-radius:50%;border:2px solid var(--dark);
-  display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;
-  margin-left:-9px;color:#fff;
-}
-.avatars-row .stack span:first-child{margin-left:0}
-.avatars-row p{font-size:.8rem;color:rgba(255,255,255,.85);font-weight:600}
+/* Pedidos reais desta semana, como um papel afixado */
+.papel{background:#fff;border:1px solid var(--linha);border-radius:4px;padding:22px 22px 10px;transform:rotate(.6deg);box-shadow:0 1px 0 var(--linha),0 18px 30px -24px rgba(43,33,24,.45)}
+.papel .head{font-family:var(--serifa);font-size:1.2rem;font-weight:600;margin-bottom:6px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.live-dot{font-family:var(--texto);font-size:.78rem;font-weight:600;color:#3E8E5E}
+.live-req{display:block;padding:12px 0;border-top:1px dashed var(--linha)}
+.live-req:first-child{border-top:0}
+.live-req strong{display:block;font-weight:600;line-height:1.35}
+.live-req span{font-size:.88rem;color:var(--tinta-2)}
+.papel .rodape{font-size:.88rem;padding:12px 0 8px;border-top:1px solid var(--linha);margin-top:4px}
+.papel .rodape a{color:var(--terracota);font-weight:600;text-decoration:none}
+.hp{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px dashed var(--linha);text-decoration:none;color:var(--tinta)}
+.hp:first-child{border-top:0}
+.hp .pro-avatar{width:44px;height:44px;font-size:1rem}
+.hp strong{display:block;font-weight:600;line-height:1.3}
+.hp span{font-size:.88rem;color:var(--tinta-2)}
 
-/* Value strip — floating card over hero */
-.value-strip{position:relative;z-index:5;margin-top:-40px}
-.value-card{
-  background:#fff;border-radius:var(--radius-lg);box-shadow:0 30px 70px -25px rgba(19,36,32,.35);
-  display:grid;grid-template-columns:repeat(4,1fr);padding:6px;
-}
-.value-item{display:flex;align-items:center;gap:12px;color:var(--ink);padding:18px 20px;border-radius:calc(var(--radius-lg) - 6px);position:relative;transition:background .2s ease}
-.value-item:hover{background:var(--bg-tint)}
-.value-item:not(:last-child)::after{content:"";position:absolute;right:0;top:14px;bottom:14px;width:1px;background:var(--line)}
-.value-item .ic{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.value-item .ic-orange{background:#FFE7CE;color:var(--orange-dark)}
-.value-item .ic-mint{background:#D7F5E4;color:var(--mint-dark)}
-.value-item .ic-purple{background:#efeafe;color:#6d59e8}
-.value-item .ic-dark{background:var(--bg-tint);color:var(--dark)}
-.value-item strong{display:block;font-size:.92rem}
-.value-item span{display:block;font-size:.78rem;color:var(--muted)}
+/* ---------- Categorias, como um índice ---------- */
+.indice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:48px}
+.cat-tile{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:15px 2px;border-bottom:1px solid var(--linha);text-decoration:none;color:var(--tinta)}
+.cat-tile h3{font-size:1.25rem;font-weight:400}
+.cat-tile .desc{font-size:.92rem;color:var(--tinta-2);white-space:nowrap}
+.cat-tile:hover h3{color:var(--terracota)}
 
-/* Section shells */
-section{padding:96px 0}
-.section-head{max-width:640px;margin-bottom:52px}
-.section-head.center{margin-inline:auto;text-align:center}
-.section-head h2{font-size:clamp(1.9rem,3.6vw,2.7rem);font-weight:800}
-.hi-block{position:relative;display:inline-block;padding:0 10px;color:#fff;z-index:1}
-.hi-block::before{content:"";position:absolute;inset:2px -2px;background:var(--orange);z-index:-1;transform:skewX(-6deg)}
-.hi-block.mint::before{background:var(--mint-dark)}
-.section-head p{margin-top:14px;color:var(--muted);font-size:1.05rem}
+/* ---------- Como funciona ---------- */
+.passos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:36px}
+.passo h3{font-size:1.2rem;margin-bottom:8px}
+.passo p{margin:0;color:var(--tinta-2)}
+.nota{margin:32px 0 0;padding:16px 20px;background:var(--papel-2);border-radius:10px;color:var(--tinta-2);font-size:.98rem}
+.nota strong{color:var(--tinta)}
 
-/* How it works — step cards */
-.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:12px}
-@media (max-width:960px){ .steps-grid{grid-template-columns:1fr} }
-.step-card{
-  position:relative;border:1.5px solid var(--line);border-radius:var(--radius-md);
-  padding:30px;background:#fff;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
-}
-.step-card:hover{transform:translateY(-3px);box-shadow:0 16px 30px -22px rgba(19,36,32,.3);border-color:var(--ink)}
-.step-card .step-num{position:absolute;top:26px;right:28px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.82rem;color:var(--line)}
-.step-card .ic{width:52px;height:52px;border-radius:14px;background:var(--bg-tint);color:var(--dark);display:flex;align-items:center;justify-content:center;margin-bottom:22px}
-.step-card:nth-child(1) .ic{background:var(--dark);color:#fff}
-.step-card:nth-child(2) .ic{background:var(--orange);color:#fff}
-.step-card:nth-child(3) .ic{background:var(--mint-dark);color:#fff}
-.step-card h3{font-size:1.15rem;margin-bottom:10px}
-.step-card p{color:var(--muted);font-size:.92rem;line-height:1.6}
-
-/* legacy (unused, kept to avoid touching JS guards) */
-.how-inner{display:grid;grid-template-columns:.8fr 1.6fr;gap:64px;align-items:start;margin-top:12px}
-.how-sticky{position:sticky;top:110px;display:flex;flex-direction:column;align-items:flex-start;gap:22px}
-.how-num{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:5.2rem;line-height:1;color:var(--line);transition:color .35s ease}
-.how-num.n-active-1{color:var(--dark)}
-.how-num.n-active-2{color:var(--orange)}
-.how-num.n-active-3{color:var(--mint-dark)}
-.how-line{width:3px;height:130px;background:var(--line);border-radius:3px;overflow:hidden;position:relative}
-.how-line-fill{position:absolute;top:0;left:0;width:100%;height:0%;background:linear-gradient(180deg,var(--dark),var(--orange),var(--mint-dark));transition:height .45s cubic-bezier(.16,.8,.24,1)}
-.how-dots{display:flex;flex-direction:column;gap:11px}
-.how-dot{width:8px;height:8px;border-radius:50%;background:var(--line);transition:.25s ease}
-.how-dot.active{background:var(--orange);transform:scale(1.35)}
-.how-track{display:flex;flex-direction:column;gap:15vh}
-.how-block{padding:8px 0;opacity:.32;transition:opacity .45s ease}
-.how-block.active{opacity:1}
-.how-block .ic{width:56px;height:56px;border-radius:14px;background:var(--bg-tint);color:var(--dark);display:flex;align-items:center;justify-content:center;margin-bottom:22px;transition:background .3s ease,color .3s ease}
-.how-block[data-step="1"].active .ic{background:var(--dark);color:#fff}
-.how-block[data-step="2"].active .ic{background:var(--orange);color:#fff}
-.how-block[data-step="3"].active .ic{background:var(--mint-dark);color:#fff}
-.how-block h3{font-size:1.55rem;margin-bottom:12px}
-.how-block p{color:var(--muted);font-size:1.03rem;max-width:44ch;line-height:1.65}
-.how-cta{
-  margin-top:48px;background:var(--bg-tint);border-radius:var(--radius-lg);
-  padding:32px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
-}
-
-/* Categories — horizontal drag carousel */
-.cat-carousel-wrap{position:relative}
-.cat-carousel{
-  display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;
-  padding:6px 4px 10px;margin:0 -4px;cursor:grab;user-select:none;
-  scrollbar-width:none;-ms-overflow-style:none;
-}
-.cat-carousel::-webkit-scrollbar{display:none}
-.cat-carousel.dragging{cursor:grabbing;scroll-snap-type:none}
-.cat-slide{
-  scroll-snap-align:start;flex:0 0 auto;width:270px;min-height:340px;
-  border-radius:var(--radius-lg);padding:26px;position:relative;overflow:hidden;
-  display:flex;flex-direction:column;color:#fff;
-  background:linear-gradient(160deg,var(--dark) 0%,var(--dark-2) 100%);
-  transition:transform .3s cubic-bezier(.2,.9,.3,1.3);
-}
-.cat-slide:hover{transform:translateY(-6px)}
-.cat-slide.v-orange{background:linear-gradient(160deg,var(--orange-dark) 0%,var(--orange) 100%)}
-.cat-slide.v-mint{background:linear-gradient(160deg,var(--mint-dark) 0%,#0f8a5a 100%)}
-.cat-slide.v-purple{background:linear-gradient(160deg,#4a3bb8 0%,#6d59e8 100%)}
-.cat-slide .ic{
-  width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,.14);
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.cat-slide .tag{
-  position:absolute;top:22px;right:22px;font-size:.68rem;font-weight:800;letter-spacing:.04em;
-  padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.16);text-transform:uppercase;
-}
-.cat-slide .body{margin-top:auto;padding-top:34px}
-.cat-slide h3{color:#fff;font-size:1.3rem}
-.cat-slide p{color:rgba(255,255,255,.72);font-size:.9rem;margin-top:8px;line-height:1.55}
-.cat-slide .go{
-  margin-top:16px;display:inline-flex;align-items:center;gap:6px;font-size:.85rem;font-weight:700;
-  color:#fff;opacity:.85;transition:opacity .2s ease,transform .2s ease;
-}
-.cat-slide:hover .go{opacity:1;transform:translateX(3px)}
-.carousel-controls{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:18px}
-.car-arrow{
-  width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);display:flex;
-  align-items:center;justify-content:center;transition:border-color .2s ease,background .2s ease;flex-shrink:0;
-}
-.car-arrow:hover{border-color:var(--ink);background:var(--bg-tint)}
-.car-dots{display:flex;gap:7px}
-.car-dot{width:7px;height:7px;border-radius:50%;background:var(--line);transition:.25s ease}
-.car-dot.active{background:var(--orange);width:22px;border-radius:4px}
-
-/* Categories — clean grid (Upwork-style) */
-.cat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
-.cat-tile{border:1.5px solid var(--line);border-radius:var(--radius-md);padding:22px 20px;display:flex;flex-direction:column;gap:14px;transition:border-color .2s ease,transform .2s ease,box-shadow .2s ease;background:#fff;position:relative}
-.cat-tile:hover{border-color:var(--ink);transform:translateY(-3px);box-shadow:0 16px 30px -22px rgba(19,36,32,.3)}
-.cat-tile .ic{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.cat-tile .ic.ic-orange{background:#FFE7CE;color:var(--orange-dark)}
-.cat-tile .ic.ic-mint{background:#D7F5E4;color:var(--mint-dark)}
-.cat-tile .ic.ic-purple{background:#efeafe;color:#6d59e8}
-.cat-tile .ic.ic-dark{background:var(--bg-tint);color:var(--dark)}
-.cat-tile h3{font-size:1rem}
-.cat-tile .desc{display:block;font-size:.82rem;color:var(--muted);margin-top:4px;line-height:1.5}
-.cat-tile .tag-pill{position:absolute;top:16px;right:16px;font-size:.62rem;font-weight:800;letter-spacing:.03em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--bg-tint);color:var(--dark)}
-@media (max-width:960px){.cat-grid{grid-template-columns:repeat(3,1fr)}}
-@media (max-width:640px){.cat-grid{grid-template-columns:repeat(2,1fr)}}
-
-/* Gradient CTA banner (Upwork-style) */
-@keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-
-/* Professionals — bordered card grid (Upwork-style) */
-.pros-section{background:var(--bg-tint)}
-
-/* Banner de profissionais patrocinados (ver compra de destaque no dashboard) */
-.sponsored-strip{margin-bottom:28px}
-.sponsored-strip-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px;justify-content:center}
-.sponsored-track{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
-.sponsored-card{flex:0 0 240px;height:170px;border-radius:16px;overflow:hidden;position:relative;text-decoration:none;background:var(--ink);box-shadow:0 4px 14px rgba(15,26,51,.14);display:block}
-.sponsored-card img,.sponsored-card video{width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0}
-.sponsored-card .sp-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,26,51,0) 42%,rgba(15,26,51,.82) 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:12px}
-.sponsored-card .sp-tag{position:absolute;top:9px;left:9px;background:rgba(255,255,255,.94);color:var(--ink);font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;padding:3px 9px;border-radius:99px}
-.sponsored-card .sp-name{color:#fff;font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sponsored-card .sp-meta{color:rgba(255,255,255,.82);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-@media(max-width:600px){.sponsored-card{flex:0 0 188px;height:145px}}
-
-.pro-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-@media (max-width:960px){ .pro-grid{grid-template-columns:1fr 1fr} }
-@media (max-width:640px){ .pro-grid{grid-template-columns:1fr} }
-.pro-card{
-  display:flex;flex-direction:column;gap:14px;
-  padding:26px;border:1.5px solid var(--line);border-radius:var(--radius-md);background:#fff;
-  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
-}
-.pro-card:hover{transform:translateY(-3px);box-shadow:0 16px 30px -22px rgba(19,36,32,.3);border-color:var(--ink)}
+/* ---------- Profissionais ---------- */
+.pro-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.pro-card{display:flex;flex-direction:column;gap:12px;background:#fff;border:1px solid var(--linha);border-radius:12px;padding:20px;text-decoration:none;color:var(--tinta)}
+a.pro-card:hover{border-color:var(--tinta-2)}
 .pro-top{display:flex;gap:14px;align-items:center}
-.pro-avatar{
-  width:52px;height:52px;border-radius:50%;background:linear-gradient(150deg,var(--dark-3),var(--dark));color:#fff;position:relative;
-  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;flex-shrink:0;
-  box-shadow:0 10px 20px -10px rgba(19,36,32,.5);
-}
-.pro-avatar .vid-badge{
-  position:absolute;bottom:-3px;right:-3px;width:20px;height:20px;border-radius:50%;
-  background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;
-  border:2px solid var(--paper);
-}
-.pro-stats{display:flex;flex-wrap:wrap;gap:14px;margin-top:2px}
-.pro-stats span{display:inline-flex;align-items:center;gap:5px;font-size:.78rem;color:var(--muted);font-weight:600}
-.pro-stats span b{color:var(--ink);font-weight:800}
-.pro-name{font-weight:700;font-size:1.05rem;font-family:'Plus Jakarta Sans',sans-serif}
-.pro-meta{font-size:.8rem;color:var(--muted);margin-top:2px}
-.pro-bio-wrap{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
-.verified{
-  display:inline-flex;align-items:center;gap:5px;font-size:.72rem;font-weight:800;
-  color:var(--mint-dark);background:#D7F5E4;padding:4px 9px;border-radius:999px;flex-shrink:0;
-}
-.pro-card p.bio{color:var(--muted);font-size:.9rem;line-height:1.55}
-.pro-card .btn{width:100%;justify-content:center;margin-top:auto}
-.pro-more{margin-top:28px;text-align:center}
+.pro-avatar{width:56px;height:56px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--papel-2);color:var(--terracota);font-family:var(--serifa);font-size:1.2rem;font-weight:600;object-fit:cover}
+.pro-name{font-family:var(--serifa);font-size:1.15rem;font-weight:600;line-height:1.25}
+.pro-name-row{display:flex;align-items:center;gap:6px}
+.verified{font-size:.8rem;color:#3E8E5E;font-weight:700}
+.pro-meta{font-size:.9rem;color:var(--tinta-2)}
+.pro-stats{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.88rem;color:var(--tinta-2)}
+.pc-star{color:var(--tinta);font-weight:600}
+.pc-star em{font-style:normal;font-weight:400;color:var(--tinta-2)}
+.pro-card .bio{margin:0;font-size:.95rem;color:var(--tinta-2);line-height:1.55;flex:1}
+.pro-foot{display:flex;justify-content:space-between;align-items:center;font-size:.92rem;padding-top:12px;border-top:1px solid var(--linha)}
+.pro-price b{font-weight:600}
+.pro-go{color:var(--terracota);font-weight:600}
 
-/* Trust dark band */
-.pillar{
-  background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.14);border-radius:var(--radius-md);
-  padding:26px;transition:border-color .2s ease,background .2s ease,transform .2s ease;
-}
+.sponsored-strip{margin-bottom:24px}
+.sponsored-strip-label{font-size:.85rem;color:var(--tinta-2);margin-bottom:10px}
+.sponsored-track{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px}
+.sponsored-card{position:relative;flex:0 0 220px;height:150px;border-radius:12px;overflow:hidden;background:var(--papel-2);text-decoration:none;color:#fff}
+.sponsored-card img,.sponsored-card video{width:100%;height:100%;object-fit:cover}
+.sp-tag{position:absolute;top:8px;left:8px;font-size:.72rem;background:rgba(43,33,24,.75);padding:2px 8px;border-radius:99px}
+.sp-overlay{position:absolute;left:0;right:0;bottom:0;padding:10px 12px;background:rgba(43,33,24,.72)}
+.sp-name{font-weight:600}
+.sp-meta{font-size:.8rem;opacity:.85}
 
-/* Verification passport */
-.verify-list{display:flex;flex-direction:column;gap:14px}
-.verify-item{
-  display:flex;align-items:flex-start;gap:16px;padding:18px 20px;border-radius:var(--radius-md);
-  background:#fff;border:1.5px solid var(--line);box-shadow:0 14px 30px -26px rgba(19,36,32,.3);
-  transition:border-color .2s ease,background .2s ease,transform .2s ease,box-shadow .2s ease;
-}
-.verify-item:hover{border-color:var(--mint-dark);background:var(--bg-tint);transform:translateX(4px);box-shadow:0 18px 34px -22px rgba(10,107,73,.35)}
-.verify-item .check{
-  width:34px;height:34px;border-radius:50%;background:#D7F5E4;color:var(--mint-dark);flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-}
-.verify-item strong{display:block;font-size:.98rem}
-.verify-item span{display:block;font-size:.86rem;color:var(--muted);margin-top:3px;line-height:1.5}
-.passport-card{
-  background:
-    radial-gradient(500px circle at 100% 0%,rgba(15,139,95,.16),transparent 60%),
-    radial-gradient(circle at 1px 1px, rgba(255,255,255,.06) 1.4px, transparent 0) 0 0/20px 20px,
-    var(--dark);
-  color:#fff;border-radius:var(--radius-lg);padding:30px;position:relative;overflow:hidden;
-  box-shadow:0 34px 70px -30px rgba(19,36,32,.55);
-  transition:transform .3s cubic-bezier(.2,.9,.3,1.2);
-}
-.passport-stamp{
-  display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;
-  border:1.5px solid var(--mint);color:var(--mint);font-size:.72rem;font-weight:800;letter-spacing:.03em;
-  transform:rotate(-4deg);
-}
+/* ---------- Profissionais (faixa) ---------- */
+.faixa{background:var(--tinta);color:var(--papel);padding:64px 0}
+.faixa-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:40px;align-items:center}
+.faixa h2{color:var(--papel)}
+.faixa p{color:#D9CBBB;margin:12px 0 0;max-width:560px}
+.faixa ul{list-style:none;margin:0;padding:0;font-size:.98rem}
+.faixa li{padding:10px 0;border-top:1px solid rgba(251,246,239,.15)}
+.faixa li:first-child{border-top:0}
+.faixa .btn{margin-top:22px}
 
-/* Coverage — flowing tag cloud, sized by activity */
-.zone-tile{
-  display:inline-flex;align-items:center;gap:9px;padding:12px 20px;border-radius:999px;
-  background:var(--bg-tint);font-weight:700;font-size:.95rem;color:var(--ink);
-  transition:transform .2s ease,background .2s ease;
-}
-
-/* Coverage network card (stylized — not a literal map) */
-.map-card{
-  position:relative;height:380px;border-radius:var(--radius-lg);overflow:hidden;
-  background:
-    radial-gradient(360px circle at 50% 56%,rgba(232,114,10,.12),transparent 68%),
-    radial-gradient(320px circle at 26% 16%,rgba(10,107,73,.14),transparent 70%),
-    radial-gradient(320px circle at 74% 92%,rgba(10,107,73,.14),transparent 70%),
-    radial-gradient(120% 120% at 50% 50%,var(--bg-tint) 55%,#e2f0e8 100%);
-  box-shadow:0 30px 60px -30px rgba(19,36,32,.3);
-  transition:transform .3s cubic-bezier(.2,.9,.3,1.2);
-}
-.map-head{
-  position:absolute;top:20px;left:20px;z-index:3;font-size:.72rem;font-weight:800;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--dark);background:rgba(255,255,255,.75);backdrop-filter:blur(6px);
-  padding:7px 13px;border-radius:999px;display:inline-flex;align-items:center;gap:7px;
-}
-@keyframes map-dash{to{stroke-dashoffset:-20}}
-@keyframes map-ping{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2.2);opacity:0}}
-
-/* Price guide */
-.price-row{
-  position:relative;display:grid;grid-template-columns:1.6fr 1fr 1.1fr;gap:20px;align-items:center;
-  padding:22px 24px;border-radius:var(--radius-md);background:#fff;
-  border:1.5px solid var(--line);
-  transition:transform .25s cubic-bezier(.2,.9,.3,1.3),box-shadow .25s ease,border-color .25s ease;
-}
-.price-row .popular-tag{
-  position:absolute;top:-10px;left:24px;background:var(--orange);color:#fff;font-size:.66rem;font-weight:800;
-  letter-spacing:.04em;text-transform:uppercase;padding:4px 10px;border-radius:999px;box-shadow:0 6px 14px -6px rgba(232,114,10,.6);
-}
-
-/* Para Profissionais teaser */
-@media (max-width:640px){ .pros-benefits{grid-template-columns:1fr} }
-
-
-
-/* Footer */
-footer{background:var(--dark);color:rgba(255,255,255,.75);border-top:3px solid var(--orange)}
-.footer-top{padding:64px 0 40px;display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:32px}
-.footer-logo{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.3rem;color:#fff}
-.footer-logo span{color:var(--orange)}
-.footer-top p{margin-top:14px;font-size:.92rem;max-width:34ch;line-height:1.6}
-.footer-col h4{font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:16px}
-.footer-col ul{display:flex;flex-direction:column;gap:11px;font-size:.92rem}
-.footer-col a:hover{color:#fff}
-.footer-bottom{
-  border-top:1px solid rgba(255,255,255,.12);padding:22px 0;
-  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:.82rem;
-}
-.footer-bottom .legal{display:flex;gap:18px;flex-wrap:wrap}
-
-/* Responsive */
-@media (max-width:960px){
-  .hero-inner{grid-template-columns:1fr}
-  .hero-side{margin-top:12px}
-  .live-card,.avatars-row{margin-left:0}
-  .value-card{grid-template-columns:repeat(2,1fr)}
-  .value-item:nth-child(2)::after{display:none}
-  .value-strip{margin-top:-40px}
-  .how-inner{grid-template-columns:1fr;gap:8px}
-  .how-sticky{position:static;flex-direction:row;align-items:center;gap:16px;margin-bottom:8px}
-  .how-line{display:none}
-  .how-num{font-size:2.4rem}
-  .how-track{gap:30px}
-  .how-block{opacity:1}
-  .cat-slide{width:240px;min-height:300px}
-  .pro-card{grid-template-columns:1fr;gap:12px}
-  .pro-card .btn{width:100%;justify-content:center}
-  .footer-top{grid-template-columns:1fr 1fr}
-}
-@media (max-width:720px){
-  /* No telemóvel a faixa de cima roubava quase um quinto do ecrã. */
-  .promo-bar{display:none}
-  .hero h1{font-size:clamp(2.1rem,9vw,2.6rem)}
-  .nav-links{display:none}
-  .nav-actions .btn-ghost{display:none}
-  .nav-toggle{display:flex}
-  .search-card{flex-direction:column}
-  .search-field + .search-field{border-left:none;border-top:1px solid var(--line)}
-  section{padding:64px 0}
-  .footer-top{grid-template-columns:1fr;padding-bottom:24px}
-}
-@media (max-width:520px){
-  /* A pesquisa tem de caber no primeiro ecrã do telemóvel. */
-  .hero .badge-pill{display:none}
-  .hero p.lead{font-size:.98rem;margin-top:12px}
-  .hero .mode-toggle{margin-top:16px}
-  .value-card{grid-template-columns:1fr}
-  .value-item:not(:last-child)::after{display:none;content:none}
-  .value-item:not(:last-child){border-bottom:1px solid var(--line)}
-  .value-strip{margin-top:-24px}
-  .cat-slide{width:82vw}
-}
-
-/* ============ motion / flow ============ */
-header{transition:box-shadow .25s ease}
-header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
-
-/* hero entrance */
-.hero::before{transform:scale(1.08);transition:transform 5s cubic-bezier(.16,.8,.24,1)}
-.hero.loaded::before{transform:scale(1)}
-/* O título e o texto do topo aparecem logo (sem esperar pela animação): são a primeira coisa que se lê e o que o Google mede como carregamento. */
-.badge-pill,.search-card,.hero-ctas{opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.16,.8,.24,1),transform .7s cubic-bezier(.16,.8,.24,1)}
-.hero.loaded .badge-pill{opacity:1;transform:none;transition-delay:.05s}
-.hero.loaded h1{opacity:1;transform:none;transition-delay:.14s}
-.hero.loaded p.lead{opacity:1;transform:none;transition-delay:.22s}
-.hero.loaded .search-card{opacity:1;transform:none;transition-delay:.3s}
-.hero.loaded .trust-row{opacity:1;transform:none;transition-delay:.38s}
-.hero.loaded .hero-ctas{opacity:1;transform:none;transition-delay:.38s}
-.hero-side{opacity:0;transform:translateY(18px) scale(.98);transition:opacity .8s cubic-bezier(.16,.8,.24,1) .3s,transform .8s cubic-bezier(.16,.8,.24,1) .3s}
-.hero.loaded .hero-side{opacity:1;transform:none}
-.live-dot::before{animation:pulse-dot 1.8s ease-in-out infinite}
-@keyframes pulse-dot{0%,100%{box-shadow:0 0 0 4px rgba(15,139,95,.25)}50%{box-shadow:0 0 0 7px rgba(15,139,95,.08)}}
-
-/* search focus lift */
-.search-card{transition:box-shadow .25s ease,transform .25s ease}
-.search-card:focus-within{box-shadow:0 34px 70px -28px rgba(0,0,0,.6);transform:translateY(-2px)}
-
-/* scroll reveal */
-[data-reveal]{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.16,.8,.24,1),transform .7s cubic-bezier(.16,.8,.24,1)}
-[data-reveal].is-in{opacity:1;transform:none}
-[data-reveal="d1"]{transition-delay:.08s}
-[data-reveal="d2"]{transition-delay:.16s}
-[data-reveal="d3"]{transition-delay:.24s}
-[data-reveal="d4"]{transition-delay:.32s}
-
-/* icon micro-interaction */
-.value-item .ic{transition:transform .3s ease}
-.value-item:hover .ic{transform:translateY(-3px)}
-.pro-card{transition:background .2s ease}
-.pro-card:hover{background:rgba(255,255,255,.55)}
-@keyframes chip-pulse{0%,100%{opacity:1}50%{opacity:.35}}
-
-/* ============ extra polish pass ============ */
-
-/* scroll progress bar */
-.scroll-progress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--orange),var(--mint));z-index:300;transition:width .1s linear}
-
-/* hero ambient orbs */
-.hero-orbs{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
-.hero .hero-orbs{opacity:.4}
-.orb{position:absolute;border-radius:50%;filter:blur(50px);opacity:.35;animation:drift 14s ease-in-out infinite}
-.orb.o1{width:280px;height:280px;background:var(--orange);top:-60px;left:8%;animation-duration:16s}
-.orb.o2{width:220px;height:220px;background:var(--mint);bottom:-40px;right:14%;animation-duration:13s;animation-delay:-4s}
-.orb.o3{width:160px;height:160px;background:#6d59e8;top:38%;left:46%;animation-duration:18s;animation-delay:-8s;opacity:.22}
-@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(24px,-18px) scale(1.08)}}
-
-/* headline word reveal */
-.hero h1{display:block}
-.hw{display:inline-block;overflow:hidden;vertical-align:top}
-.hw span{display:inline-block;transform:none;transition:transform .6s cubic-bezier(.16,.8,.24,1)}
-.hero.loaded .hw span{transform:translateY(0)}
-.hw:nth-of-type(1) span{transition-delay:.16s}
-.hw:nth-of-type(2) span{transition-delay:.2s}
-.hw:nth-of-type(3) span{transition-delay:.24s}
-.hw:nth-of-type(4) span{transition-delay:.28s}
-.hw:nth-of-type(5) span{transition-delay:.32s}
-.hw:nth-of-type(6) span{transition-delay:.36s}
-.hw:nth-of-type(7) span{transition-delay:.4s}
-.hw:nth-of-type(8) span{transition-delay:.44s}
-.hw:nth-of-type(9) span{transition-delay:.48s}
-
-/* nav underline */
-.nav-links a{position:relative}
-.nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:2px;background:var(--orange);transition:right .25s cubic-bezier(.2,.9,.3,1)}
-.nav-links a:hover::after{right:0}
-
-/* button arrow micro-interaction */
-.btn .arrow{display:inline-block;transition:transform .25s cubic-bezier(.2,.9,.3,1.3)}
-.btn:hover .arrow{transform:translateX(4px)}
-
-/* magnetic primary cta */
-.magnetic{will-change:transform}
-
-/* live-card / avatars idle float */
-.live-card{animation:float-a 5s ease-in-out infinite;animation-delay:1.1s}
-.avatars-row{animation:float-b 5.6s ease-in-out infinite;animation-delay:1.3s}
-@keyframes float-a{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-@keyframes float-b{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-
-/* pro-card tilt */
-
-/* category / zone ticker */
-@keyframes ticker-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-
-/* ============ round 2: more ============ */
-
-/* cursor spotlight for dark sections (real element — avoids clashing with existing ::before/::after) */
-.spotlight{position:relative}
-.glow-spot{
-  position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;transition:opacity .4s ease;
-  background:radial-gradient(360px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.07),transparent 60%);
-}
-.spotlight:hover .glow-spot{opacity:1}
-
-/* ambient orbs reused on trust-band + final-cta */
-
-/* idle bounce on category icons */
-.cat-slide .ic{animation:icon-bob 3.4s ease-in-out infinite}
-.cat-slide:nth-child(2) .ic{animation-delay:.15s}
-.cat-slide:nth-child(3) .ic{animation-delay:.3s}
-.cat-slide:nth-child(4) .ic{animation-delay:.45s}
-.cat-slide:nth-child(5) .ic{animation-delay:.6s}
-.cat-slide:nth-child(6) .ic{animation-delay:.75s}
-@keyframes icon-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-.cat-slide:hover .ic{animation-play-state:paused}
-
-/* counter finish pulse */
-@keyframes num-pulse{0%{text-shadow:0 0 0 rgba(255,255,255,0)}40%{text-shadow:0 0 26px currentColor}100%{text-shadow:0 0 0 rgba(255,255,255,0)}}
-
-/* button shine sweep */
-.btn-orange,.btn-dark{position:relative;overflow:hidden}
-.btn-orange::before,.btn-dark::before{
-  content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;
-  background:linear-gradient(115deg,transparent 0%,rgba(255,255,255,.35) 50%,transparent 100%);
-  transform:skewX(-18deg);transition:left .55s ease;
-}
-.btn-orange:hover::before,.btn-dark:hover::before{left:130%}
-
-/* button ripple */
-.btn{position:relative;overflow:hidden}
-.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.55);transform:scale(0);animation:ripple-anim .6s ease-out;pointer-events:none}
-.btn-ghost .ripple,.btn-ghost-dark .ripple{background:rgba(0,0,0,.12)}
-@keyframes ripple-anim{to{transform:scale(2.6);opacity:0}}
-
-/* back to top */
-.to-top{
-  position:fixed;right:22px;bottom:22px;width:48px;height:48px;border-radius:50%;
-  background:var(--dark);color:#fff;display:flex;align-items:center;justify-content:center;
-  box-shadow:var(--shadow);z-index:250;opacity:0;transform:translateY(14px) scale(.9);pointer-events:none;
-  transition:opacity .3s ease,transform .3s cubic-bezier(.2,.9,.3,1.3),background .2s ease;
-}
-.to-top.show{opacity:1;transform:none;pointer-events:auto}
-.to-top:hover{background:var(--orange)}
-
-/* footer link slide */
-.footer-col a{position:relative;display:inline-block;transition:color .15s ease,transform .2s ease}
-.footer-col a:hover{transform:translateX(3px)}
-
-/* logo hover */
-.logo{display:inline-flex;transition:transform .3s cubic-bezier(.2,.9,.3,1.3)}
-.logo:hover{transform:rotate(-2deg) scale(1.04)}
-
-/* ============ round 5: more interactive + polish ============ */
-
-/* sliding pill behind the active hero mode-toggle button */
-.mode-toggle{position:relative}
-.mode-pill{
-  position:absolute;top:4px;left:4px;height:calc(100% - 8px);border-radius:999px;
-  background:#fff;box-shadow:0 6px 16px -8px rgba(0,0,0,.35);
-  transition:left .38s cubic-bezier(.4,0,.2,1),width .38s cubic-bezier(.4,0,.2,1);
-  z-index:0;
-}
-.mode-btn{position:relative;z-index:1}
-.mode-btn.active{background:transparent}
-
-/* contained stacking context so card glow + accent bar stay under content and inside rounded corners */
-.cat-tile,.pro-card,.step-card,.pillar{position:relative;z-index:0;overflow:hidden}
-.cat-tile .glow-spot,.pro-card .glow-spot,.step-card .glow-spot,.pillar .glow-spot{z-index:-1;border-radius:inherit;opacity:0;transition:opacity .4s ease}
-.cat-tile:hover .glow-spot,.pro-card:hover .glow-spot,.step-card:hover .glow-spot,.pillar:hover .glow-spot{opacity:1}
-.cat-tile .glow-spot,.pro-card .glow-spot,.step-card .glow-spot{
-  background:radial-gradient(280px circle at var(--mx,50%) var(--my,50%),rgba(15,139,95,.14),transparent 65%);
-}
-
-/* animated top accent line that sweeps in on hover */
-.cat-tile::after,.pro-card::after,.step-card::after{
-  content:"";position:absolute;top:0;left:0;height:3px;width:0;
-  background:linear-gradient(90deg,var(--orange),var(--mint));
-  transition:width .35s ease;
-}
-.cat-tile:hover::after,.pro-card:hover::after,.step-card:hover::after{width:100%}
-
-/* icon / avatar micro-interaction on card hover */
-.cat-tile .ic,.step-card .ic{transition:transform .3s cubic-bezier(.2,.9,.3,1.3),background .2s ease}
-.cat-tile:hover .ic,.step-card:hover .ic{transform:scale(1.08) rotate(-4deg)}
-.pro-avatar{transition:transform .3s cubic-bezier(.2,.9,.3,1.3)}
-.pro-card:hover .pro-avatar{transform:scale(1.06) rotate(-3deg)}
-
-/* ============ round 6: more color ============ */
-
-/* professional avatars cycle through the brand palette instead of all-dark */
-.pro-card:nth-child(2) .pro-avatar{background:linear-gradient(150deg,var(--orange-dark),var(--orange))}
-.pro-card:nth-child(3) .pro-avatar{background:linear-gradient(150deg,var(--mint-dark),var(--mint))}
-
-/* trust pillars: colored top accent per card, matching the stats above */
-
-
-
-@media (prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  .mode-pill{transition:none}
-  .cat-tile::after,.pro-card::after,.step-card::after{transition:none}
-  .cat-tile .ic,.step-card .ic,.pro-avatar{transition:none}
-  [data-reveal]{transition:none;opacity:1;transform:none}
-  .badge-pill,.hero h1,.hero p.lead,.search-card,.trust-row,.hero-ctas,.hero-side{transition:none;opacity:1;transform:none}
-  .hero::before{transition:none;transform:none}
-  .live-dot::before,.zone-tile .n{animation:none}
-  .orb{animation:none;opacity:.2}
-  .hw span{transition:none;transform:none}
-  .live-card,.avatars-row{animation:none}
-  .scroll-progress{display:none}
-  .cat-slide .ic{animation:none}
-  .btn-orange::before,.btn-dark::before{display:none}
-  .to-top{transition:none}
-  .glow-spot{display:none}
-  .live-req{transition:none}
-  .how-block{opacity:1;transition:none}
-  .how-num,.how-line-fill,.how-dot{transition:none}
-  .cat-slide{transition:none}
-}
-/* ============ APP NO TELEMÓVEL ============ */
-.app-section{background:var(--bg-tint)}
-.app-inner{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center}
-.app-inner h2{font-size:clamp(1.8rem,3.4vw,2.6rem);line-height:1.1;margin-bottom:14px}
-.app-lead{color:var(--muted);font-size:1.05rem;line-height:1.6;max-width:520px;margin-bottom:24px}
-.app-benefits{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px}
-.app-benefit{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:14px}
-.app-benefit .ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;background:#FFE7CE}
-.app-benefit strong{display:block;font-size:.95rem;margin-bottom:2px}
-.app-benefit span{font-size:.85rem;color:var(--muted);line-height:1.45}
-.app-cta{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.app-cta .btn{font-size:1rem}
-.app-hint{font-size:.85rem;color:var(--muted)}
-.app-done{display:none;font-weight:700;color:var(--mint-dark)}
+/* ---------- App ---------- */
+.app-section{padding:56px 0}
+.app-inner{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;background:var(--papel-2);border-radius:16px;padding:32px 36px}
+.app-inner h2{font-size:1.6rem}
+.app-inner p{margin:6px 0 0;color:var(--tinta-2);max-width:560px}
+.app-cta{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.app-hint{font-size:.85rem;color:var(--tinta-2)}
+.app-done{display:none;font-weight:600;color:#3E8E5E}
+.app-section.is-installed .app-done{display:block}
 .app-section.is-installed .app-cta .btn,.app-section.is-installed .app-hint{display:none}
-.app-section.is-installed .app-done{display:inline-flex}
-.phone{position:relative;width:290px;height:560px;margin:0 auto;border-radius:40px;background:#0b1512;padding:12px;box-shadow:var(--shadow),0 0 0 2px #1F4538 inset}
-.phone-screen{position:relative;height:100%;border-radius:30px;overflow:hidden;background:linear-gradient(170deg,#1F4538,#132420 60%);padding:40px 16px 16px;color:#fff}
-.phone-screen::before{content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);width:90px;height:22px;border-radius:12px;background:#0b1512}
-.phone-time{text-align:center;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:2.6rem;letter-spacing:-.02em;margin:8px 0 2px}
-.phone-date{text-align:center;font-size:.78rem;opacity:.75;margin-bottom:22px}
-.phone-notif{background:rgba(255,255,255,.94);color:var(--ink);border-radius:16px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;box-shadow:0 8px 20px rgba(0,0,0,.25);margin-bottom:10px}
-.phone-notif img{width:30px;height:30px;border-radius:8px;flex-shrink:0}
-.phone-notif>div{flex:1;min-width:0}
-.phone-notif b{display:block;font-size:.78rem}
-.phone-notif span{display:block;font-size:.76rem;color:var(--muted);line-height:1.35}
-.phone-notif small{margin-left:auto;font-size:.66rem;color:var(--muted);white-space:nowrap}
-.phone-dock{position:absolute;left:16px;right:16px;bottom:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:rgba(255,255,255,.14);border-radius:22px;padding:10px}
-.phone-dock i{display:block;aspect-ratio:1;border-radius:12px;background:rgba(255,255,255,.22)}
-.phone-dock img{width:100%;border-radius:12px;box-shadow:0 0 0 2px var(--orange)}
-.app-mock-note{text-align:center;font-size:.75rem;color:var(--muted);margin-top:10px}
-@media (max-width:960px){.app-inner{grid-template-columns:1fr;gap:36px}}
-@media (max-width:520px){.app-benefits{grid-template-columns:1fr}.phone{width:250px;height:430px}.phone-time{font-size:2.2rem}.phone-date{margin-bottom:16px}.phone-notif+.phone-notif{display:none}.app-cta .btn{width:100%;justify-content:center}}
-/* ============ PROFISSIONAIS (cartões) ============ */
-.pros-section .pro-grid{grid-template-columns:repeat(3,1fr);gap:18px}
-.pros-section a.pro-card{display:flex;flex-direction:column;gap:12px;padding:20px;border-radius:var(--radius-lg);background:#fff;border:1px solid var(--line);color:inherit;text-decoration:none}
-.pros-section .pro-top{min-width:0}
-.pros-section .pro-avatar{width:56px;height:56px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;background:var(--dark)}
-.pros-section .pro-photo{object-fit:cover;border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}
-.pros-section .pro-id{min-width:0}
-.pros-section .pro-name-row{display:flex;align-items:center;gap:6px;min-width:0}
-.pros-section .pro-name{font-size:1.02rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pros-section .pro-name-row .verified{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;padding:0;border-radius:50%;background:var(--mint);color:#fff;font-size:.7rem;flex-shrink:0}
-.pros-section .pro-stats{gap:6px}
-.pc-chip{display:inline-flex;align-items:center;gap:4px;font-size:.76rem;font-weight:700;color:var(--ink);background:var(--bg-tint);border:1px solid var(--line);border-radius:999px;padding:4px 10px}
-.pc-chip em{font-style:normal;color:var(--muted);font-weight:600}
-.pc-star{color:#9A5B00;background:#FFF4E0;border-color:#FBE3BB}
-.pros-section a.pro-card p.bio{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:.88rem}
-.pro-foot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:12px;border-top:1px solid var(--line);font-size:.85rem}
-.pro-price{color:var(--muted)}
-.pro-price b{color:var(--ink)}
-.pro-go{font-weight:700;color:var(--orange-dark);display:inline-flex;gap:4px}
-.pro-go .arrow{transition:transform .2s ease}
-.pros-section a.pro-card:hover .pro-go .arrow{transform:translateX(3px)}
-@media (max-width:960px){.pros-section .pro-grid{grid-template-columns:1fr 1fr}}
-/* No telemóvel os cartões passam de lado (com o dedo), em vez de ocuparem 6 ecrãs. */
-@media (max-width:640px){
-  .pros-section .pro-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;margin:0 -24px;padding:4px 24px 12px;scrollbar-width:none}
-  .pros-section .pro-grid::-webkit-scrollbar{display:none}
-  .pros-section a.pro-card{flex:0 0 82%;scroll-snap-align:start}
-  .pros-section .pro-grid > p,.pros-section .pro-grid > div.pro-card{flex:0 0 100%}
-}
 
-/* Homepage mais curta no telemóvel. */
-@media (max-width:720px){.app-section .phone,.app-mock-note{display:none}.app-inner{gap:0}}
-@media (max-width:520px){.value-card{grid-template-columns:1fr 1fr!important}.value-item{padding:12px!important}.value-item span{display:none}.value-item:not(:last-child){border-bottom:none!important}}
+@media (max-width:900px){
+  .topo-grid{grid-template-columns:minmax(0,1fr);gap:36px}
+  .papel{transform:none}
+  .pro-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .passos{grid-template-columns:minmax(0,1fr);gap:22px}
+  .faixa-grid{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:640px){
+  body{font-size:16px}
+  .topo{padding:36px 0 44px}
+  .sec{padding:52px 0}
+  .procura{flex-direction:column;border-radius:12px}
+  .procura label + label{border-left:0;border-top:1px solid var(--linha)}
+  .procura button{padding:15px;border-radius:0}
+  .indice{grid-template-columns:minmax(0,1fr)}
+  .pro-grid{grid-template-columns:minmax(0,1fr)}
+  .app-inner{padding:24px 20px}
+}
 </style>
 <script src="/assets/cookie-consent.js" defer></script>
 <script src="/assets/public-chat-widget.js" defer></script>
@@ -851,15 +214,6 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
 </head>
 <body>
 <a class="skip-link" href="#main">Saltar para o conteúdo</a>
-<div class="scroll-progress" id="scrollProgress"></div>
-
-<div class="promo-bar">
-  <div class="wrap promo-bar-inner">
-    <span class="promo-dot"></span>
-    <span>Novo em Portugal — cria a tua conta grátis e sem comissões.</span>
-    <a href="/auth?tab=register">Começar <span class="arrow">→</span></a>
-  </div>
-</div>
 
 <!-- fk:header -->
 <div class="fk-header" id="fkHeader" role="banner">
@@ -901,215 +255,130 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
 
 <main id="main">
 
-  <!-- HERO -->
-  <div class="hero-shell">
-  <div class="wrap">
-  <section class="hero spotlight" id="heroSection">
-    <div class="hero-orbs" aria-hidden="true"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span></div><div class="glow-spot" aria-hidden="true"></div>
-    <div class="hero-pad hero-inner">
+  <section class="topo">
+    <div class="wrap topo-grid">
       <div>
-        <span class="badge-pill"><span class="dot"></span> Portugal · Perfis verificados manualmente</span>
-        <h1><span class="hw"><span>Encontra</span></span> <span class="hw"><span>um</span></span> <span class="hw"><span>profissional</span></span> <span class="hw"><span>de</span></span> <span class="hw hi"><span>confiança</span></span> <span class="hw"><span>em</span></span> <span class="hw"><span>todo</span></span> <span class="hw"><span>o</span></span> <span class="hw"><span>país</span></span></h1>
-        <p class="lead" id="heroLead">Eletricistas, canalizadores, pintores e muito mais. Pede orçamento, compara perfis verificados e decide — sem compromisso e sem comissões.</p>
+        <h1>O eletricista que o teu vizinho <em>recomendaria</em>.</h1>
+        <p class="lead" id="heroLead">Canalizadores, pintores, eletricistas e muito mais, de norte a sul. Cada perfil é revisto por nós, os preços estão à vista e falas diretamente com quem vai fazer o trabalho. À Flinko não pagas nada.</p>
 
-        <div class="mode-toggle" role="tablist" id="modeToggle">
-          <span class="mode-pill" id="modePill"></span>
-          <button type="button" class="mode-btn active" data-mode="hire" role="tab" aria-selected="true">Quero contratar</button>
-          <button type="button" class="mode-btn" data-mode="work" role="tab" aria-selected="false">Sou profissional</button>
+        <div class="modos" role="tablist" id="modeToggle">
+          <button type="button" class="modo active" data-mode="hire" role="tab" aria-selected="true">Quero contratar</button>
+          <button type="button" class="modo" data-mode="work" role="tab" aria-selected="false">Sou profissional</button>
         </div>
 
-        <form class="search-card" action="/categoria" method="get" id="heroSearchForm">
-          <label class="search-field">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-            <input type="text" name="q" placeholder="O que precisas? Ex: eletricista" id="heroSearchQ" />
-          </label>
-          <label class="search-field" id="heroLocalField">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-            <input type="text" name="local" placeholder="Onde? Ex: Porto" />
-          </label>
-          <button type="submit" class="btn btn-orange" id="heroSearchBtn">Procurar</button>
+        <form class="procura" action="/categoria" method="get" id="heroSearchForm">
+          <label><input type="text" name="q" placeholder="O que precisas?" aria-label="O que precisas" id="heroSearchQ" /></label>
+          <label id="heroLocalField"><input type="text" name="local" placeholder="Onde?" aria-label="Onde" /></label>
+          <button type="submit" class="btn btn-terracota" id="heroSearchBtn">Procurar</button>
         </form>
 
-        <div class="hero-ctas">
-          <a href="/pedidos?publicar=1" class="btn btn-ghost-dark">Ou publica um pedido grátis <span class="arrow">→</span></a>
+        <div class="topo-depois">
+          <span class="contagem" id="avatarsRowText">A contar profissionais…</span>
+          <a href="/pedidos?publicar=1">Prefiro descrever o trabalho e receber propostas</a>
         </div>
       </div>
 
-      <div class="hero-side">
-        <div class="live-card">
-          <div class="head">Pedidos recentes <span class="live-dot" id="liveDot" style="display:none">Ao vivo</span></div>
-          <div class="live-feed" id="liveFeed">
-            <div class="live-req is-active" data-i="0">
-              <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg></span>
-              <div><strong>A carregar…</strong><span>&nbsp;</span></div>
-            </div>
-          </div>
-          <div class="live-feed-dots" id="liveFeedDots" aria-hidden="true"></div>
-        </div>
-        <div class="avatars-row">
-          <span class="stack" aria-hidden="true">
-            <span style="background:var(--orange)">PC</span>
-            <span style="background:var(--mint-dark)">DC</span>
-            <span style="background:#6d59e8">AF</span>
-          </span>
-          <p id="avatarsRowText">A carregar profissionais…</p>
-        </div>
-      </div>
+      <aside class="papel live-card" id="liveCard" hidden aria-label="Pedidos recentes de clientes">
+        <div class="head">Pedidos recentes <span class="live-dot" id="liveDot" style="display:none">a acontecer agora</span></div>
+        <div id="liveFeed"></div>
+        <div class="rodape"><a href="/pedidos">Ver todos os pedidos</a></div>
+      </aside>
+
+      <aside class="papel" id="heroPros" hidden aria-label="Alguns profissionais na Flinko">
+        <div class="head">Quem já está na Flinko</div>
+        <div id="heroProsList"></div>
+        <div class="rodape"><a href="/categoria">Ver todos os profissionais</a></div>
+      </aside>
     </div>
   </section>
-  </div>
-  </div>
 
-  <!-- VALUE STRIP (floating over hero) -->
-  <div class="value-strip">
+  <section class="sec">
     <div class="wrap">
-      <div class="value-card" data-reveal>
-        <div class="value-item">
-          <span class="ic ic-orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></span>
-          <div><strong>Sem custos escondidos</strong><span>Preços claros, sem surpresas</span></div>
+      <div class="sec-head">
+        <div>
+          <h2>Do que precisas?</h2>
+          <p>Os números são de profissionais com perfil ativo hoje.</p>
         </div>
-        <div class="value-item">
-          <span class="ic ic-mint"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/></svg></span>
-          <div><strong>Perfis verificados</strong><span>Revistos à mão, um a um</span></div>
-        </div>
-        <div class="value-item">
-          <span class="ic ic-purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg></span>
-          <div><strong>Contacto direto</strong><span>Falas logo com o profissional</span></div>
-        </div>
-        <div class="value-item">
-          <span class="ic ic-dark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
-          <div><strong>Sem comissões</strong><span>O que combinares fica entre vocês</span></div>
-        </div>
+        <a class="link-seta" href="/categoria">Todas as categorias →</a>
       </div>
-    </div>
-  </div>
-
-  <!-- CATEGORIES -->
-  <section style="padding-top:0">
-    <div class="wrap">
-      <div class="section-head center" data-reveal>
-        <span class="kicker">Categorias</span>
-        <h2>Explora por <span class="hi-block">categoria</span></h2>
-        <p>Encontra o especialista certo para cada trabalho</p>
-      </div>
-      <div class="cat-grid" data-reveal>
-        <a href="/eletricistas" class="cat-tile" data-cat="Eletricistas"><span class="glow-spot"></span>
-          <span class="tag-pill">Mais procurada</span>
-          <span class="ic ic-orange"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg></span>
-          <div><h3>Eletricistas</h3><span class="desc">Instalações e reparações</span></div>
-        </a>
-        <a href="/canalizadores" class="cat-tile" data-cat="Canalizadores"><span class="glow-spot"></span>
-          <span class="ic ic-mint"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/></svg></span>
-          <div><h3>Canalizadores</h3><span class="desc">Água e saneamento</span></div>
-        </a>
-        <a href="/limpeza" class="cat-tile" data-cat="Limpeza"><span class="glow-spot"></span>
-          <span class="ic ic-dark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 21 9-9m0 0 8-8m-8 8-5-5m5 5 5 5"/></svg></span>
-          <div><h3>Limpeza</h3><span class="desc">Casa e escritórios</span></div>
-        </a>
-        <a href="/pintores" class="cat-tile" data-cat="Pintores"><span class="glow-spot"></span>
-          <span class="ic ic-orange"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19a3 3 0 0 0 3-3V4H9v12a3 3 0 0 0 3 3Z"/></svg></span>
-          <div><h3>Pintores</h3><span class="desc">Interior e exterior</span></div>
-        </a>
-        <a href="/programadores" class="cat-tile" data-cat="Programadores"><span class="glow-spot"></span>
-          <span class="ic ic-purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m8 6-6 6 6 6m8-12 6 6-6 6"/></svg></span>
-          <div><h3>Programadores</h3><span class="desc">Sites, apps e sistemas</span></div>
-        </a>
-        <a href="/designers" class="cat-tile" data-cat="Designers"><span class="glow-spot"></span>
-          <span class="ic ic-mint"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg></span>
-          <div><h3>Designers</h3><span class="desc">Design gráfico e visual</span></div>
-        </a>
-        <a href="/jardineiros" class="cat-tile" data-cat="Jardineiros"><span class="glow-spot"></span>
-          <span class="ic ic-dark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></span>
-          <div><h3>Jardineiros</h3><span class="desc">Jardins e exteriores</span></div>
-        </a>
-        <a href="/carpinteiros" class="cat-tile" data-cat="Carpinteiros"><span class="glow-spot"></span>
-          <span class="ic ic-orange"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
-          <div><h3>Carpinteiros</h3><span class="desc">Móveis e madeira</span></div>
-        </a>
-        <a href="/categoria" class="cat-tile" style="align-items:flex-start;justify-content:center;text-align:left"><span class="glow-spot"></span>
-          <div><h3>Ver todas</h3><span class="desc">Todas as categorias →</span></div>
-        </a>
+      <div class="indice">
+        <a href="/eletricistas" class="cat-tile" data-cat="Eletricistas"><h3>Eletricistas</h3><span class="desc">Instalações e reparações</span></a>
+        <a href="/canalizadores" class="cat-tile" data-cat="Canalizadores"><h3>Canalizadores</h3><span class="desc">Água e esgotos</span></a>
+        <a href="/pintores" class="cat-tile" data-cat="Pintores"><h3>Pintores</h3><span class="desc">Interiores e fachadas</span></a>
+        <a href="/limpeza" class="cat-tile" data-cat="Limpeza"><h3>Limpeza</h3><span class="desc">Casas e escritórios</span></a>
+        <a href="/jardineiros" class="cat-tile" data-cat="Jardineiros"><h3>Jardineiros</h3><span class="desc">Jardins e quintais</span></a>
+        <a href="/carpinteiros" class="cat-tile" data-cat="Carpinteiros"><h3>Carpinteiros</h3><span class="desc">Móveis e madeiras</span></a>
+        <a href="/programadores" class="cat-tile" data-cat="Programadores"><h3>Programadores</h3><span class="desc">Sites e aplicações</span></a>
+        <a href="/designers" class="cat-tile" data-cat="Designers"><h3>Designers</h3><span class="desc">Logótipos e imagem</span></a>
       </div>
     </div>
   </section>
 
-  <!-- HOW IT WORKS -->
-  <section>
+  <section class="sec">
     <div class="wrap">
-      <div class="section-head center" data-reveal>
-        <span class="kicker">Passo a passo</span>
-        <h2>Como funciona</h2>
-        <p>Um exemplo: a Ana precisa de um eletricista em Cascais. Do primeiro clique à obra marcada.</p>
-      </div>
-      <div class="steps-grid">
-        <div class="step-card" data-reveal="d1"><span class="glow-spot"></span>
-          <span class="step-num">01</span>
-          <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>
-          <h3>Ana escreve o que precisa</h3>
-          <p>"Eletricista" + "Cascais" na pesquisa. Vê logo os profissionais verificados da zona, com preços "a partir de" e avaliações — sem ter de pedir orçamento a cada um.</p>
+      <div class="sec-head"><h2>Como funciona</h2></div>
+      <div class="passos">
+        <div class="passo">
+          <h3>Procuras na tua zona</h3>
+          <p>Escreves o que precisas e onde. Vês logo quem trabalha aí, com fotos de trabalhos, avaliações e preços "a partir de".</p>
         </div>
-        <div class="step-card" data-reveal="d2"><span class="glow-spot"></span>
-          <span class="step-num">02</span>
-          <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg></span>
-          <h3>Compara e fala diretamente</h3>
-          <p>Abre os perfis, vê serviços, fotos de trabalhos e avaliações, e envia mensagem direta a perguntar disponibilidade esta semana.</p>
+        <div class="passo">
+          <h3>Falas diretamente</h3>
+          <p>Mandas mensagem a quem te parecer bem e perguntas o que quiseres: datas, materiais, se vem ver antes. Sem intermediários.</p>
         </div>
-        <div class="step-card" data-reveal="d3"><span class="glow-spot"></span>
-          <span class="step-num">03</span>
-          <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></span>
-          <h3>Combina a visita e marca a obra</h3>
-          <p>O profissional responde, combinam a visita diretamente no chat e marcam data. A Ana não pagou nada à Flinko — nem para procurar, nem para fechar o trabalho.</p>
+        <div class="passo">
+          <h3>Combinas e pronto</h3>
+          <p>O preço e a data combinam-se entre vocês. Pagas ao profissional, como sempre fizeste. A Flinko não fica com nada.</p>
         </div>
       </div>
+      <p class="nota"><strong>Não sabes bem o que pedir?</strong> Publica o pedido com uma foto do problema e os profissionais da zona respondem com propostas. <a class="link-seta" href="/pedidos?publicar=1">Publicar um pedido</a></p>
     </div>
   </section>
 
-  <!-- PROFESSIONALS -->
-  <section class="pros-section">
+  <section class="sec pros-section">
     <div class="wrap">
-      <div class="section-head center" data-reveal>
-        <span class="kicker">Profissionais verificados</span>
-        <h2>Quem já está na <span class="hi-block mint">Flinko</span></h2>
-        <p>Cada perfil é revisto à mão pela nossa equipa antes de receber o selo de verificado. Vê as avaliações, os preços e fala diretamente.</p>
+      <div class="sec-head">
+        <div>
+          <h2>Alguns profissionais na Flinko</h2>
+          <p>Perfis revistos à mão antes de receberem o visto verde.</p>
+        </div>
+        <a class="link-seta" href="/categoria">Ver todos →</a>
       </div>
       <div id="sponsoredContainer"></div>
       <div class="pro-grid" id="proGrid" aria-live="polite">
-        <p style="grid-column:1/-1;text-align:center;color:var(--muted)">A carregar profissionais…</p>
+        <p style="grid-column:1/-1;color:var(--tinta-2)">A carregar profissionais…</p>
       </div>
-      <div class="pro-more" data-reveal><a href="/categoria" class="btn btn-ghost">Ver todos os profissionais <span class="arrow">→</span></a></div>
     </div>
   </section>
 
-  <!-- APP NO TELEMÓVEL -->
+  <section class="faixa">
+    <div class="wrap faixa-grid">
+      <div>
+        <h2>És profissional? Trabalho não falta por aí.</h2>
+        <p>Cria o teu perfil em poucos minutos e recebe pedidos de clientes da tua zona. O que fechas é todo teu: não cobramos comissões.</p>
+        <a href="/auth?tab=register&amp;intent=professional" class="btn btn-claro">Criar perfil grátis</a>
+      </div>
+      <ul>
+        <li>Pedidos da tua zona no telemóvel</li>
+        <li>Página própria com fotos dos teus trabalhos</li>
+        <li>Avaliações de clientes verdadeiros</li>
+        <li>Orçamentos e agenda no mesmo sítio</li>
+      </ul>
+    </div>
+  </section>
+
   <section class="app-section" id="app">
-    <div class="wrap app-inner">
-      <div data-reveal>
-        <span class="kicker">App Flinko</span>
-        <h2>A Flinko no teu telemóvel, como uma <span class="hi-block">app</span></h2>
-        <p class="app-lead">Instala em 10 segundos, sem ir à loja de apps. Fica no ecrã principal, abre num toque e avisa-te quando alguém te responde.</p>
-        <div class="app-benefits">
-          <div class="app-benefit"><span class="ic">🔔</span><div><strong>Avisos na hora</strong><span>Mensagens e propostas chegam como notificação.</span></div></div>
-          <div class="app-benefit"><span class="ic">⚡</span><div><strong>Abre num toque</strong><span>Em ecrã inteiro, sem procurar o site no browser.</span></div></div>
-          <div class="app-benefit"><span class="ic">🧰</span><div><strong>Para profissionais</strong><span>Pedidos da tua zona, agenda e orçamentos sempre à mão.</span></div></div>
-          <div class="app-benefit"><span class="ic">🪶</span><div><strong>Grátis e leve</strong><span>Não ocupa espaço como uma app normal.</span></div></div>
+    <div class="wrap">
+      <div class="app-inner">
+        <div>
+          <h2>A Flinko no teu telemóvel</h2>
+          <p>Instala em segundos, sem ir à loja de apps. Abre num toque e avisa-te quando te respondem.</p>
         </div>
         <div class="app-cta">
-          <button type="button" class="btn btn-orange" data-fk-install onclick="window.flinkoInstallApp&&window.flinkoInstallApp()">📲 Instalar a app</button>
-          <span class="app-hint">No iPhone: Partilhar → “Adicionar ao ecrã principal”.</span>
-          <span class="app-done">✓ Já tens a app Flinko instalada</span>
+          <button type="button" class="btn btn-linha" data-fk-install onclick="window.flinkoInstallApp&&window.flinkoInstallApp()">Instalar a app</button>
+          <span class="app-hint">No iPhone: Partilhar e depois "Adicionar ao ecrã principal".</span>
+          <span class="app-done">Já tens a app Flinko instalada</span>
         </div>
-      </div>
-      <div data-reveal="d1">
-        <div class="phone" aria-hidden="true">
-          <div class="phone-screen">
-            <div class="phone-time">9:41</div>
-            <div class="phone-date">quarta-feira, 30 de setembro</div>
-            <div class="phone-notif"><img src="/icon-192.png" alt=""><div><b>Flinko</b><span>Nova proposta para o teu pedido “Trocar quadro elétrico”.</span></div><small>agora</small></div>
-            <div class="phone-notif"><img src="/icon-192.png" alt=""><div><b>Flinko · Mensagem</b><span>Posso passar amanhã às 10h para ver o trabalho.</span></div><small>2 min</small></div>
-            <div class="phone-dock"><i></i><i></i><img src="/icon-192.png" alt=""><i></i></div>
-          </div>
-        </div>
-        <p class="app-mock-note">Exemplo de notificações da app.</p>
       </div>
     </div>
   </section>
@@ -1134,275 +403,39 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
 </div>
 <!-- /fk:footer -->
 
-<button class="to-top" id="toTop" aria-label="Voltar ao topo">
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m18 15-6-6-6 6"/></svg>
-</button>
-
 <script>
+// Pesquisa do topo: "Quero contratar" procura profissionais; "Sou profissional"
+// leva ao registo. Conta a pesquisa no funil (só com consentimento de análise).
 (function(){
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  requestAnimationFrame(function(){
-    setTimeout(function(){
-      var hero = document.getElementById('heroSection');
-      if(hero) hero.classList.add('loaded');
-    }, 60);
-  });
-
-  var header = document.getElementById('siteHeader');
-  var progress = document.getElementById('scrollProgress');
-  if(header || progress){
-    var onScroll = function(){
-      if(header) header.classList.toggle('condensed', window.scrollY > 30);
-      if(progress){
-        var h = document.documentElement;
-        var max = h.scrollHeight - h.clientHeight;
-        var pct = max > 0 ? (window.scrollY / max) * 100 : 0;
-        progress.style.width = pct + '%';
-      }
-    };
-    document.addEventListener('scroll', function(){ requestAnimationFrame(onScroll); }, {passive:true});
-    onScroll();
-  }
-
-  if(!reduced){
-    var magnets = document.querySelectorAll('.magnetic');
-    magnets.forEach(function(btn){
-      btn.addEventListener('mousemove', function(e){
-        var r = btn.getBoundingClientRect();
-        var x = (e.clientX - r.left - r.width/2) * .25;
-        var y = (e.clientY - r.top - r.height/2) * .35;
-        btn.style.transform = 'translate(' + x + 'px,' + y + 'px)';
-      });
-      btn.addEventListener('mouseleave', function(){ btn.style.transform = ''; });
-    });
-
-    var spotlights = document.querySelectorAll('.spotlight, .cat-tile, .pro-card, .step-card, .pillar');
-    spotlights.forEach(function(el){
-      el.addEventListener('mousemove', function(e){
-        var r = el.getBoundingClientRect();
-        el.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
-        el.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
-      });
-    });
-
-    document.querySelectorAll('.btn').forEach(function(btn){
-      btn.addEventListener('click', function(e){
-        var r = btn.getBoundingClientRect();
-        var span = document.createElement('span');
-        var size = Math.max(r.width, r.height);
-        span.className = 'ripple';
-        span.style.width = span.style.height = size + 'px';
-        span.style.left = (e.clientX - r.left - size/2) + 'px';
-        span.style.top = (e.clientY - r.top - size/2) + 'px';
-        btn.appendChild(span);
-        setTimeout(function(){ span.remove(); }, 650);
-      });
-    });
-  }
-
-  var revealEls = document.querySelectorAll('[data-reveal], .line-draw');
-  if(revealEls.length){
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        if(e.isIntersecting){ e.target.classList.add('is-in'); io.unobserve(e.target); }
-      });
-    }, {threshold:.15, rootMargin:'0px 0px -8% 0px'});
-    revealEls.forEach(function(el){ io.observe(el); });
-  }
-
-  function animateCount(el){
-    var target = parseFloat(el.getAttribute('data-count'));
-    var suffix = el.getAttribute('data-suffix') || '';
-    if(reduced){ el.textContent = target + suffix; return; }
-    var start = null, dur = 1100;
-    function step(ts){
-      if(!start) start = ts;
-      var p = Math.min((ts - start) / dur, 1);
-      var eased = 1 - Math.pow(1 - p, 3);
-      el.textContent = Math.round(target * eased) + suffix;
-      if(p < 1){ requestAnimationFrame(step); }
-      else{ el.classList.add('counted'); }
-    }
-    requestAnimationFrame(step);
-  }
-  var counters = document.querySelectorAll('[data-count]');
-  if(counters.length){
-    var countIO = new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        if(e.isIntersecting){ animateCount(e.target); countIO.unobserve(e.target); }
-      });
-    }, {threshold:.6});
-    counters.forEach(function(el){ countIO.observe(el); });
-  }
-
-  var toTop = document.getElementById('toTop');
-  if(toTop){
-    document.addEventListener('scroll', function(){
-      toTop.classList.toggle('show', window.scrollY > 700);
-    }, {passive:true});
-    toTop.addEventListener('click', function(){
-      window.scrollTo({top:0, behavior: reduced ? 'auto' : 'smooth'});
-    });
-  }
-
-  // rotating live-feed in hero — populated with real data from Supabase
-  // further down (loadLiveFeed()), which calls window.startLiveFeedRotation
-  // once the real items exist in the DOM. Nothing to wire up here at
-  // load time since the content doesn't exist yet.
-  window.startLiveFeedRotation = function(){
-    var liveFeed = document.getElementById('liveFeed');
-    if(!liveFeed) return;
-    var liveItems = liveFeed.querySelectorAll('.live-req');
-    var liveDots = document.querySelectorAll('#liveFeedDots span');
-    var liveI = 0, liveTimer = null;
-    function showLive(i){
-      liveItems.forEach(function(el){ el.classList.remove('is-active'); });
-      liveDots.forEach(function(el){ el.classList.remove('active'); });
-      liveItems[i].classList.add('is-active');
-      if(liveDots[i]) liveDots[i].classList.add('active');
-    }
-    function startLive(){
-      if(reduced || liveItems.length < 2) return;
-      liveTimer = setInterval(function(){
-        liveI = (liveI + 1) % liveItems.length;
-        showLive(liveI);
-      }, 3200);
-    }
-    startLive();
-    var liveCard = liveFeed.closest('.live-card');
-    if(liveCard){
-      liveCard.addEventListener('mouseenter', function(){ clearInterval(liveTimer); });
-      liveCard.addEventListener('mouseleave', function(){ startLive(); });
-    }
-  };
-
-  // categories drag carousel
-  var carousel = document.getElementById('catCarousel');
-  if(carousel){
-    var slides = carousel.querySelectorAll('.cat-slide');
-    var dotsWrap = document.getElementById('carDots');
-    var prevBtn = document.getElementById('carPrev');
-    var nextBtn = document.getElementById('carNext');
-    slides.forEach(function(_, i){
-      var d = document.createElement('span');
-      d.className = 'car-dot' + (i === 0 ? ' active' : '');
-      dotsWrap.appendChild(d);
-    });
-    var carDots = dotsWrap.querySelectorAll('.car-dot');
-    function slideStep(){
-      return slides[0].getBoundingClientRect().width + 20;
-    }
-    function updateDots(){
-      var step = slideStep();
-      var idx = Math.round(carousel.scrollLeft / step);
-      idx = Math.max(0, Math.min(idx, slides.length - 1));
-      carDots.forEach(function(d, i){ d.classList.toggle('active', i === idx); });
-    }
-    var scrollTicking = false;
-    carousel.addEventListener('scroll', function(){
-      if(!scrollTicking){
-        requestAnimationFrame(function(){ updateDots(); scrollTicking = false; });
-        scrollTicking = true;
-      }
-    }, {passive:true});
-    if(prevBtn) prevBtn.addEventListener('click', function(){
-      carousel.scrollBy({left:-slideStep(), behavior: reduced ? 'auto' : 'smooth'});
-    });
-    if(nextBtn) nextBtn.addEventListener('click', function(){
-      carousel.scrollBy({left:slideStep(), behavior: reduced ? 'auto' : 'smooth'});
-    });
-    // drag to scroll (mouse/trackpad)
-    var isDown = false, startX = 0, startScroll = 0, dragged = false;
-    carousel.addEventListener('mousedown', function(e){
-      isDown = true; dragged = false;
-      carousel.classList.add('dragging');
-      startX = e.pageX; startScroll = carousel.scrollLeft;
-    });
-    window.addEventListener('mouseup', function(){
-      isDown = false;
-      carousel.classList.remove('dragging');
-    });
-    window.addEventListener('mousemove', function(e){
-      if(!isDown) return;
-      e.preventDefault();
-      var dx = e.pageX - startX;
-      if(Math.abs(dx) > 4) dragged = true;
-      carousel.scrollLeft = startScroll - dx;
-    });
-    carousel.addEventListener('click', function(e){
-      if(dragged){ e.preventDefault(); e.stopPropagation(); }
-    }, true);
-    updateDots();
-  }
-
-  // "como funciona" pinned scroll story
-  var howBlocks = document.querySelectorAll('.how-block');
-  if(howBlocks.length){
-    var howNum = document.getElementById('howNum');
-    var howLineFill = document.getElementById('howLineFill');
-    var howDots = document.querySelectorAll('.how-dot');
-    var howLabels = {1:'01',2:'02',3:'03'};
-    var setActiveStep = function(step){
-      howBlocks.forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-step') === String(step)); });
-      howDots.forEach(function(d){ d.classList.toggle('active', d.getAttribute('data-step') === String(step)); });
-      if(howNum){
-        howNum.textContent = howLabels[step];
-        howNum.className = 'how-num n-active-' + step;
-      }
-      if(howLineFill) howLineFill.style.height = (step / 3 * 100) + '%';
-    };
-    var howIO = new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        if(e.isIntersecting) setActiveStep(e.target.getAttribute('data-step'));
-      });
-    }, {threshold:.5, rootMargin:'-20% 0px -20% 0px'});
-    howBlocks.forEach(function(b){ howIO.observe(b); });
-  }
-
-  // hero dual-mode toggle (hire vs work)
   var modeToggle = document.getElementById('modeToggle');
-  if(modeToggle){
-    var modeBtns = modeToggle.querySelectorAll('.mode-btn');
-    var heroForm = document.getElementById('heroSearchForm');
-    // Funil: conta a pesquisa (só é enviada com consentimento de análise).
-    if(heroForm) heroForm.addEventListener('submit', function(){ var f = new FormData(heroForm); if(window.flinkoTrack)window.flinkoTrack('pesquisa', { q: f.get('q'), local: f.get('local'), origem: 'home' }); });
-    var heroQ = document.getElementById('heroSearchQ');
-    var heroLocalField = document.getElementById('heroLocalField');
-    var heroBtn = document.getElementById('heroSearchBtn');
-    var heroLead = document.getElementById('heroLead');
-    var modePill = document.getElementById('modePill');
-    function positionModePill(){
-      if(!modePill) return;
-      var activeBtn = modeToggle.querySelector('.mode-btn.active') || modeBtns[0];
-      modePill.style.width = activeBtn.offsetWidth + 'px';
-      modePill.style.left = activeBtn.offsetLeft + 'px';
-    }
-    positionModePill();
-    window.addEventListener('resize', positionModePill);
-    modeBtns.forEach(function(btn){
-      btn.addEventListener('click', function(){
-        modeBtns.forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
-        btn.classList.add('active'); btn.setAttribute('aria-selected','true');
-        positionModePill();
-        var mode = btn.getAttribute('data-mode');
-        if(mode === 'work'){
-          heroForm.setAttribute('action','/auth');
-          heroQ.setAttribute('placeholder','A tua profissão? Ex: eletricista');
-          heroLocalField.style.display = 'none';
-          heroBtn.textContent = 'Criar perfil grátis';
-          heroLead.textContent = 'Cria o teu perfil, recebe pedidos de clientes na tua zona e responde diretamente — sem comissões sobre o que fechas.';
-        } else {
-          heroForm.setAttribute('action','/categoria');
-          heroQ.setAttribute('placeholder','O que precisas? Ex: eletricista');
-          heroLocalField.style.display = '';
-          heroBtn.textContent = 'Procurar';
-          heroLead.textContent = 'Eletricistas, canalizadores, pintores e muito mais. Pede orçamento, compara perfis verificados e decide — sem compromisso e sem comissões.';
-        }
-      });
+  var heroForm = document.getElementById('heroSearchForm');
+  if(!modeToggle || !heroForm) return;
+  heroForm.addEventListener('submit', function(){ var f = new FormData(heroForm); if(window.flinkoTrack)window.flinkoTrack('pesquisa', { q: f.get('q'), local: f.get('local'), origem: 'home' }); });
+  var heroQ = document.getElementById('heroSearchQ');
+  var heroLocalField = document.getElementById('heroLocalField');
+  var heroBtn = document.getElementById('heroSearchBtn');
+  var heroLead = document.getElementById('heroLead');
+  var leadCliente = heroLead.textContent;
+  var modeBtns = modeToggle.querySelectorAll('.modo');
+  modeBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      modeBtns.forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+      btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+      if(btn.getAttribute('data-mode') === 'work'){
+        heroForm.setAttribute('action','/auth');
+        heroQ.setAttribute('placeholder','Qual é a tua profissão?');
+        heroLocalField.style.display = 'none';
+        heroBtn.textContent = 'Criar perfil grátis';
+        heroLead.textContent = 'Cria o teu perfil, recebe pedidos de clientes da tua zona e responde diretamente. Não cobramos comissões sobre o que fechas.';
+      } else {
+        heroForm.setAttribute('action','/categoria');
+        heroQ.setAttribute('placeholder','O que precisas?');
+        heroLocalField.style.display = '';
+        heroBtn.textContent = 'Procurar';
+        heroLead.textContent = leadCliente;
+      }
     });
-  }
-
+  });
 })();
 </script>
 
@@ -1414,12 +447,6 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   var db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   var grid = document.getElementById('proGrid');
   if(!grid) return;
-
-  var AVATAR_STYLES = [
-    null,
-    'background:linear-gradient(150deg,var(--orange),var(--orange-dark))',
-    'background:linear-gradient(150deg,var(--mint),var(--mint-dark))'
-  ];
 
   function esc(s){
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
@@ -1434,82 +461,61 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   function profileHref(p){
     return p.slug ? ('/' + encodeURIComponent(p.slug)) : ('/profile.html?id=' + encodeURIComponent(p.id));
   }
-
   function timeAgo(dateStr){
-    var diffMs = Date.now() - new Date(dateStr).getTime();
-    var min = Math.floor(diffMs / 60000);
-    if(min < 1) return 'publicado agora';
-    if(min < 60) return 'publicado há ' + min + ' min';
+    var min = Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000);
+    if(min < 1) return 'agora mesmo';
+    if(min < 60) return 'há ' + min + ' min';
     var h = Math.floor(min / 60);
-    if(h < 24) return 'publicado há ' + h + (h === 1 ? ' hora' : ' horas');
+    if(h < 24) return 'há ' + h + (h === 1 ? ' hora' : ' horas');
     var d = Math.floor(h / 24);
-    if(d < 30) return 'publicado há ' + d + (d === 1 ? ' dia' : ' dias');
-    var mo = Math.floor(d / 30);
-    if(mo < 12) return 'publicado há ' + mo + (mo === 1 ? ' mês' : ' meses');
-    var y = Math.floor(mo / 12);
-    return 'publicado há ' + y + (y === 1 ? ' ano' : ' anos');
+    return 'há ' + d + (d === 1 ? ' dia' : ' dias');
   }
 
-  var REQUEST_ICONS = {
-    'Programadores': '<path d="m8 6-6 6 6 6m8-12 6 6-6 6"/>',
-    'Eletricistas': '<path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/>',
-    'Pintores': '<path d="M12 19a3 3 0 0 0 3-3V4H9v12a3 3 0 0 0 3 3Z"/>',
-    'Canalizadores': '<path d="M12 2s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/>',
-    'Limpeza': '<path d="m3 21 9-9m0 0 8-8m-8 8-5-5m5 5 5 5"/>',
-    'Designers': '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/>',
-    'Jardineiros': '<path d="M12 2v20M2 12h20"/>',
-    'Carpinteiros': '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>'
-  };
-  var REQUEST_ICON_DEFAULT = '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/>';
+  // Lado direito do topo: os pedidos recentes (só quem tem sessão os vê) ou,
+  // sem eles, três profissionais reais da montra. Sem nada, o topo fica numa coluna.
+  var topoSemPedidos = false, topoPros = null;
+  function temFoto(p){ return /^https:\/\//i.test(String(p.photo_url || '')); }
+  function atualizarTopo(){
+    if(!topoSemPedidos || topoPros === null) return;
+    var box = document.getElementById('heroPros');
+    if(topoPros.length && box){
+      document.getElementById('heroProsList').innerHTML = topoPros.slice(0, 3).map(function(p){
+        var foto = temFoto(p) ? p.photo_url : '';
+        var av = foto ? '<img class="pro-avatar" src="' + esc(foto) + '" alt="" loading="lazy" width="44" height="44">' : '<div class="pro-avatar">' + esc(initials(p.name)) + '</div>';
+        var zona = cidade(p.location);
+        return '<a class="hp" href="' + profileHref(p) + '">' + av + '<div><strong>' + esc(p.name) + '</strong><span>' + esc(p.category) + (zona ? ', ' + esc(zona) : '') + '</span></div></a>';
+      }).join('');
+      box.hidden = false;
+    } else document.body.classList.add('sem-pedidos');
+  }
 
-  // Pedidos recentes reais (tabela requests) no cartao "Ao vivo" do hero.
-  // Antes disto os 3 itens eram inteiramente escritos a mao no HTML (um
-  // deles era um pedido real copiado, os outros dois inventados) - agora
-  // mostra sempre o que existe de verdade, com estado honesto para quando
-  // ha poucos ou nenhum pedido publicado ainda.
+  // Pedidos reais dos últimos 60 dias. Sem nenhum, o papel sai e o topo fica
+  // só com a pesquisa (um "ainda não há pedidos" no topo tira confiança).
   function loadLiveFeed(){
     var feed = document.getElementById('liveFeed');
-    var dotsWrap = document.getElementById('liveFeedDots');
     var dot = document.getElementById('liveDot');
     if(!feed) return;
-    db.from('requests').select('title,category,location,created_at').eq('status','open').gte('created_at', new Date(Date.now() - 14*24*60*60*1000).toISOString()).order('created_at', {ascending:false}).limit(3)
+    var card = feed.closest('.live-card');
+    function esconder(){ if(card) card.hidden = true; topoSemPedidos = true; atualizarTopo(); }
+    db.from('requests').select('title,category,location,created_at').eq('status','open').gte('created_at', new Date(Date.now() - 60*24*60*60*1000).toISOString()).order('created_at', {ascending:false}).limit(4)
       .then(function(res){
         var items = (res && res.data) || [];
-        // Sem pedidos recentes o cartão sai de cena: um "ainda não há pedidos"
-        // no topo da homepage é a primeira coisa que o cliente vê e tira
-        // confiança. Fica só a contagem de profissionais por baixo.
-        if(!items.length){
-          var card = feed.closest('.live-card');
-          if(card) card.hidden = true;
-          return;
-        }
-        feed.innerHTML = items.map(function(it, i){
-          var icon = REQUEST_ICONS[it.category] || REQUEST_ICON_DEFAULT;
-          return '<div class="live-req' + (i === 0 ? ' is-active' : '') + '" data-i="' + i + '">' +
-            '<span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + icon + '</svg></span>' +
-            '<div><strong>' + esc(it.title) + '</strong><span>' + esc(it.location || 'Portugal') + ' · ' + timeAgo(it.created_at) + '</span></div>' +
-          '</div>';
+        if(!items.length) return esconder();
+        feed.innerHTML = items.map(function(it){
+          return '<div class="live-req"><strong>' + esc(it.title) + '</strong><span>' + esc(it.location || 'Portugal') + ' · ' + timeAgo(it.created_at) + '</span></div>';
         }).join('');
-        dotsWrap.innerHTML = items.map(function(_, i){ return '<span' + (i === 0 ? ' class="active"' : '') + '></span>'; }).join('');
-        // "Ao vivo" só faz sentido a mostrar quando o pedido mais recente
-        // e mesmo recente - caso contrario seria uma etiqueta enganadora
-        // (a mesma logica ja usada para nao inventar tempos de resposta).
+        if(card) card.hidden = false;
+        // "a acontecer agora" só quando o mais recente é mesmo de hoje.
         var freshMs = Date.now() - new Date(items[0].created_at).getTime();
-        if(dot) dot.style.display = freshMs < 1000*60*60*24*30 ? '' : 'none';
-        if(window.startLiveFeedRotation) window.startLiveFeedRotation();
+        if(dot) dot.style.display = freshMs < 1000*60*60*24 ? '' : 'none';
       })
-      .catch(function(){
-        var card = feed.closest('.live-card');
-        if(card) card.hidden = true;
-      });
+      .catch(esconder);
   }
   loadLiveFeed();
 
-  // Contagem real de profissionais verificados (substitui o "23+" fixo).
+  // Contagem real de profissionais verificados com categoria.
   function loadRealCounts(){
     var avatarsText = document.getElementById('avatarsRowText');
-    // Só conta quem já escolheu categoria: sem ela o perfil não aparece em
-    // nenhuma pesquisa, e o número deixava de bater com os das categorias.
     db.from('profiles').select('location,category').eq('account_type', 'professional').eq('verified', true).eq('is_demo', false).eq('suspended', false).eq('approved', true).neq('category', '')
       .then(function(res){
         var rows = ((res && res.data) || []).filter(function(p){ return p.category == null || String(p.category).trim(); });
@@ -1521,74 +527,62 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   }
   loadRealCounts();
 
-  // Contagem real de profissionais por categoria nos tiles da homepage -
-  // só mostra o numero quando e maior que zero, para nao pintar as
-  // categorias ainda vazias como "0 profissionais" (desencorajador e nao
-  // acrescenta nada que a descricao generica ja nao diga).
+  // Número de profissionais por categoria no índice; categorias vazias dizem "Em breve".
   function loadCategoryCounts(){
     db.from('profiles').select('category').eq('account_type', 'professional').eq('is_demo', false).eq('suspended', false).eq('approved', true)
       .then(function(res){
-        var rows = (res && res.data) || [];
         var counts = {};
-        rows.forEach(function(p){
+        ((res && res.data) || []).forEach(function(p){
           var c = (p.category || '').trim();
           if(c) counts[c] = (counts[c] || 0) + 1;
         });
         document.querySelectorAll('.cat-tile[data-cat]').forEach(function(tile){
           var n = counts[tile.getAttribute('data-cat')] || 0;
-          if(n > 0){
-            var descEl = tile.querySelector('.desc');
-            if(descEl) descEl.textContent = n + (n === 1 ? ' profissional' : ' profissionais');
-          } else {
-            var descVazio = tile.querySelector('.desc');
-            if(descVazio) descVazio.textContent = 'Em breve';
-          }
+          var descEl = tile.querySelector('.desc');
+          if(descEl) descEl.textContent = n > 0 ? (n + (n === 1 ? ' profissional' : ' profissionais')) : 'Em breve';
         });
       })
       .catch(function(){});
   }
   loadCategoryCounts();
 
-  // Cartões dos profissionais: foto (ou iniciais), zona, avaliação real,
-  // tempo de resposta e preço "a partir de" vindos da base de dados. O cartão
-  // inteiro é o link para o perfil.
-  function cidade(loc){ var p = String(loc || '').split(/\s[–-]\s/); return (p[1] || p[0] || '').trim(); }
+  // Cartões dos profissionais. A zona só aparece se parecer um nome de terra
+  // (há perfis com lixo no campo, como "I'm").
+  function cidade(loc){
+    var p = String(loc || '').split(/\s[–-]\s/);
+    var c = (p[1] || p[0] || '').trim();
+    return /^[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ .,-]{1,40}$/.test(c) ? c : '';
+  }
   function euros(v){ var n = Number(v); return isFinite(n) && n > 0 ? n.toLocaleString('pt-PT', {style:'currency', currency:'EUR', maximumFractionDigits:0}) : ''; }
-  function chipsHtml(p){
+  function statsHtml(p){
     var out = [];
-    if(p._rating) out.push('<span class="pc-chip pc-star">★ ' + p._rating.toFixed(1).replace('.', ',') + ' <em>(' + p._reviews + ')</em></span>');
+    if(p._rating) out.push('<span class="pc-star">★ ' + p._rating.toFixed(1).replace('.', ',') + ' <em>(' + p._reviews + ')</em></span>');
     if(p.response_sample_count > 0 && p.avg_response_minutes != null){
       var mins = Math.round(p.avg_response_minutes);
-      out.push('<span class="pc-chip">⚡ Responde em ~' + (mins < 60 ? mins + ' min' : Math.round(mins/60) + ' h') + '</span>');
-    } else if(p.experience_years > 0){
-      out.push('<span class="pc-chip">' + esc(p.experience_years) + ' anos de experiência</span>');
+      out.push('<span>Responde em ~' + (mins < 60 ? mins + ' min' : Math.round(mins/60) + ' h') + '</span>');
     }
+    if(p.experience_years > 0) out.push('<span>' + esc(p.experience_years) + ' anos de experiência</span>');
     return out.length ? '<div class="pro-stats">' + out.join('') + '</div>' : '';
   }
-  function cardHtml(p, i){
-    // Nota: sem data-reveal de propósito — o IntersectionObserver da pagina
-    // faz querySelectorAll('[data-reveal]') uma unica vez ao carregar a pagina,
-    // antes deste fetch assincrono terminar. Cartoes injetados depois nunca
-    // seriam observados e ficariam com opacity:0 para sempre.
-    var style = AVATAR_STYLES[i % AVATAR_STYLES.length];
+  function cardHtml(p){
     var foto = /^https:\/\//i.test(String(p.photo_url || '')) ? p.photo_url : '';
     var avatar = foto
-      ? '<img class="pro-avatar pro-photo" src="' + esc(foto) + '" alt="" loading="lazy" width="56" height="56">'
-      : '<div class="pro-avatar"' + (style ? ' style="' + style + '"' : '') + '>' + esc(initials(p.name)) + '</div>';
+      ? '<img class="pro-avatar" src="' + esc(foto) + '" alt="" loading="lazy" width="56" height="56">'
+      : '<div class="pro-avatar">' + esc(initials(p.name)) + '</div>';
     var zona = cidade(p.location);
     return '' +
-      '<a class="pro-card" href="' + profileHref(p) + '"><span class="glow-spot"></span>' +
+      '<a class="pro-card" href="' + profileHref(p) + '">' +
         '<div class="pro-top">' + avatar +
-          '<div class="pro-id">' +
-            '<div class="pro-name-row"><div class="pro-name">' + esc(p.name) + '</div>' + (p.verified ? '<span class="verified" title="Verificado pela Flinko" aria-label="Verificado">✓</span>' : '') + '</div>' +
-            '<div class="pro-meta">' + esc(p.category) + (zona ? (' · ' + esc(zona)) : '') + '</div>' +
+          '<div>' +
+            '<div class="pro-name-row"><div class="pro-name">' + esc(p.name) + '</div>' + (p.verified ? '<span class="verified" title="Perfil revisto pela Flinko" aria-label="Verificado">✓</span>' : '') + '</div>' +
+            '<div class="pro-meta">' + esc(p.category) + (zona ? (', ' + esc(zona)) : '') + '</div>' +
           '</div>' +
         '</div>' +
-        chipsHtml(p) +
-        '<p class="bio">' + (p.bio ? esc(p.bio.length > 120 ? p.bio.slice(0,117) + '…' : p.bio) : 'Perfil verificado pela equipa da Flinko. Vê os serviços e contacta diretamente.') + '</p>' +
+        statsHtml(p) +
+        '<p class="bio">' + (p.bio ? esc(p.bio.length > 140 ? p.bio.slice(0,137) + '…' : p.bio) : 'Perfil revisto pela equipa da Flinko. Vê os serviços e fala diretamente.') + '</p>' +
         '<div class="pro-foot">' +
-          (p._from ? '<span class="pro-price">A partir de <b>' + euros(p._from) + '</b></span>' : '<span class="pro-price">Orçamento grátis</span>') +
-          '<span class="pro-go">Ver perfil <span class="arrow">→</span></span>' +
+          (p._from ? '<span class="pro-price">Desde <b>' + euros(p._from) + '</b></span>' : '<span class="pro-price">Orçamento grátis</span>') +
+          '<span class="pro-go">Ver perfil</span>' +
         '</div>' +
       '</a>';
   }
@@ -1607,15 +601,13 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
     });
   }
   function emptyStateHtml(){
-    return '<div class="pro-card" style="text-align:center;grid-column:1/-1">' +
-      '<p class="bio" style="margin-bottom:14px">Ainda não temos profissionais verificados para mostrar aqui — podes ser o primeiro.</p>' +
-      '<a href="/auth" class="btn btn-orange">Criar perfil grátis</a>' +
+    return '<div class="pro-card" style="grid-column:1/-1">' +
+      '<p class="bio">Ainda não temos profissionais verificados para mostrar aqui. Podes ser o primeiro.</p>' +
+      '<div><a href="/auth" class="btn btn-terracota">Criar perfil grátis</a></div>' +
     '</div>';
   }
 
-  // Banner de profissionais com destaque pago ativo (comprado com creditos
-  // no dashboard - "Creditos" -> "Anunciar no site"). Independente do
-  // spotlight_pros() de baixo, que e organico (baseado no plano).
+  // Destaques pagos (comprados com créditos no painel).
   function loadSponsoredHome(){
     var box = document.getElementById('sponsoredContainer');
     if(!box) return;
@@ -1631,8 +623,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
             var slotByPro = {};
             slots.forEach(function(s){ if(!slotByPro[s.professional_id]) slotByPro[s.professional_id] = s; });
             var shuffled = pros.slice().sort(function(){ return Math.random() - 0.5; });
-            box.innerHTML = '<div class="sponsored-strip">' +
-              '<div class="sponsored-strip-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg> Em destaque</div>' +
+            box.innerHTML = '<div class="sponsored-strip"><div class="sponsored-strip-label">Em destaque</div>' +
               '<div class="sponsored-track">' + shuffled.map(function(p){
                 var slot = slotByPro[p.id];
                 var safeName = esc(p.name);
@@ -1644,7 +635,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
                 return '<a class="sponsored-card" href="' + profileHref(p) + '">' + mediaHtml +
                   '<span class="sp-tag">Patrocinado</span>' +
                   '<div class="sp-overlay"><div class="sp-name">' + safeName + '</div>' +
-                  '<div class="sp-meta">' + esc(p.category || '') + (p.location ? (' · ' + esc(p.location)) : '') + '</div></div>' +
+                  '<div class="sp-meta">' + esc(p.category || '') + (cidade(p.location) ? (', ' + esc(cidade(p.location))) : '') + '</div></div>' +
                 '</a>';
               }).join('') + '</div></div>';
           });
@@ -1653,12 +644,14 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   }
   loadSponsoredHome();
 
+  // Montra: primeiro os destaques do plano (spotlight_pros), depois os perfis
+  // mais completos. Um nome com menos de 3 letras não entra na montra.
+  var nomeOk = function(p){ return String(p.name || '').trim().length >= 3; };
   Promise.resolve()
     .then(function(){ return db.rpc('spotlight_pros', {limite: 6}); })
     .then(function(res){
-      var spotlight = (res && res.data) || [];
-      var have = spotlight.length;
-      if(have >= 6) return spotlight.slice(0, 6);
+      var spotlight = ((res && res.data) || []).filter(nomeOk);
+      if(spotlight.length >= 6) return spotlight.slice(0, 6);
       var excludeIds = spotlight.map(function(p){ return p.id; });
       return db.from('profiles')
         .select('id,name,bio,photo_url,category,location,verified,slug,experience_years,avg_response_minutes,response_sample_count,account_type')
@@ -1671,11 +664,9 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
         .order('created_at', {ascending: false})
         .limit(18 + excludeIds.length)
         .then(function(res2){
-          // Primeiro os perfis mais completos (descrição e foto): são os que
-          // passam confiança na montra. Os outros só completam se faltar.
           var completo = function(p){ return (p.bio && String(p.bio).trim() ? 2 : 0) + (p.photo_url ? 1 : 0); };
           var extra = ((res2 && res2.data) || [])
-            .filter(function(p){ return excludeIds.indexOf(p.id) === -1 && String(p.category || '').trim(); })
+            .filter(function(p){ return excludeIds.indexOf(p.id) === -1 && String(p.category || '').trim() && nomeOk(p); })
             .map(function(p, i){ return {p: p, i: i}; })
             .sort(function(a, b){ return completo(b.p) - completo(a.p) || a.i - b.i; })
             .map(function(x){ return x.p; });
@@ -1683,10 +674,15 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
         });
     })
     .then(function(list){
+      // No topo, de preferência quem tem foto.
+      topoPros = list.filter(temFoto).concat(list.filter(function(p){ return !temFoto(p); }));
+      atualizarTopo();
       if(!list.length){ grid.innerHTML = emptyStateHtml(); return; }
       return enrich(list).then(function(full){ grid.innerHTML = full.map(cardHtml).join(''); }, function(){ grid.innerHTML = list.map(cardHtml).join(''); });
     })
     .catch(function(){
+      topoPros = topoPros || [];
+      atualizarTopo();
       grid.innerHTML = emptyStateHtml();
     });
 })();
