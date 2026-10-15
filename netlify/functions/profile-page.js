@@ -140,7 +140,7 @@ function migalhas(html, pro, url) {
   const cat = categories.find((c) => c.serviceType === oneLine(pro.category))
   if (!cat) return html
   const zona = placesOf(pro)[0]
-  const passos = [{ nome: 'Flinko', url: SITE + '/' }, { nome: cat.serviceType, url: `${SITE}/${cat.slug}` }]
+  const passos = [{ nome: 'Flinko', url: SITE + '/' }, { nome: cat.serviceType, url: `${SITE}/${cat.slug}.html` }]
   if (zona) passos.push({ nome: zona.name, url: `${SITE}/${cat.slug}/${zona.slug}` })
   passos.push({ nome: oneLine(pro.name), url })
   const nav = `<nav class="fk-crumbs" aria-label="Caminho" style="max-width:1100px;margin:0 auto;padding:14px 5% 0;font-size:13px;color:#5E6B66">${passos.map((p, i) => i === passos.length - 1 ? `<span aria-current="page">${esc(p.nome)}</span>` : `<a href="${esc(p.url.replace(SITE, '') || '/')}" style="color:inherit">${esc(p.nome)}</a>`).join(' › ')}</nav>`
