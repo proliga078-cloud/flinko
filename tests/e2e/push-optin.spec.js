@@ -5,7 +5,7 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 
 const FAKE_SDK_PATH = path.join(__dirname, 'fixtures', 'fake-supabase-sdk.js');
-const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3';
 const ME = 'c0000000-0000-0000-0000-000000000001';
 const PRO = 'b0000000-0000-0000-0000-000000000002';
 const CONV = 'a0000000-0000-0000-0000-00000000000a';

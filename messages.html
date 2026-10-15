@@ -375,7 +375,7 @@ body.is-offline .offline{display:block}
   <button class="lb-nav next" onclick="lbStep(1)" aria-label="Foto seguinte"><svg class="ico" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3"></script>
 <script src="/assets/escape-html.js"></script>
 <script src="/assets/resize-image.js"></script>
 <script>
@@ -506,13 +506,18 @@ async function loadConversations(){
   // não lidas, e se a última mensagem foi minha e já foi vista (✓✓ na lista)
   const meta={}
   if(rows.length){
-    const{data:ms}=await db.from('messages').select('conversation_id,sender_id,read,created_at').in('conversation_id',rows.map(c=>c.id)).order('created_at',{ascending:false}).limit(3000)
-    ;(ms||[]).forEach(m=>{
-      const x=meta[m.conversation_id]=meta[m.conversation_id]||{unread:0,last:null,count:0}
-      if(!x.last)x.last=m
-      x.count++
-      if(m.sender_id!==S.me&&!m.read)x.unread++
-    })
+    // Contado no servidor (resumo_conversas): ler as mensagens todas parava nas 1000.
+    const{data:rs,error:re}=await db.rpc('resumo_conversas')
+    if(!re&&rs)rs.forEach(r=>{meta[r.conversation_id]={unread:r.unread,count:r.total,last:{sender_id:r.last_sender,read:r.last_read}}})
+    else{
+      const{data:ms}=await db.from('messages').select('conversation_id,sender_id,read,created_at').in('conversation_id',rows.map(c=>c.id)).order('created_at',{ascending:false}).limit(1000)
+      ;(ms||[]).forEach(m=>{
+        const x=meta[m.conversation_id]=meta[m.conversation_id]||{unread:0,last:null,count:0}
+        if(!x.last)x.last=m
+        x.count++
+        if(m.sender_id!==S.me&&!m.read)x.unread++
+      })
+    }
   }
   const keep=S.convs.filter(c=>c.draft)
   // Conversa oficial (enviada pelo admin): do lado do profissional aparece como "Flinko".

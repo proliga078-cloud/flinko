@@ -4,7 +4,7 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 
 const FAKE_SDK_PATH = path.join(__dirname, 'fixtures', 'fake-supabase-sdk.js');
-const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3';
 
 const CLI = 'cli-1', RUI = 'pro-rui', MARTA = 'pro-marta';
 const pedido = (extra) => ({ id: 'req-1', client_id: CLI, title: 'Trocar quadro elétrico', category: 'Eletricistas', location: 'Braga', status: 'open', created_at: new Date().toISOString(), profiles: { name: 'Ana Silva' }, ...extra });

@@ -10,7 +10,7 @@ const path = require('path');
 
 const SB = 'https://cdwinidhtfxfxowflize.supabase.co';
 const FAKE_SDK_PATH = path.join(__dirname, 'fixtures', 'fake-supabase-sdk.js');
-const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3';
 
 async function captureTickets(page, status = 201, body = '') {
   const sent = [];

@@ -36,7 +36,7 @@ const plan=(typeof profileData!=='undefined'&&profileData&&profileData.plan)||'f
 const banner=document.getElementById('upgrade-banner-wrap')
 if(banner){
 if(plan==='free'){
-banner.innerHTML='<div class="upgrade-banner"><div><h3>🚀 Aumenta a visibilidade do teu perfil</h3><p>Plano Pro: portfólio, badge verificado, destaque nas pesquisas. A partir de €9,99/mês.</p></div><button class="btn btn-gold" onclick="location.href=\'pricing.html\'">Atualizar plano →</button></div>'
+banner.innerHTML='<div class="upgrade-banner"><div><h3>🚀 Aumenta a visibilidade do teu perfil</h3><p>Planos pagos com portfólio, badge verificado e destaque nas pesquisas: Starter €9,99/mês, Pro €19,99/mês.</p></div><button class="btn btn-gold" onclick="location.href=\'pricing.html\'">Atualizar plano →</button></div>'
 }else if(plan==='starter'){
 banner.innerHTML='<div class="upgrade-banner" style="background:linear-gradient(135deg,#334155,#0f172a)"><div><h3>🚀 Estás no plano Starter</h3><p>Mais orçamentos e destaque nas pesquisas — tudo ativo.</p></div><button class="btn btn-outline" style="background:#fff" onclick="manageBilling()">Gerir subscrição</button></div>'
 }else if(plan==='pro'){

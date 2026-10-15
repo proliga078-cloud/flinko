@@ -3,7 +3,7 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 
 const FAKE_SDK_PATH = path.join(__dirname, 'fixtures', 'fake-supabase-sdk.js');
-const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3';
 const INFO = { professional_id: 'pro-1', pro_name: 'Rui Alves', pro_photo: null, pro_category: 'Eletricistas', pro_slug: 'rui', client_name: 'Carlos', used: false };
 
 async function abrir(page, url, info = INFO) {

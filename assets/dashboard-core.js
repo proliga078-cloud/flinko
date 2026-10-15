@@ -84,7 +84,8 @@ const path = `profiles/${user.id}/avatar.${ext}`;
 const { data, error } = await db.storage.from('proliga-media').upload(path, uploadFile, { upsert: true, contentType: uploadFile.type });
 if(error) throw error;
 const { data: urlData } = db.storage.from('proliga-media').getPublicUrl(path);
-const url = urlData.publicUrl;
+// O ficheiro tem sempre o mesmo nome: ?v= muda o URL para o browser e o CDN não mostrarem a foto antiga.
+const url = urlData.publicUrl + '?v=' + Date.now();
 document.getElementById('p-photo').value = url;
 preview.innerHTML = `<img src="${escapeHtml(url)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--blue)"/>`;
 } catch(e) {
@@ -102,7 +103,7 @@ const plan=(profileData&&profileData.plan)||'free'
 const portMax=planLimits.portfolio_max||3
 const{count:portCount}=await db.from('portfolio_items').select('*',{count:'exact',head:true}).eq('professional_id',profileId)
 if(portCount>=portMax){
-showAlert('port-error','Atingiste o limite de '+portMax+' fotos do plano grátis. O plano Pro tem portfólio ilimitado.','error')
+showAlert('port-error','Atingiste o limite de '+portMax+' fotos do teu plano. O plano Pro tem portfólio ilimitado.','error')
 input.value=''
 return
 }

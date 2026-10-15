@@ -157,16 +157,18 @@
 # NAO tem hash de versao, por isso os tempos sao propositadamente moderados
 # (nao "immutable" nem 1 ano) — se editarmos um destes ficheiros, os
 # visitantes com cache ainda quente veem a versao antiga ate o cache expirar.
-# JS/CSS: 1 hora (mudam com alguma frequencia durante o desenvolvimento).
+# JS/CSS: o browser confirma sempre com o servidor (304 barato se nao mudou).
+# Com max-age=3600 uma pagina nova podia correr com JS antigo ate 1 hora
+# depois de um deploy (o dashboard tem 13 ficheiros que dependem uns dos outros).
 [[headers]]
   for = "/assets/*.js"
   [headers.values]
-    Cache-Control = "public, max-age=3600"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
   for = "/assets/*.css"
   [headers.values]
-    Cache-Control = "public, max-age=3600"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # Imagens e icones: 1 semana (mudam raramente).
 [[headers]]

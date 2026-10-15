@@ -172,7 +172,8 @@ async function sendAiChat(){
       const thinkEl=document.getElementById(thinkId)
       if(thinkEl)thinkEl.remove()
     }
-    body.insertAdjacentHTML('beforeend',`<div class="ai-msg bot">${answer.replace(/\n/g,'<br>')}</div>`)
+    // A resposta vem do modelo (e pode repetir texto de pedidos): escapa sempre.
+    body.insertAdjacentHTML('beforeend',`<div class="ai-msg bot">${escapeHtml(answer).replace(/\n/g,'<br>')}</div>`)
   }
 
   sendBtn.disabled=false
@@ -485,7 +486,7 @@ async function answerWithClaude(question){
   if(error||!data||data.error){
     if(data&&data.error==='rate_limited')return 'Chegaste ao limite de perguntas ao assistente por hoje. Amanhã há mais.'
     return data&&data.error==='not_configured'
-      ?'O assistente de IA com Claude ainda não foi ativado. Configura ANTHROPIC_API_KEY no Supabase.'
+      ?'O assistente ainda não está disponível. Tenta mais tarde.'
       :'Não consegui responder agora. Tenta novamente daqui a pouco.'
   }
   return data.answer||'Não consegui gerar uma resposta.'

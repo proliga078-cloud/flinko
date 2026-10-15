@@ -30,7 +30,7 @@ test('admin: mensagem da Flinko a um profissional e reforço por WhatsApp a quem
 });
 
 const FAKE_SDK_PATH = path.join(__dirname, 'fixtures', 'fake-supabase-sdk.js');
-const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3';
 const PRO = 'b0000000-0000-0000-0000-000000000002', ADM = 'd0000000-0000-0000-0000-000000000009', CONV = 'a0000000-0000-0000-0000-00000000000f';
 
 async function abrirMensagens(page, me) {
