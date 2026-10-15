@@ -48,7 +48,7 @@ test('perfil por id: 200 com título, descrição, canonical, imagem e resumo no
   assert.deepEqual(ld.aggregateRating, { '@type': 'AggregateRating', ratingValue: 4.5, reviewCount: 2, bestRating: 5, worstRating: 1 });
   assert.equal(ld.makesOffer[0].itemOffered.name, 'Quadro elétrico');
   // só perfis públicos: aprovados, não suspensos, não demo
-  assert.deepEqual(filtros('profiles'), [['approved', true], ['suspended', false], ['is_demo', false], ['id', ID]]);
+  assert.deepEqual(filtros('profiles'), [['account_type', 'professional'], ['approved', true], ['suspended', false], ['is_demo', false], ['id', ID]]);
 });
 
 test('perfil por link próprio (/o-nome): lê o slug do caminho, como o Netlify o passa', async () => {

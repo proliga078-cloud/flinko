@@ -4,7 +4,7 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 
 const FAKE_SDK_PATH = path.join(__dirname, 'fixtures', 'fake-supabase-sdk.js');
-const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3';
 
 async function abrir(page, perfilExtra, servicos) {
   const p = { id: 'u1', name: 'Ana', plan: 'free', account_type: 'professional', category: 'Eletricistas', location: 'Porto', bio: 'x', photo_url: 'https://example.com/f.jpg', notify_email: true, notify_digest: true, ...perfilExtra };

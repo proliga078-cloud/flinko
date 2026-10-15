@@ -531,7 +531,7 @@
 </div>
 <!-- /fk:footer -->
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3"></script>
 <script src="/assets/escape-html.js"></script>
 <script src="/assets/a11y-clickable.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
@@ -559,7 +559,7 @@ let currentRating=0,proData=null,preloadedPro=null
 // aqui em vez de select('*') porque a tabela profiles tambem tem colunas
 // sensiveis (creditos, ids do Stripe, is_admin, etc.) que so o proprio dono
 // ou um admin podem ler — pedir '*' falharia com "permission denied".
-const PUBLIC_PROFILE_COLS='id,name,bio,category,location,photo_url,plan,verified,created_at,slug,avg_response_minutes,response_sample_count,unavailable_until,unavailable_message,weekly_schedule,cover_url,certifications,has_insurance,experience_years,languages,specialties,website,is_demo,social_links,intro_video_url,awards,promotions,theme_color,custom_sections,section_order,hidden_sections'
+const PUBLIC_PROFILE_COLS='id,account_type,name,bio,category,location,photo_url,plan,verified,created_at,slug,avg_response_minutes,response_sample_count,unavailable_until,unavailable_message,weekly_schedule,cover_url,certifications,has_insurance,experience_years,languages,specialties,website,is_demo,social_links,intro_video_url,awards,promotions,theme_color,custom_sections,section_order,hidden_sections'
 
 async function resolveSlug(){
   if(proId&&proId!=='null'&&proId!=='undefined')return true
@@ -633,7 +633,8 @@ async function init(){
   }
   const{data:pro,error}=preloadedPro?{data:preloadedPro,error:null}
     :await db.from('profiles').select(PUBLIC_PROFILE_COLS).eq('id',proId).single()
-  if(error||!pro){
+  // A conta de um cliente não tem página pública (RGPD).
+  if(error||!pro||pro.account_type==='client'){
     document.getElementById('profile-header').innerHTML='<p style="color:red;padding:20px">Profissional não encontrado.</p>'
     // Página sem conteúdo real: não faz sentido o Google indexar isto.
     document.getElementById('meta-robots').setAttribute('content','noindex, nofollow')
@@ -1050,8 +1051,11 @@ async function loadSimilarPros(pro){
     const{data}=await db.from('profiles').select('id,name,category,location,photo_url,slug,verified,plan,is_demo,suspended,approved')
       .ilike('category',`%${pro.category}%`).neq('id',pro.id)
       .eq('is_demo',false).eq('suspended',false).eq('approved',true)
-      .order('plan',{ascending:false}).limit(6)
+      .limit(30)
     if(!data||!data.length)return
+    // Pagos primeiro (premium, pro, starter); ordenar por 'plan' na BD era alfabético.
+    const RANK={premium:3,pro:2,starter:1}
+    data.sort((a,b)=>(RANK[b.plan]||0)-(RANK[a.plan]||0)).splice(6)
     const ids=data.map(p=>p.id)
     const{data:revs}=await db.from('reviews').select('professional_id,rating').in('professional_id',ids)
     const rMap={}
@@ -1120,26 +1124,26 @@ function setStar(v){
   })
 }
 
-// Qualquer visitante pode deixar avaliação, com ou sem conta na Flinko —
-// já não é preciso ter sessão iniciada nem ter falado antes com o
-// profissional pelo chat (decisão de 2026-09, ver reviews_insert no RLS).
-// Como não há sessão obrigatória, o nome/email têm de vir sempre do
-// próprio formulário (o insert antigo não os enviava e por isso nunca
-// tinha sucesso — a tabela reviews é NOT NULL em reviewer_name/reviewer_email).
+// Avaliar no perfil pede sessão e ter falado antes com o profissional na
+// Flinko, uma vez por profissional (out/2026, ver reviews_insert e
+// avaliacao_de_quem_contactou na BD). Quem foi cliente fora da Flinko avalia
+// pelo link de convite que o profissional lhe envia (avaliar.html).
 async function submitReview(){
   const name=document.getElementById('rev-name').value.trim()
   const email=document.getElementById('rev-email').value.trim()
   const comment=document.getElementById('rev-comment').value.trim()
   const btn=document.getElementById('rev-btn')
+  const{data:{session}}=await db.auth.getSession()
+  if(!session){location.href='auth.html?tab=login&intent=client&redirect='+encodeURIComponent(location.pathname+location.search);return}
   if(!name)return showMsg('rev-error','Escreve o teu nome.')
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return showMsg('rev-error','Escreve um email válido.')
   if(!currentRating)return showMsg('rev-error','Escolhe uma classificação.')
   btn.disabled=true;btn.textContent='A publicar...'
-  const{data:{session}}=await db.auth.getSession()
-  const{error}=await db.from('reviews').insert({professional_id:proId,client_id:session?session.user.id:null,reviewer_name:name,reviewer_email:email,rating:currentRating,comment})
+  const{error}=await db.from('reviews').insert({professional_id:proId,client_id:session.user.id,reviewer_name:name,reviewer_email:email,rating:currentRating,comment})
   btn.disabled=false;btn.textContent='Publicar avaliação'
   if(error){
-    showMsg('rev-error','Não foi possível publicar a avaliação. Tenta novamente.')
+    const m=error.message||''
+    showMsg('rev-error',/falaste|Já avaliaste/.test(m)?m:'Não foi possível publicar a avaliação. Tenta novamente.')
     return
   }
   showMsg('rev-success','Avaliação publicada! Obrigado.','success')
@@ -1153,6 +1157,7 @@ async function checkReviewEligibility(){
   const fields=document.getElementById('rev-form-fields')
   if(session&&session.user.id===proId){self.style.display='block';fields.style.display='none';return}
   self.style.display='none';fields.style.display='block'
+  if(!session)document.getElementById('rev-btn').textContent='Entrar para avaliar'
   if(session){
     const emailInput=document.getElementById('rev-email')
     if(!emailInput.value)emailInput.value=session.user.email||''

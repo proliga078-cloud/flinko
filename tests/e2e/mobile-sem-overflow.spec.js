@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 
 const FAKE_SDK_PATH = path.join(__dirname, 'fixtures', 'fake-supabase-sdk.js');
-const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3';
 const RAIZ = path.join(__dirname, '..', '..');
 const paginas = fs.readdirSync(RAIZ).filter((f) => f.endsWith('.html') && !['admin.html', 'dashboard.html'].includes(f)).sort();
 

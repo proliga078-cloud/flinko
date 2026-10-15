@@ -103,7 +103,10 @@ if(!el)return
 const cats=[...new Set(clientRequests.map(r=>r.category).filter(Boolean))]
 let query=db.from('profiles').select('id,name,slug,category,location,photo_url,plan').eq('account_type','professional')
 if(cats.length)query=query.in('category',cats)
-const{data}=await query.order('plan',{ascending:false}).limit(6)
+const{data:todos}=await query.limit(30)
+// Pagos primeiro (premium, pro, starter); ordenar por 'plan' na BD era alfabético.
+const RANK={premium:3,pro:2,starter:1}
+const data=(todos||[]).sort((a,b)=>(RANK[b.plan]||0)-(RANK[a.plan]||0)).slice(0,6)
 if(!data||!data.length){el.innerHTML='<div class="tc-empty"><p>Publica um pedido para veres recomendações aqui.</p></div>';return}
 el.innerHTML=data.map(p=>{
 const link=p.slug?`/${p.slug}`:`/profile.html?id=${p.id}`

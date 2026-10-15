@@ -8,7 +8,7 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 
 const FAKE_SDK_PATH = path.join(__dirname, 'fixtures', 'fake-supabase-sdk.js');
-const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3';
 
 const pros = Array.from({ length: 30 }, (_, i) => ({
   id: 'p' + (i + 1), name: 'Profissional ' + String(i + 1).padStart(2, '0'), slug: null, category: 'Eletricistas',

@@ -168,7 +168,8 @@ exports.handler = async (event) => {
   const naoEncontrado = () => page(404, html.replace(/(<meta id="meta-robots"[^>]*content=")[^"]*(")/, '$1noindex, nofollow$2'), 'public, max-age=60')
   if (!who) return naoEncontrado()
   try {
-    let q = admin.from('profiles').select(COLS).eq('approved', true).eq('suspended', false).eq('is_demo', false)
+    // Só profissionais: a conta de um cliente não tem página pública (RGPD).
+    let q = admin.from('profiles').select(COLS).eq('account_type', 'professional').eq('approved', true).eq('suspended', false).eq('is_demo', false)
     q = who.id ? q.eq('id', who.id) : q.eq('slug', who.slug)
     const { data: pro, error } = await q.maybeSingle()
     if (error) throw new Error(error.message)

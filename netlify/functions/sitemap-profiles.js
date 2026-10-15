@@ -45,6 +45,7 @@ exports.handler = async () => {
       .eq('approved', true)
       .eq('suspended', false)
       .eq('is_demo', false)
+      .eq('account_type', 'professional')
       .order('created_at', { ascending: false })
       .limit(LIMITE_URLS)
 

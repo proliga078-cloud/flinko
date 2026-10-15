@@ -444,7 +444,7 @@ nav{flex-wrap:wrap;height:auto;padding:10px 4%;row-gap:8px}
 </div>
 <!-- /fk:footer -->
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3"></script>
 <script src="/assets/escape-html.js"></script>
 <script src="/assets/push-optin.js"></script>
 <script src="/assets/resize-image.js"></script>
@@ -548,9 +548,15 @@ async function loadOfferCounts(){
 offerCounts={};myOffers={}
 if(!allRequests.length)return
 const ids=allRequests.map(r=>r.id)
-const{data}=await db.from('request_offers').select('request_id,professional_id,message,price_from,price_to').in('request_id',ids)
+// Cada proposta só é visível ao autor e ao dono do pedido: o número total
+// vem de contagem_propostas (só contagens); as minhas propostas vêm daqui.
+const[{data:cont},{data}]=await Promise.all([
+db.rpc('contagem_propostas',{p_ids:ids}),
+db.from('request_offers').select('request_id,professional_id,message,price_from,price_to').in('request_id',ids)
+])
+;(cont||[]).forEach(c=>{offerCounts[c.request_id]=c.n})
 ;(data||[]).forEach(o=>{
-offerCounts[o.request_id]=(offerCounts[o.request_id]||0)+1
+if(!cont)offerCounts[o.request_id]=(offerCounts[o.request_id]||0)+1
 if(session&&o.professional_id===session.user.id)myOffers[o.request_id]=o
 })
 }

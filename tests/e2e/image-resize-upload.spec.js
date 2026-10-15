@@ -13,7 +13,7 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 
 const FAKE_SDK_PATH = path.join(__dirname, 'fixtures', 'fake-supabase-sdk.js');
-const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3';
 const LARGE_PHOTO = path.join(__dirname, 'fixtures', 'large-photo.jpg'); // 2400x1800, ~2.9MB
 const SMALL_PHOTO = path.join(__dirname, 'fixtures', 'small-photo.jpg'); // 400x300, poucos KB
 

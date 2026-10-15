@@ -33,8 +33,11 @@ self.addEventListener('activate', (event) => {
 //    com JS antigo (com stale-while-revalidate isto acontecia no 1.o carregamento).
 //  - imagens e restantes estaticos: cache primeiro, atualizada em segundo plano.
 //  - pedidos a outras origens (Supabase, CDNs, mapas): nao passam pelo SW.
+// cache: 'no-cache' faz o browser confirmar com o servidor (resposta 304 barata
+// se nada mudou) em vez de usar a cópia da cache HTTP: sem isto, o JS antigo
+// continuava a ser servido até 1 hora depois de um deploy.
 function redePrimeiro(req, fallbackUrl) {
-  return fetch(req)
+  return fetch(req, { cache: 'no-cache' })
     .then((res) => {
       if (res && res.status === 200 && res.type === 'basic') {
         const copy = res.clone();
