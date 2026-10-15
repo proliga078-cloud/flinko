@@ -32,10 +32,12 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    if (event.type === "checkout.session.completed") {
+    // Pagamentos que demoram (Multibanco, SEPA) chegam como completed com
+    // payment_status "unpaid" e so depois como async_payment_succeeded.
+    if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
       const session = event.data.object as Stripe.Checkout.Session;
-      if (session.metadata?.product !== "ai_profile_builder") {
-        // Nao e um pagamento deste produto - ignora (pode ser subscricao de plano, etc.)
+      if (session.metadata?.product !== "ai_profile_builder" || session.payment_status !== "paid") {
+        // Nao e um pagamento deste produto (pode ser subscricao de plano, etc.) ou ainda nao foi pago - ignora
         return new Response(JSON.stringify({ received: true, ignored: true }), { headers: { "Content-Type": "application/json" } });
       }
 

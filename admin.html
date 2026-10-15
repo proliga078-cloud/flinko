@@ -296,7 +296,9 @@ let D = {}, M = {}, LOADERR = [];
 // Todas as consultas têm uma ordem estável (acabam em id) para a paginação
 // de apiAll não saltar nem repetir linhas.
 const TABLES = {
-  profiles: "profiles?select=id,name,category,location,plan,plan_expires_at,verified,approved,suspended,is_admin,is_demo,created_at,account_type,bio,photo_url,cover_url,slug,stripe_subscription_id,ai_profile_builder_unlocked,ai_profile_builder_paid_at,credits,avg_response_minutes&order=created_at.desc,id",
+  // As colunas privadas (prazo do plano, admin, Stripe, créditos...) não são
+  // legíveis na tabela: chegam por admin_profiles_private(), ver loadAll.
+  profiles: "profiles?select=id,name,category,location,plan,verified,approved,suspended,is_demo,created_at,account_type,bio,photo_url,cover_url,slug,ai_profile_builder_unlocked,avg_response_minutes&order=created_at.desc,id",
   private: "profile_private?select=profile_id,phone&order=profile_id",
   services: "services?select=id,professional_id,price_from,price_to,created_at&order=id",
   portfolio: "portfolio_items?select=id,professional_id,created_at&order=id",
@@ -343,6 +345,11 @@ async function loadAll() {
   const keys = Object.keys(TABLES);
   const res = await Promise.all(keys.map(k => loadTable(k).catch(e => { LOADERR.push(k + ": " + e.message); return []; })));
   D = Object.fromEntries(keys.map((k, i) => [k, res[i]]));
+  if (!DEMO) {
+    const priv = await apiAll("rpc/admin_profiles_private?order=id").catch(e => { LOADERR.push("admin_profiles_private: " + e.message); return []; });
+    const byId = new Map(priv.map(x => [x.id, x]));
+    D.profiles.forEach(p => Object.assign(p, byId.get(p.id)));
+  }
   // Conversas oficiais da Flinko (admin → profissional) não são procura de clientes: ficam fora das métricas.
   const flk = new Set((D.conversations || []).filter(c => c.is_flinko).map(c => c.id));
   D.flinkoConvs = (D.conversations || []).filter(c => c.is_flinko);
@@ -461,7 +468,6 @@ function demoApi(path, opt) {
   const table = path.split("?")[0];
   if (table.startsWith("admin_")) { const e = new Error("relation does not exist"); e.status = 404; throw e; }
   if (opt.method && opt.method !== "GET") return [];
-  if (path.startsWith("profiles?select=is_admin")) return [{ is_admin: true }];
   if (!_demo) _demo = genDemo();
   if (path.startsWith("rpc/admin_visit_rows")) { if (!_demo) _demo = genDemo(); return compactVisits(_demo.visits); }
   if (path.startsWith("rpc/") || table === "support_tickets" || table === "admin_audit") return [];
@@ -2235,11 +2241,10 @@ async function start() {
   await loadAll(); render();
   const u = liveAlerts().filter(a => a.lvl === "bad").length; if (u) toast(u + " aviso(s) urgente(s) — vê “Avisos”");
 }
-// Lê is_admin e o papel (dono/apoio). Antes da migração admin_role não existe: conta como dono.
+// Lê is_admin e o papel (dono/apoio) do próprio perfil (na tabela não são
+// legíveis). Sem admin_role conta como dono.
 async function whoAmI() {
-  let me;
-  try { me = (await api("profiles?select=is_admin,admin_role&id=eq." + session.user.id))[0]; }
-  catch (e) { if (!/admin_role/.test(e.message || "")) throw e; me = (await api("profiles?select=is_admin&id=eq." + session.user.id))[0]; }
+  const me = (await rpc("get_my_profile", {}))[0];
   ROLE = me?.admin_role || "owner";
   return me;
 }

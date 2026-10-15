@@ -216,7 +216,7 @@ loadPortfolio()
 const SRC_LABEL={trabalho:'✓ Trabalho feito pela Flinko',convite:'Cliente convidado pelo profissional'}
 async function loadReviews(){
 loadReviewInvites()
-const{data}=await db.from('reviews').select('*').eq('professional_id',profileId).order('created_at',{ascending:false})
+const{data}=await db.from('reviews').select('id,professional_id,client_id,reviewer_name,rating,comment,created_at,source,job_id').eq('professional_id',profileId).order('created_at',{ascending:false})
 const el=document.getElementById('reviews-list')
 if(!data||!data.length){el.innerHTML='<div class="empty">Sem avaliações ainda.</div>';return}
 const avg=(data.reduce((s,r)=>s+r.rating,0)/data.length).toFixed(1)

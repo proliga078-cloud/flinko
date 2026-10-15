@@ -25,7 +25,7 @@ if(!profileId)return
 const[{data:reqs},{data:jobs},{data:revs}]=await Promise.all([
 db.from('requests').select('*').eq('client_id',profileId).order('created_at',{ascending:false}),
 db.from('jobs').select('*').eq('client_id',profileId).order('scheduled_at',{ascending:true,nullsFirst:false}),
-db.from('reviews').select('*').eq('client_id',profileId)
+db.from('reviews').select('id,professional_id,client_id,reviewer_name,rating,comment,created_at,source,job_id').eq('client_id',profileId)
 ])
 clientRequests=reqs||[]
 clientJobsCache=jobs||[]
@@ -149,7 +149,7 @@ return `<div class="list-item">
 async function loadClientReviews(){
 const el=document.getElementById('client-reviews-list')
 if(!el)return
-const{data}=await db.from('reviews').select('*').eq('client_id',profileId).order('created_at',{ascending:false})
+const{data}=await db.from('reviews').select('id,professional_id,client_id,reviewer_name,rating,comment,created_at,source,job_id').eq('client_id',profileId).order('created_at',{ascending:false})
 if(!data||!data.length){el.innerHTML='<div class="empty">Ainda não deixaste nenhuma avaliação. Depois de um trabalho terminado, o profissional recebe um pedido para deixares a tua opinião.</div>';return}
 const proIds=[...new Set(data.map(r=>r.professional_id))]
 const{data:pros}=await db.from('profiles').select('id,name').in('id',proIds)

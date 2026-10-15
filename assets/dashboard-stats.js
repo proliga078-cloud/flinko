@@ -1,7 +1,7 @@
 async function loadStats(){
   const[{count:mc},{count:rc},{data:revs},{count:sc}]=await Promise.all([
     db.from('conversations').select('*',{count:'exact',head:true}).eq('professional_id',profileId).eq('is_flinko',false),
-    db.from('reviews').select('*',{count:'exact',head:true}).eq('professional_id',profileId),
+    db.from('reviews').select('id',{count:'exact',head:true}).eq('professional_id',profileId),
     db.from('reviews').select('rating').eq('professional_id',profileId),
     db.from('services').select('*',{count:'exact',head:true}).eq('professional_id',profileId)
   ])
@@ -334,7 +334,7 @@ async function loadRecentMsgs(){
 }
 
 async function loadRecentReviews(){
-  const{data}=await db.from('reviews').select('*').eq('professional_id',profileId).order('created_at',{ascending:false}).limit(3)
+  const{data}=await db.from('reviews').select('id,professional_id,client_id,reviewer_name,rating,comment,created_at,source,job_id').eq('professional_id',profileId).order('created_at',{ascending:false}).limit(3)
   const el=document.getElementById('recent-reviews')
   const section=document.getElementById('recent-reviews-section')
   // Só mostra o cartão quando há pelo menos 1 avaliação — sem isto, todos os

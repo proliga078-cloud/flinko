@@ -786,7 +786,7 @@ function logProfileView(id){
 
 async function loadReviews(){
   checkReviewEligibility()
-  const{data}=await db.from('reviews').select('*').eq('professional_id',proId).order('created_at',{ascending:false})
+  const{data}=await db.from('reviews').select('id,professional_id,client_id,reviewer_name,rating,comment,created_at,source,job_id').eq('professional_id',proId).order('created_at',{ascending:false})
   const reviews=data||[]
   if(reviews.length>0){
     const avg=(reviews.reduce((s,r)=>s+r.rating,0)/reviews.length).toFixed(1)
