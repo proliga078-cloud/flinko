@@ -6,7 +6,7 @@ import { PGlite } from '@electric-sql/pglite'
 import fs from 'node:fs'
 import assert from 'node:assert/strict'
 
-const MIGRATION = new URL('../../supabase/migrations/20261016090000_confianca_trabalhos_avaliacoes.sql', import.meta.url)
+const MIGRATION = new URL('../../supabase/migrations/20261015222459_confianca_trabalhos_avaliacoes.sql', import.meta.url)
 
 const PRO = '11111111-1111-1111-1111-111111111111'
 const CLI = '22222222-2222-2222-2222-222222222222' // falou com o PRO
