@@ -11,6 +11,12 @@
 window.supabase = {
   createClient(_url, _key) {
     function cfg() { return window.__testAuthConfig || {}; }
+    // Como o SDK real, opcionalmente: emitir SIGNED_IN a meio do signIn/signUp
+    // (cfg().emitAuthEvents) e, num link de recuperação (cfg().recoveryLink),
+    // apagar o hash logo ao criar o cliente e só depois, num setTimeout,
+    // emitir PASSWORD_RECOVERY.
+    const emit = (event, session) => { if (cfg().emitAuthEvents && session && window.__authStateChangeCallback) window.__authStateChangeCallback(event, session); };
+    if (cfg().recoveryLink) history.replaceState(null, '', location.pathname + location.search);
 
     return {
       auth: {
@@ -18,19 +24,28 @@ window.supabase = {
         getUser: async () => ({ data: { user: (cfg().session && cfg().session.user) || null }, error: null }),
         onAuthStateChange: (callback) => {
           window.__authStateChangeCallback = callback;
+          if (cfg().recoveryLink) setTimeout(() => callback('PASSWORD_RECOVERY', cfg().session), 0);
           return { data: { subscription: { unsubscribe() {} } } };
         },
         signInWithPassword: async ({ email, password }) => {
           window.__signInCalls = window.__signInCalls || [];
           window.__signInCalls.push({ email, password });
           if (cfg().loginError) return { data: { user: null, session: null }, error: { message: cfg().loginError } };
+          emit('SIGNED_IN', cfg().loginSession);
           return { data: { user: cfg().loginUser, session: cfg().loginSession }, error: null };
         },
-        signUp: async ({ email, password }) => {
+        signUp: async ({ email, password, options }) => {
           window.__signUpCalls = window.__signUpCalls || [];
-          window.__signUpCalls.push({ email, password });
+          window.__signUpCalls.push({ email, password, options });
           if (cfg().signUpError) return { data: { user: null, session: null }, error: { message: cfg().signUpError } };
+          emit('SIGNED_IN', cfg().signUpSession);
           return { data: { user: cfg().signUpUser || null, session: cfg().signUpSession || null }, error: null };
+        },
+        // Não sai da página: só regista o pedido (o regresso da Google simula-se com cfg().session).
+        signInWithOAuth: async (opts) => {
+          window.__oauthCalls = window.__oauthCalls || [];
+          window.__oauthCalls.push(opts);
+          return { data: {}, error: null };
         },
         resetPasswordForEmail: async (email, options) => {
           window.__resetPasswordCalls = window.__resetPasswordCalls || [];

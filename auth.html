@@ -135,7 +135,12 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 </div>
 <div class="form-group">
 <label for="login-password">Password</label>
-<input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
+<div class="pw-wrap">
+<input type="password" id="login-password" placeholder="A tua password" autocomplete="current-password" />
+<button type="button" class="pw-toggle" id="login-pw-toggle" onclick="togglePw('login-password','login-pw-toggle')" aria-label="Mostrar password">
+<svg class="ic" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+</button>
+</div>
 </div>
 <button class="btn-submit" id="login-btn" onclick="doLogin()">Entrar na conta</button>
 <div style="text-align:center;margin-top:14px">
@@ -228,10 +233,18 @@ Continuar com Google
 <script>
 const SUPABASE_URL = 'https://cdwinidhtfxfxowflize.supabase.co'
 const SUPABASE_KEY = 'sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk'
+// O link de recuperação de password chega com "#...type=recovery" e o SDK apaga
+// o hash logo que o lê, antes do evento PASSWORD_RECOVERY. Lê-se aqui, antes de
+// criar o cliente, para nunca redirecionar quem vem mudar a password.
+const recoveryLink = /type=recovery/.test(location.hash)
+const linkExpired = /error_code=otp_expired/.test(location.hash)
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 
 let inRecovery = false
 let redirected = false
+// true enquanto doLogin/doRegister tratam do login: o SIGNED_IN que o SDK
+// emite a meio não deve correr o completeSignIn em paralelo.
+let authBusy = false
 
 // Impede open redirect: só aceita um ?redirect= que aponte para uma página
 // do próprio site (caminho relativo), nunca para um domínio externo — caso
@@ -297,30 +310,26 @@ if (!email || !password) return showMsg('login-msg', 'Preenche o email e a passw
 
 btn.disabled = true
 btn.textContent = 'A entrar...'
+authBusy = true
+try { sessionStorage.removeItem('flinko_oauth_pending') } catch (e) {}
 
 try {
 const { data, error } = await db.auth.signInWithPassword({ email, password })
 
 if (error) {
+authBusy = false
 showMsg('login-msg', 'Email ou password incorretos.', 'error')
 btn.disabled = false
 btn.textContent = 'Entrar na conta'
 return
 }
 
-// Admin decidido pelo servidor (função is_admin() da BD), nunca por um email escrito no código.
-const { data: isAdminLogin } = await db.rpc('is_admin')
-if (isAdminLogin === true) {
-showMsg('login-msg', 'Bem-vindo, admin! A redirecionar...', 'success')
-setTimeout(() => location.href = 'admin.html', 800)
-return
-}
-
-// Conta sem perfil (registo que ficou a meio): pergunta o tipo antes de seguir.
-if (data && data.session && !(await hasProfile())) { redirected = true; showMsg('login-msg', '', 'hidden'); return askAccountType(data.session, params.get('redirect')) }
+// O resto (admin, conta sem perfil, destino) é igual a quem já chega com sessão.
 showMsg('login-msg', 'Bem-vindo! A redirecionar...', 'success')
-setTimeout(() => location.href = safeRedirect(params.get('redirect')) || 'dashboard.html', 800)
+authBusy = false
+await completeSignIn(data.session)
 } catch (e) {
+authBusy = false
 showMsg('login-msg', 'Erro de ligação. Tenta novamente.', 'error')
 btn.disabled = false
 btn.textContent = 'Entrar na conta'
@@ -342,7 +351,9 @@ const btn = document.getElementById(fromRegister ? 'reg-google-btn' : 'login-goo
 btn.disabled = true
 try {
 sessionStorage.setItem('flinko_oauth_pending', JSON.stringify({
-accountType: fromRegister ? regAccountType : null,
+// No separador Entrar o tipo também pode vir do ?intent= (ex: publicar um
+// pedido); assim uma conta Google nova não volta a ter de o escolher.
+accountType: regAccountType,
 ref: refCode,
 redirect: params.get('redirect') || null
 }))
@@ -360,7 +371,7 @@ btn.disabled = false
 // Ponto único de conclusão do login — chamado tanto quando já havia sessão
 // ao abrir a página, como depois de voltar do redirect do Google.
 async function completeSignIn(session) {
-if (!session || redirected || inRecovery || location.hash.includes('type=recovery')) return
+if (!session || redirected || authBusy || inRecovery || recoveryLink) return
 redirected = true
 
 let pending = null
@@ -384,13 +395,13 @@ if (isAdminSession === true) { location.href = 'admin.html'; return }
 // Garante que existe sempre uma linha em profiles antes de avançar (fecha o buraco em que
 // alguém confirma o email, faz login, e nunca chega a ter perfil porque o insertProfile só
 // corria no signUp com sessão imediata). Idempotente (on conflict do nothing), por isso é
-// seguro chamar em todos os logins. Preserva a intenção de 'cliente' vinda do link de
-// contacto (?intent=client), senão mantém o default 'professional' de sempre.
+// seguro chamar em todos os logins. O tipo vem do ?intent= ou do que a pessoa escolheu
+// ao registar-se (guardado na conta); sem nenhum dos dois, pergunta.
 try {
 const name = nameFromSession(session)
-const intentParam2 = params.get('intent')
-if (intentParam2 !== 'client' && intentParam2 !== 'professional' && !(await hasProfile())) return askAccountType(session, params.get('redirect'))
-await db.rpc('create_my_profile_if_missing', intentParam2 === 'client' ? { p_name: name, p_account_type: 'client' } : { p_name: name, p_account_type: intentParam2 || 'professional' })
+const tipo = validType(params.get('intent')) || validType((session.user.user_metadata || {}).account_type)
+if (!tipo && !(await hasProfile())) return askAccountType(session, params.get('redirect'))
+await db.rpc('create_my_profile_if_missing', { p_name: name, p_account_type: tipo || 'professional' })
 } catch (e) {}
 location.href = safeRedirect(params.get('redirect')) || 'dashboard.html'
 }
@@ -398,6 +409,7 @@ location.href = safeRedirect(params.get('redirect')) || 'dashboard.html'
 // Conta sem perfil (registo que ficou a meio, ou Google sem escolher o tipo):
 // antes de criar o perfil pergunta se a pessoa quer contratar ou oferecer
 // serviços, em vez de a tornar profissional por omissão.
+function validType(t) { return t === 'client' || t === 'professional' ? t : null }
 async function hasProfile() {
 try { const { data } = await db.rpc('get_my_profile'); return !!(data && data[0]) } catch (e) { return true }
 }
@@ -423,13 +435,15 @@ location.href = (chooseCtx.redirect && safeRedirect(chooseCtx.redirect)) || post
 
 // Detect password recovery flow (user clicked the reset link in their email)
 // e apanha tambem o regresso do login com o Google.
-db.auth.onAuthStateChange((event, session) => {
-if (event === 'PASSWORD_RECOVERY') {
+function showRecovery() {
 inRecovery = true
 document.getElementById('tabs-wrap').style.display = 'none'
 document.getElementById('form-recovery').style.display = 'block'
-return
 }
+if (recoveryLink) showRecovery()
+if (linkExpired) showMsg('login-msg', 'Este link já expirou ou já foi usado. Escreve o teu email e carrega em "Esqueci a palavra-passe" para receberes um novo.', 'error')
+db.auth.onAuthStateChange((event, session) => {
+if (event === 'PASSWORD_RECOVERY') return showRecovery()
 if (event === 'SIGNED_IN') completeSignIn(session)
 })
 
@@ -464,11 +478,20 @@ if (!email.includes('@')) return showMsg('reg-msg', 'Introduz um email válido.'
 
 btn.disabled = true
 btn.textContent = 'A criar conta...'
+authBusy = true
+try { sessionStorage.removeItem('flinko_oauth_pending') } catch (e) {}
 
 try {
-const { data: signUpData, error: signUpError } = await db.auth.signUp({ email, password })
+// O nome e o tipo ficam guardados na conta: se o perfil não chegar a ser
+// criado agora (ligação perdida, confirmação de email), recupera-se daqui
+// no próximo login, sem voltar a perguntar.
+const { data: signUpData, error: signUpError } = await db.auth.signUp({
+email, password,
+options: { data: { full_name: name, account_type: regAccountType }, emailRedirectTo: location.origin + '/auth.html' }
+})
 
 if (signUpError) {
+authBusy = false
 const errMsg = (signUpError.message || '').toLowerCase()
 let msg = 'Erro ao criar conta. Tenta novamente.'
 if (errMsg.includes('already') || errMsg.includes('registered') || errMsg.includes('exists')) {
@@ -486,6 +509,7 @@ return
 
 const userId = signUpData.user?.id
 if (!userId) {
+authBusy = false
 showMsg('reg-msg', 'Este email já está registado. Tenta fazer login.', 'error')
 btn.disabled = false
 btn.textContent = 'Criar conta'
@@ -512,11 +536,13 @@ setTimeout(() => location.href = postAuthDestination(regAccountType), 800)
 return
 }
 
+authBusy = false
 showMsg('reg-msg', '✅ Conta criada! Verifica o email ' + email + ' e clica no link de confirmação. Depois faz login aqui.', 'success')
 btn.disabled = false
 btn.textContent = 'Criar conta'
 
 } catch (e) {
+authBusy = false
 showMsg('reg-msg', 'Erro de ligação. Tenta novamente.', 'error')
 btn.disabled = false
 btn.textContent = 'Criar conta'
@@ -591,6 +617,8 @@ setTimeout(()=>location.href='dashboard.html',1000)
 // Enter key support
 document.addEventListener('keydown', e => {
 if (e.key !== 'Enter') return
+// No ecrã "Falta só um passo" escolhe-se com os botões; Enter não volta a fazer login.
+if (document.getElementById('form-choose').style.display !== 'none') return
 if (document.getElementById('form-recovery').style.display !== 'none') doUpdatePassword()
 else if (document.getElementById('form-login').style.display !== 'none') doLogin()
 else doRegister()

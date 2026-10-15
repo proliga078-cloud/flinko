@@ -170,9 +170,12 @@ function renderClientWelcome(){var host=document.getElementById('page-myrequests
 // Conta sem perfil (registo que ficou a meio): a página de entrada pergunta
 // primeiro se a pessoa quer contratar ou oferecer serviços. Só uma vez, para
 // nunca ficar em ciclo; se voltar sem perfil, cria como até aqui.
-try{if(!sessionStorage.getItem('fk_escolher_tipo')){sessionStorage.setItem('fk_escolher_tipo','1');location.replace('auth.html?redirect=dashboard.html');return}}catch(e){}
-const name=user.user_metadata?.name||user.email.split('@')[0]
-const{error}=await db.rpc('create_my_profile_if_missing',{p_name:name})
+// Se o tipo ficou guardado na conta ao registar, usa-o sem perguntar.
+const meta=user.user_metadata||{}
+const tipo=meta.account_type==='client'||meta.account_type==='professional'?meta.account_type:null
+try{if(!tipo&&!sessionStorage.getItem('fk_escolher_tipo')){sessionStorage.setItem('fk_escolher_tipo','1');location.replace('auth.html?redirect=dashboard.html');return}}catch(e){}
+const name=meta.full_name||meta.name||user.email.split('@')[0]
+const{error}=await db.rpc('create_my_profile_if_missing',{p_name:name,p_account_type:tipo||'professional'})
 if(error){
 console.error('createProfile upsert error:',error)
 }

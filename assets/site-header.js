@@ -37,6 +37,9 @@
       var user = document.getElementById('nav-user')
       if (guest) guest.style.display = 'none'
       if (user) user.style.display = 'flex'
+      // No menu do telemóvel, "Entrar" passa a "O meu painel".
+      var entrar = panel && panel.querySelector('a[href="/auth?tab=login"]')
+      if (entrar) { entrar.href = '/dashboard'; entrar.textContent = 'O meu painel' }
       var meta = (sess.user && sess.user.user_metadata) || {}
       var name = String(meta.full_name || meta.name || '').trim()
       var av = document.getElementById('nav-avatar')

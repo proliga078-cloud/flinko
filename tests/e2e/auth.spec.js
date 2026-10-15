@@ -165,6 +165,71 @@ test.describe('auth.html — registo', () => {
     expect(rpcCalls.some((c) => c.fnName === 'create_my_profile_if_missing')).toBe(true);
     await page.waitForURL('**/pedidos.html');
   });
+
+  test('REGRESSÃO: o SIGNED_IN do SDK a meio do registo não pergunta o tipo outra vez nem muda o destino', async ({ page }) => {
+    // Regista se o ecrã "Falta só um passo" chegou a aparecer, mesmo por um instante.
+    await page.addInitScript(() => {
+      setInterval(() => { const f = document.getElementById('form-choose'); if (f && f.style.display === 'block') sessionStorage.setItem('viu-escolha', '1'); }, 5);
+    });
+    await withFakeSupabase(page, {
+      emitAuthEvents: true,
+      signUpUser: { id: 'new-user-3' },
+      signUpSession: { access_token: 'tok-3', user: { id: 'new-user-3', email: 'rita@example.com', user_metadata: {} } },
+      rpcResults: { get_my_profile: [] },
+    });
+    await page.goto('/auth.html?tab=register');
+    await page.click('#intent-client');
+    await page.fill('#reg-name', 'Rita Costa');
+    await page.fill('#reg-email', 'rita@example.com');
+    await page.fill('#reg-password', 'password123');
+    await page.click('#reg-btn');
+    await page.waitForFunction(() => (window.__signUpCalls || []).length > 0);
+    const [call] = await page.evaluate(() => window.__signUpCalls);
+    expect(call.options.data).toEqual({ full_name: 'Rita Costa', account_type: 'client' });
+    await page.waitForURL('**/pedidos.html');
+    expect(await page.evaluate(() => sessionStorage.getItem('viu-escolha'))).toBeNull();
+  });
+});
+
+test.describe('auth.html — recuperar password', () => {
+  test('REGRESSÃO: o link do email mostra o formulário da nova password e não salta para o painel', async ({ page }) => {
+    const S = { access_token: 'tok-r', user: { id: 'user-r', email: 'r@example.com' } };
+    // Como o SDK real: há sessão logo, o hash é apagado e o PASSWORD_RECOVERY só chega depois.
+    await withFakeSupabase(page, { recoveryLink: true, session: S, rpcResults: { get_my_profile: [{ id: 'user-r' }] } });
+    await page.goto('/auth.html#access_token=x&type=recovery');
+    await expect(page.locator('#form-recovery')).toBeVisible();
+    await page.waitForTimeout(1200);
+    expect(page.url()).toContain('auth.html');
+    await page.fill('#recovery-password', 'novaPass123');
+    await page.fill('#recovery-password2', 'novaPass123');
+    await page.click('#recovery-btn');
+    await expect(page.locator('#recovery-msg')).toContainText('Password atualizada');
+  });
+
+  test('link expirado: explica e diz como pedir outro', async ({ page }) => {
+    await withFakeSupabase(page, {});
+    await page.goto('/auth.html#error=access_denied&error_code=otp_expired&error_description=x');
+    await expect(page.locator('#login-msg')).toContainText('expirou');
+  });
+});
+
+test.describe('auth.html — Google e pequenos detalhes', () => {
+  test('Google no separador Entrar com ?intent=client guarda o tipo para a conta nova', async ({ page }) => {
+    await withFakeSupabase(page, {});
+    await page.goto('/auth.html?tab=login&intent=client&redirect=pedidos.html%3Fpublicar%3D1');
+    await page.click('#login-google-btn');
+    const pend = await page.evaluate(() => JSON.parse(sessionStorage.getItem('flinko_oauth_pending')));
+    expect(pend).toEqual({ accountType: 'client', ref: null, redirect: 'pedidos.html?publicar=1' });
+  });
+
+  test('a password do login pode ser mostrada e não parece já preenchida', async ({ page }) => {
+    await withFakeSupabase(page, {});
+    await page.goto('/auth.html');
+    await expect(page.locator('#login-password')).toHaveAttribute('placeholder', 'A tua password');
+    await page.fill('#login-password', 'segredo');
+    await page.click('#login-pw-toggle');
+    await expect(page.locator('#login-password')).toHaveAttribute('type', 'text');
+  });
 });
 
 // Registo que ficou a meio (conta sem perfil): antes de criar o perfil,
@@ -202,6 +267,31 @@ test.describe('auth.html — conta sem perfil', () => {
     await page.waitForURL('**/dashboard.html');
     const rpc = (await rpcs(page)).find((c) => c.fnName === 'create_my_profile_if_missing');
     expect(rpc.args).toEqual({ p_name: 'Ana Silva', p_account_type: 'professional' });
+  });
+
+  test('conta sem perfil mas com o tipo guardado no registo: cria-o sem perguntar', async ({ page }) => {
+    await guardaRpc(page);
+    const user = { ...SESS.user, user_metadata: { full_name: 'Ana Silva', account_type: 'client' } };
+    await withFakeSupabase(page, { emitAuthEvents: true, loginUser: user, loginSession: { ...SESS, user }, rpcResults: { get_my_profile: [] } });
+    await page.goto('/auth.html');
+    await page.fill('#login-email', 'ana.silva@example.com');
+    await page.fill('#login-password', 'segredo123');
+    await page.click('#login-btn');
+    await page.waitForURL('**/dashboard.html');
+    const rpc = (await rpcs(page)).filter((c) => c.fnName === 'create_my_profile_if_missing');
+    expect(rpc).toEqual([{ fnName: 'create_my_profile_if_missing', args: { p_name: 'Ana Silva', p_account_type: 'client' } }]);
+  });
+
+  test('Enter no ecrã "Falta só um passo" não volta a fazer login', async ({ page }) => {
+    await withFakeSupabase(page, { loginUser: SESS.user, loginSession: SESS, rpcResults: { get_my_profile: [] } });
+    await page.goto('/auth.html');
+    await page.fill('#login-email', 'ana.silva@example.com');
+    await page.fill('#login-password', 'segredo123');
+    await page.click('#login-btn');
+    await expect(page.locator('#form-choose')).toBeVisible();
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    expect(await page.evaluate(() => window.__signInCalls.length)).toBe(1);
   });
 
   test('conta com perfil: entra direto, sem perguntar', async ({ page }) => {

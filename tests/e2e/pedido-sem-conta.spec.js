@@ -42,7 +42,7 @@ test('sem conta: "Publicar" pede nome/email/password na mesma janela e publica o
   await page.click('#acc-btn');
   await expect(page.locator('#m-success')).toContainText('Pedido publicado');
   const calls = await page.evaluate(() => ({ signUp: window.__signUpCalls, rpc: window.__rpcCalls, insert: window.__insertCalls }));
-  expect(calls.signUp).toEqual([{ email: 'ana@example.com', password: 'segredo123' }]);
+  expect(calls.signUp).toEqual([{ email: 'ana@example.com', password: 'segredo123', options: { data: { full_name: 'Ana Silva', account_type: 'client' } } }]);
   expect(calls.rpc).toContainEqual({ fnName: 'create_my_profile_if_missing', args: { p_name: 'Ana Silva', p_account_type: 'client' } });
   const pedido = calls.insert.find((c) => c.table === 'requests').row;
   expect(pedido).toMatchObject({ client_id: 'cli-1', title: 'Trocar quadro elétrico', category: 'Eletricistas', location: 'Braga – Guimarães' });
@@ -59,6 +59,8 @@ test('"Já tenho conta": entra com email e password e publica', async ({ page })
   await page.click('#acc-btn');
   await expect(page.locator('#m-success')).toContainText('Pedido publicado');
   expect(await page.evaluate(() => window.__signInCalls.length)).toBe(1);
+  // Conta sem perfil (registo a meio) fica com perfil de cliente; se já existir, o servidor não muda nada.
+  expect(await page.evaluate(() => window.__rpcCalls)).toContainEqual({ fnName: 'create_my_profile_if_missing', args: { p_name: 'ana', p_account_type: 'client' } });
 });
 
 test('conta que precisa de confirmar email: o pedido fica guardado e volta preenchido depois', async ({ page }) => {
