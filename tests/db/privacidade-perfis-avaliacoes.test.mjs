@@ -6,7 +6,7 @@ import { PGlite } from '@electric-sql/pglite'
 import fs from 'node:fs'
 import assert from 'node:assert/strict'
 
-const MIGRATION = new URL('../../supabase/migrations/20261015120000_privacidade_perfis_avaliacoes.sql', import.meta.url)
+const MIGRATION = new URL('../../supabase/migrations/20261015193859_privacidade_perfis_avaliacoes.sql', import.meta.url)
 
 const A = '11111111-1111-1111-1111-111111111111' // profissional com convite
 const B = '22222222-2222-2222-2222-222222222222' // conta nova
