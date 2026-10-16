@@ -96,3 +96,24 @@ test('resultados: conta envios por modelo e leads que se registaram', async ({ p
   await expect(row).toContainText('50%');
   await expect(row).toContainText('(1/2)');
 });
+
+// Campanha "Traz os teus clientes" (out/2026): o dono prefere WhatsApp a email,
+// porque as pessoas leem. Os modelos têm de existir no painel, não são
+// promocionais (são sobre o perfil do próprio profissional) e ficam registados.
+for (const [tpl, trecho] of [['d12', 'link de avaliação'], ['d13', 'cartaz']]) {
+  test(`modelo de campanha ${tpl}: abre o WhatsApp do profissional com o texto certo e regista o contacto`, async ({ page }) => {
+    const calls = await openAdmin(page, { view: 'contact' });
+    await page.evaluate(() => openPro('pro-1'));
+    const popup = page.waitForEvent('popup');
+    await page.locator('#drawer').getByRole('button', { name: 'WhatsApp com modelo' }).click();
+    await page.locator('#ff_t').selectOption(tpl);
+    await modalOk(page);
+    const wa = await popup;
+    const texto = new URL(wa.url()).searchParams.get('text');
+    expect(texto).toContain('Olá Rui');
+    expect(texto).toContain(trecho);
+    expect(texto).toContain('flinko.pt/dashboard');
+    await wa.close();
+    await expect.poll(() => calls.filter((c) => c.method === 'POST' && c.path === '/rest/v1/admin_items' && c.body && c.body.kind === 'contact').length).toBeGreaterThan(0);
+  });
+}
