@@ -132,6 +132,18 @@ test('enviar email a um grupo: pré-visualiza, confirma e manda o texto preenchi
   await expect(page.locator('.toast')).toContainText('1 email(s) enviado(s)');
 });
 
+test('email de teste: envia só para o próprio dono e diz para onde foi', async ({ page }) => {
+  const calls = await openAdmin(page, {
+    view: 'contact',
+    fns: { 'admin-send-campaign': (b) => (b.action === 'test' ? { sent: 1, to: 'dono@flinko.pt' } : { error: 'não devia enviar a mais ninguém' }) },
+  });
+  await page.getByRole('button', { name: /Enviar email de teste para mim/ }).click();
+  await modalOk(page);
+  await expect.poll(() => calls.find((c) => c.fn === 'admin-send-campaign')?.body?.action).toBe('test');
+  expect(calls.find((c) => c.fn === 'admin-send-campaign').body.profileIds).toBeUndefined();
+  await expect(page.locator('.toast')).toContainText('dono@flinko.pt');
+});
+
 test('registo de ações: mostra o que vem do admin_audit e a receita real do Stripe nas Finanças', async ({ page }) => {
   await openAdmin(page, { view: 'audit', fns: { 'admin-stripe-summary': { mrr: 1999, last30: { gross: 1999, refunds: 0, fees: 60, net: 1939 }, months: [], subscriptions: { active: 1, trialing: 0, pastDue: 1 }, pastDue: [{ customer: { name: 'Rui Alves', profile_id: 'pro-1' }, monthly: 1999 }], churned30: [], disputes: [], balance: { available: 1939, pending: 0 } } } });
   await expect(page.locator('#autable')).toContainText('Rui Alves: suspended');
