@@ -74,6 +74,28 @@ async function emailMap(){
   return map
 }
 
+// action:"test" -> envia o email só para o próprio admin (o email vem do
+// token validado, nunca do pedido), para confirmar que os envios funcionam
+// sem escrever a profissionais. Não regista nada na base de dados.
+async function sendTest(user,subject,message){
+  if(!user||!user.email)return json(400,{error:'A tua conta não tem email.'})
+  if(!process.env.RESEND_API_KEY)return json(503,{error:'RESEND_API_KEY não está configurada no Netlify, por isso não é possível enviar emails.'})
+  const me={name:user.user_metadata&&(user.user_metadata.full_name||user.user_metadata.name)||''}
+  const subj='[Teste] '+(fill(String(subject||'').trim(),me)||'Email de teste do Flinko').slice(0,150)
+  const text=fill(String(message||'').trim(),me).slice(0,5000)||'Se estás a ler isto, os emails do Flinko estão a sair.'
+  const res=await fetch('https://api.resend.com/emails',{
+    method:'POST',
+    headers:{Authorization:`Bearer ${process.env.RESEND_API_KEY}`,'Content-Type':'application/json'},
+    body:JSON.stringify({from:FROM,to:[user.email],reply_to:REPLY_TO,subject:subj,html:emailHtml(text),text})
+  })
+  if(!res.ok){
+    const txt=await res.text().catch(()=>'')
+    console.error('admin-send-campaign: Resend recusou o teste:',res.status,txt)
+    return json(502,{error:`A Resend recusou o envio (código ${res.status}). Confirma o remetente (RESEND_FROM) e o domínio na Resend.`})
+  }
+  return json(200,{sent:1,to:user.email})
+}
+
 exports.handler=async(event)=>{
   if(event.httpMethod!=='POST')return{statusCode:405,body:'Method Not Allowed'}
   try{
@@ -82,6 +104,7 @@ exports.handler=async(event)=>{
 
     const body=JSON.parse(event.body||'{}')
     const{action,profileIds,subject,message,messages,promo}=body
+    if(action==='test')return sendTest(auth.user,subject,message)
     if(!Array.isArray(profileIds)||!profileIds.length)return json(400,{error:'Escolhe pelo menos um destinatário.'})
     if(profileIds.length>MAX_RECIPIENTS)return json(400,{error:`No máximo ${MAX_RECIPIENTS} destinatários por envio.`})
     if(!profileIds.every(id=>typeof id==='string'))return json(400,{error:'profileIds inválidos.'})

@@ -118,3 +118,35 @@ test('promo: só envia a quem tem consentimento registado (quem disse PARAR fica
   const body = JSON.parse(res.body);
   assert.equal(body.skipped.find((s) => s.id === 'rui').reason, 'sem consentimento para promoções');
 });
+
+// Botão "Enviar teste para mim" (out/2026): os emails estiveram semanas a
+// falhar (remetente num domínio perdido) e não havia forma de testar sem
+// escrever a profissionais verdadeiros. O teste vai só para o admin.
+test('test: envia só para o email do próprio admin, sem destinatários escolhidos', async () => {
+  setup();
+  process.env.RESEND_API_KEY = 'k';
+  const enviados = [];
+  global.fetch = async (url, opts) => { enviados.push({ url, body: JSON.parse(opts.body) }); return { ok: true, json: async () => ({ id: 'e1' }) }; };
+  const res = await handler({ httpMethod: 'POST', headers: { authorization: 'Bearer t' }, body: JSON.stringify({ action: 'test', subject: 'Olá {nome}', message: 'Isto é um teste do Flinko.', profileIds: ['rui'] }) });
+  assert.equal(res.statusCode, 200);
+  assert.equal(JSON.parse(res.body).to, 'dono@flinko.pt');
+  assert.equal(enviados.length, 1);
+  assert.equal(enviados[0].url, 'https://api.resend.com/emails');
+  assert.deepEqual(enviados[0].body.to, ['dono@flinko.pt']);
+  assert.match(enviados[0].body.subject, /^\[Teste\] /);
+});
+
+test('test: se a Resend recusar, diz que falhou e com que código', async () => {
+  setup();
+  process.env.RESEND_API_KEY = 'k';
+  global.fetch = async () => ({ ok: false, status: 403, text: async () => 'domain not verified' });
+  const res = await handler({ httpMethod: 'POST', headers: { authorization: 'Bearer t' }, body: JSON.stringify({ action: 'test', subject: 'Teste', message: 'Isto é um teste do Flinko.' }) });
+  assert.equal(res.statusCode, 502);
+  assert.match(JSON.parse(res.body).error, /403/);
+});
+
+test('test: admin de apoio também não pode', async () => {
+  setup('support');
+  const res = await handler({ httpMethod: 'POST', headers: { authorization: 'Bearer t' }, body: JSON.stringify({ action: 'test', subject: 'Teste', message: 'Isto é um teste do Flinko.' }) });
+  assert.equal(res.statusCode, 403);
+});

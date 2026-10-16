@@ -1385,6 +1385,17 @@ async function sendGroupEmail() {
   } catch (e) { toast("Erro: " + e.message); }
 }
 
+// Confirma que os emails estão a sair sem escrever a profissionais: o
+// servidor envia só para o email da conta de quem está no painel.
+async function sendTestEmail() {
+  const r = await form("Email de teste para ti", [{ k: "subject", label: "Assunto", def: "Email de teste do Flinko", req: 1 }, { k: "text", label: "Mensagem", type: "textarea", rows: 5, def: "Se estás a ler isto, os emails do Flinko estão a sair.", req: 1 }], {}, "Enviar teste");
+  if (!r) return;
+  try {
+    const j = await fn("admin-send-campaign", { action: "test", subject: r.subject, message: r.text });
+    toast(`Email de teste enviado para ${j.to}. Vê a tua caixa de correio (e o spam).`);
+  } catch (e) { toast("Erro: " + e.message); }
+}
+
 function contactNext() { const p = contactList().find(x => M.phone[x.id]); if (!p) return toast("Ninguém com telemóvel neste grupo"); contactVia(p.id, "wa"); }
 function setSeg(k) { cst.seg = k; render(); }
 function setTpl(id) { cst.tpl = id; cst.text = ""; render(); }
@@ -1406,7 +1417,7 @@ const vContact = () => {
       <div class="note" id="cprev" style="margin:12px 0 0"></div></div>
     <div class="card"><h3>Ações do grupo <span class="sp"></span><span class="pill" id="ccount"></span></h3>
       <div class="row"><button class="btn" onclick="contactNext()">Próximo por contactar (WhatsApp)</button>
-      <button class="btn" onclick="sendGroupMessage()">💬 Mensagem da Flinko a este grupo</button><button class="btn sec" onclick="copyPhones()">Copiar números</button><button class="btn sec" onclick="copyEmails()">Copiar emails</button>${isOwner() ? `<button class="btn sec" onclick="sendGroupEmail()">✉ Enviar email a este grupo</button>` : ""}</div>
+      <button class="btn" onclick="sendGroupMessage()">💬 Mensagem da Flinko a este grupo</button><button class="btn sec" onclick="copyPhones()">Copiar números</button><button class="btn sec" onclick="copyEmails()">Copiar emails</button>${isOwner() ? `<button class="btn sec" onclick="sendGroupEmail()">✉ Enviar email a este grupo</button><button class="btn sec" onclick="sendTestEmail()">Enviar email de teste para mim</button>` : ""}</div>
       <label class="f">Filtrar por nome, categoria ou zona</label><input value="${esc(cst.q)}" oninput="cst.q=this.value;refreshContact()" placeholder="Pesquisar…">
       <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" style="width:auto" ${cst.hide ? "checked" : ""} onchange="cst.hide=this.checked;refreshContact()"> Esconder quem já contactei nos últimos 7 dias</label>
       <p class="mut" style="margin:10px 0 0">Ao contactar, a fase do CRM passa a “Contactado” e fica um próximo contacto agendado para daqui a 3 dias.</p></div></div>
