@@ -42,8 +42,8 @@ test.describe('eletricistas.html — stat de tempo de resposta honesto', () => {
     });
     await page.goto('/eletricistas.html');
     await page.waitForFunction(() => document.getElementById('stat-count').textContent !== '–');
-    const displayStyle = await page.$eval('#stat-response-item', el => el.style.display);
-    expect(displayStyle).toBe('none');
+    // O espaço fica reservado (para o ecrã não saltar), mas sem número à vista.
+    await expect(page.locator('#stat-response-item')).toBeHidden();
     const bodyText = await page.locator('body').innerText();
     expect(bodyText).not.toContain('24h');
   });
@@ -63,8 +63,7 @@ test.describe('eletricistas.html — stat de tempo de resposta honesto', () => {
     });
     await page.goto('/eletricistas.html');
     await page.waitForFunction(() => document.getElementById('stat-response').textContent !== '–');
-    const displayStyle = await page.$eval('#stat-response-item', el => el.style.display);
-    expect(displayStyle).not.toBe('none');
+    await expect(page.locator('#stat-response-item')).toBeVisible();
     // Média ponderada: (90*2 + 30*1) / 3 = 70 min -> a partir de 60min o
     // formatador arredonda para horas: Math.round(70/60) = "1 h".
     await expect(page.locator('#stat-response')).toHaveText('1 h');

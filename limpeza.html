@@ -23,7 +23,7 @@
 <script src="/assets/cookie-consent.js" defer></script>
 <script src="/assets/a11y-clickable.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
- <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet"/>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=optional" rel="stylesheet"/>
  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"A empresa de limpeza traz os produtos?","acceptedAnswer":{"@type":"Answer","text":"Depende do profissional — alguns incluem produtos e equipamento no preço, outros pedem que sejam fornecidos pelo cliente. Confirma antes de marcar."}},{"@type":"Question","name":"Fazem limpezas pontuais ou só serviços fixos?","acceptedAnswer":{"@type":"Answer","text":"A maioria oferece os dois: limpezas avulsas (ex: pós-obra, mudança de casa) e serviços semanais ou mensais fixos."}}]}</script>
  <style>
 .ic{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;vertical-align:-3px}
@@ -33,7 +33,7 @@
 
  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
  :root{
---ink:#132420;--ink-soft:#4E5C57;--ink-mute:#84918C;
+--ink:#132420;--ink-soft:#4E5C57;--ink-mute:#69756F;
 --paper:#FFFFFF;--surface:#F3FBF6;--line:#E1EEE6;--line-2:#CFE4D9;
 --accent:#E8720A;--accent-deep:#B85608;--accent-soft:#FFE7CE;
 --fresh:#0F8B5F;--fresh-deep:#0A6B49;--fresh-soft:#D7F5E4;--fresh-light:#6FE3B4;
@@ -66,7 +66,8 @@
  .breadcrumb{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted-2);margin-bottom:8px}
  .breadcrumb a{color:var(--muted)}.breadcrumb a:hover{color:var(--ink)}
  .trust-pillrow{display:none}
- .stats-row{display:none;gap:26px;margin:14px 0 2px;flex-wrap:wrap}
+ /* Espaço reservado desde o início: aparecer depois empurrava a lista (CLS). */
+ .stats-row{display:flex;visibility:hidden;gap:26px;margin:14px 0 2px;flex-wrap:wrap}
  .stats-row .stat-item{display:flex;align-items:baseline;gap:7px}
  .stats-row .stat-item strong{font-family:'Plus Jakarta Sans',sans-serif;font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
  .stats-row .stat-item span{font-size:12.5px;color:var(--muted);font-weight:600}
@@ -112,6 +113,11 @@
  .pro-bio{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
  .pro-card-side{flex:0 0 100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;padding-top:12px;border-top:1px solid #F0F0EC}
  .page-header{padding:20px 4% 16px}
+ /* Duas linhas reservadas no telemóvel: a 3.ª estatística entra sem empurrar nada. */
+ .stats-row{gap:4px 14px;min-height:50px;align-content:flex-start}
+ .stats-row .stat-item{white-space:nowrap;gap:5px}
+ .stats-row .stat-item strong{font-size:16px}
+ .stats-row .stat-item span{font-size:11.5px}
  .page-body{padding:16px 4%}
  nav{padding:10px 4%}
  }
@@ -183,6 +189,8 @@
  .verif{display:none}
 
  .loading-grid{display:flex;flex-direction:column;gap:14px}
+ /* A lista nunca encolhe abaixo disto, para o que está por baixo não saltar. */
+ #pros-container{min-height:420px}
  .skeleton{background:var(--white);border:1px solid var(--border);border-radius:18px;overflow:hidden;padding:22px 24px;display:flex;align-items:center;gap:20px}
  .skeleton-cover{width:64px;height:64px;border-radius:50%;flex-shrink:0;background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:200% 100%;animation:shimmer 1.2s infinite}
  .skeleton-body{flex:1}
@@ -328,10 +336,10 @@
  <span class="trust-pill">Contacto direto</span>
  <span class="trust-pill">Sem custos escondidos</span>
  </div>
- <div class="stats-row" id="cat-stats-row" style="display:none">
+ <div class="stats-row" id="cat-stats-row">
  <div class="stat-item"><strong id="stat-count">–</strong><span>Profissionais</span></div>
  <div class="stat-item"><strong id="stat-rating">–</strong><span>Avaliação média</span></div>
- <div class="stat-item" id="stat-response-item" style="display:none"><strong id="stat-response">–</strong><span>Resposta média</span></div>
+ <div class="stat-item" id="stat-response-item" style="visibility:hidden"><strong id="stat-response">–</strong><span>Resposta média</span></div>
  </div>
  </div>
 
@@ -430,7 +438,7 @@
  <option value="newest">Mais recentes</option>
  </select>
  </div>
- <div id="pros-container"></div>
+ <div id="pros-container"><div class="loading-grid"><div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="width:60%"></div></div></div><div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="width:60%"></div></div></div><div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="width:60%"></div></div></div></div></div>
  <div class="pagination" id="pagination"></div>
  </main>
 </div>
@@ -634,9 +642,9 @@ async function loadCatStats(){
  })
  if(totalN>=3){
  document.getElementById('stat-response').textContent=formatResponseMinutes(totalMin/totalN)
- document.getElementById('stat-response-item').style.display=''
+ document.getElementById('stat-response-item').style.visibility='visible'
  }
- row.style.display='flex'
+ row.style.visibility='visible'
  }catch(e){}
 }
 

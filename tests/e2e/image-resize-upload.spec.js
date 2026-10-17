@@ -103,3 +103,59 @@ test('resizeImageFile (função global) devolve o mesmo ficheiro, inalterado, pa
   });
   expect(result.sameRef).toBe(true);
 });
+
+// Out/2026: na página dos eletricistas havia fotos de perfil de 1,1 e 1,3 MB.
+// Eram PNG: o resize mantinha o PNG (sem perdas, enorme) e não mexia em
+// ficheiros pesados que já cabiam nas dimensões. Uma foto sem transparência
+// passa a JPEG, e um ficheiro pesado é sempre recomprimido.
+async function pngOpaco(page, lado) {
+  return page.evaluate(async (l) => {
+    const c = document.createElement('canvas'); c.width = l; c.height = l;
+    const ctx = c.getContext('2d'); const img = ctx.createImageData(l, l);
+    for (let i = 0; i < img.data.length; i += 4) { img.data[i] = Math.random() * 255; img.data[i + 1] = Math.random() * 255; img.data[i + 2] = Math.random() * 255; img.data[i + 3] = 255; }
+    ctx.putImageData(img, 0, 0);
+    const blob = await new Promise((r) => c.toBlob(r, 'image/png'));
+    window.__png = new File([blob], 'foto.png', { type: 'image/png' });
+    return blob.size;
+  }, lado);
+}
+
+test('PNG sem transparência, mesmo já pequeno em dimensões, sai como JPEG mais leve', async ({ page }) => {
+  await withFakeSupabase(page, dashboardConfig());
+  await page.goto('/dashboard.html');
+  const original = await pngOpaco(page, 900);
+  expect(original).toBeGreaterThan(1000000);
+  const out = await page.evaluate(async () => { const f = await resizeImageFile(window.__png); return { type: f.type, size: f.size, name: f.name }; });
+  expect(out.type).toBe('image/jpeg');
+  expect(out.name).toBe('foto.jpg');
+  expect(out.size).toBeLessThan(original / 2);
+});
+
+test('PNG com transparência continua PNG (não perde o fundo transparente)', async ({ page }) => {
+  await withFakeSupabase(page, dashboardConfig());
+  await page.goto('/dashboard.html');
+  const out = await page.evaluate(async () => {
+    const c = document.createElement('canvas'); c.width = 2000; c.height = 2000;
+    const ctx = c.getContext('2d'); ctx.fillStyle = '#E8720A'; ctx.fillRect(500, 500, 1000, 1000);
+    const blob = await new Promise((r) => c.toBlob(r, 'image/png'));
+    const f = await resizeImageFile(new File([blob], 'logo.png', { type: 'image/png' }));
+    return { type: f.type };
+  });
+  expect(out.type).toBe('image/png');
+});
+
+test('a foto de perfil é guardada no máximo com 600px', async ({ page }) => {
+  await withFakeSupabase(page, dashboardConfig());
+  await page.goto('/dashboard.html');
+  await page.click('.nav-item[data-page="profile"]');
+  await page.evaluate(() => {
+    const orig = window.resizeImageFile;
+    window.__resizeOpts = [];
+    window.resizeImageFile = (f, o) => { window.__resizeOpts.push(o || null); return orig(f, o); };
+  });
+  await page.setInputFiles('#p-photo-file', LARGE_PHOTO);
+  await expect.poll(() => page.evaluate(() => (window.__uploadCalls || []).length)).toBeGreaterThan(0);
+  const opts = await page.evaluate(() => window.__resizeOpts[0]);
+  expect(opts && opts.maxWidth).toBeLessThanOrEqual(600);
+  expect(opts && opts.maxHeight).toBeLessThanOrEqual(600);
+});

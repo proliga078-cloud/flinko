@@ -227,7 +227,7 @@
     var av = document.getElementById('onb-av')
     av.innerHTML = '⏳'
     try{
-      var file = typeof resizeImageFile === 'function' ? await resizeImageFile(f, { maxWidth: 800, maxHeight: 800 }) : f
+      var file = typeof resizeImageFile === 'function' ? await resizeImageFile(f, { maxWidth: 600, maxHeight: 600 }) : f
       if(file.size > 5 * 1024 * 1024) throw new Error('Foto demasiado grande (máx. 5 MB).')
       var ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
       var path = 'profiles/' + user.id + '/avatar.' + ext

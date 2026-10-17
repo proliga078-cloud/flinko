@@ -34,7 +34,7 @@
       + '.fk-msg-user{align-self:flex-end;background:#E8720A;color:#fff;border-bottom-right-radius:4px}'
       + '.fk-msg-error{align-self:flex-start;background:#FFF3E4;color:#B85608;border:1px solid #FFE7CE;border-bottom-left-radius:4px}'
       + '.fk-typing{align-self:flex-start;display:flex;gap:4px;padding:10px 14px;background:#fff;border:1px solid #E1EEE6;border-radius:14px;border-bottom-left-radius:4px}'
-      + '.fk-typing span{width:6px;height:6px;border-radius:50%;background:#84918C;animation:fkBlink 1.2s infinite ease-in-out}'
+      + '.fk-typing span{width:6px;height:6px;border-radius:50%;background:#69756F;animation:fkBlink 1.2s infinite ease-in-out}'
       + '.fk-typing span:nth-child(2){animation-delay:.15s}'
       + '.fk-typing span:nth-child(3){animation-delay:.3s}'
       + '@keyframes fkBlink{0%,80%,100%{opacity:.25}40%{opacity:1}}'
