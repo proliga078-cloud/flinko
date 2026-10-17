@@ -526,10 +526,16 @@ panel.classList.toggle('open', open);
 <div class="form-section" id="share-section">
 <div class="form-title">Divulga o teu perfil</div>
 <p style="color:var(--muted);font-size:13px;margin:-8px 0 16px;max-width:520px">Quantos mais clientes chegarem ao teu perfil, mais pedidos recebes. Partilha o link no WhatsApp e nas redes sociais, ou imprime um cartaz com QR para a carrinha, a loja ou o cartão de visita.</p>
+<div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+<div id="share-qr" role="img" aria-label="Código QR do teu perfil" style="width:132px;height:132px;flex-shrink:0;background:#fff;padding:6px;border-radius:8px;border:1px solid var(--border)"></div>
+<div style="flex:1;min-width:200px">
 <div style="font-size:13px;color:var(--muted-2);margin-bottom:4px">O teu endereço</div>
 <a id="share-url" href="#" target="_blank" rel="noopener noreferrer" style="font-size:15px;font-weight:700;color:var(--blue);word-break:break-all"></a>
+</div>
+</div>
 <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
 <button class="btn btn-line" onclick="copyShareUrl()">Copiar link</button>
+<button class="btn btn-line" onclick="downloadShareQr()">Descarregar QR</button>
 <a class="btn btn-line" id="share-wa" href="#" target="_blank" rel="noopener noreferrer">Partilhar no WhatsApp</a>
 <a class="btn btn-primary" id="share-poster" href="#" target="_blank" rel="noopener noreferrer">Imprimir cartaz com QR</a><a class="btn btn-outline" id="share-cards" href="#" target="_blank" rel="noopener noreferrer">Cartões de visita</a><a class="btn btn-outline" id="share-image" href="#" target="_blank" rel="noopener noreferrer">Imagem para WhatsApp e Instagram</a>
 </div>

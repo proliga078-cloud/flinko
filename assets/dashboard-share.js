@@ -1,5 +1,5 @@
 // ---------- DIVULGAR O PERFIL (todos os planos) ----------
-// Link, WhatsApp e cartaz com QR para o profissional levar clientes ao seu perfil.
+// Link, QR, WhatsApp e cartaz para o profissional levar clientes ao seu perfil.
 // O link próprio (/o-nome) é do plano Pro; sem ele usa-se profile.html?id=...
 function shareUrl(){
   if(!profileData||!profileId)return ''
@@ -12,6 +12,7 @@ function renderShare(){
   const url=shareUrl()
   el.textContent=url.replace(/^https?:\/\//,'')
   el.href=url||'#'
+  drawShareQr(url)
   const wa=document.getElementById('share-wa')
   if(wa){
     const txt='Olá! Podes ver o meu perfil e pedir-me orçamento grátis na Flinko: '+url
@@ -22,6 +23,28 @@ function renderShare(){
   const cards=document.getElementById('share-cards'),img=document.getElementById('share-image')
   if(cards&&profileId)cards.href='cartaz.html?formato=cartoes&id='+encodeURIComponent(profileId)
   if(img&&profileId)img.href='cartaz.html?formato=imagem&id='+encodeURIComponent(profileId)
+}
+
+// O QR fica no painel para todos os planos (antes só aparecia com o link próprio do Pro).
+let shareQrText=''
+function drawShareQr(url){
+  const alvo=document.getElementById('share-qr')
+  if(!alvo||!url||url===shareQrText)return
+  if(typeof QRCode==='undefined'){loadLib('qrcode').then(()=>drawShareQr(url)).catch(()=>{alvo.innerHTML='<div style="font-size:11px;color:var(--muted-2);padding:8px">QR indisponível</div>'});return}
+  alvo.innerHTML=''
+  shareQrText=url
+  new QRCode(alvo,{text:url,width:120,height:120,correctLevel:QRCode.CorrectLevel.M})
+}
+
+function downloadShareQr(){
+  const img=document.querySelector('#share-qr img')
+  const canvas=document.querySelector('#share-qr canvas')
+  const fonte=img&&img.src?img.src:(canvas?canvas.toDataURL('image/png'):null)
+  if(!fonte){showAlert('profile-error','O QR ainda não está pronto. Tenta daqui a um segundo.','error');return}
+  const a=document.createElement('a')
+  a.href=fonte
+  a.download='flinko-'+((profileData&&profileData.slug)||'perfil')+'-qr.png'
+  document.body.appendChild(a);a.click();a.remove()
 }
 
 function copyShareUrl(){
