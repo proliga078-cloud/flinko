@@ -192,3 +192,32 @@ test('carregar: erro da base de dados devolve error e listas vazias (a página m
   assert.equal(b.error.message, 'falhou');
   assert.deepEqual(b.pros, []);
 });
+
+// Out/2026 (Baymard: custos inesperados são a 1.ª razão para desistir): o
+// cartão mostrava só "A partir de €20", sem dizer se era à hora ou pelo
+// trabalho todo. E o tempo de resposta só aparecia no perfil.
+test('unidadesDosPrecos: guarda a unidade do serviço mais barato de cada profissional', () => {
+  const u = PS.unidadesDosPrecos([
+    { professional_id: 'a', price_from: 40, price_unit: 'trabalho' },
+    { professional_id: 'a', price_from: 15, price_unit: 'hora' },
+    { professional_id: 'b', price_from: 0, price_unit: 'hora' },
+    { professional_id: 'c', price_from: 8, price_unit: 'm²' },
+  ]);
+  assert.deepEqual(u, { a: 'hora', c: 'm²' });
+});
+
+test('textoPreco: diz a unidade em português claro', () => {
+  assert.equal(PS.textoPreco(15, 'hora'), 'A partir de €15/hora');
+  assert.equal(PS.textoPreco(8, 'm²'), 'A partir de €8/m²');
+  assert.equal(PS.textoPreco(40, 'trabalho'), 'A partir de €40 por trabalho');
+  assert.equal(PS.textoPreco(40, null), 'A partir de €40');
+  assert.equal(PS.textoPreco(null, 'hora'), null);
+});
+
+test('textoResposta: só com amostra real (3+) e quando responde em menos de 1 dia', () => {
+  assert.equal(PS.textoResposta({ avg_response_minutes: 25, response_sample_count: 3 }), 'Responde em ~25 min');
+  assert.equal(PS.textoResposta({ avg_response_minutes: 130, response_sample_count: 5 }), 'Responde em ~2 h');
+  assert.equal(PS.textoResposta({ avg_response_minutes: 25, response_sample_count: 2 }), null);
+  assert.equal(PS.textoResposta({ avg_response_minutes: 2000, response_sample_count: 9 }), null);
+  assert.equal(PS.textoResposta({ avg_response_minutes: null, response_sample_count: 0 }), null);
+});

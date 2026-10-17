@@ -553,11 +553,16 @@ footer{background:var(--dark);color:rgba(255,255,255,.75);border-top:3px solid v
   .search-card{flex-direction:column}
   .search-field + .search-field{border-left:none;border-top:1px solid var(--line)}
   section{padding:64px 0}
+  /* O topo é uma <section> mas não leva este espaço: empurrava a pesquisa para fora do 1.º ecrã. */
+  section.hero{padding:0}
   .footer-top{grid-template-columns:1fr;padding-bottom:24px}
 }
 @media (max-width:520px){
   /* A pesquisa tem de caber no primeiro ecrã do telemóvel. */
   .hero .badge-pill{display:none}
+  .hero-shell{padding-top:12px}
+  .hero-pad{padding:24px 20px}
+  .hero .search-card{margin-top:14px}
   .hero p.lead{font-size:.98rem;margin-top:12px}
   .hero .mode-toggle{margin-top:16px}
   .value-card{grid-template-columns:1fr}

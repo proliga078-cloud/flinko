@@ -54,6 +54,34 @@
     return m;
   }
 
+  // [{professional_id, price_from, price_unit}] -> { id: unidade do serviço mais barato }
+  function unidadesDosPrecos(rows) {
+    var m = {}, min = {};
+    (rows || []).forEach(function (s) {
+      var v = Number(s.price_from);
+      if (v > 0 && (min[s.professional_id] == null || v < min[s.professional_id])) {
+        min[s.professional_id] = v;
+        if (s.price_unit) m[s.professional_id] = s.price_unit; else delete m[s.professional_id];
+      }
+    });
+    return m;
+  }
+
+  // Preço no cartão com a unidade: sem ela, '€20' tanto podia ser à hora como pelo trabalho.
+  function textoPreco(valor, unidade) {
+    if (!(Number(valor) > 0)) return null;
+    var t = 'A partir de €' + valor;
+    if (unidade === 'trabalho') return t + ' por trabalho';
+    return unidade ? t + '/' + unidade : t;
+  }
+
+  // Tempo de resposta no cartão: só com amostra real (3+ respostas) e se for menos de 1 dia.
+  function textoResposta(p) {
+    var n = p && p.response_sample_count, m = p && p.avg_response_minutes;
+    if (!(n >= 3) || m == null || m >= 1440) return null;
+    return 'Responde em ~' + (m < 60 ? Math.max(1, Math.round(m)) + ' min' : Math.round(m / 60) + ' h');
+  }
+
   function media(r) { return r && r.c ? r.s / r.c : 0; }
 
   function respondeRapido(p, limiteMinutos) {
@@ -163,7 +191,7 @@
     if (termo) q = q.or('name.ilike.%' + termo + '%,category.ilike.%' + termo + '%,bio.ilike.%' + termo + '%');
     if (opts.verified) q = q.eq('verified', true);
     var res = await q.order('created_at', { ascending: false }).limit(LIMITE);
-    if (res.error) return { error: res.error, pros: [], rMap: {}, pMap: {} };
+    if (res.error) return { error: res.error, pros: [], rMap: {}, pMap: {}, uMap: {} };
 
     var pros = res.data || [];
     var ids = pros.map(function (p) { return p.id; });
@@ -172,12 +200,12 @@
       var lote = ids.slice(i, i + LOTE);
       var par = await Promise.all([
         db.from('reviews').select('professional_id,rating').in('professional_id', lote),
-        db.from('services').select('professional_id,price_from').in('professional_id', lote),
+        db.from('services').select('professional_id,price_from,price_unit').in('professional_id', lote),
       ]);
       avaliacoes = avaliacoes.concat(par[0].data || []);
       servicos = servicos.concat(par[1].data || []);
     }
-    var base = { pros: pros, rMap: resumirAvaliacoes(avaliacoes), pMap: precosMinimos(servicos), error: null };
+    var base = { pros: pros, rMap: resumirAvaliacoes(avaliacoes), pMap: precosMinimos(servicos), uMap: unidadesDosPrecos(servicos), error: null };
     cache = { chave: chave, base: base };
     return base;
   }
@@ -186,7 +214,7 @@
 
   return {
     LIMITE: LIMITE, sanitizarPesquisa: sanitizarPesquisa, resumirAvaliacoes: resumirAvaliacoes,
-    precosMinimos: precosMinimos, filtrar: filtrar, ordenar: ordenar, paginar: paginar,
+    precosMinimos: precosMinimos, unidadesDosPrecos: unidadesDosPrecos, textoPreco: textoPreco, textoResposta: textoResposta, filtrar: filtrar, ordenar: ordenar, paginar: paginar,
     consultar: consultar, carregar: carregar, limparCache: limparCache, respondeRapido: respondeRapido,
   };
 });

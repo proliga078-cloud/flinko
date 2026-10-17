@@ -144,6 +144,13 @@ function pintar(){
   card.querySelectorAll('.stars button').forEach(b=>{const on=+b.dataset.n<=nota;b.classList.toggle('on',on);b.setAttribute('aria-checked',+b.dataset.n===nota?'true':'false')})
   const l=document.getElementById('lbl');if(l)l.textContent=LABELS[nota]||'Toca nas estrelas'
 }
+// Quem acabou de dar 4-5 estrelas é quem mais recomenda (Nielsen: 83% confiam
+// em recomendações de amigos). A mensagem já vai escrita; quem envia é o cliente.
+function linkRecomendar(){
+  const cat=String(info.pro_category||'').toLowerCase().replace(/s$/,'')
+  const txt='Recomendo '+(info.pro_name||'este profissional')+(cat?', '+cat:'')+'. Vê o perfil e as avaliações no Flinko: '+location.origin+perfilUrl()
+  return 'https://wa.me/?text='+encodeURIComponent(txt)
+}
 async function publicar(){
   const err=document.getElementById('err'),btn=document.getElementById('pub')
   const mostrar=t=>{err.textContent=t;err.style.display=t?'block':'none'}
@@ -155,7 +162,8 @@ async function publicar(){
   const{error}=await db.rpc('submit_review_invite',{p_token:token,p_rating:nota,p_comment:document.getElementById('com').value,p_name:nome})
   if(error){btn.disabled=false;btn.textContent='Publicar avaliação';return mostrar(String(error.message||'Não foi possível publicar. Tenta de novo.'))}
   msg('🎉','Obrigado, '+escapeHtml(nome.split(' ')[0])+'!','A tua avaliação já aparece no perfil de '+escapeHtml(info.pro_name||'')+'. Ajudas outras pessoas a escolher bem.',
-    '<a class="btn" href="'+perfilUrl()+'">Ver a avaliação</a><a class="btn ghost" href="/categoria">Precisas de outro profissional?</a>')
+    (nota>=4?'<a class="btn" target="_blank" rel="noopener noreferrer" href="'+escapeHtml(linkRecomendar())+'">Recomendar a um amigo no WhatsApp</a>':'')+
+    '<a class="btn'+(nota>=4?' ghost':'')+'" href="'+perfilUrl()+'">Ver a avaliação</a><a class="btn ghost" href="/categoria">Precisas de outro profissional?</a>')
 }
 init()
 </script>

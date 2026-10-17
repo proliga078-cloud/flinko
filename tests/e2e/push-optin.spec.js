@@ -80,7 +80,7 @@ test('pedidos: depois de publicar um pedido, convida a ativar para receber as pr
   await page.addInitScript((c) => { window.__testAuthConfig = c; }, { session: { access_token: 'tok', user: { id: ME, email: 'ana@exemplo.pt' } }, tableData: { requests: { data: [] } } });
   await page.goto('/pedidos.html?publicar=1');
   await expect(page.getByRole('dialog', { name: 'Ativar notificações' })).toHaveCount(0);
-  await page.fill('#m-title', 'Trocar quadro elétrico');
+  await page.fill('#m-desc', 'Trocar quadro elétrico');
   await page.selectOption('#m-cat', 'Eletricistas');
   await page.selectOption('#m-district', 'Braga');
   await page.fill('#m-city', 'Guimarães');

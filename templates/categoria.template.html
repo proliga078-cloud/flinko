@@ -183,6 +183,8 @@
  .pro-rating .stars{color:var(--gold)}
  .pro-bio{font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
  .pro-card-side{text-align:right;flex-shrink:0}
+ .pro-resp{display:flex;align-items:center;gap:5px;margin-top:6px;font-size:12.5px;font-weight:600;color:#0B6B47}
+ .pro-resp .ic{width:13px;height:13px}
  .pro-price{font-size:13.5px;color:#5B6270;margin-bottom:8px}
  .pro-price strong,.pro-price.free{color:var(--blue);font-size:14px;font-weight:700}
  .pro-cta-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:#fff;font-weight:700;background:linear-gradient(135deg,#E8720A,#C25A06);padding:9px 16px;border-radius:10px;box-shadow:0 3px 10px rgba(232,114,10,.3)}
@@ -628,7 +630,7 @@ async function loadPros(){
  const _base=await ProsSearch.carregar(db,{cat:filters.cat,loc:filters.loc,zona:filters.zona,q:filters.q,verified:_verificado})
  const _res=ProsSearch.consultar(_base,{sort:_sort,planos:_planos,minRating:filters.minRating,priceMin:_pMin,priceMax:_pMax,rapido:_rapido,page:filters.page,perPage:filters.perPage})
  filters.page=_res.page
- const data=_res.items,count=_res.total,error=_base.error,rMap=_base.rMap,pMap=_base.pMap
+ const data=_res.items,count=_res.total,error=_base.error,rMap=_base.rMap,pMap=_base.pMap,uMap=_base.uMap||{}
  const sort=_sort
  let filtered=data
  if(error){container.innerHTML=`<p style="color:red;padding:20px">Erro: ${escapeHtml(error.message)}</p>`;return}
@@ -661,7 +663,10 @@ const initials=pro.name.split(' ').map(n=>n[0]).slice(0,2).join('')
  const planPill=pro.plan==='premium'?'<span class="badge-pill badge-premium">★ Premium</span>':pro.plan==='pro'?'<span class="badge-pill badge-pro">★ Pro</span>':''
  const verifiedBadge=pro.verified?'<span class="pro-verified-badge" title="Perfil verificado manualmente pela equipa Flinko" aria-label="Perfil verificado manualmente pela equipa Flinko"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><path d="M20 6 9 17l-5-5"/></svg></span>':''
  const verifiedLabel=pro.verified?'<span class="tverif" style="margin-left:8px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>Verificado</span>':''
- const price=pMap[pro.id]?`A partir de <strong>€${pMap[pro.id]}</strong>`:'<span class="free">Orçamento grátis</span>'
+ const precoTxt=ProsSearch.textoPreco(pMap[pro.id],uMap[pro.id])
+ const price=precoTxt?`A partir de <strong>${escapeHtml(precoTxt.replace('A partir de ',''))}</strong>`:'<span class="free">Orçamento grátis</span>'
+ const respTxt=ProsSearch.textoResposta(pro)
+ const resp=respTxt?`<div class="pro-resp"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>${respTxt}</div>`:''
  const subline=r?`<span class="pro-rating"><span class="stars">${stars}</span>&nbsp;<strong>${avg}</strong>&nbsp;(${r.c})</span>`:(pro.bio?`<div class="pro-bio">${escapeHtml(pro.bio)}</div>`:'<span class="pro-rating">✨ Perfil novo</span>')
  return`<a class="pro-card ${cardClass}" href="${pro.slug?("/"+pro.slug):("profile.html?id="+pro.id)}">
  <div class="pro-avatar-wrap">
@@ -675,6 +680,7 @@ const initials=pro.name.split(' ').map(n=>n[0]).slice(0,2).join('')
  </div>
  <div class="pro-card-cat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5B6270" stroke-width="2"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${escapeHtml(pro.category||'Profissional')} · ${escapeHtml(pro.location||'Portugal')}${verifiedLabel}</div>
  ${subline}
+ ${resp}
  </div>
  <div class="pro-card-side">
  <div class="pro-price">${price}</div>
