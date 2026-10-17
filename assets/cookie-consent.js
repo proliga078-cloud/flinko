@@ -82,14 +82,14 @@ if(!window.flinkoTrack){
       + 'transition:opacity .25s ease,transform .25s ease}'
       + '.fk-cookie-bar.fk-show{opacity:1;transform:translateY(0)}'
       + '.fk-cookie-text{font-size:13.5px;line-height:1.55;color:#4E5C57;margin:0}'
-      + '.fk-cookie-text a{color:#E8720A;font-weight:600;text-decoration:none}'
+      + '.fk-cookie-text a{color:#BB5C08;font-weight:600;text-decoration:none}'
       + '.fk-cookie-text a:hover{text-decoration:underline}'
       + '.fk-cookie-actions{display:flex;gap:10px;flex-wrap:wrap}'
       + '.fk-cookie-btn{flex:1;min-width:140px;padding:10px 16px;border-radius:8px;'
       + 'font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer;'
       + 'border:1.5px solid transparent;transition:filter .15s ease,background .15s ease}'
       + '.fk-cookie-btn:hover{filter:brightness(0.96)}'
-      + '.fk-cookie-accept{background:#E8720A;color:#fff}'
+      + '.fk-cookie-accept{background:#BB5C08;color:#fff}'
       + '.fk-cookie-reject{background:#fff;color:#132420;border-color:#E1EEE6}'
       + '@media(max-width:480px){.fk-cookie-bar{left:10px;right:10px;bottom:10px;padding:16px}}';
     var style = document.createElement('style');

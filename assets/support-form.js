@@ -65,7 +65,7 @@
     '.sf-box label{display:block;font-size:12px;font-weight:600;color:#5B6270;margin:10px 0 4px}' +
     '.sf-box input,.sf-box select,.sf-box textarea{width:100%;box-sizing:border-box;border:1px solid #ECECE9;border-radius:10px;padding:9px 11px;font:inherit}' +
     '.sf-row{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}.sf-row button{border:0;border-radius:10px;padding:9px 15px;font-weight:600;cursor:pointer;font:inherit}' +
-    '.sf-send{background:#E8720A;color:#fff}.sf-cancel{background:#F7F8FA;color:#14181F}.sf-hp{position:absolute;left:-9999px}' +
+    '.sf-send{background:#BB5C08;color:#fff}.sf-cancel{background:#F7F8FA;color:#14181F}.sf-hp{position:absolute;left:-9999px}' +
     '.sf-status{font-size:13px;margin-top:10px}.sf-ok{color:#166534}.sf-err{color:#b91c1c}';
 
   // Janela "Denunciar perfil" (profile.html).

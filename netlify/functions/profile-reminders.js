@@ -57,13 +57,13 @@ function emailHtml(l) {
     : '<p style="margin:0 0 14px">Perfis completos, com foto e preços, recebem muito mais contactos.</p>'
   return `<!DOCTYPE html><html lang="pt"><body style="margin:0;padding:0;background:#FAF8F4;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
 <div style="max-width:520px;margin:0 auto;padding:28px 20px">
-  <div style="font-size:20px;font-weight:800;color:#14181F;margin-bottom:22px">Flink<span style="color:#E8720A">o</span></div>
+  <div style="font-size:20px;font-weight:800;color:#14181F;margin-bottom:22px">Flink<span style="color:#BB5C08">o</span></div>
   <div style="background:#fff;border-radius:14px;padding:26px;box-shadow:0 2px 12px rgba(20,24,31,.06);font-size:15px;color:#14181F;line-height:1.6">
     <p style="margin:0 0 14px">Olá${nome ? ' ' + esc(nome) : ''},</p>
     ${critico}
     <p style="margin:0 0 6px">Falta-te:</p>
     <ul style="margin:0 0 20px;padding-left:20px">${lista}</ul>
-    <a href="${SITE}/dashboard?completar=1" style="display:inline-block;background:#E8720A;color:#fff;font-weight:700;text-decoration:none;padding:12px 24px;border-radius:999px">Completar em 2 minutos</a>
+    <a href="${SITE}/dashboard?completar=1" style="display:inline-block;background:#BB5C08;color:#fff;font-weight:700;text-decoration:none;padding:12px 24px;border-radius:999px">Completar em 2 minutos</a>
     <p style="margin:18px 0 0;font-size:13px;color:#707580">É grátis e sem comissões. Se precisares de ajuda, responde a este email.</p>
   </div>
   <p style="font-size:12px;color:#707580;text-align:center;margin-top:20px;line-height:1.6">Recebeste este email porque criaste um perfil profissional na Flinko.<br/>Podes desligar os avisos por email no teu <a href="${SITE}/dashboard" style="color:#B85608">dashboard</a>.</p>

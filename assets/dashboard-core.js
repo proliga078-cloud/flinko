@@ -472,7 +472,7 @@ showAlert('profile-success','Perfil guardado com sucesso!')
 
 
 // ---- Personalizacao do perfil (cor de destaque, seccoes livres, ordem/visibilidade) ----
-const THEME_PRESETS={orange:{label:'Laranja (padrão)',accent:'#E8720A'},blue:{label:'Azul',accent:'#1D6FE0'},green:{label:'Verde',accent:'#0F8B5F'},purple:{label:'Roxo',accent:'#7C3AED'},red:{label:'Vermelho',accent:'#D8342B'},teal:{label:'Turquesa',accent:'#0E9AA3'}}
+const THEME_PRESETS={orange:{label:'Laranja (padrão)',accent:'#BB5C08'},blue:{label:'Azul',accent:'#1D6FE0'},green:{label:'Verde',accent:'#0F8B5F'},purple:{label:'Roxo',accent:'#7C3AED'},red:{label:'Vermelho',accent:'#D8342B'},teal:{label:'Turquesa',accent:'#0E9AA3'}}
 const LAYOUT_LABELS={servicos:'Serviços',portfolio:'Portfólio',avaliacoes:'Avaliações',diario:'Diário',faq:'Perguntas frequentes',badges:'Conquistas',zone:'Zona de atuação',avail:'Disponibilidade',extra_info:'Outras informações',video:'Vídeo de apresentação'}
 const DEFAULT_TABS_ORDER=['servicos','portfolio','avaliacoes','diario','faq']
 const DEFAULT_SIDEBAR_ORDER=['badges','zone','avail','extra_info','video']

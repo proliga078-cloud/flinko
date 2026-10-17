@@ -38,12 +38,12 @@ function trecho(t) {
 
 function emailHtml({ proNome, clienteNome, texto, quando, link }) {
   return `<div style="font-family:Arial,Helvetica,sans-serif;max-width:480px;margin:0 auto;padding:24px">
-  <div style="font-size:22px;font-weight:800;color:#132420;margin-bottom:20px">Flink<span style="color:#E8720A">o</span></div>
+  <div style="font-size:22px;font-weight:800;color:#132420;margin-bottom:20px">Flink<span style="color:#BB5C08">o</span></div>
   <h2 style="color:#14181F;font-size:18px;margin-bottom:8px">${esc(clienteNome)} está à espera da tua resposta</h2>
   <p style="color:#5B6270;font-size:14px;line-height:1.6">Olá${proNome ? ' ' + esc(proNome) : ''}, ${esc(clienteNome)} escreveu-te ${esc(quando)}:</p>
-  <div style="background:#F7F8FA;padding:14px 16px;border-left:3px solid #E8720A;border-radius:6px;color:#14181F;font-size:14px;margin:16px 0">${esc(texto)}</div>
+  <div style="background:#F7F8FA;padding:14px 16px;border-left:3px solid #BB5C08;border-radius:6px;color:#14181F;font-size:14px;margin:16px 0">${esc(texto)}</div>
   <p style="color:#5B6270;font-size:14px;line-height:1.6">Quem responde primeiro costuma ficar com o trabalho. Mesmo que não possas, uma resposta curta deixa o cliente bem impressionado.</p>
-  <a href="${link}" style="display:inline-block;background:#E8720A;color:#fff;padding:11px 22px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700">Responder agora</a>
+  <a href="${link}" style="display:inline-block;background:#BB5C08;color:#fff;padding:11px 22px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700">Responder agora</a>
   <p style="color:#94a3b8;font-size:12px;margin-top:24px">Recebeste este lembrete porque tens uma conversa por responder na Flinko. Podes desligar os avisos por email no teu painel.</p>
 </div>`
 }

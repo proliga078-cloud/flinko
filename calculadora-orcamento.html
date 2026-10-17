@@ -35,8 +35,8 @@
   --dark:#132420;
   --dark-2:#19352C;
   --dark-3:#1F4538;
-  --orange:#E8720A;
-  --orange-dark:#B85608;
+  --orange:#BB5C08;
+  --orange-dark:#9A4A06;
   --mint:#0F8B5F;
   --mint-dark:#0A6B49;
   --ink:#132420;
@@ -47,8 +47,8 @@
   --radius-lg:22px;
   --radius-md:14px;
   --radius-sm:10px;
-  --theme:#E8720A;
-  --theme-dark:#B85608;
+  --theme:#BB5C08;
+  --theme-dark:#9A4A06;
   font-size:16px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -64,7 +64,7 @@ ul{list-style:none}
 
 .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;border-radius:999px;font-weight:700;font-size:.95rem;transition:transform .15s ease,box-shadow .15s ease,background .15s ease;white-space:nowrap;border:none}
 .btn:active{transform:translateY(1px)}
-.btn-orange{background:var(--orange);color:#fff;box-shadow:0 12px 24px -10px rgba(232,114,10,.65)}
+.btn-orange{background:var(--orange);color:#fff;box-shadow:0 12px 24px -10px rgba(187,92,8,.65)}
 .btn-orange:hover{background:var(--orange-dark)}
 .btn-dark{background:var(--dark);color:#fff}
 .btn-dark:hover{background:var(--dark-3)}
@@ -113,7 +113,7 @@ body.menu-open .nav-toggle span::after{transform:rotate(-45deg);top:0}
 .calc-hero{background:var(--dark);color:#fff;position:relative;overflow:hidden;padding:72px 0 64px}
 .calc-hero::before{content:"";position:absolute;inset:0;background:
   radial-gradient(620px 360px at 96% -12%,rgba(15,139,95,.4),transparent 65%),
-  radial-gradient(460px 280px at 2% 112%,rgba(232,114,10,.26),transparent 65%)}
+  radial-gradient(460px 280px at 2% 112%,rgba(187,92,8,.26),transparent 65%)}
 .calc-hero-inner{position:relative;z-index:1;max-width:760px}
 .calc-hero h1{font-size:clamp(2.2rem,4.6vw,3.3rem);color:#fff;line-height:1.06;letter-spacing:-.03em}
 .calc-hero h1 .accent{color:var(--mint)}
@@ -495,7 +495,7 @@ footer{background:var(--dark);color:rgba(255,255,255,.7)}
 
   var CATEGORIES = {
     eletricistas: {
-      label:'Eletricistas', color:'#E8720A', colorDark:'#B85608',
+      label:'Eletricistas', color:'#BB5C08', colorDark:'#B85608',
       guideUrl:'blog-eletricista-confianca.html', guideText:'Ver o guia completo: sinais de um eletricista de confiança',
       catUrl:'/eletricistas.html', regionSensitivity:1.0, inputType:'tiers',
       services:[

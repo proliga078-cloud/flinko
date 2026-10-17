@@ -26,13 +26,13 @@ function estrelasHtml(link) {
 function emailHtml({ nomeCliente, nomePro, titulo, link }) {
   return `<!DOCTYPE html><html lang="pt"><body style="margin:0;padding:0;background:#FAF8F4;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
 <div style="max-width:520px;margin:0 auto;padding:28px 20px">
-  <div style="font-size:20px;font-weight:800;color:#14181F;margin-bottom:22px">Flink<span style="color:#E8720A">o</span></div>
+  <div style="font-size:20px;font-weight:800;color:#14181F;margin-bottom:22px">Flink<span style="color:#BB5C08">o</span></div>
   <div style="background:#fff;border-radius:14px;padding:26px;box-shadow:0 2px 12px rgba(20,24,31,.06);font-size:15px;color:#14181F;line-height:1.6;text-align:center">
     <p style="margin:0 0 10px;text-align:left">Olá${nomeCliente ? ' ' + esc(nomeCliente) : ''},</p>
     <p style="margin:0 0 18px;text-align:left">Como correu <b>${esc(titulo)}</b> com <b>${esc(nomePro)}</b>? A tua opinião ajuda outras pessoas a escolher (e demora 10 segundos).</p>
     <div style="margin:6px 0 10px">${estrelasHtml(link)}</div>
     <p style="margin:0 0 20px;font-size:13px;color:#707580">Toca nas estrelas para avaliar</p>
-    <a href="${link}" style="display:inline-block;background:#E8720A;color:#fff;font-weight:700;text-decoration:none;padding:12px 24px;border-radius:999px">Avaliar ${esc(nomePro.split(' ')[0])}</a>
+    <a href="${link}" style="display:inline-block;background:#BB5C08;color:#fff;font-weight:700;text-decoration:none;padding:12px 24px;border-radius:999px">Avaliar ${esc(nomePro.split(' ')[0])}</a>
   </div>
   <p style="font-size:12px;color:#707580;text-align:center;margin-top:20px;line-height:1.6">Recebeste este email porque contrataste um profissional pela Flinko.</p>
 </div></body></html>`

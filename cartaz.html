@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--orange:#E8720A;--dark:#132420;--mint:#0F7B55;--muted:#5B6270;--bg:#F7F8FA}
+:root{--orange:#BB5C08;--dark:#132420;--mint:#0F7B55;--muted:#5B6270;--bg:#F7F8FA}
 [hidden]{display:none!important}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px}
 .tabs{display:flex;gap:6px;background:#fff;border:1.5px solid #E3E5E8;border-radius:12px;padding:4px;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
@@ -151,11 +151,11 @@ async function renderImagem(){
   ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H)
   // topo escuro com a pergunta
   ctx.fillStyle='#132420';ctx.fillRect(0,0,W,420)
-  const g=ctx.createLinearGradient(0,0,W,0);g.addColorStop(0,'#E8720A');g.addColorStop(1,'#0F7B55')
+  const g=ctx.createLinearGradient(0,0,W,0);g.addColorStop(0,'#BB5C08');g.addColorStop(1,'#0F7B55')
   ctx.fillStyle=g;ctx.fillRect(0,414,W,12)
   ctx.textBaseline='alphabetic';ctx.textAlign='left'
   ctx.font='800 52px Inter, Arial, sans-serif';ctx.fillStyle='#fff';ctx.fillText('Flink',80,130)
-  ctx.fillStyle='#E8720A';ctx.fillText('o',80+ctx.measureText('Flink').width,130)
+  ctx.fillStyle='#BB5C08';ctx.fillText('o',80+ctx.measureText('Flink').width,130)
   const pergunta='Precisas de '+(P.category||'um profissional')+'?'
   const s=cabe(ctx,pergunta,'800',86,48,W-160)
   ctx.font='800 '+s+'px Inter, Arial, sans-serif';ctx.fillStyle='#fff'
@@ -182,7 +182,7 @@ async function renderImagem(){
   ctx.fillText('Lê o código ou visita',W/2,qy+lado+80)
   const u=URL_PERFIL.replace(/^https?:\/\//,'')
   const su=cabe(ctx,u,'800',44,26,W-120)
-  ctx.font='800 '+su+'px Inter, Arial, sans-serif';ctx.fillStyle='#E8720A';ctx.fillText(u,W/2,qy+lado+136)
+  ctx.font='800 '+su+'px Inter, Arial, sans-serif';ctx.fillStyle='#BB5C08';ctx.fillText(u,W/2,qy+lado+136)
   // rodapé
   ctx.fillStyle='#F7F8FA';ctx.fillRect(0,H-90,W,90)
   ctx.font='600 28px Inter, Arial, sans-serif';ctx.fillStyle='#5B6270'

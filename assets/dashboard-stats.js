@@ -72,7 +72,7 @@ function renderViewsChart(views){
   if(chartViews)chartViews.destroy()
   chartViews=new Chart(ctx,{
     type:'line',
-    data:{labels,datasets:[{data,borderColor:'#E8720A',backgroundColor:'rgba(232,114,10,.08)',fill:true,tension:.3,pointRadius:0,borderWidth:2}]},
+    data:{labels,datasets:[{data,borderColor:'#BB5C08',backgroundColor:'rgba(187,92,8,.08)',fill:true,tension:.3,pointRadius:0,borderWidth:2}]},
     options:{plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:6,font:{size:10}},grid:{display:false}},y:{beginAtZero:true,ticks:{precision:0,font:{size:10}}}}}
   })
 }
@@ -97,7 +97,7 @@ function renderEarningsChart(paidJobs){
   if(chartEarnings)chartEarnings.destroy()
   chartEarnings=new Chart(ctx,{
     type:'bar',
-    data:{labels:months.map(m=>m.label),datasets:[{data:months.map(m=>totals[m.key]),backgroundColor:'#E8720A',borderRadius:6,maxBarThickness:28}]},
+    data:{labels:months.map(m=>m.label),datasets:[{data:months.map(m=>totals[m.key]),backgroundColor:'#BB5C08',borderRadius:6,maxBarThickness:28}]},
     options:{plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,ticks:{callback:v=>'€'+v,font:{size:10}}}}}
   })
 }
@@ -110,7 +110,7 @@ function renderStatusChart(jobs){
   jobs.forEach(j=>{counts[j.status]=(counts[j.status]||0)+1})
   let labels=Object.keys(counts).map(k=>JOB_STATUS_LABELS[k]||k)
   let data=Object.values(counts)
-  let colors=['#E8720A','#F59E0B','#22c55e','#a855f7','#ef4444','#06b6d4','#64748b','#94a3b8']
+  let colors=['#BB5C08','#F59E0B','#22c55e','#a855f7','#ef4444','#06b6d4','#64748b','#94a3b8']
   if(!data.length){labels=['Sem trabalhos'];data=[1];colors=['#e5e7eb']}
   if(chartStatus)chartStatus.destroy()
   chartStatus=new Chart(ctx,{

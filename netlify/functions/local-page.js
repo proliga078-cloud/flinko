@@ -160,7 +160,7 @@ exports.handler=async(event)=>{
 <link rel="manifest" href="/manifest.json">
 ${jsonLdHtml}
 <style>
-:root{--ink:#132420;--soft:#4E5C57;--line:#E1EEE6;--surface:#F3FBF6;--accent:#E8720A;--accent-deep:#B85608;--fresh:#0F8B5F}
+:root{--ink:#132420;--soft:#4E5C57;--line:#E1EEE6;--surface:#F3FBF6;--accent:#BB5C08;--accent-deep:#B85608;--fresh:#0F8B5F}
 *{box-sizing:border-box}
 body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--ink);background:#fff;line-height:1.55}
 a{color:inherit}
