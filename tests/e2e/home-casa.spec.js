@@ -108,3 +108,14 @@ test('só o nome do ponto escolhido aparece, para não se taparem', async ({ pag
   await page.getByRole('button', { name: /Computador/ }).click();
   await expect(page.locator('.house-spot .lbl:visible')).toHaveText('Computador');
 });
+
+// Out/2026 (Nielsen Norman Group: 57% do tempo é passado no primeiro ecrã):
+// num iPhone SE (375x667) o botão "Procurar" ficava abaixo do fundo do ecrã,
+// porque o topo herdava os 64px de espaço das outras secções.
+test('num telemóvel pequeno (375x667) o botão "Procurar" aparece sem descer', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 667 });
+  await abrir(page, PROS);
+  await expect(page.locator('#heroSection')).toHaveClass(/loaded/);
+  const botao = page.locator('#heroSearchForm button').first();
+  await expect.poll(async () => (await botao.boundingBox()).y + (await botao.boundingBox()).height).toBeLessThanOrEqual(667);
+});

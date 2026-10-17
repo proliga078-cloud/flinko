@@ -17,7 +17,7 @@ async function abrir(page, cfg = {}, url = '/pedidos.html?publicar=1') {
 }
 
 async function preencher(page) {
-  await page.fill('#m-title', 'Trocar quadro elétrico');
+  await page.fill('#m-desc', 'Trocar quadro elétrico');
   await page.selectOption('#m-cat', 'Eletricistas');
   await page.selectOption('#m-district', 'Braga');
   await page.fill('#m-city', 'Guimarães');
@@ -26,7 +26,7 @@ async function preencher(page) {
 test('?publicar=1 abre logo o formulário, sem pedir login primeiro', async ({ page }) => {
   await abrir(page);
   await expect(page.locator('#modal-overlay')).toHaveClass(/open/);
-  await expect(page.locator('#m-title')).toBeVisible();
+  await expect(page.locator('#m-desc')).toBeVisible();
   expect(page.url()).toContain('/pedidos.html');
 });
 
@@ -82,7 +82,7 @@ test('conta que precisa de confirmar email: o pedido fica guardado e volta preen
   await page.addInitScript((s) => { window.__testAuthConfig = { ...(window.__testAuthConfig || {}), session: s }; }, SESSAO);
   await page.goto('/pedidos.html');
   await expect(page.locator('#modal-overlay')).toHaveClass(/open/);
-  await expect(page.locator('#m-title')).toHaveValue('Trocar quadro elétrico');
+  await expect(page.locator('#m-desc')).toHaveValue('Trocar quadro elétrico');
   await expect(page.locator('#m-success')).toContainText('ficou guardado');
 });
 
@@ -91,4 +91,26 @@ test('campos em falta: não avança para a conta', async ({ page }) => {
   await page.click('#submit-btn');
   await expect(page.locator('#m-error')).toContainText('Preenche');
   await expect(page.locator('#modal-account')).toBeHidden();
+});
+
+// Out/2026 (Baymard: formulários longos fazem desistir): título e descrição
+// eram dois campos para a mesma coisa. Fica só "O que precisas?" e o título
+// sai do início do texto. À vista ficam 4 campos; o resto é opcional.
+test('formulário curto: só "O que precisas?", categoria, distrito e zona à vista', async ({ page }) => {
+  await abrir(page);
+  await expect(page.locator('#m-title')).toHaveCount(0);
+  const visiveis = await page.locator('#modal-body input:visible, #modal-body select:visible, #modal-body textarea:visible').count();
+  expect(visiveis).toBe(4);
+});
+
+test('o título do pedido sai do início do texto, cortado numa palavra', async ({ page }) => {
+  await abrir(page, { session: SESSAO });
+  await page.fill('#m-desc', 'Preciso de trocar o quadro elétrico antigo da casa toda porque está sempre a disparar quando ligo o forno e a máquina. Pode ser na próxima semana.');
+  await page.selectOption('#m-cat', 'Eletricistas');
+  await page.selectOption('#m-district', 'Braga');
+  await page.click('#submit-btn');
+  await expect(page.locator('#m-success')).toContainText('Pedido publicado');
+  const pedido = (await page.evaluate(() => window.__insertCalls)).find((c) => c.table === 'requests').row;
+  expect(pedido.title).toBe('Preciso de trocar o quadro elétrico antigo da casa toda porque está…');
+  expect(pedido.description).toContain('Pode ser na próxima semana.');
 });

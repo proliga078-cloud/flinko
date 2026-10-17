@@ -333,7 +333,7 @@ nav{flex-wrap:wrap;height:auto;padding:10px 4%;row-gap:8px}
 <div class="msg error" id="m-error"></div>
 <div class="msg success" id="m-success"></div>
 <div id="modal-body">
-<div class="form-group"><label>Título *</label><input id="m-title" type="text" placeholder="Ex: Preciso de um eletricista urgente"/></div>
+<div class="form-group"><label for="m-desc">O que precisas? *</label><textarea id="m-desc" placeholder="Ex: Trocar o quadro elétrico de um T2. Pode ser na próxima semana."></textarea></div>
 <div class="form-group"><label>Categoria *</label>
 <select id="m-cat">
 <option value="">Escolhe uma categoria</option>
@@ -369,7 +369,6 @@ nav{flex-wrap:wrap;height:auto;padding:10px 4%;row-gap:8px}
 </select>
 </div>
 <div class="form-group"><label>Cidade / Zona</label><input id="m-city" type="text" placeholder="Ex: Sintra, Braga (centro)..."/></div>
-<div class="form-group"><label>Descreve o que precisas</label><textarea id="m-desc" placeholder="Dá detalhes: quando, o que precisa de ser feito, etc."></textarea></div>
 <details class="more-details">
 <summary>Mais detalhes (opcional): orçamento, fotos, urgência</summary>
 <div class="row2">
@@ -744,7 +743,7 @@ location.href='messages.html?with='+clientId
 // no fim, na mesma janela. Antes, "Publicar" sem sessão mandava logo para o
 // login e o cliente perdia o que ia escrever.
 const DRAFT_KEY='flinko_pedido_rascunho'
-const DRAFT_FIELDS=['m-title','m-cat','m-district','m-city','m-desc','m-bmin','m-bmax']
+const DRAFT_FIELDS=['m-cat','m-district','m-city','m-desc','m-bmin','m-bmax']
 let accMode='new'
 
 function showMsg(kind,text){
@@ -764,7 +763,7 @@ showStep('request')
 renderPhotoStrip()
 document.getElementById('modal-overlay').classList.add('open')
 if(cat&&CATEGORIES.includes(cat))document.getElementById('m-cat').value=cat
-setTimeout(()=>document.getElementById('m-title').focus(),50)
+setTimeout(()=>document.getElementById('m-desc').focus(),50)
 }
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open')}
 
@@ -782,7 +781,7 @@ const d=JSON.parse(localStorage.getItem(DRAFT_KEY)||'null')
 if(!d||Date.now()-(d.at||0)>7*864e5)return false
 DRAFT_FIELDS.forEach(id=>{if(d[id]!=null)document.getElementById(id).value=d[id]})
 document.getElementById('m-urgent').checked=!!d.urgent
-return !!d['m-title']
+return !!d['m-desc']
 }catch(e){return false}
 }
 function clearDraft(){try{localStorage.removeItem(DRAFT_KEY)}catch(e){}}
@@ -824,12 +823,22 @@ urls.push(db.storage.from('proliga-media').getPublicUrl(path).data.publicUrl)
 return urls
 }
 
+// Título para as listas e notificações: a 1.ª frase do que o cliente escreveu,
+// cortada numa palavra (antes era um campo à parte, a pedir o mesmo duas vezes).
+function tituloDoPedido(txt){
+const t=String(txt||'').trim().replace(/\s+/g,' ')
+const frase=(t.match(/^[^.!?]+/)||[t])[0].trim()
+if(frase.length<=70)return frase
+const corte=frase.slice(0,70)
+return corte.slice(0,corte.lastIndexOf(' ')>30?corte.lastIndexOf(' '):70).replace(/[ ,;:]+$/,'')+'…'
+}
+
 function readRequest(){
 const district=document.getElementById('m-district').value
 const city=document.getElementById('m-city').value.trim()
 const bmin=document.getElementById('m-bmin').value,bmax=document.getElementById('m-bmax').value
 return{
-title:document.getElementById('m-title').value.trim(),
+title:tituloDoPedido(document.getElementById('m-desc').value),
 category:document.getElementById('m-cat').value,
 location:district?(city?district+' – '+city:district):'',
 description:document.getElementById('m-desc').value.trim()||null,

@@ -45,3 +45,23 @@ test('SEGURANÇA: nome do profissional com HTML não é executado', async ({ pag
   await expect(page.locator('.sub')).toContainText('<img src=x');
   expect(await page.evaluate(() => window.__pwn)).toBeUndefined();
 });
+
+// Out/2026 (Nielsen Global Trust: 83% confiam na recomendação de amigos):
+// quem acaba de dar 4 ou 5 estrelas é quem mais vontade tem de recomendar.
+test('depois de 4-5 estrelas: botão para recomendar o profissional no WhatsApp', async ({ page }) => {
+  await abrir(page, '/avaliar.html?t=abc123&s=5');
+  await page.getByRole('button', { name: 'Publicar avaliação' }).click();
+  const wa = page.getByRole('link', { name: 'Recomendar a um amigo no WhatsApp' });
+  const href = decodeURIComponent(await wa.getAttribute('href'));
+  expect(href).toMatch(/^https:\/\/wa\.me\/\?text=/);
+  expect(href).toContain('Rui Alves');
+  expect(href).toContain('eletricista');
+  expect(href).toMatch(/https?:\/\/[^ ]+\/rui$/);
+});
+
+test('com 3 estrelas ou menos não pede para recomendar', async ({ page }) => {
+  await abrir(page, '/avaliar.html?t=abc123&s=3');
+  await page.getByRole('button', { name: 'Publicar avaliação' }).click();
+  await expect(page.locator('h1')).toContainText('Obrigado');
+  await expect(page.getByRole('link', { name: /Recomendar/ })).toHaveCount(0);
+});
