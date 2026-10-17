@@ -93,3 +93,32 @@ test('dashboard: atalhos para os cartões de visita e a imagem', async ({ page }
   await expect(page.locator('#share-cards')).toHaveAttribute('href', 'cartaz.html?formato=cartoes&id=' + p.id);
   await expect(page.locator('#share-image')).toHaveAttribute('href', 'cartaz.html?formato=imagem&id=' + p.id);
 });
+
+// O QR era só do plano Pro (vinha com o link próprio). Agora qualquer
+// profissional vê e descarrega o QR do seu perfil logo no painel.
+test('dashboard: o plano grátis também vê e descarrega o QR do perfil', async ({ page }) => {
+  const p = perfil({});
+  await fake(page, {
+    session: { access_token: 'tok', user: { id: p.id, email: 'a@example.com' } },
+    rpcResults: { get_my_profile: [p] },
+    tableData: { plan_limits: { data: [] } },
+  });
+  await page.route('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js', (route) =>
+    route.fulfill({ path: path.join(__dirname, 'fixtures', 'fake-qrcode.js'), contentType: 'text/javascript' }));
+  await page.goto('/dashboard.html');
+  const seccao = page.locator('#share-section');
+  await expect(seccao.locator('#share-qr canvas')).toHaveAttribute('data-text', /profile\.html\?id=11111111-2222-3333-4444-555555555555$/);
+  await expect(seccao.locator('button', { hasText: 'Descarregar QR' })).toHaveAttribute('onclick', 'downloadShareQr()');
+});
+
+test('preços: o QR aparece em todos os planos; só o link com o teu nome é do Pro', async ({ page }) => {
+  await fake(page, { session: null, tableData: {} });
+  await page.goto('/pricing.html');
+  const gratis = page.locator('.plan-card').filter({ has: page.locator('.plan-name', { hasText: 'Grátis' }) });
+  await expect(gratis.locator('.plan-features')).toContainText('Link e código QR do teu perfil');
+  const linhaQr = page.locator('.compare-table tr', { hasText: 'Link e código QR do perfil' });
+  await expect(linhaQr.locator('td').nth(1)).toContainText('✓');
+  const linhaNome = page.locator('.compare-table tr', { hasText: 'Link com o teu nome' });
+  await expect(linhaNome.locator('td').nth(1)).toContainText('✕');
+  await expect(linhaNome.locator('td').nth(3)).toContainText('✓');
+});
