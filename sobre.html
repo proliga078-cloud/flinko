@@ -6,54 +6,123 @@
 <title>Quem somos: o Flinko e como funciona</title>
 <meta name="description" content="O Flinko é um marketplace português que liga quem precisa de um serviço a profissionais de muitas áreas. Sem comissão sobre o trabalho."/>
 <link rel="canonical" href="https://flinko.pt/sobre"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=optional" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=optional" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--blue:#BB5C08;--blue-dark:#9A4A06;--text:#14181F;--muted:#5B6270;--border:#ECECE9;--bg:#F7F8FA;--white:#fff}
-body{font-family:'Inter',sans-serif;color:var(--text);background:var(--white);line-height:1.7}
-a{color:var(--blue);text-decoration:none}
-a:hover{text-decoration:underline}
-nav{position:sticky;top:0;z-index:200;background:var(--white);border-bottom:1px solid var(--border);padding:0 5%;height:64px;display:flex;align-items:center;gap:20px}
-.logo{font-size:22px;font-weight:900;color:var(--text);letter-spacing:-1px}
-.logo span{color:#BB5C08}
-.legal-hero{background:linear-gradient(135deg,#0f231b,#1b4433);padding:48px 5% 40px;color:#fff}
-.legal-hero h1{font-size:clamp(24px,4vw,40px);font-weight:800;margin-bottom:8px}
-.legal-hero p{font-size:15px;opacity:.8}
-.legal-body{max-width:860px;margin:0 auto;padding:48px 5%}
-.legal-body h2{font-size:20px;font-weight:700;margin:36px 0 12px;padding-top:16px;border-top:1px solid var(--border)}
-.legal-body h2:first-child{border-top:none;margin-top:0}
-.legal-body p{font-size:15px;color:#334155;margin-bottom:14px}
-.legal-body ul{margin:10px 0 16px 20px}
-.legal-body ul li{font-size:15px;color:#334155;margin-bottom:8px}
-.legal-body .highlight{background:var(--bg);border-left:4px solid var(--blue);padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;font-size:14px;color:var(--muted)}
-.values-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:16px 0 24px}
-@media(max-width:640px){.values-grid{grid-template-columns:1fr}}
-.value-card{background:var(--bg);border-radius:12px;padding:18px}
-.value-card strong{display:block;margin-bottom:6px;font-size:15px}
-footer{background:var(--text);color:rgba(255,255,255,.6);padding:28px 5%;text-align:center;font-size:13px}
-footer a{color:rgba(255,255,255,.7)}
-footer a:hover{color:#fff}
+:root{
+  --dark:#132420;--dark-2:#19352C;--orange:#BB5C08;--orange-dark:#9A4A06;
+  --mint:#0F8B5F;--mint-dark:#0A6B49;--ink:#132420;--muted:#4E5C57;
+  --line:#E1EEE6;--bg-tint:#F3FBF6;--paper:#ffffff;--cream:#FBF7F1;
+}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1.1}
+a{color:inherit}
+.wrap{max-width:1180px;margin-inline:auto;padding-inline:24px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;border-radius:12px;font-weight:700;font-size:.98rem;text-decoration:none;transition:background .2s ease,border-color .2s ease,transform .2s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn-orange{background:var(--orange);color:#fff;box-shadow:0 12px 24px -10px rgba(187,92,8,.65)}
+.btn-orange:hover{background:var(--orange-dark)}
+.btn-ghost-dark{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.35)}
+.btn-ghost-dark:hover{border-color:#fff}
+.btn-ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--ink)}
 
-/* === tema navy+laranja: nav === */
+/* Topo: o mesmo cartão escuro da página inicial */
+.qs-shell{padding:26px 0 0}
+.qs-hero{position:relative;overflow:hidden;background:linear-gradient(180deg,var(--dark) 0%,var(--dark-2) 100%);border-radius:28px;color:#fff;padding:64px 56px;display:grid;grid-template-columns:1.25fr .75fr;gap:48px;align-items:end}
+.qs-hero::after{content:"";position:absolute;right:-120px;top:-120px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(187,92,8,.35),transparent 65%);pointer-events:none}
+.qs-hero .tag{display:block;font-weight:600;color:rgba(255,255,255,.75);margin-bottom:18px}
+.qs-hero h1{color:#fff;font-size:clamp(2.2rem,5vw,3.6rem)}
+.qs-hero .lead{margin-top:20px;font-size:1.12rem;color:rgba(255,255,255,.82);max-width:34em}
+.qs-nums{position:relative;z-index:1;display:grid;gap:18px}
+.qs-num{border-top:1px solid rgba(255,255,255,.18);padding-top:14px}
+.qs-num strong{display:block;font-family:'Plus Jakarta Sans',sans-serif;font-size:2.4rem;line-height:1;color:#fff}
+.qs-num span{color:rgba(255,255,255,.72);font-size:.95rem}
+.qs-num[hidden]{display:none}
 
+/* Texto de abertura em duas colunas */
+.qs-intro{padding:88px 0 40px;display:grid;grid-template-columns:1fr 1fr;gap:56px}
+.qs-intro .big{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:clamp(1.4rem,2.6vw,1.9rem);line-height:1.3;letter-spacing:-.01em}
+.qs-intro .big em{font-style:normal;color:var(--orange)}
+.qs-intro p+p{margin-top:14px}
+.qs-intro .txt{color:var(--muted);font-size:1.05rem}
 
+/* Ofícios: as categorias verdadeiras, com link */
+.qs-oficios{padding:40px 0 80px}
+.qs-oficios h2,.qs-sec h2{font-size:clamp(1.6rem,3vw,2.2rem);margin-bottom:12px}
+.qs-oficios p{color:var(--muted);max-width:40em;margin-bottom:24px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chips a{text-decoration:none;padding:10px 16px;border-radius:999px;background:var(--bg-tint);border:1px solid var(--line);font-weight:600;font-size:.95rem;transition:border-color .2s ease,background .2s ease}
+.chips a:hover{border-color:var(--mint);background:#fff}
 
-.navlinks{color:#9AA6C3}
-.navlinks a:hover{color:#fff}
-.hamburger-btn{background:transparent;border-color:rgba(255,255,255,.25);color:#fff}
-.mobile-nav-panel{background:#fff}
-nav .btn-ghost{color:#fff}
-nav .btn-ghost:hover{background:rgba(255,255,255,.1)}
-nav .btn-line{color:#fff;border-color:rgba(255,255,255,.3)}
-nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
-.btn-ink{background:#BB5C08;color:#fff}
-.btn-ink:hover{background:#9A4A06}
-.legal-body ol.passos{margin:10px 0 16px 20px}
-.legal-body ol.passos li{font-size:15px;color:#334155;margin-bottom:8px}
-.cta-row{display:flex;gap:12px;flex-wrap:wrap;margin:28px 0 8px}
-.cta-row a{display:inline-flex;align-items:center;padding:12px 20px;border-radius:10px;font-weight:700;text-decoration:none}
-.cta-row .btn-linha{border:1.5px solid var(--border);color:var(--text)}
-.cta-row a:hover{text-decoration:none}
+/* Os dois lados */
+.qs-lados{display:grid;grid-template-columns:1fr 1fr;border-radius:28px;overflow:hidden}
+.lado{padding:48px 44px}
+.lado h3{font-size:1.6rem;margin-bottom:14px}
+.lado p{font-size:1.05rem;margin-bottom:26px;max-width:28em}
+.lado-cli{background:var(--cream)}
+.lado-cli p{color:var(--muted)}
+.lado-pro{background:var(--dark);color:#fff}
+.lado-pro h3{color:#fff}
+.lado-pro p{color:rgba(255,255,255,.8)}
+
+/* Princípios: lista editorial, sem ícones */
+.qs-sec{padding:96px 0 0}
+.principios{margin-top:28px;border-top:1px solid var(--line)}
+.principio{display:grid;grid-template-columns:280px 1fr;gap:32px;padding:22px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.principio h3{font-size:1.35rem}
+.principio p{color:var(--muted);font-size:1.05rem}
+
+/* Como funciona: um percurso, não passos numerados */
+.percurso{margin-top:32px;display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative}
+.percurso::before{content:"";position:absolute;left:0;right:0;top:11px;height:2px;background:linear-gradient(90deg,var(--mint),var(--orange))}
+.etapa{position:relative;padding:40px 20px 0 0}
+.etapa::before{content:"";position:absolute;left:0;top:4px;width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--mint)}
+.etapa:last-child::before{border-color:var(--orange)}
+.etapa h3{font-size:1.15rem;margin-bottom:6px}
+.etapa p{color:var(--muted);font-size:.98rem}
+.nota{margin-top:28px;color:var(--muted);font-size:.95rem}
+
+/* Sem comissão: uma frase grande */
+.qs-comissao{margin-top:96px;padding:56px;border-radius:28px;background:var(--cream);display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:center}
+.qs-comissao .zero{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:clamp(3.5rem,8vw,6rem);line-height:1;color:var(--orange)}
+.qs-comissao h2{font-size:clamp(1.5rem,2.8vw,2rem);margin-bottom:10px}
+.qs-comissao p{color:var(--muted);font-size:1.05rem;max-width:38em}
+
+/* Antes de contratares */
+.qs-antes{margin-top:56px;display:grid;grid-template-columns:280px 1fr;gap:32px;padding-top:28px;border-top:1px solid var(--line)}
+.qs-antes h2{font-size:1.5rem}
+.qs-antes p{color:var(--muted);font-size:1.05rem}
+
+/* Fecho */
+.qs-fecho{margin:96px 0 40px;padding:64px 56px;border-radius:28px;background:linear-gradient(180deg,var(--dark) 0%,var(--dark-2) 100%);color:#fff}
+.qs-fecho h2{color:#fff;font-size:clamp(1.8rem,3.6vw,2.6rem);max-width:18em}
+.qs-fecho p{margin-top:16px;color:rgba(255,255,255,.8);font-size:1.05rem;max-width:36em}
+.qs-fecho .acoes{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap}
+.qs-contacto{padding:0 0 72px;color:var(--muted)}
+.qs-contacto a{color:var(--orange-dark);font-weight:600}
+
+@media (max-width:860px){
+  .qs-hero{grid-template-columns:1fr;padding:44px 26px;gap:32px}
+  .qs-nums{grid-template-columns:repeat(3,1fr);gap:12px}
+  .qs-num strong{font-size:1.8rem}
+  .qs-num span{font-size:.82rem}
+  .qs-intro{grid-template-columns:1fr;gap:20px;padding:56px 0 24px}
+  .qs-lados{grid-template-columns:1fr}
+  .lado{padding:34px 26px}
+  .principio,.qs-antes{grid-template-columns:1fr;gap:6px}
+  .percurso{grid-template-columns:1fr;gap:0}
+  .percurso::before{left:7px;right:auto;top:0;bottom:0;width:2px;height:auto;background:linear-gradient(180deg,var(--mint),var(--orange))}
+  .etapa{padding:0 0 26px 36px}
+  .etapa::before{top:2px}
+  .qs-sec{padding-top:64px}
+  .qs-comissao{grid-template-columns:1fr;gap:12px;padding:36px 26px;margin-top:64px}
+  .qs-fecho{padding:44px 26px;margin-top:64px}
+}
+@media (max-width:420px){
+  .qs-shell{padding-top:12px}
+  .wrap{padding-inline:16px}
+}
 </style>
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
@@ -116,61 +185,115 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
   </div>
 </div>
 <!-- /fk:header -->
-<div class="legal-hero">
-<h1>Quem somos</h1>
-<p>O Flinko liga quem precisa de um serviço a quem o sabe fazer. Encontra. Contacta. Decide.</p>
+<main id="quem-somos">
+<div class="qs-shell"><div class="wrap">
+<section class="qs-hero">
+  <div>
+    <span class="tag">Quem somos</span>
+    <h1>De um lado, quem precisa. Do outro, quem sabe fazer.</h1>
+    <p class="lead">O Flinko é um marketplace português que junta os dois. Encontras, contactas e decides tu.</p>
+  </div>
+  <div class="qs-nums" aria-label="O Flinko em números">
+    <div class="qs-num" id="qsNumPros" hidden><strong id="qsPros"></strong><span>profissionais com perfil</span></div>
+    <div class="qs-num" id="qsNumCats" hidden><strong id="qsCats"></strong><span>ofícios diferentes</span></div>
+    <div class="qs-num"><strong>0%</strong><span>de comissão sobre o trabalho</span></div>
+  </div>
+</section>
+</div></div>
+
+<div class="wrap">
+<section class="qs-intro">
+  <p class="big">Encontrar alguém para um trabalho não devia ser complicado, demorado ou <em>cheio de incertezas</em>.</p>
+  <div class="txt">
+    <p>Todos os dias há quem precise de reparar uma avaria, remodelar uma casa ou fazer um site novo. E há bons profissionais à procura de clientes. As duas coisas encaixam, mas nem sempre se encontram.</p>
+    <p>Criámos o Flinko para encurtar essa distância: um só sítio onde vês o trabalho e os preços de cada um, e falas diretamente com quem escolheres.</p>
+  </div>
+</section>
+
+<section class="qs-oficios">
+  <h2>Um só lugar para muitos ofícios</h2>
+  <p>Das obras em casa aos serviços digitais. Não precisas de procurar em dezenas de sítios.</p>
+  <nav class="chips" aria-label="Ofícios no Flinko">
+    <a href="/eletricistas">Eletricistas</a><a href="/canalizadores">Canalizadores</a><a href="/pintores">Pintores</a><a href="/pedreiros">Pedreiros</a><a href="/carpinteiros">Carpinteiros</a><a href="/serralheiros">Serralheiros</a><a href="/jardineiros">Jardineiros</a><a href="/limpeza">Limpeza</a><a href="/mudancas">Mudanças</a><a href="/decoradores">Decoradores</a><a href="/programadores">Programadores</a><a href="/designers">Designers</a><a href="/reparacoes-tech">Reparações tech</a><a href="/personal-trainers">Personal trainers</a><a href="/cabeleireiros">Cabeleireiros</a><a href="/esteticistas">Esteticistas</a>
+  </nav>
+</section>
+
+<section class="qs-lados" aria-label="Para clientes e para profissionais">
+  <div class="lado lado-cli">
+    <h3>Para quem procura</h3>
+    <p>Vês os serviços, os preços e os trabalhos de cada profissional. Comparas, falas com quem quiseres e a decisão é tua. Não pagas nada ao Flinko.</p>
+    <a class="btn btn-orange" href="/categoria">Explorar profissionais</a>
+  </div>
+  <div class="lado lado-pro">
+    <h3>Para quem trabalha</h3>
+    <p>Fazer um bom trabalho é só metade. A outra é ser encontrado. Aqui apresentas o que fazes e chegas a clientes da tua zona, sem construíres tudo sozinho.</p>
+    <a class="btn btn-ghost-dark" href="/profissionais">Juntar-me como profissional</a>
+  </div>
+</section>
+
+<section class="qs-sec">
+  <h2>Como trabalhamos</h2>
+  <div class="principios">
+    <div class="principio"><h3>Transparência</h3><p>Vês a informação de cada profissional e esclareces as condições antes de avançar.</p></div>
+    <div class="principio"><h3>Acessibilidade</h3><p>Procurar um serviço, ou dar a conhecer o teu, tem de ser fácil em qualquer área.</p></div>
+    <div class="principio"><h3>Autonomia</h3><p>Comparas, contactas quem quiseres e escolhes com quem trabalhar.</p></div>
+    <div class="principio"><h3>Responsabilidade</h3><p>Informação clara, conversa honesta e expectativas realistas.</p></div>
+    <div class="principio"><h3>Melhoria contínua</h3><p>Ouvimos quem usa o Flinko e melhoramos com isso.</p></div>
+  </div>
+</section>
+
+<section class="qs-sec">
+  <h2>Como funciona</h2>
+  <div class="percurso">
+    <div class="etapa"><h3>Procuras</h3><p>Escolhes o serviço e vês quem trabalha na tua zona.</p></div>
+    <div class="etapa"><h3>Conheces</h3><p>Perfis, serviços, preços e trabalhos feitos.</p></div>
+    <div class="etapa"><h3>Falas</h3><p>Tiras dúvidas e explicas o que precisas, diretamente.</p></div>
+    <div class="etapa"><h3>Decides</h3><p>Comparas as propostas e escolhes.</p></div>
+  </div>
+  <p class="nota">O preço e as condições combinam-se entre ti e o profissional.</p>
+</section>
+
+<section class="qs-comissao">
+  <div class="zero" aria-hidden="true">0%</div>
+  <div>
+    <h2>Sem comissão sobre o teu trabalho</h2>
+    <p>Quem contrata não paga nada ao Flinko. Os profissionais podem usar o plano grátis ou um plano pago com mais ferramentas, e em nenhum deles tiramos uma parte do valor que combinam com o cliente.</p>
+  </div>
+</section>
+
+<section class="qs-antes">
+  <h2>Antes de contratares</h2>
+  <p>Combina com o profissional o que vai ser feito, o preço e o prazo. Se o trabalho pedir qualificações, seguro ou certificados, pede os comprovativos antes de começar. Uma boa escolha começa com boa informação.</p>
+</section>
+
+<section class="qs-fecho">
+  <h2>Queremos ser o sítio onde se encontra um profissional em Portugal.</h2>
+  <p>Sem prometer o impossível: crescendo com quem nos usa e ganhando a confiança de cada um pela experiência. Estamos só a começar.</p>
+  <div class="acoes">
+    <a class="btn btn-orange" href="/pedidos?publicar=1">Publicar um pedido grátis</a>
+    <a class="btn btn-ghost-dark" href="/auth?tab=register">Criar perfil de profissional</a>
+  </div>
+</section>
+
+<p class="qs-contacto">Dúvidas, sugestões ou um problema com a plataforma? Escreve para <a href="mailto:flinkogeral@gmail.com">flinkogeral@gmail.com</a> ou usa a <a href="/contacto">página de contacto</a>. Respondemos normalmente em 1 a 2 dias úteis.</p>
 </div>
-<div class="legal-body">
-<div class="highlight">
-Encontrar alguém para um trabalho não devia ser complicado, demorado ou cheio de incertezas. Seja uma avaria em casa, uma remodelação ou um site novo, queremos que essa procura seja simples e clara.
-</div>
-
-<h2>Uma ideia simples</h2>
-<p>O Flinko é um marketplace português. Junta numa só plataforma profissionais de muitas áreas e as pessoas que precisam deles.</p>
-<p>Todos os dias há quem procure alguém para resolver um problema ou começar um projeto. E há bons profissionais à procura de clientes e de mais visibilidade. As duas coisas encaixam, mas nem sempre se encontram. Criámos o Flinko para encurtar essa distância.</p>
-
-<h2>Um só lugar para muitos ofícios</h2>
-<p>Eletricistas, canalizadores, pintores e limpezas. Programadores, designers e quem faz sites. Remodelações e muito mais. Não precisas de procurar em dezenas de sítios: pesquisas pelo serviço, vês os perfis e falas com quem te parecer melhor.</p>
-
-<div class="values-grid">
-<div class="value-card"><strong>Para quem procura</strong>Vês os serviços e os preços de cada profissional, comparas e falas diretamente com quem escolheres. A decisão é tua.</div>
-<div class="value-card"><strong>Para quem trabalha</strong>Fazer um bom trabalho é só metade. A outra é ser encontrado. No Flinko apresentas o que fazes sem teres de construir tudo sozinho.</div>
-</div>
-
-<h2>Como trabalhamos</h2>
-<ul>
-<li><strong>Transparência.</strong> Vês a informação de cada profissional e esclareces as condições antes de avançar.</li>
-<li><strong>Acessibilidade.</strong> Procurar um serviço, ou dar a conhecer o teu, tem de ser fácil em qualquer área.</li>
-<li><strong>Autonomia.</strong> Comparas, contactas quem quiseres e escolhes com quem trabalhar.</li>
-<li><strong>Responsabilidade.</strong> Informação clara, conversa honesta e expectativas realistas.</li>
-<li><strong>Melhoria contínua.</strong> Ouvimos quem usa o Flinko e melhoramos com isso.</li>
-</ul>
-
-<h2>Como funciona</h2>
-<ol class="passos">
-<li><strong>Procura o serviço.</strong> Escolhe a categoria e vê quem trabalha na tua zona.</li>
-<li><strong>Conhece os profissionais.</strong> Vê os perfis, os serviços, os preços e os trabalhos feitos.</li>
-<li><strong>Fala com eles.</strong> Tira dúvidas e explica o que precisas, diretamente.</li>
-<li><strong>Decide.</strong> Compara as propostas e escolhe. O preço e as condições combinam-se entre ti e o profissional.</li>
-</ol>
-
-<h2>Sem comissão sobre o teu trabalho</h2>
-<p>Quem contrata não paga nada ao Flinko. Os profissionais podem usar o plano grátis ou um plano pago com mais ferramentas, e em nenhum deles tiramos uma parte do valor que combinam com o cliente.</p>
-
-<h2>Antes de contratares</h2>
-<p>Combina com o profissional o que vai ser feito, o preço e o prazo. Se o trabalho pedir qualificações, seguro ou certificados, pede os comprovativos antes de começar. Uma boa escolha começa com boa informação.</p>
-
-<h2>O que queremos construir</h2>
-<p>Queremos que o Flinko seja o sítio onde se encontra um profissional em Portugal, e onde os profissionais encontram clientes. Sem prometer o impossível: crescendo com quem o usa e ganhando a confiança de cada um pela experiência. Estamos só a começar.</p>
-
-<div class="cta-row">
-<a class="btn-ink" href="/categoria">Explorar profissionais</a>
-<a class="btn-linha" href="/profissionais">Juntar-me como profissional</a>
-</div>
-
-<h2>Fala connosco</h2>
-<p>Dúvidas, sugestões ou um problema com a plataforma: escreve para <a href="mailto:flinkogeral@gmail.com">flinkogeral@gmail.com</a> ou usa a <a href="/contacto">página de contacto</a>. Respondemos normalmente em 1 a 2 dias úteis.</p>
-</div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3"></script>
+<script>
+// Números verdadeiros no topo (perfis aprovados e ofícios com gente).
+// Se a base de dados falhar, os dois números ficam escondidos: nada de "0".
+(async function(){
+  try{
+    const db=supabase.createClient('https://cdwinidhtfxfxowflize.supabase.co','sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk')
+    const{data,error}=await db.from('profiles').select('category').eq('account_type','professional').eq('is_demo',false).eq('suspended',false).eq('approved',true)
+    if(error||!data||!data.length)return
+    const cats=new Set(data.map(p=>p.category).filter(Boolean))
+    document.getElementById('qsPros').textContent=data.length
+    document.getElementById('qsNumPros').hidden=false
+    if(cats.size>1){document.getElementById('qsCats').textContent=cats.size;document.getElementById('qsNumCats').hidden=false}
+  }catch(e){}
+})()
+</script>
 <!-- fk:footer -->
 <div class="fk-footer" role="contentinfo">
   <div class="fk-ftop">

@@ -13,18 +13,34 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('quem somos: título, princípios, sem comissão e caminhos para os dois lados', async ({ page }) => {
-  await expect(page.locator('h1')).toHaveText('Quem somos');
-  const corpo = page.locator('.legal-body');
+  await expect(page.locator('h1')).toHaveText('De um lado, quem precisa. Do outro, quem sabe fazer.');
+  await expect(page.locator('.qs-hero .tag')).toHaveText('Quem somos');
+  const corpo = page.locator('#quem-somos');
   for (const p of ['Transparência', 'Acessibilidade', 'Autonomia', 'Responsabilidade', 'Melhoria contínua']) await expect(corpo).toContainText(p);
   await expect(corpo).toContainText('Sem comissão');
   await expect(corpo.getByRole('link', { name: 'Explorar profissionais' })).toHaveAttribute('href', '/categoria');
   await expect(corpo.getByRole('link', { name: 'Juntar-me como profissional' })).toHaveAttribute('href', '/profissionais');
+  await expect(corpo.locator('.chips a')).toHaveCount(16);
   await expect(corpo.getByRole('link', { name: 'flinkogeral@gmail.com' })).toHaveAttribute('href', 'mailto:flinkogeral@gmail.com');
 });
 
 test('quem somos: sem frases feitas, travessões, emojis nem dados por preencher', async ({ page }) => {
-  const texto = await page.locator('.legal-hero, .legal-body').allInnerTexts();
+  const texto = await page.locator('#quem-somos').allInnerTexts();
   const t = texto.join('\n');
   expect(t).not.toMatch(/de confiança|sem compromisso|profissional certo|especialista certo|—|\[/);
   expect(t).not.toMatch(/\p{Extended_Pictographic}/u);
+});
+
+test('quem somos: números verdadeiros no topo, e sem números se a base de dados falhar', async ({ page }) => {
+  await page.addInitScript(() => { window.__testAuthConfig = { tableData: { profiles: { data: [{ category: 'Eletricistas' }, { category: 'Pintores' }, { category: 'Pintores' }] } } }; });
+  await page.reload();
+  await expect(page.locator('#qsPros')).toHaveText('3');
+  await expect(page.locator('#qsCats')).toHaveText('2');
+});
+
+test('quem somos: no telemóvel não desliza para o lado', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.reload();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
+  await expect(page.locator('#qsNumPros')).toBeHidden();
 });
