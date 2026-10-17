@@ -62,12 +62,12 @@ Equipa Flinko`
 function emailHtml(c){
   const como=c.via==='google'?'carrega em <b>“Continuar com Google”</b>':'entra com o teu email e palavra-passe'
   return `<div style="font-family:Arial,Helvetica,sans-serif;max-width:480px;margin:0 auto;padding:24px">
-  <div style="font-size:22px;font-weight:800;color:#132420;margin-bottom:20px">Flink<span style="color:#E8720A">o</span></div>
+  <div style="font-size:22px;font-weight:800;color:#132420;margin-bottom:20px">Flink<span style="color:#BB5C08">o</span></div>
   <h2 style="color:#14181F;font-size:18px;margin-bottom:8px">Falta só um passo</h2>
   <p style="color:#5B6270;font-size:14px;line-height:1.6">Olá${c.nome?' '+esc(c.nome):''}!</p>
   <p style="color:#5B6270;font-size:14px;line-height:1.6">Criaste conta na Flinko, mas o teu registo ficou a meio. A culpa foi nossa: um erro no site não deixou acabar o registo. Pedimos desculpa, já está corrigido.</p>
   <p style="color:#5B6270;font-size:14px;line-height:1.6">Para acabar, ${como} e escolhe se procuras um profissional ou se ofereces serviços. Demora menos de 1 minuto.</p>
-  <a href="${LINK}" style="display:inline-block;background:#E8720A;color:#fff;padding:11px 22px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700;margin:6px 0 14px">Acabar o registo</a>
+  <a href="${LINK}" style="display:inline-block;background:#BB5C08;color:#fff;padding:11px 22px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700;margin:6px 0 14px">Acabar o registo</a>
   <p style="color:#5B6270;font-size:13px;line-height:1.6">Se não te lembras da palavra-passe, carrega em “Esqueci a palavra-passe” na página de entrada.</p>
   <p style="color:#5B6270;font-size:14px;line-height:1.6">Obrigado,<br>Equipa Flinko</p>
   <p style="color:#94a3b8;font-size:12px;margin-top:24px">Recebeste este email porque criaste conta em flinko.pt. Se não quiseres continuar, basta ignorares esta mensagem.</p>

@@ -53,12 +53,12 @@ exports.handler = async (event) => {
     if (!para) return json(200, { sent: false, push: true })
 
     const html = `<div style="font-family:Arial,Helvetica,sans-serif;max-width:480px;margin:0 auto;padding:24px">
-  <div style="font-size:22px;font-weight:800;color:#132420;margin-bottom:20px">Flink<span style="color:#E8720A">o</span></div>
+  <div style="font-size:22px;font-weight:800;color:#132420;margin-bottom:20px">Flink<span style="color:#BB5C08">o</span></div>
   <h2 style="color:#14181F;font-size:18px;margin-bottom:8px">Recebeste uma proposta</h2>
   <p style="color:#5B6270;font-size:14px;line-height:1.6">Ol&aacute;${cliente.name ? ' ' + esc(String(cliente.name).split(' ')[0]) : ''},</p>
   <p style="color:#5B6270;font-size:14px;line-height:1.6"><strong>${esc(nomePro)}</strong>${pro && pro.category ? ' (' + esc(pro.category) + ')' : ''} respondeu ao teu pedido <strong>${esc(pedido.title)}</strong>:</p>
-  <div style="background:#F7F8FA;padding:14px 16px;border-left:3px solid #E8720A;border-radius:6px;color:#14181F;font-size:14px;margin:16px 0">${preco ? '<strong>' + esc(preco) + '</strong><br/>' : ''}${esc(String(oferta.message || '').slice(0, 300)) || 'Sem mensagem.'}</div>
-  <a href="${link}" style="display:inline-block;background:#E8720A;color:#fff;padding:11px 22px;border-radius:999px;text-decoration:none;font-size:14px;font-weight:700">Ver e comparar propostas</a>
+  <div style="background:#F7F8FA;padding:14px 16px;border-left:3px solid #BB5C08;border-radius:6px;color:#14181F;font-size:14px;margin:16px 0">${preco ? '<strong>' + esc(preco) + '</strong><br/>' : ''}${esc(String(oferta.message || '').slice(0, 300)) || 'Sem mensagem.'}</div>
+  <a href="${link}" style="display:inline-block;background:#BB5C08;color:#fff;padding:11px 22px;border-radius:999px;text-decoration:none;font-size:14px;font-weight:700">Ver e comparar propostas</a>
   <p style="color:#94a3b8;font-size:12px;margin-top:24px">Recebeste este email porque publicaste um pedido na Flinko. Podes desligar os avisos no teu painel.</p>
 </div>`
     const res = await fetch('https://api.resend.com/emails', {

@@ -111,14 +111,14 @@ exports.handler=async(event)=>{
     for(const p of alvos){
       const html=`
       <div style="font-family:Arial,Helvetica,sans-serif;max-width:480px;margin:0 auto;padding:24px">
-        <div style="font-size:22px;font-weight:800;color:#132420;margin-bottom:20px">Flink<span style="color:#E8720A">o</span></div>
+        <div style="font-size:22px;font-weight:800;color:#132420;margin-bottom:20px">Flink<span style="color:#BB5C08">o</span></div>
         <h2 style="color:#14181F;font-size:18px;margin-bottom:8px">Novo pedido em ${cat}</h2>
         <p style="color:#5B6270;font-size:14px;line-height:1.6">Ol&aacute;${p.name?' '+esc(p.name):''},</p>
         <p style="color:#5B6270;font-size:14px;line-height:1.6">Algu&eacute;m publicou um pedido que pode ser para ti:</p>
-        <div style="background:#F7F8FA;padding:14px 16px;border-left:3px solid #E8720A;border-radius:6px;color:#14181F;font-size:14px;margin:16px 0">
+        <div style="background:#F7F8FA;padding:14px 16px;border-left:3px solid #BB5C08;border-radius:6px;color:#14181F;font-size:14px;margin:16px 0">
           <strong>${titulo}</strong><br/>${local}${orcamento?' &middot; '+esc(orcamento):''}
         </div>
-        <a href="${link}" style="display:inline-block;background:#E8720A;color:#fff;padding:11px 22px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700">Ver pedido e responder</a>
+        <a href="${link}" style="display:inline-block;background:#BB5C08;color:#fff;padding:11px 22px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700">Ver pedido e responder</a>
         <p style="color:#94a3b8;font-size:12px;margin-top:24px">Recebeste este email porque tens perfil na categoria "${cat}". Podes desligar os avisos no teu painel.</p>
       </div>`
 

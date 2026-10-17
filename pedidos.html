@@ -32,7 +32,7 @@
 :root{
 --ink:#132420;--ink-soft:#4E5C57;--ink-mute:#69756F;
 --paper:#FFFFFF;--surface:#F3FBF6;--line:#E1EEE6;--line-2:#CFE4D9;
---accent:#E8720A;--accent-deep:#B85608;--accent-soft:#FFE7CE;
+--accent:#BB5C08;--accent-deep:#B85608;--accent-soft:#FFE7CE;
 --fresh:#0F8B5F;--fresh-deep:#0A6B49;--fresh-soft:#D7F5E4;--fresh-light:#6FE3B4;
 --gold:#AF620A;--gold-light:#FFF3E4;
 --red:#C0362C;--red-light:#FDECEA;
@@ -53,7 +53,7 @@ nav{position:sticky;top:0;z-index:200;background:var(--white);border-bottom:1px 
 .btn{padding:9px 17px;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s;font-family:inherit;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .btn-ghost{background:transparent;color:var(--text)}.btn-ghost:hover{background:var(--bg)}
 .btn-outline{background:transparent;color:var(--ink);border-color:var(--line-2)}.btn-outline:hover{border-color:var(--ink-mute)}
-.btn-solid{background:linear-gradient(100deg,var(--accent),var(--accent-deep));color:#fff;box-shadow:0 4px 12px rgba(232,114,10,.25)}.btn-solid:hover{filter:brightness(1.05)}
+.btn-solid{background:linear-gradient(100deg,var(--accent),var(--accent-deep));color:#fff;box-shadow:0 4px 12px rgba(187,92,8,.25)}.btn-solid:hover{filter:brightness(1.05)}
 .btn-fresh{background:linear-gradient(100deg,var(--fresh),var(--fresh-deep));color:#fff;box-shadow:0 4px 12px rgba(15,139,95,.25)}.btn-fresh:hover{filter:brightness(1.06)}
 .btn-ghost-dark{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)}.btn-ghost-dark:hover{background:rgba(255,255,255,.2)}
 .btn-sm{padding:7px 13px;font-size:12.5px}
@@ -63,7 +63,7 @@ nav{position:sticky;top:0;z-index:200;background:var(--white);border-bottom:1px 
 
 /* HERO */
 .hero{position:relative;overflow:hidden;background:linear-gradient(165deg,var(--ink) 0%,#1b4433 100%);padding:52px 0 46px;color:#fff;text-align:center}
-.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 18% 20%,rgba(63,214,147,.20),transparent 45%),radial-gradient(circle at 82% 75%,rgba(232,114,10,.20),transparent 45%);pointer-events:none}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 18% 20%,rgba(63,214,147,.20),transparent 45%),radial-gradient(circle at 82% 75%,rgba(187,92,8,.20),transparent 45%);pointer-events:none}
 .hero-orbs{position:absolute;inset:0;overflow:hidden;pointer-events:none}
 .orb{position:absolute;border-radius:50%;filter:blur(46px);opacity:.5}
 .orb.o1{width:260px;height:260px;background:var(--fresh-light);top:-90px;left:-70px;animation:orbFloat1 10s ease-in-out infinite}
@@ -104,7 +104,7 @@ nav{position:sticky;top:0;z-index:200;background:var(--white);border-bottom:1px 
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:18px;padding-bottom:60px}
 @keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .req-card{background:var(--white);border:1px solid var(--border);border-radius:18px;overflow:hidden;isolation:isolate;display:flex;flex-direction:column;transition:box-shadow .25s cubic-bezier(.22,1,.36,1),transform .25s cubic-bezier(.22,1,.36,1);box-shadow:var(--shadow);position:relative;animation:cardIn .5s ease both}
-.req-card::before{content:'';position:absolute;inset:0;background:radial-gradient(240px circle at var(--mx,50%) var(--my,0%),rgba(232,114,10,.10),transparent 70%);opacity:0;transition:opacity .3s;pointer-events:none;z-index:0}
+.req-card::before{content:'';position:absolute;inset:0;background:radial-gradient(240px circle at var(--mx,50%) var(--my,0%),rgba(187,92,8,.10),transparent 70%);opacity:0;transition:opacity .3s;pointer-events:none;z-index:0}
 .req-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--fresh));transform:scaleX(0);transform-origin:left;transition:transform .35s cubic-bezier(.22,1,.36,1);z-index:2}
 .req-card>*{position:relative;z-index:1}
 .req-card:hover{box-shadow:var(--shadow-lift);transform:translateY(-3px)}

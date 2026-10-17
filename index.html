@@ -40,8 +40,8 @@
   --dark:#132420;
   --dark-2:#19352C;
   --dark-3:#1F4538;
-  --orange:#E8720A;
-  --orange-dark:#B85608;
+  --orange:#BB5C08;
+  --orange-dark:#9A4A06;
   --mint:#0F8B5F;
   --mint-dark:#0A6B49;
   --ink:#132420;
@@ -83,7 +83,7 @@ ul{list-style:none}
   white-space:nowrap;
 }
 .btn:active{transform:translateY(1px)}
-.btn-orange{background:var(--orange);color:#fff;box-shadow:0 12px 24px -10px rgba(232,114,10,.65)}
+.btn-orange{background:var(--orange);color:#fff;box-shadow:0 12px 24px -10px rgba(187,92,8,.65)}
 .btn-orange:hover{background:var(--orange-dark)}
 .btn-dark{background:var(--dark);color:#fff}
 .btn-dark:hover{background:var(--dark-3)}
@@ -163,7 +163,7 @@ body.menu-open .nav-toggle span::after{transform:rotate(-45deg);top:0}
 .house-spot[aria-pressed="true"] .lbl{background:var(--orange)}
 .house-spot:hover .dot,.house-spot:focus-visible .dot{transform:scale(1.25)}
 .house-spot:focus-visible{outline:3px solid #fff;outline-offset:2px;border-radius:12px}
-@keyframes house-pulse{0%{box-shadow:0 0 0 0 rgba(232,114,10,.6)}70%{box-shadow:0 0 0 14px rgba(232,114,10,0)}100%{box-shadow:0 0 0 0 rgba(232,114,10,0)}}
+@keyframes house-pulse{0%{box-shadow:0 0 0 0 rgba(187,92,8,.6)}70%{box-shadow:0 0 0 14px rgba(187,92,8,0)}100%{box-shadow:0 0 0 0 rgba(187,92,8,0)}}
 @media (prefers-reduced-motion:reduce){.house-spot .dot{animation:none}}
 .house-panel{background:#fff;color:var(--ink);border-radius:18px;padding:18px 20px;margin-top:6px}
 .house-panel .hp-q{font-size:.8rem;font-weight:700;color:var(--muted)}
@@ -209,10 +209,10 @@ body.menu-open .nav-toggle span::after{transform:rotate(-45deg);top:0}
   background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);
   font-size:.82rem;font-weight:600;color:rgba(255,255,255,.9);
 }
-.trust-chip:nth-child(1){background:rgba(232,114,10,.16);border-color:rgba(232,114,10,.4);color:#ffdcb0}
+.trust-chip:nth-child(1){background:rgba(187,92,8,.16);border-color:rgba(187,92,8,.4);color:#ffdcb0}
 .trust-chip:nth-child(2){background:rgba(15,139,95,.14);border-color:rgba(15,139,95,.4);color:#c9f5e0}
 .trust-chip:nth-child(3){background:rgba(109,89,232,.18);border-color:rgba(109,89,232,.48);color:#ddd7fc}
-.trust-chip-urgent{background:rgba(232,114,10,.22);border-color:rgba(232,114,10,.55);color:#ffd9b3}
+.trust-chip-urgent{background:rgba(187,92,8,.22);border-color:rgba(187,92,8,.55);color:#ffd9b3}
 .hero-ctas{margin-top:26px;display:flex;flex-wrap:wrap;gap:12px}
 
 .hero-side{position:relative}
@@ -477,7 +477,7 @@ section{padding:96px 0}
 .map-card{
   position:relative;height:380px;border-radius:var(--radius-lg);overflow:hidden;
   background:
-    radial-gradient(360px circle at 50% 56%,rgba(232,114,10,.12),transparent 68%),
+    radial-gradient(360px circle at 50% 56%,rgba(187,92,8,.12),transparent 68%),
     radial-gradient(320px circle at 26% 16%,rgba(10,107,73,.14),transparent 70%),
     radial-gradient(320px circle at 74% 92%,rgba(10,107,73,.14),transparent 70%),
     radial-gradient(120% 120% at 50% 50%,var(--bg-tint) 55%,#e2f0e8 100%);
@@ -501,7 +501,7 @@ section{padding:96px 0}
 }
 .price-row .popular-tag{
   position:absolute;top:-10px;left:24px;background:var(--orange);color:#fff;font-size:.66rem;font-weight:800;
-  letter-spacing:.04em;text-transform:uppercase;padding:4px 10px;border-radius:999px;box-shadow:0 6px 14px -6px rgba(232,114,10,.6);
+  letter-spacing:.04em;text-transform:uppercase;padding:4px 10px;border-radius:999px;box-shadow:0 6px 14px -6px rgba(187,92,8,.6);
 }
 
 /* Para Profissionais teaser */
@@ -953,7 +953,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
         <div class="house" id="heroHouse">
           <div class="house-draw">
             <svg viewBox="0 0 560 480" aria-hidden="true">
-              <path d="M40 200 L280 40 L520 200" fill="none" stroke="#E8720A" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+              <path d="M40 200 L280 40 L520 200" fill="none" stroke="#BB5C08" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
               <rect x="70" y="200" width="420" height="250" fill="#19352C" stroke="#2C5446" stroke-width="3"/>
               <line x1="280" y1="200" x2="280" y2="450" stroke="#2C5446" stroke-width="3"/>
               <line x1="70" y1="325" x2="490" y2="325" stroke="#2C5446" stroke-width="3"/>

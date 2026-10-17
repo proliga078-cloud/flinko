@@ -40,7 +40,7 @@ banner.innerHTML='<div class="upgrade-banner"><div><h3>🚀 Aumenta a visibilida
 }else if(plan==='starter'){
 banner.innerHTML='<div class="upgrade-banner" style="background:linear-gradient(135deg,#334155,#0f172a)"><div><h3>🚀 Estás no plano Starter</h3><p>Mais orçamentos e destaque nas pesquisas — tudo ativo.</p></div><button class="btn btn-outline" style="background:#fff" onclick="manageBilling()">Gerir subscrição</button></div>'
 }else if(plan==='pro'){
-banner.innerHTML='<div class="upgrade-banner" style="background:linear-gradient(135deg,#C25A06,#E8720A)"><div><h3>🚀 Estás no plano Pro</h3><p>Portefólio, selo verificado e destaque nas pesquisas — tudo ativo.</p></div><button class="btn btn-outline" style="background:#fff" onclick="manageBilling()">Gerir subscrição</button></div>'
+banner.innerHTML='<div class="upgrade-banner" style="background:linear-gradient(135deg,#C25A06,#BB5C08)"><div><h3>🚀 Estás no plano Pro</h3><p>Portefólio, selo verificado e destaque nas pesquisas — tudo ativo.</p></div><button class="btn btn-outline" style="background:#fff" onclick="manageBilling()">Gerir subscrição</button></div>'
 }else if(plan==='premium'){
 banner.innerHTML='<div class="upgrade-banner" style="background:linear-gradient(135deg,#0f172a,#1d4ed8)"><div><h3>👑 Estás no plano Premium</h3><p>Tens o destaque máximo na Flinko.</p></div><button class="btn btn-outline" style="background:#fff" onclick="manageBilling()">Gerir subscrição</button></div>'
 }

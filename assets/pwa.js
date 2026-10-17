@@ -56,7 +56,7 @@
         '<div style="font-size:13px;font-weight:700">Instala a app Flinko</div>'+
         '<div style="font-size:11.5px;color:rgba(255,255,255,.72);line-height:1.4">' + texto + '</div>'+
       '</div>'+
-      (deferredPrompt ? '<button id="pwa-install-btn" style="background:#E8720A;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap">Instalar</button>' : '')+
+      (deferredPrompt ? '<button id="pwa-install-btn" style="background:#BB5C08;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap">Instalar</button>' : '')+
       '<button id="pwa-install-close" aria-label="Fechar" style="background:transparent;border:none;color:rgba(255,255,255,.6);font-size:20px;cursor:pointer;padding:0 2px;line-height:1">&times;</button>';
     document.body.appendChild(el);
 
