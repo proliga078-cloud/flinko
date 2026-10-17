@@ -29,7 +29,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-<link rel="preload" as="image" href="assets/hero-team.jpg" fetchpriority="high" />
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Flinko","url":"https://flinko.pt/","logo":"https://flinko.pt/icon-512.png","image":"https://flinko.pt/assets/og-image.png","description":"Marketplace de profissionais verificados manualmente em Portugal. Eletricistas, canalizadores, pintores, jardineiros, designers e muito mais.","areaServed":{"@type":"Country","name":"Portugal"}}
 </script>
@@ -148,21 +147,30 @@ body.menu-open .nav-toggle span::after{transform:rotate(-45deg);top:0}
 }
 .hero-pad{padding:56px 48px}
 @media (max-width:720px){ .hero-pad{padding:34px 22px} }
-.hero::before{
-  content:"";position:absolute;inset:0;
-  background:url('assets/hero-team.jpg') center 26%/cover no-repeat;
-  filter:saturate(.85);
-}
-@media (max-width:720px){
-  .hero::before{
-    background-position:center top;
-    background-size:100% auto;
-  }
-}
-.hero::after{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(100deg,rgba(19,36,32,.97) 26%,rgba(19,36,32,.62) 60%,rgba(19,36,32,.22) 100%);
-}
+/* Sem foto de banco: o lado direito do topo é a casa interativa (.house). */
+.hero::before,.hero::after{content:none}
+
+/* Casa por dentro: o cliente toca na parte com problema e vê o ofício. */
+.house{position:relative;max-width:520px;margin-left:auto}
+.house-draw{position:relative;width:100%;aspect-ratio:560/480}
+.house-draw svg{position:absolute;inset:0;width:100%;height:100%}
+.house-spot{position:absolute;transform:translate(-22px,-22px);min-width:44px;min-height:44px;padding:0;border:0;background:transparent;color:#fff;cursor:pointer;display:flex;align-items:center;gap:6px;font:inherit}
+.house-spot .dot{display:block;width:22px;height:22px;margin:11px;border-radius:50%;background:#fff;border:4px solid var(--orange);box-sizing:border-box;flex-shrink:0;transition:transform .2s;animation:house-pulse 2.2s infinite}
+.house-spot .lbl{font-size:.78rem;font-weight:700;white-space:nowrap;padding:4px 9px;border-radius:8px;background:rgba(19,36,32,.88)}
+.house-spot[aria-pressed="true"] .dot{background:var(--orange);border-color:#fff}
+.house-spot[aria-pressed="true"] .lbl{background:var(--orange)}
+.house-spot:hover .dot,.house-spot:focus-visible .dot{transform:scale(1.25)}
+.house-spot:focus-visible{outline:3px solid #fff;outline-offset:2px;border-radius:12px}
+@keyframes house-pulse{0%{box-shadow:0 0 0 0 rgba(232,114,10,.6)}70%{box-shadow:0 0 0 14px rgba(232,114,10,0)}100%{box-shadow:0 0 0 0 rgba(232,114,10,0)}}
+@media (prefers-reduced-motion:reduce){.house-spot .dot{animation:none}}
+.house-panel{background:#fff;color:var(--ink);border-radius:18px;padding:18px 20px;margin-top:6px}
+.house-panel .hp-q{font-size:.8rem;font-weight:700;color:var(--muted)}
+.house-panel .hp-of{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.35rem;margin:2px 0 4px}
+.house-panel .hp-txt{font-size:.92rem;color:var(--muted);line-height:1.5}
+.house-panel .hp-n{font-size:.88rem;font-weight:700;color:var(--mint-dark);margin-top:6px}
+.house-panel .hp-cta{display:inline-flex;align-items:center;min-height:44px;margin-top:12px;padding:0 18px;border-radius:12px;background:var(--orange);color:#fff;font-weight:700;text-decoration:none}
+@media (max-width:960px){.house{margin:0 auto}}
+@media (max-width:640px){.house-spot .lbl{display:none}}
 .hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1.08fr .92fr;gap:56px;align-items:center}
 .badge-pill{
   display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;
@@ -936,15 +944,34 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
       </div>
 
       <div class="hero-side">
-        <div class="live-card">
-          <div class="head">Pedidos recentes <span class="live-dot" id="liveDot" style="display:none">Ao vivo</span></div>
-          <div class="live-feed" id="liveFeed">
-            <div class="live-req is-active" data-i="0">
-              <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg></span>
-              <div><strong>A carregar…</strong><span>&nbsp;</span></div>
-            </div>
+        <div class="house" id="heroHouse">
+          <div class="house-draw">
+            <svg viewBox="0 0 560 480" aria-hidden="true">
+              <path d="M40 200 L280 40 L520 200" fill="none" stroke="#E8720A" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+              <rect x="70" y="200" width="420" height="250" fill="#19352C" stroke="#2C5446" stroke-width="3"/>
+              <line x1="280" y1="200" x2="280" y2="450" stroke="#2C5446" stroke-width="3"/>
+              <line x1="70" y1="325" x2="490" y2="325" stroke="#2C5446" stroke-width="3"/>
+              <rect x="110" y="240" width="60" height="50" rx="4" fill="#244A3D"/>
+              <rect x="390" y="235" width="70" height="40" rx="6" fill="#244A3D"/>
+              <path d="M330 300 h50 v-20" fill="none" stroke="#3E6E5E" stroke-width="4"/>
+              <rect x="320" y="360" width="56" height="90" rx="4" fill="#244A3D"/>
+              <rect x="120" y="365" width="110" height="60" rx="6" fill="#244A3D"/>
+              <line x1="20" y1="450" x2="540" y2="450" stroke="#2C5446" stroke-width="3"/>
+              <path d="M500 450 q10 -40 25 0 M515 450 q8 -30 20 0" fill="none" stroke="#0F8B5F" stroke-width="4"/>
+            </svg>
+            <button type="button" class="house-spot" data-spot="luz" aria-label="Quadro elétrico" aria-pressed="true" style="left:25%;top:55.2%"><span class="dot"></span><span class="lbl">Quadro elétrico</span></button>
+            <button type="button" class="house-spot" data-spot="agua" aria-label="Casa de banho" aria-pressed="false" style="left:63.4%;top:60.4%"><span class="dot"></span><span class="lbl">Casa de banho</span></button>
+            <button type="button" class="house-spot" data-spot="tinta" aria-label="Paredes" aria-pressed="false" style="left:75.9%;top:53.1%"><span class="dot"></span><span class="lbl">Paredes</span></button>
+            <button type="button" class="house-spot" data-spot="limpeza" aria-label="Sala" aria-pressed="false" style="left:31.3%;top:82.3%"><span class="dot"></span><span class="lbl">Sala</span></button>
+            <button type="button" class="house-spot" data-spot="jardim" aria-label="Jardim" aria-pressed="false" style="left:88%;top:88.5%"><span class="dot"></span><span class="lbl">Jardim</span></button>
           </div>
-          <div class="live-feed-dots" id="liveFeedDots" aria-hidden="true"></div>
+          <div class="house-panel" id="housePanel" aria-live="polite">
+            <div class="hp-q">Onde é o problema? Toca na casa.</div>
+            <div class="hp-of" id="hpOficio">Eletricista</div>
+            <div class="hp-txt" id="hpTexto">Falhas de luz, tomadas, quadros e certificação.</div>
+            <div class="hp-n" id="hpN"></div>
+            <a class="hp-cta" id="hpCta" href="/eletricistas">Ver eletricistas</a>
+          </div>
         </div>
         <div class="avatars-row">
           <span class="stack" aria-hidden="true">
@@ -1525,6 +1552,39 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   // só mostra o numero quando e maior que zero, para nao pintar as
   // categorias ainda vazias como "0 profissionais" (desencorajador e nao
   // acrescenta nada que a descricao generica ja nao diga).
+  // Casa do topo: cada ponto é um ofício. Mostra quantos profissionais há
+  // (quando há) e leva à categoria; sem ninguém, leva a publicar o pedido
+  // nessa categoria em vez de mostrar "0".
+  var HOUSE = {
+    luz:     {cat:'Eletricistas',  oficio:'Eletricista',  um:'eletricista',  varios:'eletricistas',  url:'/eletricistas',  txt:'Falhas de luz, tomadas, quadros e certificação.'},
+    agua:    {cat:'Canalizadores', oficio:'Canalizador',  um:'canalizador',  varios:'canalizadores', url:'/canalizadores', txt:'Fugas, pingos, esquentadores e desentupimentos.'},
+    tinta:   {cat:'Pintores',      oficio:'Pintor',       um:'pintor',       varios:'pintores',      url:'/pintores',      txt:'Interiores, exteriores, humidades e acabamentos.'},
+    limpeza: {cat:'Limpeza',       oficio:'Limpeza',      um:'profissional de limpeza', varios:'profissionais de limpeza', url:'/limpeza', txt:'Limpezas regulares, pós-obra e mudanças.'},
+    jardim:  {cat:'Jardineiros',   oficio:'Jardinagem',   um:'jardineiro',   varios:'jardineiros',   url:'/jardineiros',   txt:'Relva, podas, rega e manutenção do jardim.'}
+  };
+  var catCounts = null, houseSel = 'luz';
+  function renderHouse(){
+    var h = HOUSE[houseSel]; if(!h) return;
+    var of = document.getElementById('hpOficio'); if(!of) return;
+    of.textContent = h.oficio;
+    document.getElementById('hpTexto').textContent = h.txt;
+    var n = catCounts ? (catCounts[h.cat] || 0) : null;
+    var nEl = document.getElementById('hpN'), cta = document.getElementById('hpCta');
+    if(n === 0){
+      nEl.textContent = 'Ainda à procura de ' + h.varios + '. Publica o pedido e avisamos quem trabalha perto.';
+      cta.textContent = 'Publicar o pedido';
+      cta.href = '/pedidos?publicar=1&cat=' + encodeURIComponent(h.cat);
+    } else {
+      nEl.textContent = n ? n + ' ' + (n === 1 ? h.um : h.varios) + ' com perfil ativo' : '';
+      cta.textContent = 'Ver ' + h.varios;
+      cta.href = h.url;
+    }
+    document.querySelectorAll('.house-spot').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-spot') === houseSel ? 'true' : 'false'); });
+  }
+  document.querySelectorAll('.house-spot').forEach(function(b){
+    b.addEventListener('click', function(){ houseSel = b.getAttribute('data-spot'); renderHouse(); });
+  });
+
   function loadCategoryCounts(){
     db.from('profiles').select('category').eq('account_type', 'professional').eq('is_demo', false).eq('suspended', false).eq('approved', true)
       .then(function(res){
@@ -1534,6 +1594,8 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
           var c = (p.category || '').trim();
           if(c) counts[c] = (counts[c] || 0) + 1;
         });
+        catCounts = counts;
+        renderHouse();
         document.querySelectorAll('.cat-tile[data-cat]').forEach(function(tile){
           var n = counts[tile.getAttribute('data-cat')] || 0;
           if(n > 0){
