@@ -1,6 +1,6 @@
 // ---------- DIVULGAR O PERFIL (todos os planos) ----------
 // Link, QR, WhatsApp e cartaz para o profissional levar clientes ao seu perfil.
-// O link próprio (/o-nome) é do plano Pro; sem ele usa-se profile.html?id=...
+// Com link próprio (/o-nome) usa-se esse; sem ele, profile.html?id=...
 function shareUrl(){
   if(!profileData||!profileId)return ''
   return location.origin+(profileData.slug?'/'+encodeURIComponent(profileData.slug):'/profile.html?id='+encodeURIComponent(profileId))
@@ -25,7 +25,7 @@ function renderShare(){
   if(img&&profileId)img.href='cartaz.html?formato=imagem&id='+encodeURIComponent(profileId)
 }
 
-// O QR fica no painel para todos os planos (antes só aparecia com o link próprio do Pro).
+// O QR fica no painel para todos os planos (antes só aparecia com o link próprio).
 let shareQrText=''
 function drawShareQr(url){
   const alvo=document.getElementById('share-qr')

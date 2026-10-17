@@ -30,7 +30,7 @@ function esc(s) {
 }
 
 function urlDoPerfil(p) {
-  // Profissionais Pro têm link próprio (flinko.pt/o-nome-dele); os
+  // Quem escolheu link próprio tem (flinko.pt/o-nome-dele); os
   // restantes ficam no endereço com ?id=, que continua indexável.
   return p.slug ? `${SITE}/${encodeURIComponent(p.slug)}` : `${SITE}/profile.html?id=${p.id}`
 }

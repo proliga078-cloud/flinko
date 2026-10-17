@@ -542,7 +542,7 @@ const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
 
 function escAttrJs(s){return escapeHtml(String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"))}
 const params=new URLSearchParams(location.search)
-// O perfil abre por id (?id=uuid) ou pelo link proprio do plano Pro,
+// O perfil abre por id (?id=uuid) ou pelo link proprio (flinko.pt/o-nome),
 // que o Netlify reescreve de /o-nome-dele para ?u=o-nome-dele
 let proId=params.get('id')
 // O Netlify reescreve /o-nome-dele para profile.html?u=... mas isso e interno:
