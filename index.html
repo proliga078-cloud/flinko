@@ -156,7 +156,9 @@ body.menu-open .nav-toggle span::after{transform:rotate(-45deg);top:0}
 .house-draw svg{position:absolute;inset:0;width:100%;height:100%}
 .house-spot{position:absolute;transform:translate(-22px,-22px);min-width:44px;min-height:44px;padding:0;border:0;background:transparent;color:#fff;cursor:pointer;display:flex;align-items:center;gap:6px;font:inherit}
 .house-spot .dot{display:block;width:22px;height:22px;margin:11px;border-radius:50%;background:#fff;border:4px solid var(--orange);box-sizing:border-box;flex-shrink:0;transition:transform .2s;animation:house-pulse 2.2s infinite}
-.house-spot .lbl{font-size:.78rem;font-weight:700;white-space:nowrap;padding:4px 9px;border-radius:8px;background:rgba(19,36,32,.88)}
+.house-spot .lbl{display:none;position:absolute;bottom:calc(100% - 4px);left:50%;transform:translateX(-50%);font-size:.78rem;font-weight:700;white-space:nowrap;padding:4px 9px;border-radius:8px;background:rgba(19,36,32,.92);pointer-events:none}
+.house-spot[aria-pressed="true"] .lbl,.house-spot:hover .lbl,.house-spot:focus-visible .lbl{display:block}
+.house-spot:hover,.house-spot:focus-visible{z-index:2}
 .house-spot[aria-pressed="true"] .dot{background:var(--orange);border-color:#fff}
 .house-spot[aria-pressed="true"] .lbl{background:var(--orange)}
 .house-spot:hover .dot,.house-spot:focus-visible .dot{transform:scale(1.25)}
@@ -170,7 +172,6 @@ body.menu-open .nav-toggle span::after{transform:rotate(-45deg);top:0}
 .house-panel .hp-n{font-size:.88rem;font-weight:700;color:var(--mint-dark);margin-top:6px}
 .house-panel .hp-cta{display:inline-flex;align-items:center;min-height:44px;margin-top:12px;padding:0 18px;border-radius:12px;background:var(--orange);color:#fff;font-weight:700;text-decoration:none}
 @media (max-width:960px){.house{margin:0 auto}}
-@media (max-width:640px){.house-spot .lbl{display:none}}
 .hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1.08fr .92fr;gap:56px;align-items:center}
 .badge-pill{
   display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;
@@ -916,9 +917,9 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
     <div class="hero-orbs" aria-hidden="true"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span></div><div class="glow-spot" aria-hidden="true"></div>
     <div class="hero-pad hero-inner">
       <div>
-        <span class="badge-pill"><span class="dot"></span> Portugal · Perfis verificados manualmente</span>
-        <h1><span class="hw"><span>Encontra</span></span> <span class="hw"><span>um</span></span> <span class="hw"><span>profissional</span></span> <span class="hw"><span>de</span></span> <span class="hw hi"><span>confiança</span></span> <span class="hw"><span>em</span></span> <span class="hw"><span>todo</span></span> <span class="hw"><span>o</span></span> <span class="hw"><span>país</span></span></h1>
-        <p class="lead" id="heroLead">Eletricistas, canalizadores, pintores e muito mais. Pede orçamento, compara perfis verificados e decide — sem compromisso e sem comissões.</p>
+        <span class="badge-pill"><span class="dot"></span> Portugal · cada perfil revisto à mão</span>
+        <h1><span class="hw"><span>Do</span></span> <span class="hw"><span>quadro</span></span> <span class="hw"><span>elétrico</span></span> <span class="hw"><span>ao</span></span> <span class="hw"><span>site</span></span> <span class="hw"><span>da</span></span> <span class="hw"><span>tua</span></span> <span class="hw"><span>empresa.</span></span></h1>
+        <p class="lead" id="heroLead">Eletricistas, pintores, programadores, designers, cabeleireiros e muitos outros ofícios. Vês o trabalho e os preços de cada um antes de falares, e combinas diretamente. O Flinko não cobra nada a quem contrata.</p>
 
         <div class="mode-toggle" role="tablist" id="modeToggle">
           <span class="mode-pill" id="modePill"></span>
@@ -929,7 +930,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
         <form class="search-card" action="/categoria" method="get" id="heroSearchForm">
           <label class="search-field">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-            <input type="text" name="q" placeholder="O que precisas? Ex: eletricista" id="heroSearchQ" />
+            <input type="text" name="q" placeholder="O que precisas? Ex: eletricista, site, pintura" id="heroSearchQ" />
           </label>
           <label class="search-field" id="heroLocalField">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -952,6 +953,8 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
               <line x1="280" y1="200" x2="280" y2="450" stroke="#2C5446" stroke-width="3"/>
               <line x1="70" y1="325" x2="490" y2="325" stroke="#2C5446" stroke-width="3"/>
               <rect x="110" y="240" width="60" height="50" rx="4" fill="#244A3D"/>
+              <rect x="205" y="258" width="44" height="30" rx="3" fill="#244A3D" stroke="#3E6E5E" stroke-width="2"/>
+              <path d="M227 288 v8 M190 300 h74" fill="none" stroke="#3E6E5E" stroke-width="3"/>
               <rect x="390" y="235" width="70" height="40" rx="6" fill="#244A3D"/>
               <path d="M330 300 h50 v-20" fill="none" stroke="#3E6E5E" stroke-width="4"/>
               <rect x="320" y="360" width="56" height="90" rx="4" fill="#244A3D"/>
@@ -960,13 +963,14 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
               <path d="M500 450 q10 -40 25 0 M515 450 q8 -30 20 0" fill="none" stroke="#0F8B5F" stroke-width="4"/>
             </svg>
             <button type="button" class="house-spot" data-spot="luz" aria-label="Quadro elétrico" aria-pressed="true" style="left:25%;top:55.2%"><span class="dot"></span><span class="lbl">Quadro elétrico</span></button>
+            <button type="button" class="house-spot" data-spot="pc" aria-label="Computador" aria-pressed="false" style="left:40.5%;top:56.5%"><span class="dot"></span><span class="lbl">Computador</span></button>
             <button type="button" class="house-spot" data-spot="agua" aria-label="Casa de banho" aria-pressed="false" style="left:63.4%;top:60.4%"><span class="dot"></span><span class="lbl">Casa de banho</span></button>
             <button type="button" class="house-spot" data-spot="tinta" aria-label="Paredes" aria-pressed="false" style="left:75.9%;top:53.1%"><span class="dot"></span><span class="lbl">Paredes</span></button>
             <button type="button" class="house-spot" data-spot="limpeza" aria-label="Sala" aria-pressed="false" style="left:31.3%;top:82.3%"><span class="dot"></span><span class="lbl">Sala</span></button>
             <button type="button" class="house-spot" data-spot="jardim" aria-label="Jardim" aria-pressed="false" style="left:88%;top:88.5%"><span class="dot"></span><span class="lbl">Jardim</span></button>
           </div>
           <div class="house-panel" id="housePanel" aria-live="polite">
-            <div class="hp-q">Onde é o problema? Toca na casa.</div>
+            <div class="hp-q">Não sabes por onde começar? Toca na casa.</div>
             <div class="hp-of" id="hpOficio">Eletricista</div>
             <div class="hp-txt" id="hpTexto">Falhas de luz, tomadas, quadros e certificação.</div>
             <div class="hp-n" id="hpN"></div>
@@ -1418,13 +1422,13 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
           heroQ.setAttribute('placeholder','A tua profissão? Ex: eletricista');
           heroLocalField.style.display = 'none';
           heroBtn.textContent = 'Criar perfil grátis';
-          heroLead.textContent = 'Cria o teu perfil, recebe pedidos de clientes na tua zona e responde diretamente — sem comissões sobre o que fechas.';
+          heroLead.textContent = 'Cria o teu perfil grátis e recebe pedidos de clientes da tua zona. Não cobramos comissão sobre o que fechas.';
         } else {
           heroForm.setAttribute('action','/categoria');
-          heroQ.setAttribute('placeholder','O que precisas? Ex: eletricista');
+          heroQ.setAttribute('placeholder','O que precisas? Ex: eletricista, site, pintura');
           heroLocalField.style.display = '';
           heroBtn.textContent = 'Procurar';
-          heroLead.textContent = 'Eletricistas, canalizadores, pintores e muito mais. Pede orçamento, compara perfis verificados e decide — sem compromisso e sem comissões.';
+          heroLead.textContent = 'Eletricistas, pintores, programadores, designers, cabeleireiros e muitos outros ofícios. Vês o trabalho e os preços de cada um antes de falares, e combinas diretamente. O Flinko não cobra nada a quem contrata.';
         }
       });
     });
@@ -1557,6 +1561,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   // nessa categoria em vez de mostrar "0".
   var HOUSE = {
     luz:     {cat:'Eletricistas',  oficio:'Eletricista',  um:'eletricista',  varios:'eletricistas',  url:'/eletricistas',  txt:'Falhas de luz, tomadas, quadros e certificação.'},
+    pc:      {cat:'Programadores', oficio:'Programador',  um:'programador',  varios:'programadores', url:'/programadores', txt:'Sites, lojas online, apps e sistemas para o teu negócio.'},
     agua:    {cat:'Canalizadores', oficio:'Canalizador',  um:'canalizador',  varios:'canalizadores', url:'/canalizadores', txt:'Fugas, pingos, esquentadores e desentupimentos.'},
     tinta:   {cat:'Pintores',      oficio:'Pintor',       um:'pintor',       varios:'pintores',      url:'/pintores',      txt:'Interiores, exteriores, humidades e acabamentos.'},
     limpeza: {cat:'Limpeza',       oficio:'Limpeza',      um:'profissional de limpeza', varios:'profissionais de limpeza', url:'/limpeza', txt:'Limpezas regulares, pós-obra e mudanças.'},

@@ -69,6 +69,42 @@ test('no telemóvel (375px) a casa cabe sem deslizar para o lado e os pontos tê
   await expect(page.locator('#heroSection')).toHaveClass(/loaded/);
   await expect.poll(async () => {
     const tamanhos = await page.locator('.house-spot').evaluateAll((els) => els.map((e) => { const r = e.getBoundingClientRect(); return Math.min(r.width, r.height); }));
-    return tamanhos.length === 5 ? Math.min(...tamanhos) : 0;
+    return tamanhos.length === 6 ? Math.min(...tamanhos) : 0;
   }, { timeout: 5000 }).toBeGreaterThanOrEqual(44);
+});
+
+// O Flinko não é só obras: o topo fala de todos os ofícios (programadores,
+// designers, cabeleireiros…) e a casa tem um computador que leva aos
+// programadores. Sem frases feitas nem travessões (CLAUDE.md).
+test('o topo fala de todos os ofícios e a casa tem um computador para os programadores', async ({ page }) => {
+  await abrir(page, [...PROS, pro('4', 'Programadores')]);
+  await expect(page.locator('#heroSection h1')).toHaveText(/Do quadro elétrico ao site da tua empresa\./);
+  const lead = page.locator('#heroLead');
+  await expect(lead).toContainText('programadores');
+  await expect(lead).toContainText('designers');
+  await page.getByRole('button', { name: /Computador/ }).click();
+  const painel = page.locator('#housePanel');
+  await expect(painel).toContainText('Programador');
+  await expect(painel).toContainText('1 programador com perfil ativo');
+  await expect(painel.getByRole('link', { name: /Ver programadores/ })).toHaveAttribute('href', '/programadores');
+});
+
+test('os textos do topo não têm frases feitas nem travessões, nos dois modos', async ({ page }) => {
+  await abrir(page, PROS);
+  const proibido = /de confiança|sem compromisso|especialista certo|—/;
+  await expect(page.locator('#heroSection .hero-inner > div').first()).not.toContainText(proibido);
+  await page.getByRole('tab', { name: 'Sou profissional' }).click();
+  await expect(page.locator('#heroLead')).not.toContainText(proibido);
+  await expect(page.locator('#heroLead')).toContainText('Não cobramos comissão');
+});
+
+// Com 6 pontos as etiquetas tapavam-se ("Quadro elétrico" por cima do
+// computador). Só a do ponto escolhido fica à vista, por cima do ponto.
+test('só o nome do ponto escolhido aparece, para não se taparem', async ({ page }) => {
+  await page.setViewportSize({ width: 1100, height: 900 });
+  await abrir(page, PROS);
+  await expect(page.locator('.house-spot .lbl:visible')).toHaveCount(1);
+  await expect(page.locator('.house-spot .lbl:visible')).toHaveText('Quadro elétrico');
+  await page.getByRole('button', { name: /Computador/ }).click();
+  await expect(page.locator('.house-spot .lbl:visible')).toHaveText('Computador');
 });
