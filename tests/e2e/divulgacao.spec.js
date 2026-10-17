@@ -111,14 +111,33 @@ test('dashboard: o plano grátis também vê e descarrega o QR do perfil', async
   await expect(seccao.locator('button', { hasText: 'Descarregar QR' })).toHaveAttribute('onclick', 'downloadShareQr()');
 });
 
-test('preços: o QR aparece em todos os planos; só o link com o teu nome é do Pro', async ({ page }) => {
+// Out/2026: o link com o nome (flinko.pt/o-teu-nome) e o QR passaram a ser
+// de todos os planos, para cada profissional poder divulgar o perfil.
+test('preços: link com o teu nome e QR em todos os planos', async ({ page }) => {
   await fake(page, { session: null, tableData: {} });
   await page.goto('/pricing.html');
   const gratis = page.locator('.plan-card').filter({ has: page.locator('.plan-name', { hasText: 'Grátis' }) });
-  await expect(gratis.locator('.plan-features')).toContainText('Link e código QR do teu perfil');
-  const linhaQr = page.locator('.compare-table tr', { hasText: 'Link e código QR do perfil' });
-  await expect(linhaQr.locator('td').nth(1)).toContainText('✓');
-  const linhaNome = page.locator('.compare-table tr', { hasText: 'Link com o teu nome' });
-  await expect(linhaNome.locator('td').nth(1)).toContainText('✕');
-  await expect(linhaNome.locator('td').nth(3)).toContainText('✓');
+  await expect(gratis.locator('.plan-features')).toContainText('Link com o teu nome e código QR');
+  const linha = page.locator('.compare-table tr', { hasText: 'Link com o teu nome e código QR' });
+  for (let col = 1; col <= 4; col++) await expect(linha.locator('td').nth(col)).toContainText('✓');
+  await expect(page.locator('.compare-table')).not.toContainText('Link e código QR do perfil');
+});
+
+test('dashboard: plano grátis com link próprio liberado pode escolher o endereço', async ({ page }) => {
+  const p = perfil({});
+  await fake(page, {
+    session: { access_token: 'tok', user: { id: p.id, email: 'a@example.com' } },
+    rpcResults: { get_my_profile: [p] },
+    tableData: { plan_limits: { data: [{ plan: 'free', custom_link: true }] } },
+  });
+  await page.goto('/dashboard.html');
+  await expect(page.locator('#slug-body')).toHaveCSS('display', 'block');
+  await expect(page.locator('#slug-locked')).toHaveCSS('display', 'none');
+});
+
+test('profissionais: o link próprio já não aparece como exclusivo do Pro', async ({ page }) => {
+  await fake(page, { session: null, tableData: {} });
+  await page.goto('/profissionais.html');
+  await expect(page.locator('body')).not.toContainText('no plano Pro.');
+  await expect(page.locator('body')).not.toContainText('Link próprio e código QR');
 });

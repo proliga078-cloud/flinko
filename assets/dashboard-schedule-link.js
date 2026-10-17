@@ -33,7 +33,7 @@ async function saveWeeklySchedule(){
   showAlert('profile-success','Disponibilidade semanal guardada!')
 }
 
-// ---------- LINK PROPRIO (plano Pro) ----------
+// ---------- LINK PROPRIO (todos os planos desde out/2026; decide plan_limits.custom_link) ----------
 let slugTimer=null
 
 function normalizeSlug(v){

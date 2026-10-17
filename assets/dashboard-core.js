@@ -43,7 +43,7 @@ card.style.setProperty('--my',(e.clientY-r.top)+'px')
 })()
 let refJobId=null,refSelectedPro=null
 let marketPriceCache=null
-let planLimits={portfolio_max:3,quotes_per_month:3,finances:false,market_insights:false,own_branding:false,custom_link:false,ai_actions:false}
+let planLimits={portfolio_max:3,quotes_per_month:3,finances:false,market_insights:false,own_branding:false,custom_link:true,ai_actions:false}
 async function loadPlanLimits(){
 const plano=(profileData&&profileData.plan)||'free'
 const{data}=await db.from('plan_limits').select('*').eq('plan',plano).maybeSingle()

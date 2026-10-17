@@ -318,7 +318,7 @@ const AI_FAQ=[
 {k:['tempo de resposta','quanto tempo demoro a responder'],a:'Responder depressa aos pedidos ajuda-te a aparecer melhor nas pesquisas e conta para algumas badges de conquista.'},
 {k:['cancelar um trabalho','marcar como cancelado'],a:'Podes marcar um trabalho como cancelado no Pipeline a qualquer momento — fica registado no histórico mas sai dos trabalhos ativos.'},
 {k:['mudar a foto de perfil','atualizar foto'],a:'Podes atualizar a tua foto de perfil em Perfil — perfis com foto recebem mais contactos.'},
-{k:['link personalizado','slug do perfil','url do meu perfil'],a:'Alguns planos permitem um link personalizado para o teu perfil público (flinko.pt/o-teu-nome) em vez do link genérico com ID.'},
+{k:['link personalizado','slug do perfil','url do meu perfil'],a:'Todos os planos podem ter um link com o teu nome (flinko.pt/o-teu-nome) em vez do link com números. Escolhe-o em Perfil, "O teu link próprio".'},
 {k:['exportar dados','descarregar os meus dados'],a:'Podes pedir os teus dados pessoais ao abrigo do RGPD através da página RGPD do site.'}
 ]
 
