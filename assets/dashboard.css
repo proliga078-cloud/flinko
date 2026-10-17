@@ -1,7 +1,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
 /* Paleta Flinko (igual à de categoria.html / pedidos.html) */
---ink:#132420;--ink-soft:#4E5C57;--ink-mute:#84918C;
+--ink:#132420;--ink-soft:#4E5C57;--ink-mute:#69756F;
 --paper:#FFFFFF;--surface:#F3FBF6;--line:#E1EEE6;--line-2:#CFE4D9;
 --accent:#E8720A;--accent-deep:#B85608;--accent-soft:#FFE7CE;
 --fresh:#0F8B5F;--fresh-deep:#0A6B49;--fresh-soft:#D7F5E4;--fresh-light:#6FE3B4;

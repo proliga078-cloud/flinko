@@ -78,7 +78,7 @@ const preview = document.getElementById('p-photo-preview');
 preview.innerHTML = '<div style="font-size:13px;color:var(--muted)">⏳ A carregar...</div>';
 preview.style.display = 'block';
 try {
-const uploadFile = await resizeImageFile(file);
+const uploadFile = await resizeImageFile(file, { maxWidth: 600, maxHeight: 600 });
 const ext = uploadFile.name.split('.').pop();
 const path = `profiles/${user.id}/avatar.${ext}`;
 const { data, error } = await db.storage.from('proliga-media').upload(path, uploadFile, { upsert: true, contentType: uploadFile.type });
