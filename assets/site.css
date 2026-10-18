@@ -88,12 +88,16 @@
 @media (max-width:820px){.fk-ftop{grid-template-columns:1fr 1fr}.fk-fbrand{grid-column:1/-1}}
 @media (max-width:520px){.fk-ftop{padding:36px 16px 24px;gap:24px}.fk-fbottom{padding:16px 16px 24px}}
 
-@media (max-width:1020px){
+@media (max-width:1180px){
   .fk-links{display:none}
   .fk-toggle{display:inline-flex}
 }
-@media (min-width:1021px){
+@media (min-width:1181px){
   .fk-panel{display:none!important}
+}
+/* Com 7 links ("Quem somos" entrou em out/2026) o menu completo só aparece a partir de 1181px; abaixo, botão de menu. */
+@media (min-width:1181px) and (max-width:1280px){
+  .fk-links{gap:16px;font-size:.87rem}
 }
 @media (max-width:520px){
   .fk-bar{height:64px;padding:0 16px;gap:12px}

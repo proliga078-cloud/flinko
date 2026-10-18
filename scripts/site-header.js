@@ -19,7 +19,8 @@ const LINKS = [
   ['/como-funciona', 'Como funciona', ['como-funciona']],
   ['/pricing', 'Preços', ['pricing']],
   ['/profissionais', 'Para profissionais', ['profissionais']],
-  ['/academia', 'Academia', ['academia']]
+  ['/academia', 'Academia', ['academia']],
+  ['/sobre', 'Quem somos', ['sobre']]
 ]
 
 // `page` = nome do ficheiro sem .html (ex: "pricing"), para marcar o link ativo.
