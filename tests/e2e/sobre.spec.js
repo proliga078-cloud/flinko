@@ -44,3 +44,26 @@ test('quem somos: no telemóvel não desliza para o lado', async ({ page }) => {
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
   await expect(page.locator('#qsNumPros')).toBeHidden();
 });
+
+// "Isto está só o texto": a página passa a mostrar as caras dos profissionais
+// e os trabalhos que publicaram (conteúdo real, não fotos de banco).
+test('quem somos: caras dos profissionais e trabalhos verdadeiros, com escape', async ({ page }) => {
+  const pros = Array.from({ length: 9 }, (_, i) => ({ id: 'p' + i, name: i === 0 ? '<b>Ana</b> Silva' : 'Pro ' + i, category: 'Pintores', photo_url: 'https://exemplo.pt/f' + i + '.jpg', slug: null }));
+  await page.addInitScript((d) => { window.__testAuthConfig = { tableData: { profiles: { data: d.pros }, portfolio_items: { data: d.trab } } }; }, {
+    pros,
+    trab: [0, 1, 2].map((i) => ({ professional_id: 'p' + i, photo_url: 'https://exemplo.pt/t' + i + '.jpg', title: 'Sala pintada ' + i })),
+  });
+  await page.reload();
+  await expect(page.locator('#qsRostos a')).toHaveCount(8);
+  await expect(page.locator('#qsTrabalhos')).toBeVisible();
+  await expect(page.locator('#qsTrabGrid .trab')).toHaveCount(3);
+  expect(await page.locator('#quem-somos b:has-text("Ana")').count()).toBe(0);
+});
+
+test('quem somos: com poucas fotos, os blocos de caras e trabalhos ficam escondidos', async ({ page }) => {
+  await page.addInitScript(() => { window.__testAuthConfig = { tableData: { profiles: { data: [{ id: 'a', name: 'A', category: 'Pintores', photo_url: 'https://x.pt/a.jpg' }] }, portfolio_items: { data: [] } } }; });
+  await page.reload();
+  await expect(page.locator('#qsPros')).toHaveText('1');
+  await expect(page.locator('#qsRostos')).toBeHidden();
+  await expect(page.locator('#qsTrabalhos')).toBeHidden();
+});
