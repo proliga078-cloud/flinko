@@ -95,6 +95,10 @@
 @media (min-width:1021px){
   .fk-panel{display:none!important}
 }
+/* Com 7 links ("Quem somos" entrou em out/2026), nos ecrãs mais estreitos aproximam-se para caber. */
+@media (min-width:1021px) and (max-width:1200px){
+  .fk-links{gap:15px;font-size:.86rem}
+}
 @media (max-width:520px){
   .fk-bar{height:64px;padding:0 16px;gap:12px}
   .fk-hide-sm{display:none}
