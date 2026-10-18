@@ -25,7 +25,7 @@ for (const pagina of PAGINAS) {
       const ratio = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
       const laranja = ([r, g, b]) => r > 170 && g > 70 && g < 150 && b < 70;
       const branco = ([r, g, b]) => r > 245 && g > 245 && b > 245;
-      const fundo = (el) => { while (el) { const cs = getComputedStyle(el); const c = parse(cs.backgroundColor); if (cs.backgroundImage.startsWith('linear-gradient') && /232, 114, 10|238, 124, 31/.test(cs.backgroundImage)) return [232, 114, 10]; if (c.length >= 3 && (c[3] === undefined || c[3] > 0.9)) return c; el = el.parentElement; } return [255, 255, 255]; };
+      const fundo = (el) => { while (el) { const cs = getComputedStyle(el); const c = parse(cs.backgroundColor); if (cs.backgroundImage !== 'none') return /232, 114, 10|238, 124, 31/.test(cs.backgroundImage) ? [232, 114, 10] : null; /* outro gradiente ou imagem: não dá para medir */ if (c.length >= 3 && (c[3] === undefined || c[3] > 0.9)) return c; el = el.parentElement; } return [255, 255, 255]; };
       const out = [];
       document.querySelectorAll('body *').forEach((el) => {
         if (![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim().length > 1)) return;
@@ -33,6 +33,7 @@ for (const pagina of PAGINAS) {
         const cs = getComputedStyle(el); if (cs.visibility === 'hidden' || +cs.opacity < 0.5) return;
         const fg = parse(cs.color); if (fg[3] !== undefined && fg[3] < 1) return;
         const bg = fundo(el);
+        if (!bg) return;
         if (!((branco(fg) && laranja(bg)) || (laranja(fg) && branco(bg)))) return;
         const grande = parseFloat(cs.fontSize) >= 24 || (parseFloat(cs.fontSize) >= 18.66 && +cs.fontWeight >= 700);
         if (ratio(fg, bg) < (grande ? 3 : 4.5)) out.push(el.textContent.trim().slice(0, 30) + ' (' + ratio(fg, bg).toFixed(2) + ')');

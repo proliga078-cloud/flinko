@@ -3,51 +3,253 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Sobre a Flinko: profissionais locais em Portugal</title>
-<meta name="description" content="Conhece a Flinko: a plataforma portuguesa que liga clientes a profissionais verificados, com preços claros e sem comissões."/>
+<title>Quem somos: o Flinko e como funciona</title>
+<meta name="description" content="O Flinko é um marketplace português que liga quem precisa de um serviço a profissionais de muitas áreas. Sem comissão sobre o trabalho."/>
 <link rel="canonical" href="https://flinko.pt/sobre"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=optional" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=optional" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--blue:#BB5C08;--blue-dark:#9A4A06;--text:#14181F;--muted:#5B6270;--border:#ECECE9;--bg:#F7F8FA;--white:#fff}
-body{font-family:'Inter',sans-serif;color:var(--text);background:var(--white);line-height:1.7}
-a{color:var(--blue);text-decoration:none}
-a:hover{text-decoration:underline}
-nav{position:sticky;top:0;z-index:200;background:var(--white);border-bottom:1px solid var(--border);padding:0 5%;height:64px;display:flex;align-items:center;gap:20px}
-.logo{font-size:22px;font-weight:900;color:var(--text);letter-spacing:-1px}
-.logo span{color:#BB5C08}
-.legal-hero{background:linear-gradient(135deg,#0f231b,#1b4433);padding:48px 5% 40px;color:#fff}
-.legal-hero h1{font-size:clamp(24px,4vw,40px);font-weight:800;margin-bottom:8px}
-.legal-hero p{font-size:15px;opacity:.8}
-.legal-body{max-width:860px;margin:0 auto;padding:48px 5%}
-.legal-body h2{font-size:20px;font-weight:700;margin:36px 0 12px;padding-top:16px;border-top:1px solid var(--border)}
-.legal-body h2:first-child{border-top:none;margin-top:0}
-.legal-body p{font-size:15px;color:#334155;margin-bottom:14px}
-.legal-body ul{margin:10px 0 16px 20px}
-.legal-body ul li{font-size:15px;color:#334155;margin-bottom:8px}
-.legal-body .highlight{background:var(--bg);border-left:4px solid var(--blue);padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;font-size:14px;color:var(--muted)}
-.values-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:16px 0 24px}
-@media(max-width:640px){.values-grid{grid-template-columns:1fr}}
-.value-card{background:var(--bg);border-radius:12px;padding:18px}
-.value-card strong{display:block;margin-bottom:6px;font-size:15px}
-footer{background:var(--text);color:rgba(255,255,255,.6);padding:28px 5%;text-align:center;font-size:13px}
-footer a{color:rgba(255,255,255,.7)}
-footer a:hover{color:#fff}
+:root{
+  --noite:#0C1714;--noite-2:#12221D;--noite-3:#1A2F28;--linha-n:rgba(255,255,255,.1);
+  --orange:#BB5C08;--orange-dark:#9A4A06;--brasa:#F08A3A;--mint:#0F8B5F;--mint-dark:#0A6B49;--menta-luz:#5FD3A1;
+  --ink:#132420;--muted:#4E5C57;--line:#E1EEE6;--bg-tint:#F3FBF6;--cream:#F7F1E8;--paper:#fff;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-weight:800;letter-spacing:-.03em;line-height:1.02}
+a{color:inherit}
+.w{max-width:1240px;margin-inline:auto;padding-inline:28px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:14px 24px;border-radius:999px;font-weight:700;text-decoration:none;transition:transform .2s ease,background .2s ease,border-color .2s ease}
+.btn:hover{transform:translateY(-2px)}
+.btn-brasa{background:var(--orange);color:#fff;box-shadow:0 14px 30px -12px rgba(187,92,8,.8)}
+.btn-brasa:hover{background:var(--orange-dark)}
+.btn-vidro{color:#fff;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.04)}
+.btn-vidro:hover{border-color:#fff}
+.btn-tinta{background:var(--ink);color:#fff}
+.btn-tinta:hover{background:#000}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* === tema navy+laranja: nav === */
+/* ===== 1. Topo cinematográfico ===== */
+.c-hero{position:relative;overflow:hidden;background:radial-gradient(1200px 600px at 85% 10%,rgba(240,138,58,.22),transparent 60%),linear-gradient(180deg,var(--noite) 0%,var(--noite-2) 100%);color:#fff;min-height:min(88vh,860px);display:flex;align-items:center}
+.c-hero .w{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;width:100%}
+.c-hero .tag{display:inline-flex;align-items:center;gap:10px;color:rgba(255,255,255,.7);font-weight:600;margin-bottom:26px}
+.c-hero .tag::before{content:"";width:28px;height:2px;background:var(--brasa)}
+.c-hero h1{color:#fff;font-size:clamp(2.7rem,6.4vw,5.6rem)}
+.c-hero h1 span{color:var(--brasa)}
+.c-hero .lead{margin-top:26px;font-size:clamp(1.05rem,1.6vw,1.25rem);color:rgba(255,255,255,.78);max-width:30em}
+.c-hero .acoes{margin-top:34px;display:flex;gap:12px;flex-wrap:wrap}
+.c-parede{position:relative;height:min(78vh,720px);display:grid;grid-template-columns:repeat(3,1fr);gap:14px;-webkit-mask-image:linear-gradient(transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(transparent,#000 14%,#000 86%,transparent)}
+.c-parede[hidden]{display:none}
+.c-col{overflow:hidden}
+.c-trilho{display:flex;flex-direction:column;gap:14px;animation:subir 38s linear infinite}
+.c-col:nth-child(2) .c-trilho{animation-duration:46s;animation-direction:reverse}
+.c-col:nth-child(3) .c-trilho{animation-duration:42s}
+@keyframes subir{to{transform:translateY(-50%)}}
+.c-parede a{position:relative;display:block;border-radius:20px;overflow:hidden;background:var(--noite-3);text-decoration:none}
+.c-parede img{width:100%;display:block;object-fit:cover;filter:saturate(.92)}
+.c-parede .rosto img{aspect-ratio:1}
+.c-parede .obra img{aspect-ratio:3/4}
+.c-parede a span{position:absolute;left:10px;bottom:10px;right:10px;font-size:.75rem;font-weight:600;color:#fff;background:rgba(12,23,20,.6);backdrop-filter:blur(6px);padding:5px 9px;border-radius:999px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:max-content;max-width:calc(100% - 20px)}
 
+/* ===== 2. Números ===== */
+.c-numeros{background:var(--noite-2);color:#fff;border-top:1px solid var(--linha-n)}
+.c-numeros .w{display:grid;grid-template-columns:repeat(4,1fr)}
+.c-n{padding:34px 24px 38px 0;border-right:1px solid var(--linha-n)}
+.c-n:last-child{border-right:0}
+.c-n+.c-n{padding-left:28px}
+.c-n strong{display:block;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:clamp(2.2rem,4.4vw,3.6rem);line-height:1;letter-spacing:-.03em}
+.c-n span{color:rgba(255,255,255,.62)}
+.c-n[hidden]{display:none}
 
+/* ===== 3. Frase ===== */
+.c-frase{padding:120px 0 40px}
+.c-frase p.grande{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:clamp(1.9rem,4.2vw,3.5rem);line-height:1.12;letter-spacing:-.025em;max-width:20em}
+.c-frase p.grande em{font-style:normal;color:var(--orange)}
+.c-frase .duas{margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:40px;color:var(--muted);font-size:1.08rem;max-width:62em}
 
-.navlinks{color:#9AA6C3}
-.navlinks a:hover{color:#fff}
-.hamburger-btn{background:transparent;border-color:rgba(255,255,255,.25);color:#fff}
-.mobile-nav-panel{background:#fff}
-nav .btn-ghost{color:#fff}
-nav .btn-ghost:hover{background:rgba(255,255,255,.1)}
-nav .btn-line{color:#fff;border-color:rgba(255,255,255,.3)}
-nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
-.btn-ink{background:#BB5C08;color:#fff}
-.btn-ink:hover{background:#C25A06}
+/* ===== 3b. Equipa ===== */
+.c-equipa{padding:90px 0 0}
+.c-equipa .w{border-top:1px solid var(--line);padding-top:70px}
+.c-equipa h2{font-size:clamp(2rem,4.4vw,3.6rem);max-width:15em}
+.c-equipa .duas{margin-top:30px;display:grid;grid-template-columns:1fr 1fr;gap:40px;color:var(--muted);font-size:1.08rem;max-width:62em}
+.c-equipa .remate{margin-top:40px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:clamp(1.5rem,3vw,2.4rem);letter-spacing:-.02em}
+.c-equipa .remate span{color:var(--orange)}
+@media (max-width:920px){.c-equipa{padding-top:56px}.c-equipa .w{padding-top:44px}.c-equipa .duas{grid-template-columns:1fr;gap:14px}}
+
+/* ===== 4. Mapa ===== */
+.c-mapa{margin-top:100px;background:var(--noite);color:#fff;padding:110px 0;overflow:hidden;position:relative}
+.c-mapa::before{content:"";position:absolute;width:900px;height:900px;right:-300px;top:-200px;border-radius:50%;background:radial-gradient(circle,rgba(95,211,161,.12),transparent 60%)}
+.c-mapa .w{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.c-mapa h2{color:#fff;font-size:clamp(2.2rem,4.6vw,3.9rem)}
+.c-mapa .txt{margin-top:20px;color:rgba(255,255,255,.72);font-size:1.08rem;max-width:30em}
+.c-info{margin-top:36px;padding:26px;border:1px solid var(--linha-n);border-radius:22px;background:rgba(255,255,255,.03);max-width:420px}
+.c-info[hidden]{display:none}
+.c-info strong{font-family:'Plus Jakarta Sans',sans-serif;font-size:3.4rem;line-height:1;color:var(--brasa);letter-spacing:-.03em}
+.c-info .onde{font-size:1.1rem;margin-left:8px}
+.c-info p{margin:12px 0 20px;color:rgba(255,255,255,.72)}
+.c-info .btn{min-height:46px;padding:12px 20px}
+.c-pais{position:relative;width:100%;max-width:440px;margin-inline:auto;aspect-ratio:348/683}
+.c-pais svg{position:absolute;inset:0;width:100%;height:100%}
+.c-pais svg path{stroke:#29453B;stroke-width:5.2;stroke-linecap:round;fill:none}
+.c-pino{position:absolute;transform:translate(-50%,-50%);width:44px;height:44px;border:0;background:transparent;cursor:pointer;display:grid;place-items:center}
+.c-pino i{position:relative;display:block;width:var(--t,14px);height:var(--t,14px);border-radius:50%;background:var(--brasa);box-shadow:0 0 0 4px rgba(240,138,58,.22),0 0 24px 6px rgba(240,138,58,.45)}
+.c-pino i::after{content:"";position:absolute;inset:-10px;border-radius:50%;border:1.5px solid rgba(240,138,58,.55);animation:onda 2.6s ease-out infinite}
+.c-pino:nth-of-type(3n) i::after{animation-delay:.9s}
+.c-pino:nth-of-type(3n+1) i::after{animation-delay:1.7s}
+@keyframes onda{from{transform:scale(.4);opacity:1}to{transform:scale(2.2);opacity:0}}
+.c-pino b{position:absolute;left:34px;top:50%;transform:translateY(-50%);white-space:nowrap;font-size:.8rem;font-weight:700;color:#fff;background:rgba(12,23,20,.75);padding:4px 9px;border-radius:999px;opacity:0;transition:opacity .2s ease;pointer-events:none}
+.c-pino:hover b,.c-pino:focus-visible b,.c-pino[aria-pressed="true"] b{opacity:1}
+.c-pino[aria-pressed="true"] i{background:#fff;box-shadow:0 0 0 5px rgba(255,255,255,.2),0 0 30px 8px rgba(240,138,58,.7)}
+.c-pino:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:50%}
+
+/* ===== 5. Conversa ===== */
+.c-conversa{background:var(--cream);padding:120px 0}
+.c-conversa .w{display:grid;grid-template-columns:1fr auto;gap:70px;align-items:center}
+.c-conversa h2{font-size:clamp(2.2rem,4.6vw,3.9rem);max-width:10em}
+.c-passos{list-style:none;margin-top:40px;display:grid;gap:4px;max-width:30em}
+.c-passos li{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;padding:16px 18px;border-radius:18px;transition:background .35s ease}
+.c-passos li::before{content:"";width:12px;height:12px;margin-top:8px;border-radius:50%;border:2px solid #C9BFAE;transition:all .35s ease}
+.c-passos li strong{display:block;font-family:'Plus Jakarta Sans',sans-serif;font-size:1.3rem;color:#8C8475;transition:color .35s ease}
+.c-passos li span{color:#8C8475;transition:color .35s ease}
+.c-passos li.ativo{background:#fff;box-shadow:0 18px 40px -26px rgba(19,36,32,.4)}
+.c-passos li.ativo::before{background:var(--orange);border-color:var(--orange);box-shadow:0 0 0 5px rgba(187,92,8,.15)}
+.c-passos li.ativo strong{color:var(--ink)}
+.c-passos li.ativo span{color:var(--muted)}
+.c-nota{margin-top:22px;color:var(--muted);font-size:.95rem}
+.c-tel{width:340px;height:640px;border-radius:46px;background:#0C1714;padding:12px;box-shadow:0 50px 90px -40px rgba(19,36,32,.65),inset 0 0 0 2px #2A3B35}
+.c-ecra{height:100%;border-radius:36px;background:#F6F8F7;overflow:hidden;display:flex;flex-direction:column}
+.c-barra{padding:18px 18px 12px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.c-barra .av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--mint),var(--ink));display:grid;place-items:center;color:#fff;font-weight:800;font-size:.8rem}
+.c-barra b{display:block;font-size:.92rem}
+.c-barra small{color:var(--mint-dark);font-weight:600;font-size:.74rem}
+.c-fio{flex:1;padding:16px 14px;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;overflow:hidden;font-size:.86rem}
+.c-fio>*{animation:entra .45s cubic-bezier(.2,.8,.2,1) both}
+@keyframes entra{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+.b{max-width:82%;padding:10px 13px;border-radius:18px;line-height:1.4}
+.b.eu{align-self:flex-end;background:var(--ink);color:#fff;border-bottom-right-radius:6px}
+.b.ele{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:6px}
+.b.digita{display:flex;gap:4px;padding:13px 14px}
+.b.digita i{width:7px;height:7px;border-radius:50%;background:#9AA8A2;animation:pulo 1s infinite}
+.b.digita i:nth-child(2){animation-delay:.15s}.b.digita i:nth-child(3){animation-delay:.3s}
+@keyframes pulo{0%,60%,100%{transform:none;opacity:.5}30%{transform:translateY(-4px);opacity:1}}
+.cartao{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;box-shadow:0 14px 30px -24px rgba(19,36,32,.5)}
+.cartao .pesq{display:flex;align-items:center;gap:8px;color:var(--muted)}
+.cartao .pesq b{margin-left:auto;background:var(--orange);color:#fff;border-radius:999px;padding:5px 11px;font-size:.74rem}
+.cartao .pro{display:flex;gap:10px;align-items:center}
+.cartao .pro .av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--mint),var(--ink));color:#fff;display:grid;place-items:center;font-weight:800;font-size:.8rem}
+.cartao .pro small{display:block;color:var(--muted);font-size:.74rem}
+.cartao .pro em{margin-left:auto;font-style:normal;font-weight:800;color:var(--orange-dark)}
+.cartao .resp{display:inline-block;margin-top:8px;padding:3px 9px;border-radius:999px;background:var(--bg-tint);color:var(--mint-dark);font-weight:700;font-size:.72rem}
+.cartao.prop .top{display:flex;justify-content:space-between;font-weight:700}
+.cartao.prop small{display:block;color:var(--muted);margin-top:2px}
+.cartao.prop .aceitar{margin-top:10px;text-align:center;border-radius:12px;padding:9px;background:var(--orange);color:#fff;font-weight:700;transition:background .3s ease}
+.cartao.prop.ok .aceitar{background:var(--mint)}
+
+/* ===== 6. Ofícios em movimento ===== */
+.c-oficios{padding:110px 0 100px;overflow:hidden}
+.c-oficios h2{font-size:clamp(2rem,4vw,3.2rem)}
+.c-oficios .w>p{margin-top:14px;color:var(--muted);font-size:1.05rem;max-width:34em}
+.c-faixa{margin-top:44px;display:flex;width:max-content;animation:lado 60s linear infinite}
+.c-faixa.inv{margin-top:14px;animation-direction:reverse;animation-duration:70s}
+.c-faixa:hover{animation-play-state:paused}
+@keyframes lado{to{transform:translateX(-50%)}}
+.c-faixa div{display:flex;gap:14px;padding-right:14px}
+.c-faixa a{display:inline-flex;align-items:center;gap:12px;padding:14px 26px;border-radius:999px;border:1.5px solid var(--line);background:#fff;text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:clamp(1.1rem,2vw,1.5rem);white-space:nowrap;transition:background .2s ease,color .2s ease,border-color .2s ease}
+.c-faixa a:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.c-faixa svg{width:22px;height:22px;stroke:var(--orange);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.c-faixa.inv a{background:var(--bg-tint)}
+
+/* ===== 7. Trabalhos ===== */
+.c-trab{padding:20px 0 120px}
+.c-trab[hidden]{display:none}
+.c-trab h2{font-size:clamp(2rem,4vw,3.2rem);max-width:14em}
+.c-trab .w>p{margin-top:14px;color:var(--muted)}
+.c-galeria{margin-top:40px;display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.c-galeria a{position:relative;grid-column:span 4;border-radius:24px;overflow:hidden;text-decoration:none;background:var(--noite-3);min-height:280px}
+.c-galeria a:nth-child(1){grid-column:span 7;grid-row:span 2;min-height:580px}
+.c-galeria a:nth-child(2){grid-column:span 5}
+.c-galeria a:nth-child(3){grid-column:span 5}
+.c-galeria img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+.c-galeria a:hover img{transform:scale(1.05)}
+.c-galeria div{position:absolute;inset:auto 0 0 0;padding:60px 20px 18px;background:linear-gradient(transparent,rgba(12,23,20,.85));color:#fff}
+.c-galeria strong{display:block;font-family:'Plus Jakarta Sans',sans-serif;font-size:1.15rem}
+.c-galeria span{color:rgba(255,255,255,.75);font-size:.88rem}
+
+/* ===== 8. Princípios ===== */
+.c-principios{background:var(--noite);color:#fff;padding:120px 0}
+.c-principios h2{color:#fff;font-size:clamp(2.2rem,4.6vw,3.9rem)}
+.c-lista{margin-top:46px;border-top:1px solid var(--linha-n)}
+.c-lista div{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:40px;align-items:center;padding:30px 0;border-bottom:1px solid var(--linha-n)}
+.c-lista h3{color:#fff;font-size:clamp(1.9rem,4.4vw,3.6rem);transition:color .25s ease,transform .25s ease}
+.c-lista div:hover h3{color:var(--brasa);transform:translateX(8px)}
+.c-lista p{color:rgba(255,255,255,.72);font-size:1.1rem}
+
+/* ===== 9. Zero ===== */
+.c-zero{padding:120px 0 40px}
+.c-zero .w{display:grid;grid-template-columns:auto 1fr;gap:56px;align-items:center}
+.c-zero .num{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:clamp(6rem,16vw,13rem);line-height:.85;letter-spacing:-.06em;background:linear-gradient(135deg,var(--brasa),var(--orange-dark));-webkit-background-clip:text;background-clip:text;color:transparent}
+.c-zero h2{font-size:clamp(1.9rem,3.6vw,3rem)}
+.c-zero p{margin-top:14px;color:var(--muted);font-size:1.1rem;max-width:34em}
+.c-antes{margin-top:70px;padding:30px 34px;border-radius:24px;background:var(--bg-tint);display:grid;grid-template-columns:260px 1fr;gap:30px}
+.c-antes h3{font-size:1.45rem}
+.c-antes p{color:var(--muted);font-size:1.05rem}
+
+/* ===== 10. Fecho ===== */
+.c-fecho{padding:100px 0 60px}
+.c-dois{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.c-dois>div{border-radius:30px;padding:48px 44px;min-height:340px;display:flex;flex-direction:column;justify-content:space-between;gap:28px}
+.c-dois h3{font-size:clamp(1.7rem,3vw,2.5rem)}
+.c-dois p{margin-top:14px;font-size:1.05rem;max-width:26em}
+.c-cli{background:var(--cream)}
+.c-cli p{color:var(--muted)}
+.c-pro{background:radial-gradient(600px 300px at 90% 0%,rgba(240,138,58,.3),transparent 60%),var(--noite);color:#fff}
+.c-pro h3{color:#fff}
+.c-pro p{color:rgba(255,255,255,.78)}
+.c-dois .btn{align-self:flex-start}
+.c-contacto{padding:30px 0 80px;color:var(--muted);text-align:center}
+.c-contacto a{color:var(--orange-dark);font-weight:700}
+
+/* ===== Telemóvel ===== */
+@media (max-width:920px){
+  .w{padding-inline:20px}
+  .c-hero{min-height:auto;padding:56px 0 0}
+  .c-hero .w{grid-template-columns:1fr;gap:34px}
+  .c-parede{height:300px;grid-template-columns:repeat(3,1fr);gap:10px}
+  .c-trilho{gap:10px;animation-duration:30s}
+  .c-parede a{border-radius:14px}
+  .c-parede a span{display:none}
+  .c-numeros .w{grid-template-columns:repeat(2,1fr)}
+  .c-n{padding:22px 12px 24px 0}
+  .c-n+.c-n{padding-left:0}
+  .c-n:nth-child(odd){padding-right:16px}
+  .c-n:nth-child(even){padding-left:16px;border-right:0}
+  .c-n:nth-child(-n+2){border-bottom:1px solid var(--linha-n)}
+  .c-frase{padding:72px 0 10px}
+  .c-frase .duas{grid-template-columns:1fr;gap:16px}
+  .c-mapa{margin-top:64px;padding:72px 0}
+  .c-mapa .w{grid-template-columns:1fr;gap:30px}
+  .c-pais{max-width:300px}
+  .c-conversa{padding:72px 0}
+  .c-conversa .w{grid-template-columns:1fr;gap:40px;justify-items:center}
+  .c-conversa .w>div:first-child{justify-self:stretch}
+  .c-tel{width:min(320px,100%);height:560px}
+  .c-oficios{padding:72px 0 64px}
+  .c-galeria{grid-template-columns:1fr 1fr;gap:10px}
+  .c-galeria a,.c-galeria a:nth-child(n){grid-column:span 1;grid-row:auto;min-height:190px}
+  .c-galeria a:nth-child(1){grid-column:span 2;min-height:260px}
+  .c-galeria div{padding:40px 12px 10px}
+  .c-galeria strong{font-size:.92rem}
+  .c-principios{padding:72px 0}
+  .c-lista div{grid-template-columns:1fr;gap:6px;padding:22px 0}
+  .c-zero{padding:72px 0 20px}
+  .c-zero .w{grid-template-columns:1fr;gap:10px}
+  .c-antes{grid-template-columns:1fr;gap:8px;padding:24px;margin-top:44px}
+  .c-dois{grid-template-columns:1fr}
+  .c-dois>div{padding:34px 26px;min-height:0}
+}
+@media (prefers-reduced-motion:reduce){
+  .c-trilho,.c-faixa,.c-pino i::after,.b.digita i,.c-fio>*{animation:none!important}
+}
 </style>
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
@@ -56,15 +258,15 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#0f231b"/>
 <script src="/assets/cookie-consent.js" defer></script>
-<meta property="og:title" content="Sobre a Flinko: profissionais locais em Portugal"/>
-<meta property="og:description" content="Conhece a equipa e a missão do Flinko: ligar clientes a profissionais de confiança."/>
+<meta property="og:title" content="Quem somos: o Flinko e como funciona"/>
+<meta property="og:description" content="O Flinko liga quem precisa de um serviço a quem o sabe fazer, sem comissão sobre o trabalho."/>
 <meta property="og:type" content="website"/>
 <meta property="og:url" content="https://flinko.pt/sobre"/>
 <meta property="og:image" content="https://flinko.pt/assets/og-image.png"/>
 <meta property="og:locale" content="pt_PT"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="Sobre a Flinko: profissionais locais em Portugal"/>
-<meta name="twitter:description" content="Conhece a equipa e a missão do Flinko: ligar clientes a profissionais de confiança."/>
+<meta name="twitter:title" content="Quem somos: o Flinko e como funciona"/>
+<meta name="twitter:description" content="O Flinko liga quem precisa de um serviço a quem o sabe fazer, sem comissão sobre o trabalho."/>
 <meta name="twitter:image" content="https://flinko.pt/assets/og-image.png"/>
 <!-- fk:head -->
 <link rel="stylesheet" href="/assets/site.css" />
@@ -110,34 +312,277 @@ nav .btn-line:hover{border-color:rgba(255,255,255,.6)}
   </div>
 </div>
 <!-- /fk:header -->
-<div class="legal-hero">
-<h1>Sobre a Flinko</h1>
-<p>O marketplace que liga clientes a profissionais de confiança em Portugal.</p>
-</div>
-<div class="legal-body">
-<div class="highlight">
-Acreditamos que encontrar um bom profissional não devia ser uma questão de sorte. A Flinko existe para tornar essa procura simples, transparente e local.
-</div>
+<main id="quem-somos">
 
-<h2>Quem somos</h2>
-<p>A Flinko é uma plataforma criada para conectar pessoas que precisam de um serviço — limpeza, eletricidade, jardinagem, explicações, e muito mais — com profissionais qualificados em Portugal. Começámos no Porto e em Braga, e já temos profissionais registados por todo o país.</p>
-<p>Trabalhamos com profissionais verificados e damos aos clientes acesso a avaliações reais, para que cada contratação seja feita com confiança.</p>
+<section class="c-hero">
+  <div class="w">
+    <div>
+      <span class="tag">Quem somos</span>
+      <h1>De um lado, quem precisa. Do outro, <span>quem sabe fazer.</span></h1>
+      <p class="lead">O Flinko é um marketplace português que junta os dois. Vês o trabalho e os preços de cada profissional, falas diretamente e decides tu.</p>
+      <div class="acoes">
+        <a class="btn btn-brasa" href="/categoria">Explorar profissionais</a>
+        <a class="btn btn-vidro" href="/profissionais">Juntar-me como profissional</a>
+      </div>
+    </div>
+    <div class="c-parede" id="cParede" hidden aria-label="Profissionais e trabalhos do Flinko"></div>
+  </div>
+</section>
 
-<h2>Porque criámos a Flinko</h2>
-<p>Procurar um profissional de confiança costuma significar perguntar a amigos, percorrer grupos de Facebook ou confiar em anúncios sem garantias. Quisemos criar um sítio único onde isso fosse mais fácil — para quem procura um serviço, e para quem o presta.</p>
+<section class="c-numeros" aria-label="O Flinko em números">
+  <div class="w">
+    <div class="c-n" id="nPros" hidden><strong data-alvo="0">0</strong><span>profissionais com perfil</span></div>
+    <div class="c-n" id="nDist" hidden><strong data-alvo="0">0</strong><span>distritos com gente</span></div>
+    <div class="c-n" id="nCats" hidden><strong data-alvo="0">0</strong><span>ofícios diferentes</span></div>
+    <div class="c-n"><strong>0%</strong><span>de comissão sobre o trabalho</span></div>
+  </div>
+</section>
 
-<h2>O que nos diferencia</h2>
-<div class="values-grid">
-<div class="value-card"><strong>🏠 100% português</strong>Focados no mercado nacional, para ligações mais próximas e relevantes.</div>
-<div class="value-card"><strong>💬 Contacto direto</strong>Cliente e profissional falam diretamente pela plataforma, sem intermediários nem formulários intermináveis.</div>
-<div class="value-card"><strong>✅ Perfis verificados</strong>Verificamos os profissionais para que os clientes contratem com mais confiança.</div>
-<div class="value-card"><strong>⭐ Avaliações reais</strong>Só clientes que efetivamente contactaram o profissional podem avaliar.</div>
-</div>
+<section class="c-frase">
+  <div class="w">
+    <p class="grande">Encontrar alguém para um trabalho não devia ser complicado, demorado ou <em>uma aposta</em>.</p>
+    <div class="duas">
+      <p>Todos os dias há quem precise de reparar uma avaria, remodelar uma casa ou fazer um site novo. E há bons profissionais à procura de clientes. As duas coisas encaixam, mas nem sempre se encontram.</p>
+      <p>Criámos o Flinko para encurtar essa distância: um só sítio, das obras em casa aos serviços digitais, onde vês o trabalho de cada um antes de falares.</p>
+    </div>
+  </div>
+</section>
 
-<h2>Fala connosco</h2>
-<p>Tens alguma sugestão, dúvida ou queres ser profissional parceiro? Visita a nossa página de <a href="profissionais.html">Para profissionais</a>
-<a href="contacto.html">contacto</a> ou consulta <a href="como-funciona.html">como funciona</a> a plataforma.</p>
-</div>
+<section class="c-equipa" aria-labelledby="tEquipa">
+  <div class="w">
+    <h2 id="tEquipa">Somos jovens. E queremos mudar a forma como se contrata em Portugal.</h2>
+    <div class="duas">
+      <p>O Flinko é feito por uma equipa jovem e portuguesa. Olhámos para a forma como ainda se procura um profissional: o boca a boca, os grupos de Facebook, o número escrito num papel. Achámos que podia ser muito melhor, para quem procura e para quem trabalha.</p>
+      <p>Queremos que o Flinko seja a forma normal de encontrar quem faz o trabalho, das obras em casa aos serviços digitais. Estamos a construí-lo passo a passo, a ouvir quem o usa e a melhorar todos os dias.</p>
+    </div>
+    <p class="remate">Ainda somos pequenos. <span>A ambição não é.</span></p>
+  </div>
+</section>
+
+<section class="c-mapa" aria-labelledby="tMapa">
+  <div class="w">
+    <div>
+      <h2 id="tMapa">Já há profissionais de norte a sul.</h2>
+      <p class="txt">Cada ponto aceso é um distrito com profissionais no Flinko. Toca num para veres quantos são e o que fazem.</p>
+      <div class="c-info" id="cInfo" hidden aria-live="polite">
+        <div><strong id="iNum"></strong><span class="onde" id="iOnde"></span></div>
+        <p id="iCats"></p>
+        <a class="btn btn-brasa" id="iLink" href="/categoria">Ver quem trabalha aqui</a>
+      </div>
+    </div>
+    <div class="c-pais" id="cPais">
+      <svg viewBox="0 0 348 683" aria-hidden="true"><path d="M121.5 13.5h0M130.5 13.5h0M139.5 13.5h0M103.5 22.5h0M112.5 22.5h0M121.5 22.5h0M130.5 22.5h0M139.5 22.5h0M94.5 31.5h0M103.5 31.5h0M112.5 31.5h0M121.5 31.5h0M130.5 31.5h0M139.5 31.5h0M220.5 31.5h0M229.5 31.5h0M238.5 31.5h0M247.5 31.5h0M256.5 31.5h0M265.5 31.5h0M274.5 31.5h0M283.5 31.5h0M292.5 31.5h0M76.5 40.5h0M85.5 40.5h0M94.5 40.5h0M103.5 40.5h0M112.5 40.5h0M121.5 40.5h0M130.5 40.5h0M139.5 40.5h0M166.5 40.5h0M175.5 40.5h0M184.5 40.5h0M211.5 40.5h0M220.5 40.5h0M229.5 40.5h0M238.5 40.5h0M247.5 40.5h0M256.5 40.5h0M265.5 40.5h0M274.5 40.5h0M283.5 40.5h0M292.5 40.5h0M301.5 40.5h0M310.5 40.5h0M76.5 49.5h0M85.5 49.5h0M94.5 49.5h0M103.5 49.5h0M112.5 49.5h0M121.5 49.5h0M130.5 49.5h0M139.5 49.5h0M148.5 49.5h0M157.5 49.5h0M166.5 49.5h0M175.5 49.5h0M184.5 49.5h0M193.5 49.5h0M202.5 49.5h0M211.5 49.5h0M220.5 49.5h0M229.5 49.5h0M238.5 49.5h0M247.5 49.5h0M256.5 49.5h0M265.5 49.5h0M274.5 49.5h0M283.5 49.5h0M292.5 49.5h0M301.5 49.5h0M310.5 49.5h0M76.5 58.5h0M85.5 58.5h0M94.5 58.5h0M103.5 58.5h0M112.5 58.5h0M121.5 58.5h0M130.5 58.5h0M139.5 58.5h0M148.5 58.5h0M157.5 58.5h0M166.5 58.5h0M175.5 58.5h0M184.5 58.5h0M193.5 58.5h0M202.5 58.5h0M211.5 58.5h0M220.5 58.5h0M229.5 58.5h0M238.5 58.5h0M247.5 58.5h0M256.5 58.5h0M265.5 58.5h0M274.5 58.5h0M283.5 58.5h0M292.5 58.5h0M301.5 58.5h0M310.5 58.5h0M319.5 58.5h0M85.5 67.5h0M94.5 67.5h0M103.5 67.5h0M112.5 67.5h0M121.5 67.5h0M130.5 67.5h0M139.5 67.5h0M148.5 67.5h0M157.5 67.5h0M166.5 67.5h0M175.5 67.5h0M184.5 67.5h0M193.5 67.5h0M202.5 67.5h0M211.5 67.5h0M220.5 67.5h0M229.5 67.5h0M238.5 67.5h0M247.5 67.5h0M256.5 67.5h0M265.5 67.5h0M274.5 67.5h0M283.5 67.5h0M292.5 67.5h0M301.5 67.5h0M310.5 67.5h0M319.5 67.5h0M328.5 67.5h0M85.5 76.5h0M94.5 76.5h0M103.5 76.5h0M112.5 76.5h0M121.5 76.5h0M130.5 76.5h0M139.5 76.5h0M148.5 76.5h0M157.5 76.5h0M166.5 76.5h0M175.5 76.5h0M184.5 76.5h0M193.5 76.5h0M202.5 76.5h0M211.5 76.5h0M220.5 76.5h0M229.5 76.5h0M238.5 76.5h0M247.5 76.5h0M256.5 76.5h0M265.5 76.5h0M274.5 76.5h0M283.5 76.5h0M292.5 76.5h0M301.5 76.5h0M310.5 76.5h0M319.5 76.5h0M328.5 76.5h0M337.5 76.5h0M85.5 85.5h0M94.5 85.5h0M103.5 85.5h0M112.5 85.5h0M121.5 85.5h0M130.5 85.5h0M139.5 85.5h0M148.5 85.5h0M157.5 85.5h0M166.5 85.5h0M175.5 85.5h0M184.5 85.5h0M193.5 85.5h0M202.5 85.5h0M211.5 85.5h0M220.5 85.5h0M229.5 85.5h0M238.5 85.5h0M247.5 85.5h0M256.5 85.5h0M265.5 85.5h0M274.5 85.5h0M283.5 85.5h0M292.5 85.5h0M301.5 85.5h0M310.5 85.5h0M319.5 85.5h0M328.5 85.5h0M337.5 85.5h0M85.5 94.5h0M94.5 94.5h0M103.5 94.5h0M112.5 94.5h0M121.5 94.5h0M130.5 94.5h0M139.5 94.5h0M148.5 94.5h0M157.5 94.5h0M166.5 94.5h0M175.5 94.5h0M184.5 94.5h0M193.5 94.5h0M202.5 94.5h0M211.5 94.5h0M220.5 94.5h0M229.5 94.5h0M238.5 94.5h0M247.5 94.5h0M256.5 94.5h0M265.5 94.5h0M274.5 94.5h0M283.5 94.5h0M292.5 94.5h0M301.5 94.5h0M310.5 94.5h0M319.5 94.5h0M328.5 94.5h0M85.5 103.5h0M94.5 103.5h0M103.5 103.5h0M112.5 103.5h0M121.5 103.5h0M130.5 103.5h0M139.5 103.5h0M148.5 103.5h0M157.5 103.5h0M166.5 103.5h0M175.5 103.5h0M184.5 103.5h0M193.5 103.5h0M202.5 103.5h0M211.5 103.5h0M220.5 103.5h0M229.5 103.5h0M238.5 103.5h0M247.5 103.5h0M256.5 103.5h0M265.5 103.5h0M274.5 103.5h0M283.5 103.5h0M292.5 103.5h0M301.5 103.5h0M310.5 103.5h0M319.5 103.5h0M85.5 112.5h0M94.5 112.5h0M103.5 112.5h0M112.5 112.5h0M121.5 112.5h0M130.5 112.5h0M139.5 112.5h0M148.5 112.5h0M157.5 112.5h0M166.5 112.5h0M175.5 112.5h0M184.5 112.5h0M193.5 112.5h0M202.5 112.5h0M211.5 112.5h0M220.5 112.5h0M229.5 112.5h0M238.5 112.5h0M247.5 112.5h0M256.5 112.5h0M265.5 112.5h0M274.5 112.5h0M283.5 112.5h0M292.5 112.5h0M301.5 112.5h0M310.5 112.5h0M94.5 121.5h0M103.5 121.5h0M112.5 121.5h0M121.5 121.5h0M130.5 121.5h0M139.5 121.5h0M148.5 121.5h0M157.5 121.5h0M166.5 121.5h0M175.5 121.5h0M184.5 121.5h0M193.5 121.5h0M202.5 121.5h0M211.5 121.5h0M220.5 121.5h0M229.5 121.5h0M238.5 121.5h0M247.5 121.5h0M256.5 121.5h0M265.5 121.5h0M274.5 121.5h0M283.5 121.5h0M292.5 121.5h0M301.5 121.5h0M94.5 130.5h0M103.5 130.5h0M112.5 130.5h0M121.5 130.5h0M130.5 130.5h0M139.5 130.5h0M148.5 130.5h0M157.5 130.5h0M166.5 130.5h0M175.5 130.5h0M184.5 130.5h0M193.5 130.5h0M202.5 130.5h0M211.5 130.5h0M220.5 130.5h0M229.5 130.5h0M238.5 130.5h0M247.5 130.5h0M256.5 130.5h0M265.5 130.5h0M274.5 130.5h0M283.5 130.5h0M94.5 139.5h0M103.5 139.5h0M112.5 139.5h0M121.5 139.5h0M130.5 139.5h0M139.5 139.5h0M148.5 139.5h0M157.5 139.5h0M166.5 139.5h0M175.5 139.5h0M184.5 139.5h0M193.5 139.5h0M202.5 139.5h0M211.5 139.5h0M220.5 139.5h0M229.5 139.5h0M238.5 139.5h0M247.5 139.5h0M256.5 139.5h0M265.5 139.5h0M274.5 139.5h0M94.5 148.5h0M103.5 148.5h0M112.5 148.5h0M121.5 148.5h0M130.5 148.5h0M139.5 148.5h0M148.5 148.5h0M157.5 148.5h0M166.5 148.5h0M175.5 148.5h0M184.5 148.5h0M193.5 148.5h0M202.5 148.5h0M211.5 148.5h0M220.5 148.5h0M229.5 148.5h0M238.5 148.5h0M247.5 148.5h0M256.5 148.5h0M265.5 148.5h0M103.5 157.5h0M112.5 157.5h0M121.5 157.5h0M130.5 157.5h0M139.5 157.5h0M148.5 157.5h0M157.5 157.5h0M166.5 157.5h0M175.5 157.5h0M184.5 157.5h0M193.5 157.5h0M202.5 157.5h0M211.5 157.5h0M220.5 157.5h0M229.5 157.5h0M238.5 157.5h0M247.5 157.5h0M256.5 157.5h0M265.5 157.5h0M94.5 166.5h0M103.5 166.5h0M112.5 166.5h0M121.5 166.5h0M130.5 166.5h0M139.5 166.5h0M148.5 166.5h0M157.5 166.5h0M166.5 166.5h0M175.5 166.5h0M184.5 166.5h0M193.5 166.5h0M202.5 166.5h0M211.5 166.5h0M220.5 166.5h0M229.5 166.5h0M238.5 166.5h0M247.5 166.5h0M256.5 166.5h0M265.5 166.5h0M274.5 166.5h0M94.5 175.5h0M103.5 175.5h0M112.5 175.5h0M121.5 175.5h0M130.5 175.5h0M139.5 175.5h0M148.5 175.5h0M157.5 175.5h0M166.5 175.5h0M175.5 175.5h0M184.5 175.5h0M193.5 175.5h0M202.5 175.5h0M211.5 175.5h0M220.5 175.5h0M229.5 175.5h0M238.5 175.5h0M247.5 175.5h0M256.5 175.5h0M265.5 175.5h0M274.5 175.5h0M94.5 184.5h0M103.5 184.5h0M112.5 184.5h0M121.5 184.5h0M130.5 184.5h0M139.5 184.5h0M148.5 184.5h0M157.5 184.5h0M166.5 184.5h0M175.5 184.5h0M184.5 184.5h0M193.5 184.5h0M202.5 184.5h0M211.5 184.5h0M220.5 184.5h0M229.5 184.5h0M238.5 184.5h0M247.5 184.5h0M256.5 184.5h0M265.5 184.5h0M274.5 184.5h0M94.5 193.5h0M103.5 193.5h0M112.5 193.5h0M121.5 193.5h0M130.5 193.5h0M139.5 193.5h0M148.5 193.5h0M157.5 193.5h0M166.5 193.5h0M175.5 193.5h0M184.5 193.5h0M193.5 193.5h0M202.5 193.5h0M211.5 193.5h0M220.5 193.5h0M229.5 193.5h0M238.5 193.5h0M247.5 193.5h0M256.5 193.5h0M265.5 193.5h0M274.5 193.5h0M94.5 202.5h0M103.5 202.5h0M112.5 202.5h0M121.5 202.5h0M130.5 202.5h0M139.5 202.5h0M148.5 202.5h0M157.5 202.5h0M166.5 202.5h0M175.5 202.5h0M184.5 202.5h0M193.5 202.5h0M202.5 202.5h0M211.5 202.5h0M220.5 202.5h0M229.5 202.5h0M238.5 202.5h0M247.5 202.5h0M256.5 202.5h0M265.5 202.5h0M274.5 202.5h0M85.5 211.5h0M94.5 211.5h0M103.5 211.5h0M112.5 211.5h0M121.5 211.5h0M130.5 211.5h0M139.5 211.5h0M148.5 211.5h0M157.5 211.5h0M166.5 211.5h0M175.5 211.5h0M184.5 211.5h0M193.5 211.5h0M202.5 211.5h0M211.5 211.5h0M220.5 211.5h0M229.5 211.5h0M238.5 211.5h0M247.5 211.5h0M256.5 211.5h0M265.5 211.5h0M274.5 211.5h0M85.5 220.5h0M94.5 220.5h0M103.5 220.5h0M112.5 220.5h0M121.5 220.5h0M130.5 220.5h0M139.5 220.5h0M148.5 220.5h0M157.5 220.5h0M166.5 220.5h0M175.5 220.5h0M184.5 220.5h0M193.5 220.5h0M202.5 220.5h0M211.5 220.5h0M220.5 220.5h0M229.5 220.5h0M238.5 220.5h0M247.5 220.5h0M256.5 220.5h0M265.5 220.5h0M274.5 220.5h0M85.5 229.5h0M94.5 229.5h0M103.5 229.5h0M112.5 229.5h0M121.5 229.5h0M130.5 229.5h0M139.5 229.5h0M148.5 229.5h0M157.5 229.5h0M166.5 229.5h0M175.5 229.5h0M184.5 229.5h0M193.5 229.5h0M202.5 229.5h0M211.5 229.5h0M220.5 229.5h0M229.5 229.5h0M238.5 229.5h0M247.5 229.5h0M256.5 229.5h0M265.5 229.5h0M274.5 229.5h0M85.5 238.5h0M94.5 238.5h0M103.5 238.5h0M112.5 238.5h0M121.5 238.5h0M130.5 238.5h0M139.5 238.5h0M148.5 238.5h0M157.5 238.5h0M166.5 238.5h0M175.5 238.5h0M184.5 238.5h0M193.5 238.5h0M202.5 238.5h0M211.5 238.5h0M220.5 238.5h0M229.5 238.5h0M238.5 238.5h0M247.5 238.5h0M256.5 238.5h0M265.5 238.5h0M274.5 238.5h0M85.5 247.5h0M94.5 247.5h0M103.5 247.5h0M112.5 247.5h0M121.5 247.5h0M130.5 247.5h0M139.5 247.5h0M148.5 247.5h0M157.5 247.5h0M166.5 247.5h0M175.5 247.5h0M184.5 247.5h0M193.5 247.5h0M202.5 247.5h0M211.5 247.5h0M220.5 247.5h0M229.5 247.5h0M238.5 247.5h0M247.5 247.5h0M256.5 247.5h0M265.5 247.5h0M76.5 256.5h0M85.5 256.5h0M94.5 256.5h0M103.5 256.5h0M112.5 256.5h0M121.5 256.5h0M130.5 256.5h0M139.5 256.5h0M148.5 256.5h0M157.5 256.5h0M166.5 256.5h0M175.5 256.5h0M184.5 256.5h0M193.5 256.5h0M202.5 256.5h0M211.5 256.5h0M220.5 256.5h0M229.5 256.5h0M238.5 256.5h0M247.5 256.5h0M256.5 256.5h0M265.5 256.5h0M76.5 265.5h0M85.5 265.5h0M94.5 265.5h0M103.5 265.5h0M112.5 265.5h0M121.5 265.5h0M130.5 265.5h0M139.5 265.5h0M148.5 265.5h0M157.5 265.5h0M166.5 265.5h0M175.5 265.5h0M184.5 265.5h0M193.5 265.5h0M202.5 265.5h0M211.5 265.5h0M220.5 265.5h0M229.5 265.5h0M238.5 265.5h0M247.5 265.5h0M256.5 265.5h0M265.5 265.5h0M76.5 274.5h0M85.5 274.5h0M94.5 274.5h0M103.5 274.5h0M112.5 274.5h0M121.5 274.5h0M130.5 274.5h0M139.5 274.5h0M148.5 274.5h0M157.5 274.5h0M166.5 274.5h0M175.5 274.5h0M184.5 274.5h0M193.5 274.5h0M202.5 274.5h0M211.5 274.5h0M220.5 274.5h0M229.5 274.5h0M238.5 274.5h0M247.5 274.5h0M256.5 274.5h0M76.5 283.5h0M85.5 283.5h0M94.5 283.5h0M103.5 283.5h0M112.5 283.5h0M121.5 283.5h0M130.5 283.5h0M139.5 283.5h0M148.5 283.5h0M157.5 283.5h0M166.5 283.5h0M175.5 283.5h0M184.5 283.5h0M193.5 283.5h0M202.5 283.5h0M211.5 283.5h0M220.5 283.5h0M229.5 283.5h0M238.5 283.5h0M247.5 283.5h0M256.5 283.5h0M67.5 292.5h0M76.5 292.5h0M85.5 292.5h0M94.5 292.5h0M103.5 292.5h0M112.5 292.5h0M121.5 292.5h0M130.5 292.5h0M139.5 292.5h0M148.5 292.5h0M157.5 292.5h0M166.5 292.5h0M175.5 292.5h0M184.5 292.5h0M193.5 292.5h0M202.5 292.5h0M211.5 292.5h0M220.5 292.5h0M229.5 292.5h0M238.5 292.5h0M247.5 292.5h0M256.5 292.5h0M67.5 301.5h0M76.5 301.5h0M85.5 301.5h0M94.5 301.5h0M103.5 301.5h0M112.5 301.5h0M121.5 301.5h0M130.5 301.5h0M139.5 301.5h0M148.5 301.5h0M157.5 301.5h0M166.5 301.5h0M175.5 301.5h0M184.5 301.5h0M193.5 301.5h0M202.5 301.5h0M211.5 301.5h0M220.5 301.5h0M229.5 301.5h0M238.5 301.5h0M247.5 301.5h0M67.5 310.5h0M76.5 310.5h0M85.5 310.5h0M94.5 310.5h0M103.5 310.5h0M112.5 310.5h0M121.5 310.5h0M130.5 310.5h0M139.5 310.5h0M148.5 310.5h0M157.5 310.5h0M166.5 310.5h0M175.5 310.5h0M184.5 310.5h0M193.5 310.5h0M202.5 310.5h0M211.5 310.5h0M220.5 310.5h0M229.5 310.5h0M238.5 310.5h0M247.5 310.5h0M67.5 319.5h0M76.5 319.5h0M85.5 319.5h0M94.5 319.5h0M103.5 319.5h0M112.5 319.5h0M121.5 319.5h0M130.5 319.5h0M139.5 319.5h0M148.5 319.5h0M157.5 319.5h0M166.5 319.5h0M175.5 319.5h0M184.5 319.5h0M193.5 319.5h0M202.5 319.5h0M211.5 319.5h0M220.5 319.5h0M229.5 319.5h0M238.5 319.5h0M58.5 328.5h0M67.5 328.5h0M76.5 328.5h0M85.5 328.5h0M94.5 328.5h0M103.5 328.5h0M112.5 328.5h0M121.5 328.5h0M130.5 328.5h0M139.5 328.5h0M148.5 328.5h0M157.5 328.5h0M166.5 328.5h0M175.5 328.5h0M184.5 328.5h0M193.5 328.5h0M202.5 328.5h0M211.5 328.5h0M220.5 328.5h0M229.5 328.5h0M58.5 337.5h0M67.5 337.5h0M76.5 337.5h0M85.5 337.5h0M94.5 337.5h0M103.5 337.5h0M112.5 337.5h0M121.5 337.5h0M130.5 337.5h0M139.5 337.5h0M148.5 337.5h0M157.5 337.5h0M166.5 337.5h0M175.5 337.5h0M184.5 337.5h0M193.5 337.5h0M202.5 337.5h0M211.5 337.5h0M49.5 346.5h0M58.5 346.5h0M67.5 346.5h0M76.5 346.5h0M85.5 346.5h0M94.5 346.5h0M103.5 346.5h0M112.5 346.5h0M121.5 346.5h0M130.5 346.5h0M139.5 346.5h0M148.5 346.5h0M157.5 346.5h0M166.5 346.5h0M175.5 346.5h0M184.5 346.5h0M193.5 346.5h0M202.5 346.5h0M211.5 346.5h0M220.5 346.5h0M40.5 355.5h0M49.5 355.5h0M58.5 355.5h0M67.5 355.5h0M76.5 355.5h0M85.5 355.5h0M94.5 355.5h0M103.5 355.5h0M112.5 355.5h0M121.5 355.5h0M130.5 355.5h0M139.5 355.5h0M148.5 355.5h0M157.5 355.5h0M166.5 355.5h0M175.5 355.5h0M184.5 355.5h0M193.5 355.5h0M202.5 355.5h0M211.5 355.5h0M220.5 355.5h0M31.5 364.5h0M40.5 364.5h0M49.5 364.5h0M58.5 364.5h0M67.5 364.5h0M76.5 364.5h0M85.5 364.5h0M94.5 364.5h0M103.5 364.5h0M112.5 364.5h0M121.5 364.5h0M130.5 364.5h0M139.5 364.5h0M148.5 364.5h0M157.5 364.5h0M166.5 364.5h0M175.5 364.5h0M184.5 364.5h0M193.5 364.5h0M202.5 364.5h0M211.5 364.5h0M220.5 364.5h0M229.5 364.5h0M31.5 373.5h0M40.5 373.5h0M49.5 373.5h0M58.5 373.5h0M67.5 373.5h0M76.5 373.5h0M85.5 373.5h0M94.5 373.5h0M103.5 373.5h0M112.5 373.5h0M121.5 373.5h0M130.5 373.5h0M139.5 373.5h0M148.5 373.5h0M157.5 373.5h0M166.5 373.5h0M175.5 373.5h0M184.5 373.5h0M193.5 373.5h0M202.5 373.5h0M211.5 373.5h0M220.5 373.5h0M229.5 373.5h0M31.5 382.5h0M40.5 382.5h0M49.5 382.5h0M58.5 382.5h0M67.5 382.5h0M76.5 382.5h0M85.5 382.5h0M94.5 382.5h0M103.5 382.5h0M112.5 382.5h0M121.5 382.5h0M130.5 382.5h0M139.5 382.5h0M148.5 382.5h0M157.5 382.5h0M166.5 382.5h0M175.5 382.5h0M184.5 382.5h0M193.5 382.5h0M202.5 382.5h0M211.5 382.5h0M220.5 382.5h0M229.5 382.5h0M238.5 382.5h0M31.5 391.5h0M40.5 391.5h0M49.5 391.5h0M58.5 391.5h0M67.5 391.5h0M76.5 391.5h0M85.5 391.5h0M94.5 391.5h0M103.5 391.5h0M112.5 391.5h0M121.5 391.5h0M130.5 391.5h0M139.5 391.5h0M148.5 391.5h0M157.5 391.5h0M166.5 391.5h0M175.5 391.5h0M184.5 391.5h0M193.5 391.5h0M202.5 391.5h0M211.5 391.5h0M220.5 391.5h0M229.5 391.5h0M238.5 391.5h0M31.5 400.5h0M40.5 400.5h0M49.5 400.5h0M58.5 400.5h0M67.5 400.5h0M76.5 400.5h0M85.5 400.5h0M94.5 400.5h0M103.5 400.5h0M112.5 400.5h0M121.5 400.5h0M130.5 400.5h0M139.5 400.5h0M148.5 400.5h0M157.5 400.5h0M166.5 400.5h0M175.5 400.5h0M184.5 400.5h0M193.5 400.5h0M202.5 400.5h0M211.5 400.5h0M220.5 400.5h0M229.5 400.5h0M238.5 400.5h0M247.5 400.5h0M22.5 409.5h0M31.5 409.5h0M40.5 409.5h0M49.5 409.5h0M58.5 409.5h0M67.5 409.5h0M76.5 409.5h0M85.5 409.5h0M94.5 409.5h0M103.5 409.5h0M112.5 409.5h0M121.5 409.5h0M130.5 409.5h0M139.5 409.5h0M148.5 409.5h0M157.5 409.5h0M166.5 409.5h0M175.5 409.5h0M184.5 409.5h0M193.5 409.5h0M202.5 409.5h0M211.5 409.5h0M220.5 409.5h0M229.5 409.5h0M238.5 409.5h0M247.5 409.5h0M256.5 409.5h0M22.5 418.5h0M31.5 418.5h0M40.5 418.5h0M49.5 418.5h0M58.5 418.5h0M67.5 418.5h0M76.5 418.5h0M85.5 418.5h0M94.5 418.5h0M103.5 418.5h0M112.5 418.5h0M121.5 418.5h0M130.5 418.5h0M139.5 418.5h0M148.5 418.5h0M157.5 418.5h0M166.5 418.5h0M175.5 418.5h0M184.5 418.5h0M193.5 418.5h0M202.5 418.5h0M211.5 418.5h0M220.5 418.5h0M229.5 418.5h0M238.5 418.5h0M247.5 418.5h0M256.5 418.5h0M22.5 427.5h0M31.5 427.5h0M40.5 427.5h0M49.5 427.5h0M58.5 427.5h0M67.5 427.5h0M76.5 427.5h0M85.5 427.5h0M94.5 427.5h0M103.5 427.5h0M112.5 427.5h0M121.5 427.5h0M130.5 427.5h0M139.5 427.5h0M148.5 427.5h0M157.5 427.5h0M166.5 427.5h0M175.5 427.5h0M184.5 427.5h0M193.5 427.5h0M202.5 427.5h0M211.5 427.5h0M220.5 427.5h0M229.5 427.5h0M238.5 427.5h0M247.5 427.5h0M13.5 436.5h0M22.5 436.5h0M31.5 436.5h0M40.5 436.5h0M49.5 436.5h0M58.5 436.5h0M67.5 436.5h0M76.5 436.5h0M85.5 436.5h0M94.5 436.5h0M103.5 436.5h0M112.5 436.5h0M121.5 436.5h0M130.5 436.5h0M139.5 436.5h0M148.5 436.5h0M157.5 436.5h0M166.5 436.5h0M175.5 436.5h0M184.5 436.5h0M193.5 436.5h0M202.5 436.5h0M211.5 436.5h0M220.5 436.5h0M229.5 436.5h0M238.5 436.5h0M13.5 445.5h0M22.5 445.5h0M31.5 445.5h0M40.5 445.5h0M49.5 445.5h0M58.5 445.5h0M67.5 445.5h0M76.5 445.5h0M85.5 445.5h0M94.5 445.5h0M103.5 445.5h0M112.5 445.5h0M121.5 445.5h0M130.5 445.5h0M139.5 445.5h0M148.5 445.5h0M157.5 445.5h0M166.5 445.5h0M175.5 445.5h0M184.5 445.5h0M193.5 445.5h0M202.5 445.5h0M211.5 445.5h0M220.5 445.5h0M229.5 445.5h0M238.5 445.5h0M31.5 454.5h0M40.5 454.5h0M49.5 454.5h0M58.5 454.5h0M67.5 454.5h0M76.5 454.5h0M85.5 454.5h0M94.5 454.5h0M103.5 454.5h0M112.5 454.5h0M121.5 454.5h0M130.5 454.5h0M139.5 454.5h0M148.5 454.5h0M157.5 454.5h0M166.5 454.5h0M175.5 454.5h0M184.5 454.5h0M193.5 454.5h0M202.5 454.5h0M211.5 454.5h0M220.5 454.5h0M229.5 454.5h0M49.5 463.5h0M58.5 463.5h0M67.5 463.5h0M76.5 463.5h0M85.5 463.5h0M94.5 463.5h0M103.5 463.5h0M112.5 463.5h0M121.5 463.5h0M130.5 463.5h0M139.5 463.5h0M148.5 463.5h0M157.5 463.5h0M166.5 463.5h0M175.5 463.5h0M184.5 463.5h0M193.5 463.5h0M202.5 463.5h0M211.5 463.5h0M220.5 463.5h0M229.5 463.5h0M49.5 472.5h0M58.5 472.5h0M67.5 472.5h0M76.5 472.5h0M85.5 472.5h0M94.5 472.5h0M103.5 472.5h0M112.5 472.5h0M121.5 472.5h0M130.5 472.5h0M139.5 472.5h0M148.5 472.5h0M157.5 472.5h0M166.5 472.5h0M175.5 472.5h0M184.5 472.5h0M193.5 472.5h0M202.5 472.5h0M211.5 472.5h0M220.5 472.5h0M229.5 472.5h0M49.5 481.5h0M58.5 481.5h0M67.5 481.5h0M76.5 481.5h0M85.5 481.5h0M94.5 481.5h0M103.5 481.5h0M112.5 481.5h0M121.5 481.5h0M130.5 481.5h0M139.5 481.5h0M148.5 481.5h0M157.5 481.5h0M166.5 481.5h0M175.5 481.5h0M184.5 481.5h0M193.5 481.5h0M202.5 481.5h0M211.5 481.5h0M220.5 481.5h0M229.5 481.5h0M40.5 490.5h0M76.5 490.5h0M85.5 490.5h0M94.5 490.5h0M103.5 490.5h0M112.5 490.5h0M121.5 490.5h0M130.5 490.5h0M139.5 490.5h0M148.5 490.5h0M157.5 490.5h0M166.5 490.5h0M175.5 490.5h0M184.5 490.5h0M193.5 490.5h0M202.5 490.5h0M211.5 490.5h0M220.5 490.5h0M229.5 490.5h0M76.5 499.5h0M85.5 499.5h0M94.5 499.5h0M103.5 499.5h0M112.5 499.5h0M121.5 499.5h0M130.5 499.5h0M139.5 499.5h0M148.5 499.5h0M157.5 499.5h0M166.5 499.5h0M175.5 499.5h0M184.5 499.5h0M193.5 499.5h0M202.5 499.5h0M211.5 499.5h0M220.5 499.5h0M229.5 499.5h0M238.5 499.5h0M85.5 508.5h0M94.5 508.5h0M103.5 508.5h0M112.5 508.5h0M121.5 508.5h0M130.5 508.5h0M139.5 508.5h0M148.5 508.5h0M157.5 508.5h0M166.5 508.5h0M175.5 508.5h0M184.5 508.5h0M193.5 508.5h0M202.5 508.5h0M211.5 508.5h0M220.5 508.5h0M229.5 508.5h0M238.5 508.5h0M85.5 517.5h0M94.5 517.5h0M103.5 517.5h0M112.5 517.5h0M121.5 517.5h0M130.5 517.5h0M139.5 517.5h0M148.5 517.5h0M157.5 517.5h0M166.5 517.5h0M175.5 517.5h0M184.5 517.5h0M193.5 517.5h0M202.5 517.5h0M211.5 517.5h0M220.5 517.5h0M229.5 517.5h0M238.5 517.5h0M247.5 517.5h0M85.5 526.5h0M94.5 526.5h0M103.5 526.5h0M112.5 526.5h0M121.5 526.5h0M130.5 526.5h0M139.5 526.5h0M148.5 526.5h0M157.5 526.5h0M166.5 526.5h0M175.5 526.5h0M184.5 526.5h0M193.5 526.5h0M202.5 526.5h0M211.5 526.5h0M220.5 526.5h0M229.5 526.5h0M238.5 526.5h0M247.5 526.5h0M256.5 526.5h0M85.5 535.5h0M94.5 535.5h0M103.5 535.5h0M112.5 535.5h0M121.5 535.5h0M130.5 535.5h0M139.5 535.5h0M148.5 535.5h0M157.5 535.5h0M166.5 535.5h0M175.5 535.5h0M184.5 535.5h0M193.5 535.5h0M202.5 535.5h0M211.5 535.5h0M220.5 535.5h0M229.5 535.5h0M238.5 535.5h0M247.5 535.5h0M76.5 544.5h0M85.5 544.5h0M94.5 544.5h0M103.5 544.5h0M112.5 544.5h0M121.5 544.5h0M130.5 544.5h0M139.5 544.5h0M148.5 544.5h0M157.5 544.5h0M166.5 544.5h0M175.5 544.5h0M184.5 544.5h0M193.5 544.5h0M202.5 544.5h0M211.5 544.5h0M220.5 544.5h0M229.5 544.5h0M238.5 544.5h0M76.5 553.5h0M85.5 553.5h0M94.5 553.5h0M103.5 553.5h0M112.5 553.5h0M121.5 553.5h0M130.5 553.5h0M139.5 553.5h0M148.5 553.5h0M157.5 553.5h0M166.5 553.5h0M175.5 553.5h0M184.5 553.5h0M193.5 553.5h0M202.5 553.5h0M211.5 553.5h0M220.5 553.5h0M229.5 553.5h0M76.5 562.5h0M85.5 562.5h0M94.5 562.5h0M103.5 562.5h0M112.5 562.5h0M121.5 562.5h0M130.5 562.5h0M139.5 562.5h0M148.5 562.5h0M157.5 562.5h0M166.5 562.5h0M175.5 562.5h0M184.5 562.5h0M193.5 562.5h0M202.5 562.5h0M211.5 562.5h0M220.5 562.5h0M76.5 571.5h0M85.5 571.5h0M94.5 571.5h0M103.5 571.5h0M112.5 571.5h0M121.5 571.5h0M130.5 571.5h0M139.5 571.5h0M148.5 571.5h0M157.5 571.5h0M166.5 571.5h0M175.5 571.5h0M184.5 571.5h0M193.5 571.5h0M202.5 571.5h0M211.5 571.5h0M220.5 571.5h0M76.5 580.5h0M85.5 580.5h0M94.5 580.5h0M103.5 580.5h0M112.5 580.5h0M121.5 580.5h0M130.5 580.5h0M139.5 580.5h0M148.5 580.5h0M157.5 580.5h0M166.5 580.5h0M175.5 580.5h0M184.5 580.5h0M193.5 580.5h0M202.5 580.5h0M211.5 580.5h0M85.5 589.5h0M94.5 589.5h0M103.5 589.5h0M112.5 589.5h0M121.5 589.5h0M130.5 589.5h0M139.5 589.5h0M148.5 589.5h0M157.5 589.5h0M166.5 589.5h0M175.5 589.5h0M184.5 589.5h0M193.5 589.5h0M202.5 589.5h0M211.5 589.5h0M85.5 598.5h0M94.5 598.5h0M103.5 598.5h0M112.5 598.5h0M121.5 598.5h0M130.5 598.5h0M139.5 598.5h0M148.5 598.5h0M157.5 598.5h0M166.5 598.5h0M175.5 598.5h0M184.5 598.5h0M193.5 598.5h0M202.5 598.5h0M85.5 607.5h0M94.5 607.5h0M103.5 607.5h0M112.5 607.5h0M121.5 607.5h0M130.5 607.5h0M139.5 607.5h0M148.5 607.5h0M157.5 607.5h0M166.5 607.5h0M175.5 607.5h0M184.5 607.5h0M193.5 607.5h0M202.5 607.5h0M211.5 607.5h0M85.5 616.5h0M94.5 616.5h0M103.5 616.5h0M112.5 616.5h0M121.5 616.5h0M130.5 616.5h0M139.5 616.5h0M148.5 616.5h0M157.5 616.5h0M166.5 616.5h0M175.5 616.5h0M184.5 616.5h0M193.5 616.5h0M202.5 616.5h0M211.5 616.5h0M85.5 625.5h0M94.5 625.5h0M103.5 625.5h0M112.5 625.5h0M121.5 625.5h0M130.5 625.5h0M139.5 625.5h0M148.5 625.5h0M157.5 625.5h0M166.5 625.5h0M175.5 625.5h0M184.5 625.5h0M193.5 625.5h0M202.5 625.5h0M211.5 625.5h0M85.5 634.5h0M94.5 634.5h0M103.5 634.5h0M112.5 634.5h0M121.5 634.5h0M130.5 634.5h0M139.5 634.5h0M148.5 634.5h0M157.5 634.5h0M166.5 634.5h0M175.5 634.5h0M184.5 634.5h0M193.5 634.5h0M202.5 634.5h0M211.5 634.5h0M76.5 643.5h0M85.5 643.5h0M94.5 643.5h0M103.5 643.5h0M112.5 643.5h0M121.5 643.5h0M130.5 643.5h0M139.5 643.5h0M148.5 643.5h0M157.5 643.5h0M166.5 643.5h0M175.5 643.5h0M184.5 643.5h0M193.5 643.5h0M202.5 643.5h0M211.5 643.5h0M76.5 652.5h0M85.5 652.5h0M94.5 652.5h0M103.5 652.5h0M112.5 652.5h0M121.5 652.5h0M130.5 652.5h0M139.5 652.5h0M148.5 652.5h0M157.5 652.5h0M166.5 652.5h0M175.5 652.5h0M184.5 652.5h0M193.5 652.5h0M202.5 652.5h0M211.5 652.5h0M67.5 661.5h0M76.5 661.5h0M85.5 661.5h0M94.5 661.5h0M103.5 661.5h0M112.5 661.5h0M121.5 661.5h0M130.5 661.5h0M139.5 661.5h0M148.5 661.5h0M157.5 661.5h0M166.5 661.5h0M175.5 661.5h0M184.5 661.5h0M193.5 661.5h0M67.5 670.5h0M76.5 670.5h0M157.5 670.5h0M166.5 670.5h0M175.5 670.5h0"/></svg>
+    </div>
+  </div>
+</section>
+
+<section class="c-conversa" aria-labelledby="tConversa">
+  <div class="w">
+    <div>
+      <h2 id="tConversa">Como funciona, numa conversa.</h2>
+      <ol class="c-passos" id="cPassos">
+        <li class="ativo"><div><strong>Procuras</strong><span>Escolhes o serviço e vês quem trabalha na tua zona.</span></div></li>
+        <li><div><strong>Conheces</strong><span>Perfis com serviços, preços e trabalhos feitos.</span></div></li>
+        <li><div><strong>Falas</strong><span>Tiras dúvidas e explicas o que precisas, diretamente.</span></div></li>
+        <li><div><strong>Decides</strong><span>Comparas as propostas e escolhes. Sem intermediários.</span></div></li>
+      </ol>
+      <p class="c-nota">O preço e as condições combinam-se entre ti e o profissional.</p>
+    </div>
+    <div class="c-tel" aria-hidden="true">
+      <div class="c-ecra">
+        <div class="c-barra"><div class="av">CA</div><div><b>Canalizador · Porto</b><small id="cEstado">Verificado</small></div></div>
+        <div class="c-fio" id="cFio"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="c-oficios" aria-labelledby="tOficios">
+  <div class="w">
+    <h2 id="tOficios">Um só lugar para muitos ofícios.</h2>
+    <p>Das obras em casa aos serviços digitais. Não precisas de procurar em dezenas de sítios.</p>
+  </div>
+  <nav class="c-faixa" aria-label="Ofícios no Flinko"><div><a href="/eletricistas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>Eletricistas</a><a href="/canalizadores"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.7s6 6 6 10a6 6 0 0 1-12 0c0-4 6-10 6-10z"/></svg>Canalizadores</a><a href="/pintores"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>Pintores</a><a href="/pedreiros"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 6l6 6-8 8-6-6z"/><path d="M3 21l4-4"/></svg>Pedreiros</a><a href="/carpinteiros"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"/><path d="M5 17l7-12 7 12z"/></svg>Carpinteiros</a><a href="/serralheiros"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Serralheiros</a><a href="/jardineiros"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22V12"/><path d="M12 12C12 7 8 3 3 3c0 5 4 9 9 9z"/><path d="M12 12c0-4 3-7 7-7 0 4-3 7-7 7z"/></svg>Jardineiros</a><a href="/limpeza"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="9" width="18" height="12" rx="2"/><path d="M8 9V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4"/></svg>Limpeza</a></div><div aria-hidden="true"><a tabindex="-1" href="/eletricistas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>Eletricistas</a><a tabindex="-1" href="/canalizadores"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.7s6 6 6 10a6 6 0 0 1-12 0c0-4 6-10 6-10z"/></svg>Canalizadores</a><a tabindex="-1" href="/pintores"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>Pintores</a><a tabindex="-1" href="/pedreiros"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 6l6 6-8 8-6-6z"/><path d="M3 21l4-4"/></svg>Pedreiros</a><a tabindex="-1" href="/carpinteiros"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"/><path d="M5 17l7-12 7 12z"/></svg>Carpinteiros</a><a tabindex="-1" href="/serralheiros"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Serralheiros</a><a tabindex="-1" href="/jardineiros"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22V12"/><path d="M12 12C12 7 8 3 3 3c0 5 4 9 9 9z"/><path d="M12 12c0-4 3-7 7-7 0 4-3 7-7 7z"/></svg>Jardineiros</a><a tabindex="-1" href="/limpeza"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="9" width="18" height="12" rx="2"/><path d="M8 9V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4"/></svg>Limpeza</a></div></nav>
+  <nav class="c-faixa inv" aria-label="Ofícios no Flinko"><div><a href="/mudancas"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="6" width="14" height="12" rx="2"/><path d="M15 10h4l3 3v5h-7z"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></svg>Mudanças</a><a href="/decoradores"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18v-6a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v6"/><path d="M2 18h20v3H2z"/><path d="M6 8V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/></svg>Decoradores</a><a href="/programadores"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>Programadores</a><a href="/designers"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 0 0 0 20c1 0 1.5-.7 1.5-1.5 0-1.5-1-1.5-1-3 0-1 .8-1.5 2-1.5H17a5 5 0 0 0 5-5c0-5-4.5-9-10-9z"/></svg>Designers</a><a href="/reparacoes-tech"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Reparações tech</a><a href="/personal-trainers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5h11v11h-11z"/><path d="M4 9v6M20 9v6M2 11v2M22 11v2"/></svg>Personal trainers</a><a href="/cabeleireiros"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"/></svg>Cabeleireiros</a><a href="/esteticistas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4z"/></svg>Esteticistas</a></div><div aria-hidden="true"><a tabindex="-1" href="/mudancas"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="6" width="14" height="12" rx="2"/><path d="M15 10h4l3 3v5h-7z"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></svg>Mudanças</a><a tabindex="-1" href="/decoradores"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18v-6a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v6"/><path d="M2 18h20v3H2z"/><path d="M6 8V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/></svg>Decoradores</a><a tabindex="-1" href="/programadores"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>Programadores</a><a tabindex="-1" href="/designers"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 0 0 0 20c1 0 1.5-.7 1.5-1.5 0-1.5-1-1.5-1-3 0-1 .8-1.5 2-1.5H17a5 5 0 0 0 5-5c0-5-4.5-9-10-9z"/></svg>Designers</a><a tabindex="-1" href="/reparacoes-tech"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Reparações tech</a><a tabindex="-1" href="/personal-trainers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5h11v11h-11z"/><path d="M4 9v6M20 9v6M2 11v2M22 11v2"/></svg>Personal trainers</a><a tabindex="-1" href="/cabeleireiros"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"/></svg>Cabeleireiros</a><a tabindex="-1" href="/esteticistas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4z"/></svg>Esteticistas</a></div></nav>
+</section>
+
+<section class="c-trab" id="cTrab" hidden aria-labelledby="tTrab">
+  <div class="w">
+    <h2 id="tTrab">Não são anúncios. É trabalho feito, com nome.</h2>
+    <p>Fotos que os próprios profissionais publicaram no perfil.</p>
+    <div class="c-galeria" id="cGaleria"></div>
+  </div>
+</section>
+
+<section class="c-principios" aria-labelledby="tPrinc">
+  <div class="w">
+    <h2 id="tPrinc">Como trabalhamos</h2>
+    <div class="c-lista">
+      <div><h3>Transparência</h3><p>Vês a informação de cada profissional e esclareces as condições antes de avançar.</p></div>
+      <div><h3>Acessibilidade</h3><p>Procurar um serviço, ou dar a conhecer o teu, tem de ser fácil em qualquer área.</p></div>
+      <div><h3>Autonomia</h3><p>Comparas, contactas quem quiseres e escolhes com quem trabalhar.</p></div>
+      <div><h3>Responsabilidade</h3><p>Informação clara, conversa honesta e expectativas realistas.</p></div>
+      <div><h3>Melhoria contínua</h3><p>Ouvimos quem usa o Flinko e melhoramos com isso.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="c-zero">
+  <div class="w">
+    <div class="num" aria-hidden="true">0%</div>
+    <div>
+      <h2>Sem comissão sobre o teu trabalho.</h2>
+      <p>Quem contrata não paga nada ao Flinko. Os profissionais podem usar o plano grátis ou um plano pago com mais ferramentas, e em nenhum deles tiramos uma parte do valor que combinam com o cliente.</p>
+    </div>
+  </div>
+  <div class="w">
+    <div class="c-antes">
+      <h3>Antes de contratares</h3>
+      <p>Combina com o profissional o que vai ser feito, o preço e o prazo. Se o trabalho pedir qualificações, seguro ou certificados, pede os comprovativos antes de começar. Uma boa escolha começa com boa informação.</p>
+    </div>
+  </div>
+</section>
+
+<section class="c-fecho">
+  <div class="w">
+    <div class="c-dois">
+      <div class="c-cli">
+        <div><h3>Precisas de alguém?</h3><p>Publica o teu pedido em dois minutos e recebe propostas de profissionais da tua zona. Não pagas nada ao Flinko.</p></div>
+        <a class="btn btn-tinta" href="/pedidos?publicar=1">Publicar um pedido grátis</a>
+      </div>
+      <div class="c-pro">
+        <div><h3>Tens um ofício?</h3><p>Fazer um bom trabalho é só metade. A outra é ser encontrado. Cria o teu perfil e recebe pedidos da tua zona.</p></div>
+        <a class="btn btn-brasa" href="/auth?tab=register">Criar o meu perfil</a>
+      </div>
+    </div>
+    <p class="c-contacto">Estamos só a começar. Dúvidas ou sugestões? Escreve para <a href="mailto:flinkogeral@gmail.com">flinkogeral@gmail.com</a> ou usa a <a href="/contacto">página de contacto</a>. Respondemos normalmente em 1 a 2 dias úteis.</p>
+  </div>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3"></script>
+<script>
+// Quem somos (out/2026): tudo o que se vê vem da base de dados (caras, trabalhos,
+// números, mapa). Se faltar ou falhar, o bloco esconde-se: nada de "0" nem vazios.
+const DISTRITOS={"Viana do Castelo":[77,66],"Braga":[119,85],"Vila Real":[187,117],"Bragança":[285,51],"Porto":[99,137],"Aveiro":[95,203],"Viseu":[170,200],"Guarda":[234,216],"Coimbra":[118,259],"Castelo Branco":[212,310],"Leiria":[79,320],"Santarém":[91,385],"Portalegre":[218,379],"Lisboa":[46,453],"Setúbal":[71,479],"Évora":[170,473],"Beja":[175,544],"Faro":[168,674]}
+const semMovimento=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+const ehFoto=u=>/^https:\/\//.test(String(u||''))
+const perfil=p=>p.slug?'/'+encodeURIComponent(p.slug):'/profile.html?id='+encodeURIComponent(p.id)
+const distritoDe=loc=>{const d=String(loc||'').split(' – ')[0].trim();return DISTRITOS[d]?d:null}
+const singular=c=>String(c||'').toLowerCase()
+
+function contar(el,alvo){
+  const s=el.querySelector('strong')
+  el.hidden=false
+  if(semMovimento){s.textContent=alvo;return}
+  const t0=performance.now(),dur=1400
+  const passo=t=>{const k=Math.min(1,(t-t0)/dur);s.textContent=Math.round(alvo*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(passo)}
+  requestAnimationFrame(passo)
+}
+
+function parede(pros,trab){
+  const rostos=pros.filter(p=>ehFoto(p.photo_url)).sort(()=>Math.random()-.5).map(p=>({tipo:'rosto',url:p.photo_url,txt:String(p.name||'').split(' ')[0]+' · '+(p.category||''),href:perfil(p),alt:p.name}))
+  const obras=trab.map(t=>({tipo:'obra',url:t.photo_url,txt:t.title||t.caption||t.pro.category,href:perfil(t.pro),alt:t.title||('Trabalho de '+t.pro.name)}))
+  const todos=[]
+  while(rostos.length||obras.length){if(rostos.length)todos.push(rostos.shift());if(rostos.length)todos.push(rostos.shift());if(obras.length)todos.push(obras.shift())}
+  if(todos.length<6)return
+  const cols=[[],[],[]];todos.slice(0,18).forEach((x,i)=>cols[i%3].push(x))
+  const tile=x=>'<a class="'+x.tipo+'" href="'+x.href+'"><img src="'+esc(x.url)+'" alt="'+esc(x.alt)+'" loading="lazy"/><span>'+esc(x.txt)+'</span></a>'
+  const box=document.getElementById('cParede')
+  // Cada coluna repete-se uma vez para o movimento dar a volta sem salto.
+  box.innerHTML=cols.map(c=>'<div class="c-col"><div class="c-trilho">'+c.map(tile).join('')+'<div aria-hidden="true" style="display:contents">'+c.map(tile).join('').replace(/<a /g,'<a tabindex="-1" ')+'</div></div></div>').join('')
+  box.hidden=false
+}
+
+function mapa(pros){
+  const por={}
+  pros.forEach(p=>{const d=distritoDe(p.location);if(!d)return;(por[d]=por[d]||{n:0,cats:{}}).n++;if(p.category)por[d].cats[p.category]=(por[d].cats[p.category]||0)+1})
+  const lista=Object.entries(por).sort((a,b)=>b[1].n-a[1].n)
+  if(!lista.length)return 0
+  const pais=document.getElementById('cPais'),max=lista[0][1].n
+  const escolher=d=>{
+    const x=por[d]
+    document.getElementById('iNum').textContent=x.n
+    document.getElementById('iOnde').textContent=(x.n===1?'profissional':'profissionais')+' em '+d
+    const cats=Object.entries(x.cats).sort((a,b)=>b[1]-a[1]).map(c=>c[0])
+    document.getElementById('iCats').textContent=cats.length?cats.slice(0,5).join(', ')+(cats.length>5?' e mais':''):'Vários ofícios'
+    document.getElementById('iLink').href='/categoria?loc='+encodeURIComponent(d)
+    document.getElementById('iLink').textContent='Ver quem trabalha em '+d
+    pais.querySelectorAll('.c-pino').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.d===d)))
+    document.getElementById('cInfo').hidden=false
+  }
+  lista.forEach(([d,x])=>{
+    const [px,py]=DISTRITOS[d]
+    const b=document.createElement('button')
+    b.type='button';b.className='c-pino';b.dataset.d=d
+    b.style.left=(px/348*100)+'%';b.style.top=(py/683*100)+'%'
+    b.style.setProperty('--t',(10+Math.round(10*x.n/max))+'px')
+    b.setAttribute('aria-label',d+': '+x.n+(x.n===1?' profissional':' profissionais'))
+    b.innerHTML='<i></i><b>'+esc(d)+' · '+x.n+'</b>'
+    b.addEventListener('click',()=>escolher(d))
+    pais.appendChild(b)
+  })
+  escolher(lista[0][0])
+  return lista.length
+}
+
+function galeria(trab){
+  if(trab.length<3)return
+  document.getElementById('cGaleria').innerHTML=trab.slice(0,5).map(t=>'<a href="'+perfil(t.pro)+'"><img src="'+esc(t.photo_url)+'" alt="'+esc(t.title||('Trabalho de '+t.pro.name))+'" loading="lazy"/><div><strong>'+esc(t.title||t.caption||t.pro.category||'Trabalho')+'</strong><span>'+esc(t.pro.name)+(t.pro.category?' · '+esc(t.pro.category):'')+'</span></div></a>').join('')
+  document.getElementById('cTrab').hidden=false
+}
+
+;(async function(){
+  try{
+    const db=supabase.createClient('https://cdwinidhtfxfxowflize.supabase.co','sb_publishable_G1U9iSJLR2JkhD9gvfyY3Q_qaqnMaUk')
+    const{data:pros,error}=await db.from('profiles').select('id,name,category,photo_url,slug,location').eq('account_type','professional').eq('is_demo',false).eq('suspended',false).eq('approved',true)
+    if(error||!pros||!pros.length)return
+    const porId=Object.fromEntries(pros.map(p=>[p.id,p]))
+    const{data:t}=await db.from('portfolio_items').select('photo_url,title,caption,professional_id').order('created_at',{ascending:false}).limit(30)
+    const trab=(t||[]).filter(x=>porId[x.professional_id]&&ehFoto(x.photo_url)).map(x=>({...x,pro:porId[x.professional_id]}))
+    contar(document.getElementById('nPros'),pros.length)
+    const cats=new Set(pros.map(p=>p.category).filter(Boolean)).size
+    if(cats>1)contar(document.getElementById('nCats'),cats)
+    const dist=mapa(pros)
+    if(dist>1)contar(document.getElementById('nDist'),dist)
+    parede(pros,trab)
+    galeria(trab)
+  }catch(e){}
+})()
+
+// A conversa: corre sozinha e vai acendendo o passo certo à esquerda.
+;(function(){
+  const fio=document.getElementById('cFio'),passos=[...document.querySelectorAll('#cPassos li')],estado=document.getElementById('cEstado')
+  if(!fio)return
+  const lupa='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>'
+  const cena=[
+    {p:0,html:'<div class="cartao"><div class="pesq">'+lupa+'Canalizador, Porto<b>Procurar</b></div></div>'},
+    {p:1,html:'<div class="cartao"><div class="pro"><div class="av">CA</div><div><b>Canalizador</b><small>Porto · Verificado</small></div><em>€25/hora</em></div><span class="resp">Responde em ~20 min</span></div>'},
+    {p:2,html:'<div class="b eu">Olá! Tenho uma fuga debaixo do lava-loiça. Consegue vir esta semana?</div>'},
+    {p:2,digita:true,html:'<div class="b ele">Consigo na quinta de manhã. Mande-me uma foto para levar o material certo.</div>'},
+    {p:3,html:'<div class="cartao prop"><div class="top"><span>Proposta</span><span>€60</span></div><small>Reparação da fuga e material incluído</small><div class="aceitar">Aceitar proposta</div></div>'},
+    {p:3,aceita:true}
+  ]
+  const ativa=i=>passos.forEach((li,k)=>li.classList.toggle('ativo',k===i))
+  if(semMovimento){fio.innerHTML=cena.filter(c=>c.html).map(c=>c.html).join('');ativa(3);return}
+  let i=0
+  const espera=ms=>new Promise(r=>setTimeout(r,ms))
+  async function correr(){
+    for(;;){
+      fio.innerHTML='';ativa(0);estado.textContent='Verificado';i=0
+      for(const c of cena){
+        ativa(c.p)
+        if(c.digita){estado.textContent='a escrever…';const d=document.createElement('div');d.className='b ele digita';d.innerHTML='<i></i><i></i><i></i>';fio.appendChild(d);await espera(1500);d.remove();estado.textContent='Verificado'}
+        if(c.aceita){const p=fio.querySelector('.prop');if(p){p.classList.add('ok');p.querySelector('.aceitar').textContent='Proposta aceite'}await espera(2800);continue}
+        fio.insertAdjacentHTML('beforeend',c.html)
+        await espera(1700)
+      }
+    }
+  }
+  correr()
+})()
+</script>
+
 <!-- fk:footer -->
 <div class="fk-footer" role="contentinfo">
   <div class="fk-ftop">
