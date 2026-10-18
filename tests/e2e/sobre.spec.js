@@ -24,6 +24,8 @@ test('topo, princípios e caminhos para clientes e profissionais', async ({ page
   const corpo = page.locator('#quem-somos');
   for (const p of ['Transparência', 'Acessibilidade', 'Autonomia', 'Responsabilidade', 'Melhoria contínua']) await expect(corpo).toContainText(p);
   await expect(corpo).toContainText('Sem comissão');
+  await expect(page.getByRole('heading', { name: /Somos jovens/ })).toBeVisible();
+  await expect(corpo).toContainText('A ambição não é.');
   await expect(corpo.getByRole('link', { name: 'Explorar profissionais' })).toHaveAttribute('href', '/categoria');
   await expect(corpo.getByRole('link', { name: 'Juntar-me como profissional' })).toHaveAttribute('href', '/profissionais');
   await expect(corpo.getByRole('link', { name: 'flinkogeral@gmail.com' })).toHaveAttribute('href', 'mailto:flinkogeral@gmail.com');

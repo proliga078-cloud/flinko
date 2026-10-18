@@ -67,6 +67,15 @@ a{color:inherit}
 .c-frase p.grande em{font-style:normal;color:var(--orange)}
 .c-frase .duas{margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:40px;color:var(--muted);font-size:1.08rem;max-width:62em}
 
+/* ===== 3b. Equipa ===== */
+.c-equipa{padding:90px 0 0}
+.c-equipa .w{border-top:1px solid var(--line);padding-top:70px}
+.c-equipa h2{font-size:clamp(2rem,4.4vw,3.6rem);max-width:15em}
+.c-equipa .duas{margin-top:30px;display:grid;grid-template-columns:1fr 1fr;gap:40px;color:var(--muted);font-size:1.08rem;max-width:62em}
+.c-equipa .remate{margin-top:40px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:clamp(1.5rem,3vw,2.4rem);letter-spacing:-.02em}
+.c-equipa .remate span{color:var(--orange)}
+@media (max-width:920px){.c-equipa{padding-top:56px}.c-equipa .w{padding-top:44px}.c-equipa .duas{grid-template-columns:1fr;gap:14px}}
+
 /* ===== 4. Mapa ===== */
 .c-mapa{margin-top:100px;background:var(--noite);color:#fff;padding:110px 0;overflow:hidden;position:relative}
 .c-mapa::before{content:"";position:absolute;width:900px;height:900px;right:-300px;top:-200px;border-radius:50%;background:radial-gradient(circle,rgba(95,211,161,.12),transparent 60%)}
@@ -336,6 +345,17 @@ a{color:inherit}
       <p>Todos os dias há quem precise de reparar uma avaria, remodelar uma casa ou fazer um site novo. E há bons profissionais à procura de clientes. As duas coisas encaixam, mas nem sempre se encontram.</p>
       <p>Criámos o Flinko para encurtar essa distância: um só sítio, das obras em casa aos serviços digitais, onde vês o trabalho de cada um antes de falares.</p>
     </div>
+  </div>
+</section>
+
+<section class="c-equipa" aria-labelledby="tEquipa">
+  <div class="w">
+    <h2 id="tEquipa">Somos jovens. E queremos mudar a forma como se contrata em Portugal.</h2>
+    <div class="duas">
+      <p>O Flinko é feito por uma equipa jovem e portuguesa. Olhámos para a forma como ainda se procura um profissional: o boca a boca, os grupos de Facebook, o número escrito num papel. Achámos que podia ser muito melhor, para quem procura e para quem trabalha.</p>
+      <p>Queremos que o Flinko seja a forma normal de encontrar quem faz o trabalho, das obras em casa aos serviços digitais. Estamos a construí-lo passo a passo, a ouvir quem o usa e a melhorar todos os dias.</p>
+    </div>
+    <p class="remate">Ainda somos pequenos. <span>A ambição não é.</span></p>
   </div>
 </section>
 
