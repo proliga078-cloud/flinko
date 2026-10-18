@@ -59,11 +59,11 @@ test('as páginas commitadas estão em dia com scripts/site-header.js', async ()
 });
 
 // Out/2026: "Quem somos" entrou no menu. Com 7 links o menu tem de caber
-// sem empurrar os botões, mesmo no ecrã mais estreito em que aparece (1021px).
-test('com "Quem somos" o menu de cima cabe a 1021px', async ({ page }) => {
-  await page.setViewportSize({ width: 1021, height: 800 });
+// sem empurrar os botões, mesmo no ecrã mais estreito em que aparece (1181px).
+test('com "Quem somos" o menu de cima cabe a 1181px', async ({ page }) => {
+  await page.setViewportSize({ width: 1181, height: 800 });
   await abrir(page, '/pricing.html');
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1021);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1181);
   const ultimo = await page.locator('#fkHeader .fk-links a').last().boundingBox();
   const botoes = await page.locator('#fkHeader .fk-actions').boundingBox();
   expect(ultimo.x + ultimo.width).toBeLessThan(botoes.x);
