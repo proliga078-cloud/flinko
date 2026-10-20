@@ -101,6 +101,42 @@ label.rot{display:block;font-weight:600;font-size:.86rem;margin:14px 0 6px}
 .tabs button{border:0;background:none;padding:10px 14px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
 .tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--orange)}
 
+/* Estratégia */
+.tit-sec{font-size:1.35rem;margin:34px 0 6px}
+.intro-sec{color:var(--muted);margin-bottom:14px;max-width:60em}
+.var{font-weight:700;font-size:.82rem;color:var(--muted)}
+.var.sobe{color:var(--mint-dark)}
+.var.desce{color:var(--red)}
+.kpi div{margin-top:6px}
+.recs{display:grid;gap:12px}
+.rec summary{cursor:pointer;display:flex;gap:12px;align-items:center;list-style:none;font-size:1.02rem}
+.rec summary::-webkit-details-marker{display:none}
+.rec summary::after{content:"+";margin-left:auto;font-size:1.4rem;color:var(--muted);line-height:1}
+.rec[open] summary::after{content:"−"}
+.rec-corpo{margin-top:14px;border-top:1px solid var(--line);padding-top:12px;max-width:72em}
+.rec-corpo h4{font-size:.8rem;color:var(--orange-dark);margin:14px 0 4px;font-family:'Inter',sans-serif;font-weight:700}
+.rec-corpo p,.rec-corpo li{color:var(--ink);line-height:1.6}
+.rec-corpo ol,.rec-corpo ul{padding-left:20px;display:grid;gap:6px}
+.rec-corpo .lead-rec{font-size:1.02rem;color:var(--muted)}
+.rec-corpo .pre{white-space:pre-line}
+.fontes li{list-style:disc}
+.plano{padding-left:18px;display:grid;gap:8px;margin-top:8px;font-size:.92rem}
+.barras{width:100%;border-collapse:collapse}
+.barras th{text-align:left;font-weight:600;font-size:.88rem;padding:6px 10px 6px 0;white-space:nowrap;width:1%}
+.barras td{padding:6px 0}
+.barras .barra{display:block;height:12px;border-radius:0 4px 4px 0;background:var(--mint)}
+.barras .v{text-align:right;padding-left:10px;white-space:nowrap;font-weight:700;width:1%}
+.barras .v small{font-weight:500;color:var(--muted)}
+.colunas{display:flex;gap:4px;align-items:flex-end;height:90px;margin:6px 0 14px}
+.colunas .col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:3px}
+.colunas .col span{width:100%;max-width:26px;background:var(--mint);border-radius:4px 4px 0 0}
+.colunas small{font-size:.66rem;color:var(--muted-2)}
+h4.mini{font-size:.85rem;margin-top:8px;font-family:'Inter',sans-serif}
+.tabela-wrap{overflow-x:auto}
+.tabela{width:100%;border-collapse:collapse;font-size:.9rem}
+.tabela th,.tabela td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.tabela thead th{font-size:.78rem;color:var(--muted);font-weight:700}
+
 /* Ficha lateral */
 #ficha{position:fixed;inset:0;z-index:50;display:flex;justify-content:flex-end;background:rgba(15,31,26,.35)}
 #ficha .painel{width:min(520px,100%);height:100%;background:#fff;overflow:auto;padding:24px;box-shadow:-20px 0 50px -30px rgba(0,0,0,.5)}
@@ -153,6 +189,9 @@ label.rot{display:block;font-weight:600;font-size:.86rem;margin:14px 0 6px}
   .inbox.a-ler .conversas{display:none}
   .inbox:not(.a-ler) .fio{display:none}
   .topo h1{font-size:1.5rem}
+  .nav a{font-size:.6rem;padding:8px 2px}
+  .nav a span:not(.conta){max-width:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .barras th{white-space:normal;width:auto;max-width:120px}
   .lista .pontos{display:none}
   .lista li{flex-wrap:wrap}
 }
@@ -190,6 +229,8 @@ label.rot{display:block;font-weight:600;font-size:.86rem;margin:14px 0 6px}
 <div id="aviso" class="hidden" role="status" aria-live="polite"></div>
 
 <script src="/assets/whatsapp-link.js"></script>
+<script src="/assets/gestao-numeros.js"></script>
+<script src="/assets/gestao-estrategia.js"></script>
 <script src="/assets/gestao.js"></script>
 </body>
 </html>

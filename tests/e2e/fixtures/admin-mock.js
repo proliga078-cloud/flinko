@@ -49,7 +49,7 @@ async function openAdmin(page, { role = 'owner', tables = {}, fail = {}, fns = {
         const off = Number(q.get('offset') || 0), lim = q.has('limit') ? Number(q.get('limit')) : priv.length;
         return route.fulfill({ json: priv.slice(off, off + lim) });
       }
-      if (name === 'rpc/admin_visit_rows') return route.fulfill({ json: Number(q.get('offset')) ? [] : [{ day: new Date().toISOString().slice(0, 10), visitor_id: 'v1', user_id: null, path: '/', ref_host: 'google.com', n: 3, last_at: iso(0.1) }] });
+      if (name === 'rpc/admin_visit_rows') return route.fulfill({ json: Number(q.get('offset')) ? [] : T.visits || [{ day: new Date().toISOString().slice(0, 10), visitor_id: 'v1', user_id: null, path: '/', ref_host: 'google.com', n: 3, last_at: iso(0.1) }] });
       if (name === 'rpc/admin_event_counts') return route.fulfill({ json: T.events || [] });
       if (name === 'rpc/admin_team') return route.fulfill({ json: [{ profile_id: 'admin-1', name: 'Admin', email: 'dono@flinko.pt', admin_role: role }] });
       if (name === 'rpc/admin_pro_emails') return route.fulfill({ json: [{ profile_id: 'pro-1', email: 'rui@exemplo.pt' }, { profile_id: 'cli-1', email: 'ana@exemplo.pt' }] });

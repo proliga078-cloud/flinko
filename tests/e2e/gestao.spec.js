@@ -10,10 +10,10 @@ const abrir = (page, opts = {}) => openAdmin(page, { path: '/gestao.html', ...op
 const INBOX = { conversations: [{ id: 'conv-1', professionalId: 'pro-1', name: 'Rui Alves', category: 'Eletricistas', lastMessage: 'Já completei o perfil!', lastAt: iso(0.1), porResponder: true }] };
 const muitos = (n) => Array.from({ length: n }, (_, i) => ({ ...PRO, id: 'p' + i, name: 'Pro ' + i, verified: true }));
 
-test('entra direto com a sessão de admin e mostra as 6 partes', async ({ page }) => {
+test('entra direto com a sessão de admin e mostra as 7 partes', async ({ page }) => {
   await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
   await expect(page.locator('#main h1')).toHaveText('Hoje');
-  await expect(page.locator('#nav a')).toHaveText([/Hoje/, /Profissionais/, /Mensagens/, /Clientes e pedidos/, /Angariação/, /Dinheiro e equipa/]);
+  await expect(page.locator('#nav a')).toHaveText([/Hoje/, /Estratégia/, /Profissionais/, /Mensagens/, /Clientes e pedidos/, /Angariação/, /Dinheiro e equipa/]);
 });
 
 test('Hoje: o que há para fazer (mensagens, verificar, pedidos)', async ({ page }) => {
@@ -134,4 +134,43 @@ test('no telemóvel: menu em baixo e nada desliza para o lado', async ({ page })
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
   const nav = await page.locator('.lado').boundingBox();
   expect(nav.y + nav.height).toBeGreaterThan(760);
+});
+
+// "Só com visitantes não tenho nada": a parte Estratégia junta os números
+// verdadeiros (sem a equipa nem os profissionais) com estudos, passos e
+// como medir, mais o plano de 4 semanas, as políticas e a concorrência.
+test('Estratégia: números sem a equipa, recomendações completas, plano, estudos, políticas e concorrência', async ({ page }) => {
+  const dia = new Date().toISOString().slice(0, 10);
+  const v = (visitor_id, path, ref_host, user_id = null) => ({ day: dia, visitor_id, user_id, path, ref_host, n: 1, last_at: iso(0) });
+  await abrir(page, {
+    tables: {
+      visits: [v('c1', '/', 'google.com'), v('c1', '/eletricistas', 'flinko.pt'), v('c1', '/rui', 'flinko.pt'), v('c2', '/', 'l.facebook.com'), v('pro', '/dashboard', 'Direto', 'pro-1')],
+    },
+    fns: { 'admin-flinko-message': INBOX },
+  });
+  await page.goto('/gestao.html#estrategia');
+  const main = page.locator('#main');
+  await expect(main.locator('h1')).toHaveText('Estratégia');
+  await expect(main.locator('.kpi').first()).toContainText('2');
+  await expect(main.locator('.kpi').first()).toContainText('visitantes reais');
+  const trafego = main.locator('.rec', { hasText: 'o problema é falta de gente' });
+  await expect(trafego).toContainText('Tiveste 2 visitantes reais em 30 dias');
+  await expect(trafego).toContainText('The Cold Start Problem');
+  await expect(trafego.locator('ol li')).toHaveCount(5);
+  await expect(trafego).toContainText('Como medir');
+  await expect(main.locator('.cartao', { hasText: 'De onde vêm os visitantes' })).toContainText('Google');
+  await expect(main.locator('.cartao h3')).toContainText(['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4']);
+  await expect(main.locator('.rec', { hasText: 'Como se arranca um marketplace' })).toBeVisible();
+  await expect(main.locator('.cartao', { hasText: 'Seguro e garantias' })).toContainText('Falta');
+  await expect(main.locator('.tabela')).toContainText(['Zaask']);
+  await page.getByRole('button', { name: '7 dias' }).click();
+  await expect(trafego).toContainText('em 7 dias');
+});
+
+test('Estratégia: no telemóvel não desliza para o lado', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 800 });
+  await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#estrategia');
+  await expect(page.locator('#main h1')).toHaveText('Estratégia');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
 });

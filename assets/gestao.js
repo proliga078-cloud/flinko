@@ -183,6 +183,7 @@ const preencher = (txt, p) => String(txt || "")
 
 /* ================= navegação ================= */
 const ICONES = {
+  estrategia: '<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-7"/>',
   hoje: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',
   profissionais: '<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M17 11a3 3 0 1 0 0-6"/><path d="M22 21c0-3-2-5-5-5.5"/>',
   mensagens: '<path d="M21 12a8 8 0 0 1-11.5 7.2L4 21l1.8-5.5A8 8 0 1 1 21 12z"/>',
@@ -190,7 +191,7 @@ const ICONES = {
   angariacao: '<path d="M3 11v2a2 2 0 0 0 2 2h2l5 4V5L7 9H5a2 2 0 0 0-2 2z"/><path d="M16 8a5 5 0 0 1 0 8"/>',
   dinheiro: '<circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.6-1-1.7-1.5-3-1.5-1.7 0-3 .9-3 2.2 0 3 6 1.6 6 4.6 0 1.3-1.3 2.2-3 2.2-1.4 0-2.6-.6-3.1-1.6M12 6v2M12 16v2"/>'
 };
-const PARTES = [["hoje", "Hoje"], ["profissionais", "Profissionais"], ["mensagens", "Mensagens"], ["clientes", "Clientes e pedidos"], ["angariacao", "Angariação"], ["dinheiro", "Dinheiro e equipa"]];
+const PARTES = [["hoje", "Hoje"], ["estrategia", "Estratégia"], ["profissionais", "Profissionais"], ["mensagens", "Mensagens"], ["clientes", "Clientes e pedidos"], ["angariacao", "Angariação"], ["dinheiro", "Dinheiro e equipa"]];
 let parte = "hoje";
 function desenharNav(contas = {}) {
   $("#nav").innerHTML = PARTES.map(([id, nome]) => `<a href="#${id}"${id === parte ? ' aria-current="page"' : ""}><svg viewBox="0 0 24 24" aria-hidden="true">${ICONES[id]}</svg><span>${esc(nome)}</span>${contas[id] ? `<span class="conta" aria-label="${contas[id]} por tratar">${contas[id]}</span>` : ""}</a>`).join("");
@@ -543,6 +544,117 @@ VISTAS.dinheiro = async main => {
     const s = await fn("admin-stripe-summary", {});
     $("#stripe").innerHTML = [[eur(s.last30 && s.last30.net), "recebido nos últimos 30 dias"], [eur(s.mrr), "por mês em assinaturas"], [num(s.subscriptions && s.subscriptions.active), "assinaturas ativas"], [num((s.pastDue || []).length), "pagamentos em atraso"]].map(([v, t]) => `<div class="cartao kpi"><strong>${v}</strong><span>${t}</span></div>`).join("");
   } catch (e) { $("#stripe").innerHTML = `<div class="cartao"><p class="vazio">Não consegui ler a Stripe: ${esc(e.message)}</p></div>`; }
+};
+
+/* ================= 7. Estratégia (números e decisões) ================= */
+// Junta os números verdadeiros (gestao-numeros.js) com o que dizem os estudos
+// (gestao-estrategia.js): situação, porquê, o que fazer e como medir.
+let periodo = 30;
+const dataMenos = dias => new Date(Date.now() - dias * DIA).toISOString().slice(0, 10);
+const variacao = (a, b) => b ? Math.round((a - b) / b * 100) : (a ? 100 : 0);
+const seta = v => v > 0 ? `<span class="var sobe">+${v}%</span>` : v < 0 ? `<span class="var desce">${v}%</span>` : '<span class="var">igual</span>';
+// Barras horizontais numa tabela: lê-se como gráfico e como tabela (acessível).
+function barras(linhas, { rotulo, valor, extra, max } = {}) {
+  const m = max || Math.max(1, ...linhas.map(valor));
+  return `<table class="barras"><tbody>${linhas.map(l => `<tr><th scope="row">${esc(rotulo(l))}</th><td><span class="barra" style="width:${Math.max(2, valor(l) / m * 100)}%" title="${esc(rotulo(l))}: ${num(valor(l))}"></span></td><td class="v">${num(valor(l))}${extra ? `<small>${extra(l)}</small>` : ""}</td></tr>`).join("")}</tbody></table>`;
+}
+function colunas(sem, nome) {
+  const m = Math.max(1, ...sem.map(s => s.n));
+  return `<div class="colunas" role="img" aria-label="${esc(nome)} por semana: ${sem.map(s => fdata(s.desde) + " " + s.n).join(", ")}">${sem.map(s => `<div class="col" title="Semana de ${fdata(s.desde)}: ${s.n}"><span style="height:${Math.max(3, s.n / m * 100)}%"></span><small>${new Date(s.desde).getDate()}/${new Date(s.desde).getMonth() + 1}</small></div>`).join("")}</div>`;
+}
+VISTAS.estrategia = async main => {
+  const N = window.FlinkoNumeros, E = window.FlinkoEstrategia;
+  const [pros, reqs, linhas, eventos, wa, avs] = await Promise.all([
+    profissionais(), pedidos(),
+    todas("rpc/admin_visit_rows?p_days=400&order=day,visitor_id").catch(() => []),
+    todas("rpc/admin_event_counts?p_days=" + (periodo * 2) + "&order=day,name").catch(() => []),
+    todas("whatsapp_contactos?select=id,professional_id,created_at&order=id").catch(() => []),
+    todas("reviews?select=id&order=id").catch(() => [])
+  ]);
+  const casa = new Set(pros.map(p => p.id).concat((C.admins || []).map(a => a.id)));
+  const todos = N.visitantes(linhas, casa);
+  const hojeS = hoje(), ini = dataMenos(periodo - 1), iniAnt = dataMenos(periodo * 2 - 1), fimAnt = dataMenos(periodo);
+  const vis = todos.filter(v => N.noPeriodo(v, ini, hojeS));
+  const visAnt = todos.filter(v => N.noPeriodo(v, iniAnt, fimAnt));
+  const ev = (nome, a, b) => eventos.filter(e => e.name === nome && e.day >= a && e.day <= b).reduce((s, e) => s + Number(e.n || 0), 0);
+  const reqsP = reqs.filter(r => String(r.created_at).slice(0, 10) >= ini);
+  const reqsAnt = reqs.filter(r => { const d = String(r.created_at).slice(0, 10); return d >= iniAnt && d <= fimAnt; });
+  const caminho = N.caminho(vis);
+  caminho.splice(3, 0, { passo: "Carregaram em contactar", n: ev("perfil_contactar", ini, hojeS) + wa.filter(w => String(w.created_at).slice(0, 10) >= ini).length });
+  caminho[4] = { passo: "Publicaram um pedido", n: reqsP.length };
+  const caminhoBase = N.caminho(vis);
+  const canais = N.porCanal(vis);
+  const po = N.procuraOferta(vis, pros, reqsP);
+  const distritos = N.porDistrito(pros, reqs);
+  const comContacto = new Set(wa.map(w => w.professional_id).concat(pros.filter(p => p._conversas > 0).map(p => p.id)));
+  const cpro = N.caminhoPro(pros, comContacto);
+  const faltas = {}; pros.forEach(p => (p._falta || []).forEach(f => faltas[f] = (faltas[f] || 0) + 1));
+  const faltaMaisComum = Object.entries(faltas).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([f, n]) => f.toLowerCase() + " (" + n + ")").join(", ");
+  const recs = N.recomendacoes({ dias: periodo, avaliacoes: avs.length, caminho: [caminhoBase[0], caminhoBase[1], caminhoBase[2], { n: reqsP.length }], canais, procuraOferta: po, distritos, caminhoPro: cpro, faltaMaisComum });
+  const plano = E.plano(recs);
+  const sem = N.semanas(todos, 12, hojeS);
+  const semPros = N.contarPorSemana(pros.map(p => p.created_at), sem);
+  const semReqs = N.contarPorSemana(reqs.map(r => r.created_at), sem);
+  const pctTxt = (a, b) => b ? Math.round(a / b * 100) + "%" : "—";
+  const kpi = (v, t, delta) => `<div class="cartao kpi"><strong>${v}</strong><span>${t}</span>${delta == null ? "" : `<div>${seta(delta)} <small class="nota">vs. ${periodo} dias antes</small></div>`}</div>`;
+
+  main.innerHTML = topo("Estratégia", "Os teus números, comparados com o que dizem os estudos, e o que fazer a seguir.",
+    `<div class="chips" role="group" aria-label="Período" style="margin:0">${[7, 30, 90].map(d => `<button type="button" data-per="${d}" aria-pressed="${periodo === d}">${d} dias</button>`).join("")}</div>`) + `
+  <div class="grelha g4">
+    ${kpi(num(vis.length), "visitantes reais (sem a equipa nem os profissionais)", variacao(vis.length, visAnt.length))}
+    ${kpi(num(reqsP.length), "pedidos publicados", variacao(reqsP.length, reqsAnt.length))}
+    ${kpi(pctTxt(caminhoBase[2].n, vis.length), "dos visitantes viram um perfil")}
+    ${kpi(pctTxt(cpro[1].n, cpro[0].n), "dos profissionais com o perfil completo (60% ou mais)")}
+  </div>
+
+  <h2 class="tit-sec">O que fazer agora</h2>
+  <p class="intro-sec">Cada recomendação vem dos teus números deste período. Abre para ver a situação, o que dizem os estudos, os passos e como medir.</p>
+  <div class="recs">${recs.map((r, i) => `<details class="cartao rec"${i < 2 ? " open" : ""}><summary><span class="tag ${r.prioridade === 1 ? "vermelho" : r.prioridade === 2 ? "laranja" : ""}">${r.prioridade === 1 ? "Esta semana" : r.prioridade === 2 ? "Este mês" : "Depois"}</span><b>${esc(r.titulo)}</b></summary>
+    <div class="rec-corpo"><h4>A situação</h4><p>${esc(r.situacao)}</p><h4>O que dizem os estudos</h4><p>${esc(r.estudo)}</p><h4>O que fazer</h4><ol>${r.passos.map(p => `<li>${esc(p)}</li>`).join("")}</ol><h4>Como medir</h4><p>${esc(r.medir)}</p></div></details>`).join("") || '<p class="vazio">Sem recomendações neste período.</p>'}</div>
+
+  <h2 class="tit-sec">Plano para as próximas 4 semanas</h2>
+  <div class="grelha g4">${plano.map(s => `<div class="cartao"><h3>${esc(s.semana)}</h3><ul class="plano">${s.foco.map(f => `<li>${esc(f)}</li>`).join("")}</ul></div>`).join("")}</div>
+
+  <h2 class="tit-sec">Os números em detalhe</h2>
+  <div class="grelha g2">
+    <div class="cartao"><h2>Caminho do cliente</h2><p class="sub">Dos visitantes reais deste período, quantos chegaram a cada passo. Onde a barra cai mais é onde se perde gente.</p>
+      ${barras(caminho, { rotulo: l => l.passo, valor: l => l.n, max: Math.max(1, caminho[0].n) })}
+      <p class="nota">Referência: em sites de serviços, só uma pequena parte de quem visita chega a pedir. Com poucas visitas, os pedidos são 0 ou 1. Por isso a primeira alavanca é trazer mais gente.</p></div>
+    <div class="cartao"><h2>De onde vêm os visitantes</h2><p class="sub">Primeira origem de cada visitante real. Ao lado, quantos chegaram a um perfil ou aos pedidos.</p>
+      ${canais.length ? barras(canais, { rotulo: l => l.canal, valor: l => l.visitantes, extra: l => ` · ${l.viramPerfil} viram perfis` }) : '<p class="vazio">Sem visitas neste período.</p>'}
+      <p class="nota">"Direto" é quem escreveu o endereço ou veio de uma app (WhatsApp, por exemplo).</p></div>
+    <div class="cartao"><h2>Semana a semana</h2><p class="sub">Últimas 12 semanas. Cada gráfico tem a sua escala.</p>
+      <h4 class="mini">Visitantes reais</h4>${colunas(sem, "Visitantes reais")}
+      <h4 class="mini">Profissionais novos</h4>${colunas(semPros, "Profissionais novos")}
+      <h4 class="mini">Pedidos publicados</h4>${colunas(semReqs, "Pedidos publicados")}</div>
+    <div class="cartao"><h2>Caminho do profissional</h2><p class="sub">Dos profissionais com conta, quantos chegaram a cada passo.</p>
+      ${barras(cpro, { rotulo: l => l.passo, valor: l => l.n, max: Math.max(1, cpro[0].n) })}
+      <p class="nota">O que mais falta nos perfis: ${esc(faltaMaisComum || "nada")}.</p></div>
+  </div>
+  <div class="cartao" style="margin-top:16px"><h2>Procura e oferta por ofício</h2><p class="sub">Procura = visitantes que viram a página do ofício + pedidos. Prontos = profissionais com o perfil a 60% ou mais.</p>
+    <div class="tabela-wrap"><table class="tabela"><thead><tr><th>Ofício</th><th>Procura</th><th>Pedidos</th><th>Profissionais</th><th>Prontos</th><th>Leitura</th></tr></thead><tbody>${po.map(c => {
+      const leitura = (c.procura + c.pedidos) > 0 && c.prontos === 0 ? '<span class="tag vermelho">Falta oferta: angariar</span>' : c.prontos >= 2 && !c.procura && !c.pedidos ? '<span class="tag laranja">Sem procura: divulgar</span>' : (c.procura + c.pedidos) > 0 ? '<span class="tag verde">Equilibrado</span>' : '<span class="tag">Pouco movimento</span>';
+      return `<tr><th scope="row">${esc(c.categoria)}</th><td>${c.procura}</td><td>${c.pedidos}</td><td>${c.profissionais}</td><td>${c.prontos}</td><td>${leitura}</td></tr>`;
+    }).join("")}</tbody></table></div></div>
+  <div class="cartao" style="margin-top:16px"><h2>Por distrito</h2><p class="sub">Onde estão os profissionais e os pedidos (desde sempre). O distrito com mais profissionais é o melhor sítio para concentrar o marketing de clientes.</p>
+    ${distritos.length ? barras(distritos.slice(0, 12), { rotulo: l => l.distrito, valor: l => l.profissionais, extra: l => ` · ${l.pedidos} pedidos` }) : '<p class="vazio">Sem dados.</p>'}</div>
+
+  <h2 class="tit-sec">O que dizem os estudos</h2>
+  <p class="intro-sec">Boas práticas de quem já fez crescer marketplaces, aplicadas ao Flinko.</p>
+  <div class="recs">${E.TEMAS.map(t => `<details class="cartao rec"><summary><b>${esc(t.titulo)}</b></summary><div class="rec-corpo"><p class="lead-rec">${esc(t.resumo)}</p>
+    <h4>Estudos e fontes</h4><ul class="fontes">${t.estudos.map(s => `<li><b>${esc(s.fonte)}</b><br/>${esc(s.ideia)}</li>`).join("")}</ul>
+    <h4>Aplicado ao Flinko</h4><p class="pre">${esc(t.aplicado)}</p><h4>Passos</h4><ol>${t.passos.map(p => `<li>${esc(p)}</li>`).join("")}</ol></div></details>`).join("")}</div>
+
+  <h2 class="tit-sec">Políticas da plataforma</h2>
+  <p class="intro-sec">As regras que dão confiança a clientes e profissionais: o que já tens e o que falta.</p>
+  <div class="grelha g2">${E.POLITICAS.map(p => `<div class="cartao"><div style="display:flex;gap:10px;align-items:center;justify-content:space-between"><h2>${esc(p.titulo)}</h2><span class="tag ${p.estado === "tens" ? "verde" : p.estado === "parcial" ? "laranja" : "vermelho"}">${p.estado === "tens" ? "Já tens" : p.estado === "parcial" ? "Em parte" : "Falta"}</span></div>
+    <p class="sub" style="margin-top:6px"><b>Agora:</b> ${esc(p.agora)}</p><p><b>Recomendado:</b> ${esc(p.recomendado)}</p><p class="nota">Porquê: ${esc(p.porque)}</p></div>`).join("")}</div>
+
+  <h2 class="tit-sec">Concorrência em Portugal</h2>
+  <p class="intro-sec">Como funcionam as alternativas que os teus clientes e profissionais conhecem, e onde o Flinko ganha.</p>
+  <div class="tabela-wrap cartao" style="padding:0"><table class="tabela"><thead><tr><th>Quem</th><th>Como funciona</th><th>Ponto forte</th><th>Ponto fraco</th><th>Onde o Flinko ganha</th></tr></thead><tbody>${E.CONCORRENCIA.map(c => `<tr><th scope="row">${esc(c.nome)}</th><td>${esc(c.como)}</td><td>${esc(c.forte)}</td><td>${esc(c.fraco)}</td><td>${esc(c.flinko)}</td></tr>`).join("")}</tbody></table></div>
+  <p class="nota" style="margin-top:8px">Informação da concorrência tirada do que os sites mostram publicamente. Confirma antes de usar em público.</p>`;
+  main.querySelectorAll("[data-per]").forEach(b => b.onclick = () => { periodo = Number(b.dataset.per); ir(); });
 };
 
 /* ================= arranque ================= */
