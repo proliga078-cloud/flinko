@@ -765,7 +765,9 @@ showStep('request')
 renderPhotoStrip()
 document.getElementById('modal-overlay').classList.add('open')
 if(cat&&CATEGORIES.includes(cat))document.getElementById('m-cat').value=cat
-setTimeout(()=>document.getElementById('m-desc').focus(),50)
+// Foco já, não num setTimeout: um foco atrasado roubava o campo a quem já
+// estivesse a escrever noutro (no CI o email ia parar ao campo do nome).
+document.getElementById('m-desc').focus()
 }
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open')}
 
@@ -857,7 +859,7 @@ if(!r.title||!r.category||!r.location)return showMsg('error','Preenche o que pre
 if(!session){
 saveDraft()
 showStep('account')
-setTimeout(()=>document.getElementById(accMode==='new'?'acc-name':'acc-email').focus(),50)
+document.getElementById(accMode==='new'?'acc-name':'acc-email').focus()
 return
 }
 const btn=document.getElementById('submit-btn')

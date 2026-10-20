@@ -13,7 +13,23 @@ async function abrir(page, cfg = {}, url = '/pedidos.html?publicar=1') {
   await page.route(SUPABASE_CDN_URL, (route) => route.fulfill({ path: FAKE_SDK_PATH, contentType: 'text/javascript' }));
   await page.route('**/.netlify/functions/notify-request', (route) => route.fulfill({ status: 200, body: '{"sent":0}' }));
   await page.addInitScript((c) => { window.__testAuthConfig = c; }, { tableData: { requests: { data: [] } }, ...cfg });
+  await page.clock.install();
   await page.goto(url);
+}
+
+// "Pedido publicado" só fica à vista 2,6s: depois a janela fecha e a mensagem
+// apaga-se. Com a máquina carregada o expect podia não a apanhar nesse tempo,
+// por isso os temporizadores da página param antes do clique (as promessas
+// continuam a correr; só os setTimeout esperam). A hora vem da página, e com a
+// máquina muito lenta pode já ter passado quando o pauseAt chega: tenta de novo.
+async function publicar(page, botao) {
+  for (let tentativa = 0; ; tentativa++) {
+    const agora = await page.evaluate(() => Date.now());
+    try { await page.clock.pauseAt(agora + 1000); break; } catch (e) {
+      if (tentativa >= 4 || !/past/.test(e.message)) throw e;
+    }
+  }
+  await page.click(botao);
 }
 
 async function preencher(page) {
@@ -39,7 +55,7 @@ test('sem conta: "Publicar" pede nome/email/password na mesma janela e publica o
   await page.fill('#acc-name', 'Ana Silva');
   await page.fill('#acc-email', 'ana@example.com');
   await page.fill('#acc-password', 'segredo123');
-  await page.click('#acc-btn');
+  await publicar(page, '#acc-btn');
   await expect(page.locator('#m-success')).toContainText('Pedido publicado');
   const calls = await page.evaluate(() => ({ signUp: window.__signUpCalls, rpc: window.__rpcCalls, insert: window.__insertCalls }));
   expect(calls.signUp).toEqual([{ email: 'ana@example.com', password: 'segredo123', options: { data: { full_name: 'Ana Silva', account_type: 'client' } } }]);
@@ -56,7 +72,7 @@ test('"Já tenho conta": entra com email e password e publica', async ({ page })
   await expect(page.locator('#acc-name-group')).toBeHidden();
   await page.fill('#acc-email', 'ana@example.com');
   await page.fill('#acc-password', 'segredo123');
-  await page.click('#acc-btn');
+  await publicar(page, '#acc-btn');
   await expect(page.locator('#m-success')).toContainText('Pedido publicado');
   expect(await page.evaluate(() => window.__signInCalls.length)).toBe(1);
   // Conta sem perfil (registo a meio) fica com perfil de cliente; se já existir, o servidor não muda nada.
@@ -86,6 +102,24 @@ test('conta que precisa de confirmar email: o pedido fica guardado e volta preen
   await expect(page.locator('#m-success')).toContainText('ficou guardado');
 });
 
+// O foco ia para o primeiro campo 50ms depois de abrir (setTimeout). Quem já
+// estivesse a escrever noutro campo perdia-o a meio: no GitHub o email ia parar
+// ao campo do nome ("Ana Silvaana@example.com") e o pedido não seguia.
+test('o primeiro campo ganha o foco logo e não o rouba a quem já mudou de campo', async ({ page }) => {
+  await abrir(page, {}, '/pedidos.html');
+  const foco = (abrirPasso, outroCampo) => page.evaluate(async ([abrirPasso, outroCampo]) => {
+    new Function(abrirPasso)();
+    const logo = document.activeElement.id;
+    document.getElementById(outroCampo).focus();
+    await new Promise((r) => setTimeout(r, 150));
+    return { logo, depois: document.activeElement.id };
+  }, [abrirPasso, outroCampo]);
+
+  expect(await foco('openModal()', 'm-city')).toEqual({ logo: 'm-desc', depois: 'm-city' });
+  await preencher(page);
+  expect(await foco('document.getElementById("submit-btn").click()', 'acc-email')).toEqual({ logo: 'acc-name', depois: 'acc-email' });
+});
+
 test('campos em falta: não avança para a conta', async ({ page }) => {
   await abrir(page);
   await page.click('#submit-btn');
@@ -108,7 +142,7 @@ test('o título do pedido sai do início do texto, cortado numa palavra', async 
   await page.fill('#m-desc', 'Preciso de trocar o quadro elétrico antigo da casa toda porque está sempre a disparar quando ligo o forno e a máquina. Pode ser na próxima semana.');
   await page.selectOption('#m-cat', 'Eletricistas');
   await page.selectOption('#m-district', 'Braga');
-  await page.click('#submit-btn');
+  await publicar(page, '#submit-btn');
   await expect(page.locator('#m-success')).toContainText('Pedido publicado');
   const pedido = (await page.evaluate(() => window.__insertCalls)).find((c) => c.table === 'requests').row;
   expect(pedido.title).toBe('Preciso de trocar o quadro elétrico antigo da casa toda porque está…');

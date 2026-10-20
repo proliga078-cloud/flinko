@@ -12,8 +12,8 @@ PRs e comentários no código.
   português. Sou eu (Claude) que faço o merge quando a verificação do GitHub
   fica verde, sem perguntar. Exceção: alterações de aspeto que o dono quer ver
   antes ficam em PR rascunho (com a pré-visualização do Netlify) até ele aprovar.
-- **Teste instável:** `tests/e2e/pedido-sem-conta.spec.js:64` falha às vezes no
-  GitHub; repete a verificação uma vez antes de investigar.
+- **Teste que falha às vezes:** tem uma causa. Abre o trace (artefacto
+  `playwright-test-results` da verificação) antes de repetir ou de subir timeouts.
 - **Base de dados de produção:** só com autorização explícita do dono para cada
   alteração. Ler para perceber o estado real é permitido.
 - **Ordem para publicar:** primeiro o site (merge, esperar o Netlify), depois a
