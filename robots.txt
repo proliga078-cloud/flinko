@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /admin.html
+Disallow: /gestao
 Disallow: /dashboard.html
 Disallow: /messages.html
 Disallow: /auth.html

@@ -9,6 +9,14 @@
 //
 //   action:"preview" -> quantos recebem e quem fica de fora (e porquê)
 //   action:"send"    -> envia e regista em admin_audit
+//   action:"inbox"   -> conversas da Flinko (para o painel /gestao)
+//   action:"thread"  -> mensagens de uma conversa da Flinko
+//   action:"reply"   -> responde numa conversa da Flinko
+//
+// Out/2026: há uma só conversa da Flinko por profissional. Se outro admin a
+// começou, as mensagens saem em nome dessa conta (sender = client_id da
+// conversa). Antes, cada admin só via e respondia às suas, e a base de dados
+// recusava as respostas dos outros.
 const{createClient}=require('@supabase/supabase-js')
 const{json,requireAdmin,audit}=require('./_admin.js')
 const{sendPush}=require('./_push')
@@ -55,7 +63,13 @@ exports.handler=async(event)=>{
     if(auth.error)return auth.error
     const senderId=auth.user.id
 
-    const{action,profileIds,message,messages}=JSON.parse(event.body||'{}')
+    const{action,profileIds,message,messages,conversationId}=JSON.parse(event.body||'{}')
+    if(action==='inbox')return inbox()
+    if(action==='thread'||action==='reply'){
+      const{data:conv}=await admin.from('conversations').select('id,professional_id,client_id,is_flinko').eq('id',String(conversationId||'')).maybeSingle()
+      if(!conv||!conv.is_flinko)return json(403,{error:'Só podes ver e responder a conversas da Flinko.'})
+      return action==='thread'?thread(conv):reply(conv,message,auth.user)
+    }
     if(!Array.isArray(profileIds)||!profileIds.length)return json(400,{error:'Escolhe pelo menos um profissional.'})
     if(profileIds.length>MAX_RECIPIENTS)return json(400,{error:`No máximo ${MAX_RECIPIENTS} profissionais por envio.`})
     if(!profileIds.every(id=>typeof id==='string'))return json(400,{error:'profileIds inválidos.'})
@@ -79,21 +93,27 @@ exports.handler=async(event)=>{
 
     // 1) conversas: reaproveita as que já existem com este admin, cria as que faltam
     const okIds=ok.map(p=>p.id)
-    const{data:existentes,error:e1}=await admin.from('conversations').select('id,professional_id').eq('client_id',senderId).in('professional_id',okIds)
+    const{data:existentes,error:e1}=await admin.from('conversations').select('id,professional_id,client_id').eq('is_flinko',true).in('professional_id',okIds).order('created_at',{ascending:true})
     if(e1)return json(500,{error:e1.message})
-    const convDe={}
-    ;(existentes||[]).forEach(c=>{convDe[c.professional_id]=c.id})
-    const jaExistem=Object.values(convDe)
-    if(jaExistem.length)await admin.from('conversations').update({is_flinko:true}).in('id',jaExistem)
+    const convDe={},remetente={}
+    ;(existentes||[]).forEach(c=>{if(!convDe[c.professional_id]){convDe[c.professional_id]=c.id;remetente[c.professional_id]=c.client_id||senderId}})
+    // Uma conversa normal que este admin já tenha com o profissional passa a ser a da Flinko (evita duplicar).
+    const semFlinko=okIds.filter(id=>!convDe[id])
+    if(semFlinko.length){
+      const{data:minhas}=await admin.from('conversations').select('id,professional_id').eq('client_id',senderId).in('professional_id',semFlinko)
+      const usar=(minhas||[]).filter(c=>semFlinko.includes(c.professional_id)&&!convDe[c.professional_id])
+      usar.forEach(c=>{convDe[c.professional_id]=c.id;remetente[c.professional_id]=senderId})
+      if(usar.length)await admin.from('conversations').update({is_flinko:true}).in('id',usar.map(c=>c.id))
+    }
     const faltam=okIds.filter(id=>!convDe[id])
     if(faltam.length){
       const{data:novas,error:e2}=await admin.from('conversations').insert(faltam.map(id=>({professional_id:id,client_id:senderId,is_flinko:true}))).select('id,professional_id')
       if(e2)return json(500,{error:e2.message})
-      ;(novas||[]).forEach(c=>{convDe[c.professional_id]=c.id})
+      ;(novas||[]).forEach(c=>{convDe[c.professional_id]=c.id;remetente[c.professional_id]=senderId})
     }
 
     // 2) mensagens
-    const linhas=ok.filter(p=>convDe[p.id]).map(p=>({conversation_id:convDe[p.id],sender_id:senderId,content:textFor(p),attachments:[]}))
+    const linhas=ok.filter(p=>convDe[p.id]).map(p=>({conversation_id:convDe[p.id],sender_id:remetente[p.id]||senderId,content:textFor(p),attachments:[]}))
     const{error:e3}=await admin.from('messages').insert(linhas)
     if(e3)return json(500,{error:e3.message})
     const sent=ok.filter(p=>convDe[p.id])
@@ -127,6 +147,47 @@ exports.handler=async(event)=>{
     console.error('admin-flinko-message error:',err)
     return json(500,{error:err.message})
   }
+}
+
+// Avisa o profissional (push e email, a quem não desligou) de uma mensagem nova.
+async function avisar(p,convId,texto){
+  try{await sendPush(p.id,{title:'Mensagem da Flinko',body:texto.slice(0,140),url:'/messages.html?c='+convId,tag:'flinko-'+convId})}catch(e){}
+  if(!process.env.RESEND_API_KEY||p.notify_email===false)return false
+  const{data:end}=await admin.rpc('emails_for',{ids:[p.id]})
+  const para=(end||[])[0]&&end[0].email
+  if(!para)return false
+  const res=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+process.env.RESEND_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({from:FROM,to:[para],subject:'Tens uma mensagem da Flinko',html:emailHtml(firstName(p.name),texto)})})
+  return !!res.ok
+}
+
+async function inbox(){
+  const{data:convs,error}=await admin.from('conversations').select('id,professional_id,client_id,last_message,last_message_at').eq('is_flinko',true).order('last_message_at',{ascending:false}).limit(300)
+  if(error)return json(500,{error:error.message})
+  const ids=[...new Set((convs||[]).map(c=>c.professional_id))]
+  const[{data:pros},{data:msgs}]=await Promise.all([
+    ids.length?admin.from('profiles').select('id,name,category,photo_url').in('id',ids):{data:[]},
+    (convs||[]).length?admin.from('messages').select('conversation_id,sender_id,created_at').in('conversation_id',convs.map(c=>c.id)).order('created_at',{ascending:false}).limit(2000):{data:[]}
+  ])
+  const pro=Object.fromEntries((pros||[]).map(p=>[p.id,p]))
+  const ultimo={};(msgs||[]).forEach(m=>{if(!ultimo[m.conversation_id])ultimo[m.conversation_id]=m})
+  return json(200,{conversations:(convs||[]).map(c=>({id:c.id,professionalId:c.professional_id,name:(pro[c.professional_id]||{}).name||'Profissional',category:(pro[c.professional_id]||{}).category||'',photo:(pro[c.professional_id]||{}).photo_url||null,lastMessage:c.last_message||'',lastAt:c.last_message_at,porResponder:!!(ultimo[c.id]&&ultimo[c.id].sender_id===c.professional_id)}))})
+}
+
+async function thread(conv){
+  const{data,error}=await admin.from('messages').select('id,sender_id,content,created_at').eq('conversation_id',conv.id).order('created_at',{ascending:true}).limit(500)
+  if(error)return json(500,{error:error.message})
+  return json(200,{messages:(data||[]).map(m=>({id:m.id,content:m.content,createdAt:m.created_at,deFlinko:m.sender_id!==conv.professional_id}))})
+}
+
+async function reply(conv,message,user){
+  const texto=String(message||'').trim()
+  if(texto.length<1||texto.length>4000)return json(400,{error:'Escreve a resposta (até 4000 caracteres).'})
+  const{error}=await admin.from('messages').insert({conversation_id:conv.id,sender_id:conv.client_id,content:texto,attachments:[]})
+  if(error)return json(500,{error:error.message})
+  const{data:p}=await admin.from('profiles').select('id,name,notify_email').eq('id',conv.professional_id).maybeSingle()
+  const emailed=p?await avisar(p,conv.id,texto):false
+  await audit(admin,user,'resposta_flinko',{targetType:'conversation',targetId:conv.id,summary:'Resposta da Flinko a '+((p&&p.name)||'profissional')})
+  return json(200,{sent:1,emailed})
 }
 
 exports.recipients=recipients

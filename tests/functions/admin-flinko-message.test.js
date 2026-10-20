@@ -40,6 +40,8 @@ function setup({ isAdmin = true } = {}) {
     conversations: (calls) => {
       if (ins('conversations', calls)) return { data: [{ id: 'conv-ana', professional_id: 'ana' }], error: null };
       if (calls.some((c) => c.method === 'update')) { scenario.updated = calls; return { data: null, error: null }; }
+      // 2.ª procura (conversas normais deste admin): a Ana já falou com a Flinko fora de uma conversa marcada
+      if (calls.some((c) => c.method === 'eq' && c.args[0] === 'client_id')) return { data: [], error: null };
       return { data: [{ id: 'conv-rui', professional_id: 'rui' }], error: null };
     },
     messages: (calls) => { ins('messages', calls); return { data: null, error: null }; },
@@ -76,7 +78,6 @@ test('send: reaproveita a conversa do Rui, cria a da Ana (is_flinko), mensagem c
   const body = JSON.parse(res.body);
   assert.equal(body.sent, 2);
   assert.deepEqual(scenario.inserts.conversations, [{ professional_id: 'ana', client_id: ADMIN, is_flinko: true }]);
-  assert.ok(scenario.updated.some((c) => c.method === 'update' && c.args[0].is_flinko === true));
   assert.deepEqual(scenario.inserts.messages.map((m) => [m.conversation_id, m.sender_id, m.content]), [
     ['conv-rui', ADMIN, 'Olá Rui! Temos novidades para eletricistas.'],
     ['conv-ana', ADMIN, 'Olá Ana! Temos novidades para pintores.'],
@@ -90,4 +91,93 @@ test('send: reaproveita a conversa do Rui, cria a da Ana (is_flinko), mensagem c
 test('send: mensagem vazia é recusada', async () => {
   setup();
   assert.equal((await handler(ev({ action: 'send', message: ' ' }))).statusCode, 400);
+});
+
+// Out/2026: havia dois donos (David e Matilde). As conversas da Flinko ficavam
+// em nome de quem as começou e os outros não conseguiam responder (a base de
+// dados recusava: não eram parte da conversa). A partir de agora há uma só
+// conversa da Flinko por profissional, e tudo sai em nome de quem a começou.
+const MATILDE = 'adm-matilde';
+const evr = (body) => ({ httpMethod: 'POST', headers: { authorization: 'Bearer t' }, body: JSON.stringify(body) });
+
+test('send: reaproveita a conversa da Flinko começada por outro admin e escreve em nome dela', async () => {
+  setup();
+  scenario.getUser = async () => ({ data: { user: { id: MATILDE, email: 'matilde@flinko.pt' } }, error: null });
+  let filtros = null;
+  scenario.queries.conversations = (calls) => {
+    if (calls.some((c) => c.method === 'insert')) { (scenario.inserts.conversations = scenario.inserts.conversations || []).push(...calls.find((c) => c.method === 'insert').args[0]); return { data: [{ id: 'conv-ana', professional_id: 'ana', client_id: MATILDE }], error: null }; }
+    if (calls.some((c) => c.method === 'update')) return { data: null, error: null };
+    if (calls.some((c) => c.method === 'eq' && c.args[0] === 'client_id')) return { data: [], error: null };
+    filtros = calls;
+    return { data: [{ id: 'conv-rui', professional_id: 'rui', client_id: ADMIN }], error: null };
+  };
+  global.fetch = async () => ({ ok: true });
+  const res = await handler(ev({ action: 'send', message: 'Olá {nome}' }));
+  assert.equal(res.statusCode, 200);
+  assert.ok(filtros.some((c) => c.method === 'eq' && c.args[0] === 'is_flinko' && c.args[1] === true), 'procura qualquer conversa da Flinko');
+  assert.ok(!filtros.some((c) => c.method === 'eq' && c.args[0] === 'client_id'), 'não se limita às conversas de quem envia');
+  assert.deepEqual(scenario.inserts.messages.map((m) => [m.conversation_id, m.sender_id]), [['conv-rui', ADMIN], ['conv-ana', MATILDE]]);
+});
+
+test('reply: qualquer admin responde numa conversa da Flinko, em nome da Flinko', async () => {
+  setup();
+  scenario.getUser = async () => ({ data: { user: { id: MATILDE, email: 'matilde@flinko.pt' } }, error: null });
+  scenario.queries.conversations = () => ({ data: [{ id: 'conv-rui', professional_id: 'rui', client_id: ADMIN, is_flinko: true }], error: null });
+  scenario.queries.profiles = (calls) => calls[0].args[0] === 'is_admin,admin_role' ? { data: [{ is_admin: true, admin_role: 'owner' }], error: null } : { data: [{ id: 'rui', name: 'Rui Alves', notify_email: true }], error: null };
+  const emails = [];
+  global.fetch = async (url, opts) => { emails.push(JSON.parse(opts.body)); return { ok: true }; };
+  const res = await handler(evr({ action: 'reply', conversationId: 'conv-rui', message: 'Já tratámos disso.' }));
+  assert.equal(res.statusCode, 200);
+  assert.deepEqual(scenario.inserts.messages.map((m) => [m.conversation_id, m.sender_id, m.content]), [['conv-rui', ADMIN, 'Já tratámos disso.']]);
+  assert.deepEqual(scenario.pushes.map((p) => p.id), ['rui']);
+});
+
+test('reply: recusa conversas que não são da Flinko e mensagens vazias', async () => {
+  setup();
+  scenario.queries.conversations = () => ({ data: [{ id: 'c1', professional_id: 'rui', client_id: 'cliente-x', is_flinko: false }], error: null });
+  assert.equal((await handler(evr({ action: 'reply', conversationId: 'c1', message: 'Olá' }))).statusCode, 403);
+  scenario.queries.conversations = () => ({ data: [{ id: 'c2', professional_id: 'rui', client_id: ADMIN, is_flinko: true }], error: null });
+  assert.equal((await handler(evr({ action: 'reply', conversationId: 'c2', message: '  ' }))).statusCode, 400);
+});
+
+test('inbox: lista só as conversas da Flinko, com o nome do profissional e se está por responder', async () => {
+  setup();
+  scenario.queries.conversations = (calls) => {
+    assert.ok(calls.some((c) => c.method === 'eq' && c.args[0] === 'is_flinko' && c.args[1] === true));
+    return { data: [{ id: 'conv-rui', professional_id: 'rui', client_id: ADMIN, last_message: 'Obrigado!', last_message_at: '2026-10-20T10:00:00Z' }], error: null };
+  };
+  scenario.queries.profiles = (calls) => calls[0].args[0] === 'is_admin,admin_role' ? { data: [{ is_admin: true, admin_role: 'owner' }], error: null } : { data: [{ id: 'rui', name: 'Rui Alves', category: 'Eletricistas', photo_url: null }], error: null };
+  scenario.queries.messages = () => ({ data: [{ conversation_id: 'conv-rui', sender_id: 'rui', created_at: '2026-10-20T10:00:00Z' }], error: null });
+  const res = await handler(evr({ action: 'inbox' }));
+  assert.equal(res.statusCode, 200);
+  const [c] = JSON.parse(res.body).conversations;
+  assert.equal(c.name, 'Rui Alves');
+  assert.equal(c.porResponder, true);
+});
+
+test('thread: devolve as mensagens de uma conversa da Flinko, e recusa as outras', async () => {
+  setup();
+  scenario.queries.conversations = () => ({ data: [{ id: 'conv-rui', professional_id: 'rui', client_id: ADMIN, is_flinko: true }], error: null });
+  scenario.queries.messages = () => ({ data: [{ id: 'm1', sender_id: 'rui', content: 'Olá', created_at: '2026-10-20T10:00:00Z' }], error: null });
+  const res = await handler(evr({ action: 'thread', conversationId: 'conv-rui' }));
+  assert.equal(res.statusCode, 200);
+  assert.deepEqual(JSON.parse(res.body).messages.map((m) => [m.content, m.deFlinko]), [['Olá', false]]);
+  scenario.queries.conversations = () => ({ data: [{ id: 'c1', professional_id: 'rui', client_id: 'cliente-x', is_flinko: false }], error: null });
+  assert.equal((await handler(evr({ action: 'thread', conversationId: 'c1' }))).statusCode, 403);
+});
+
+test('send: uma conversa normal que o admin já tinha com o profissional passa a ser a da Flinko (sem duplicar)', async () => {
+  setup();
+  let atualizada = null;
+  scenario.queries.conversations = (calls) => {
+    if (calls.some((c) => c.method === 'insert')) throw new Error('não devia criar conversa nova');
+    if (calls.some((c) => c.method === 'update')) { atualizada = calls; return { data: null, error: null }; }
+    if (calls.some((c) => c.method === 'eq' && c.args[0] === 'client_id')) return { data: [{ id: 'conv-ana-antiga', professional_id: 'ana' }], error: null };
+    return { data: [{ id: 'conv-rui', professional_id: 'rui', client_id: ADMIN }], error: null };
+  };
+  global.fetch = async () => ({ ok: true });
+  const res = await handler(ev({ action: 'send', message: 'Olá' }));
+  assert.equal(res.statusCode, 200);
+  assert.ok(atualizada.some((c) => c.method === 'update' && c.args[0].is_flinko === true));
+  assert.deepEqual(scenario.inserts.messages.map((m) => m.conversation_id), ['conv-rui', 'conv-ana-antiga']);
 });

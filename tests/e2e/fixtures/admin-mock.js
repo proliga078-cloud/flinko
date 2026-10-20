@@ -31,7 +31,7 @@ function baseTables() {
 }
 
 // Simula o Supabase e as funções Netlify. Devolve o registo de pedidos feitos.
-async function openAdmin(page, { role = 'owner', tables = {}, fail = {}, fns = {}, view } = {}) {
+async function openAdmin(page, { role = 'owner', tables = {}, fail = {}, fns = {}, view, me = {}, path = '/admin.html' } = {}) {
   const T = Object.assign(baseTables(), tables), calls = [];
   await page.addInitScript(() => localStorage.setItem('fk_session', JSON.stringify({ access_token: 'tok', refresh_token: 'r', user: { id: 'admin-1', email: 'dono@flinko.pt' } })));
   await page.route(SB + '/**', async (route) => {
@@ -43,7 +43,7 @@ async function openAdmin(page, { role = 'owner', tables = {}, fail = {}, fns = {
     const name = m[1], q = url.searchParams;
     if (fail[name]) return route.fulfill({ status: fail[name].status, json: { message: fail[name].message } });
     if (name.startsWith('rpc/')) {
-      if (name === 'rpc/get_my_profile') return route.fulfill({ json: [{ ...ME, admin_role: role }] });
+      if (name === 'rpc/get_my_profile') return route.fulfill({ json: [{ ...ME, admin_role: role, ...me }] });
       if (name === 'rpc/admin_profiles_private') {
         const priv = T.profiles.map(({ id, is_admin, admin_role, plan_expires_at, stripe_subscription_id, ai_profile_builder_paid_at, credits }) => ({ id, is_admin, admin_role, plan_expires_at, stripe_subscription_id, ai_profile_builder_paid_at, credits }));
         const off = Number(q.get('offset') || 0), lim = q.has('limit') ? Number(q.get('limit')) : priv.length;
@@ -68,6 +68,8 @@ async function openAdmin(page, { role = 'owner', tables = {}, fail = {}, fns = {
     return route.fulfill(res && res.status ? res : { json: res || {} });
   });
   page.on('dialog', (d) => d.accept());
+  // Painel novo (gestao.html): mesmo simulador, outra página.
+  if (path !== '/admin.html') { await page.goto(path); return calls; }
   await page.goto('/admin.html');
   await expect(page.locator('#app')).toBeVisible();
   await expect(page.locator('#main h1')).toHaveText('Painel');
