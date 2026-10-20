@@ -163,6 +163,11 @@ test('Estratégia: números sem a equipa, recomendações completas, plano, estu
   await expect(main.locator('.rec', { hasText: 'Como se arranca um marketplace' })).toBeVisible();
   await expect(main.locator('.cartao', { hasText: 'Seguro e garantias' })).toContainText('Falta');
   await expect(main.locator('.tabela')).toContainText(['Zaask']);
+  // como cresceram empresas conhecidas, e o que copiar
+  const casos = main.locator('.caso');
+  await expect(casos.first()).toContainText('O que o Flinko pode copiar');
+  expect(await casos.count()).toBeGreaterThanOrEqual(8);
+  await expect(main.locator('.caso', { hasText: 'Hotmail' })).toContainText('Orçamento gerado através da Flinko');
   await page.getByRole('button', { name: '7 dias' }).click();
   await expect(trafego).toContainText('em 7 dias');
 });

@@ -645,6 +645,11 @@ VISTAS.estrategia = async main => {
     <h4>Estudos e fontes</h4><ul class="fontes">${t.estudos.map(s => `<li><b>${esc(s.fonte)}</b><br/>${esc(s.ideia)}</li>`).join("")}</ul>
     <h4>Aplicado ao Flinko</h4><p class="pre">${esc(t.aplicado)}</p><h4>Passos</h4><ol>${t.passos.map(p => `<li>${esc(p)}</li>`).join("")}</ol></div></details>`).join("")}</div>
 
+  <h2 class="tit-sec">Como as grandes cresceram</h2>
+  <p class="intro-sec">O que fizeram empresas conhecidas para ganhar os primeiros clientes, e o que o Flinko pode copiar já.</p>
+  <div class="grelha g2">${E.CASOS.map(c => `<div class="cartao caso"><div style="display:flex;gap:10px;align-items:baseline;justify-content:space-between"><h2>${esc(c.empresa)}</h2><span class="tag ${c.estado === "falta" ? "vermelho" : "laranja"}">${c.estado === "falta" ? "Por fazer" : "Em parte"}</span></div>
+    <p class="sub" style="margin:2px 0 10px"><b>${esc(c.tecnica)}</b></p><p>${esc(c.historia)}</p><h4 class="mini" style="color:var(--orange-dark)">O que o Flinko pode copiar</h4><p>${esc(c.copiar)}</p></div>`).join("")}</div>
+
   <h2 class="tit-sec">Políticas da plataforma</h2>
   <p class="intro-sec">As regras que dão confiança a clientes e profissionais: o que já tens e o que falta.</p>
   <div class="grelha g2">${E.POLITICAS.map(p => `<div class="cartao"><div style="display:flex;gap:10px;align-items:center;justify-content:space-between"><h2>${esc(p.titulo)}</h2><span class="tag ${p.estado === "tens" ? "verde" : p.estado === "parcial" ? "laranja" : "vermelho"}">${p.estado === "tens" ? "Já tens" : p.estado === "parcial" ? "Em parte" : "Falta"}</span></div>
