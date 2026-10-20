@@ -31,7 +31,7 @@ function baseTables() {
 }
 
 // Simula o Supabase e as funções Netlify. Devolve o registo de pedidos feitos.
-async function openAdmin(page, { role = 'owner', tables = {}, fail = {}, fns = {}, view } = {}) {
+async function openAdmin(page, { role = 'owner', tables = {}, fail = {}, fns = {}, view, me = {}, path = '/admin.html' } = {}) {
   const T = Object.assign(baseTables(), tables), calls = [];
   await page.addInitScript(() => localStorage.setItem('fk_session', JSON.stringify({ access_token: 'tok', refresh_token: 'r', user: { id: 'admin-1', email: 'dono@flinko.pt' } })));
   await page.route(SB + '/**', async (route) => {
@@ -43,13 +43,13 @@ async function openAdmin(page, { role = 'owner', tables = {}, fail = {}, fns = {
     const name = m[1], q = url.searchParams;
     if (fail[name]) return route.fulfill({ status: fail[name].status, json: { message: fail[name].message } });
     if (name.startsWith('rpc/')) {
-      if (name === 'rpc/get_my_profile') return route.fulfill({ json: [{ ...ME, admin_role: role }] });
+      if (name === 'rpc/get_my_profile') return route.fulfill({ json: [{ ...ME, admin_role: role, ...me }] });
       if (name === 'rpc/admin_profiles_private') {
         const priv = T.profiles.map(({ id, is_admin, admin_role, plan_expires_at, stripe_subscription_id, ai_profile_builder_paid_at, credits }) => ({ id, is_admin, admin_role, plan_expires_at, stripe_subscription_id, ai_profile_builder_paid_at, credits }));
         const off = Number(q.get('offset') || 0), lim = q.has('limit') ? Number(q.get('limit')) : priv.length;
         return route.fulfill({ json: priv.slice(off, off + lim) });
       }
-      if (name === 'rpc/admin_visit_rows') return route.fulfill({ json: Number(q.get('offset')) ? [] : [{ day: new Date().toISOString().slice(0, 10), visitor_id: 'v1', user_id: null, path: '/', ref_host: 'google.com', n: 3, last_at: iso(0.1) }] });
+      if (name === 'rpc/admin_visit_rows') return route.fulfill({ json: Number(q.get('offset')) ? [] : T.visits || [{ day: new Date().toISOString().slice(0, 10), visitor_id: 'v1', user_id: null, path: '/', ref_host: 'google.com', n: 3, last_at: iso(0.1) }] });
       if (name === 'rpc/admin_event_counts') return route.fulfill({ json: T.events || [] });
       if (name === 'rpc/admin_team') return route.fulfill({ json: [{ profile_id: 'admin-1', name: 'Admin', email: 'dono@flinko.pt', admin_role: role }] });
       if (name === 'rpc/admin_pro_emails') return route.fulfill({ json: [{ profile_id: 'pro-1', email: 'rui@exemplo.pt' }, { profile_id: 'cli-1', email: 'ana@exemplo.pt' }] });
@@ -68,6 +68,8 @@ async function openAdmin(page, { role = 'owner', tables = {}, fail = {}, fns = {
     return route.fulfill(res && res.status ? res : { json: res || {} });
   });
   page.on('dialog', (d) => d.accept());
+  // Painel novo (gestao.html): mesmo simulador, outra página.
+  if (path !== '/admin.html') { await page.goto(path); return calls; }
   await page.goto('/admin.html');
   await expect(page.locator('#app')).toBeVisible();
   await expect(page.locator('#main h1')).toHaveText('Painel');
