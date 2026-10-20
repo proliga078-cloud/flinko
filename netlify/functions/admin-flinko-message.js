@@ -52,7 +52,7 @@ function emailHtml(nome,texto){
   <p style="color:#5B6270;font-size:14px;line-height:1.6">Olá${nome?' '+esc(nome):''},</p>
   <div style="background:#F7F8FA;padding:14px 16px;border-left:3px solid #BB5C08;border-radius:6px;color:#14181F;font-size:14px;margin:16px 0;line-height:1.6">${trecho}</div>
   <a href="${SITE}/messages" style="display:inline-block;background:#BB5C08;color:#fff;padding:11px 22px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700">Ver e responder</a>
-  <p style="color:#94a3b8;font-size:12px;margin-top:24px">Recebeste este email porque tens conta profissional na Flinko. Podes desligar os avisos por email no teu painel.</p>
+  <p style="color:#94a3b8;font-size:12px;margin-top:24px">Recebeste este email porque tens conta na Flinko. Podes desligar os avisos por email no teu painel.</p>
 </div>`
 }
 
@@ -76,7 +76,7 @@ exports.handler=async(event)=>{
     const ids=[...new Set(profileIds)]
 
     const[{data:profiles,error},{data:blocks}]=await Promise.all([
-      admin.from('profiles').select('id,name,category,notify_email,suspended,is_demo,is_admin').in('id',ids),
+      admin.from('profiles').select('id,name,category,account_type,notify_email,suspended,is_demo,is_admin').in('id',ids),
       admin.from('user_blocks').select('blocker_id').eq('blocked_id',senderId).in('blocker_id',ids)
     ])
     if(error)return json(500,{error:error.message})
@@ -91,8 +91,10 @@ exports.handler=async(event)=>{
     const per=messages&&typeof messages==='object'?messages:{}
     const textFor=p=>typeof per[p.id]==='string'&&per[p.id].trim()?String(per[p.id]).trim().slice(0,4000):fill(msg,p).slice(0,4000)
 
-    // 1) conversas: reaproveita as que já existem com este admin, cria as que faltam
-    const okIds=ok.map(p=>p.id)
+    // 1) conversas: reaproveita as que já existem, cria as que faltam
+    const ehCliente=p=>p.account_type==='client'
+    const okIds=ok.filter(p=>!ehCliente(p)).map(p=>p.id)
+    const cliIds=ok.filter(ehCliente).map(p=>p.id)
     const{data:existentes,error:e1}=await admin.from('conversations').select('id,professional_id,client_id').eq('is_flinko',true).in('professional_id',okIds).order('created_at',{ascending:true})
     if(e1)return json(500,{error:e1.message})
     const convDe={},remetente={}
@@ -110,6 +112,18 @@ exports.handler=async(event)=>{
       const{data:novas,error:e2}=await admin.from('conversations').insert(faltam.map(id=>({professional_id:id,client_id:senderId,is_flinko:true}))).select('id,professional_id')
       if(e2)return json(500,{error:e2.message})
       ;(novas||[]).forEach(c=>{convDe[c.professional_id]=c.id;remetente[c.professional_id]=senderId})
+    }
+    // Clientes: a conversa da Flinko tem o admin no lugar do profissional.
+    if(cliIds.length){
+      const{data:cc,error:e4}=await admin.from('conversations').select('id,professional_id,client_id').eq('is_flinko',true).in('client_id',cliIds).order('created_at',{ascending:true})
+      if(e4)return json(500,{error:e4.message})
+      ;(cc||[]).forEach(c=>{if(!convDe[c.client_id]){convDe[c.client_id]=c.id;remetente[c.client_id]=c.professional_id||senderId}})
+      const faltamCli=cliIds.filter(id=>!convDe[id])
+      if(faltamCli.length){
+        const{data:nc,error:e5}=await admin.from('conversations').insert(faltamCli.map(id=>({professional_id:senderId,client_id:id,is_flinko:true}))).select('id,professional_id,client_id')
+        if(e5)return json(500,{error:e5.message})
+        ;(nc||[]).forEach(c=>{convDe[c.client_id]=c.id;remetente[c.client_id]=senderId})
+      }
     }
 
     // 2) mensagens
@@ -160,31 +174,43 @@ async function avisar(p,convId,texto){
   return !!res.ok
 }
 
+// Numa conversa da Flinko, o "outro" é o participante que não é admin (o
+// profissional, ou o cliente quando a Flinko escreve a clientes).
+async function adminIds(){
+  const{data}=await admin.from('profiles').select('id').eq('is_admin',true)
+  return new Set((data||[]).map(p=>p.id))
+}
+const outroDe=(c,adm)=>adm.has(c.client_id)?c.professional_id:adm.has(c.professional_id)?c.client_id:c.professional_id
+const flinkoDe=(c,adm)=>outroDe(c,adm)===c.client_id?c.professional_id:c.client_id
+
 async function inbox(){
   const{data:convs,error}=await admin.from('conversations').select('id,professional_id,client_id,last_message,last_message_at').eq('is_flinko',true).order('last_message_at',{ascending:false}).limit(300)
   if(error)return json(500,{error:error.message})
-  const ids=[...new Set((convs||[]).map(c=>c.professional_id))]
+  const adm=await adminIds()
+  const ids=[...new Set((convs||[]).map(c=>outroDe(c,adm)))]
   const[{data:pros},{data:msgs}]=await Promise.all([
-    ids.length?admin.from('profiles').select('id,name,category,photo_url').in('id',ids):{data:[]},
+    ids.length?admin.from('profiles').select('id,name,category,photo_url,account_type').in('id',ids):{data:[]},
     (convs||[]).length?admin.from('messages').select('conversation_id,sender_id,created_at').in('conversation_id',convs.map(c=>c.id)).order('created_at',{ascending:false}).limit(2000):{data:[]}
   ])
   const pro=Object.fromEntries((pros||[]).map(p=>[p.id,p]))
   const ultimo={};(msgs||[]).forEach(m=>{if(!ultimo[m.conversation_id])ultimo[m.conversation_id]=m})
-  return json(200,{conversations:(convs||[]).map(c=>({id:c.id,professionalId:c.professional_id,name:(pro[c.professional_id]||{}).name||'Profissional',category:(pro[c.professional_id]||{}).category||'',photo:(pro[c.professional_id]||{}).photo_url||null,lastMessage:c.last_message||'',lastAt:c.last_message_at,porResponder:!!(ultimo[c.id]&&ultimo[c.id].sender_id===c.professional_id)}))})
+  return json(200,{conversations:(convs||[]).map(c=>{const o=outroDe(c,adm),p=pro[o]||{},cli=o===c.client_id||p.account_type==='client';return{id:c.id,personId:o,tipo:cli?'cliente':'profissional',professionalId:cli?null:o,name:p.name||(cli?'Cliente':'Profissional'),category:cli?'Cliente':(p.category||''),photo:p.photo_url||null,lastMessage:c.last_message||'',lastAt:c.last_message_at,porResponder:!!(ultimo[c.id]&&ultimo[c.id].sender_id===o)}})})
 }
 
 async function thread(conv){
+  const outro=outroDe(conv,await adminIds())
   const{data,error}=await admin.from('messages').select('id,sender_id,content,created_at').eq('conversation_id',conv.id).order('created_at',{ascending:true}).limit(500)
   if(error)return json(500,{error:error.message})
-  return json(200,{messages:(data||[]).map(m=>({id:m.id,content:m.content,createdAt:m.created_at,deFlinko:m.sender_id!==conv.professional_id}))})
+  return json(200,{messages:(data||[]).map(m=>({id:m.id,content:m.content,createdAt:m.created_at,deFlinko:m.sender_id!==outro}))})
 }
 
 async function reply(conv,message,user){
   const texto=String(message||'').trim()
   if(texto.length<1||texto.length>4000)return json(400,{error:'Escreve a resposta (até 4000 caracteres).'})
-  const{error}=await admin.from('messages').insert({conversation_id:conv.id,sender_id:conv.client_id,content:texto,attachments:[]})
+  const adm=await adminIds()
+  const{error}=await admin.from('messages').insert({conversation_id:conv.id,sender_id:flinkoDe(conv,adm),content:texto,attachments:[]})
   if(error)return json(500,{error:error.message})
-  const{data:p}=await admin.from('profiles').select('id,name,notify_email').eq('id',conv.professional_id).maybeSingle()
+  const{data:p}=await admin.from('profiles').select('id,name,notify_email').eq('id',outroDe(conv,adm)).maybeSingle()
   const emailed=p?await avisar(p,conv.id,texto):false
   await audit(admin,user,'resposta_flinko',{targetType:'conversation',targetId:conv.id,summary:'Resposta da Flinko a '+((p&&p.name)||'profissional')})
   return json(200,{sent:1,emailed})

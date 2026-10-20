@@ -38,6 +38,13 @@ a{color:inherit}
 .lado{background:var(--dark);color:#fff;padding:22px 14px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh}
 .marca{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.3rem;padding:4px 12px 22px}
 .marca span{color:#F08A3A}
+.procurar{display:flex;align-items:center;gap:10px;margin:0 6px 14px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04);color:rgba(255,255,255,.8);cursor:pointer;font-weight:600}
+.procurar:hover{color:#fff;border-color:rgba(255,255,255,.4)}
+.procurar svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2}
+.procurar kbd{margin-left:auto;font:inherit;font-size:.7rem;opacity:.6;border:1px solid rgba(255,255,255,.25);border-radius:5px;padding:1px 5px}
+.pq-item{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;background:none;cursor:pointer;padding:4px 0}
+.pq-item:hover b{text-decoration:underline}
+.nav .mais{display:none}
 .nav a{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;text-decoration:none;color:rgba(255,255,255,.75);font-weight:600;position:relative}
 .nav a:hover{background:rgba(255,255,255,.06);color:#fff}
 .nav a[aria-current="page"]{background:rgba(255,255,255,.1);color:#fff}
@@ -178,8 +185,12 @@ h4.mini{font-size:.85rem;margin-top:8px;font-family:'Inter',sans-serif}
 @media (max-width:900px){
   #app{grid-template-columns:1fr}
   .lado{position:fixed;bottom:0;top:auto;left:0;right:0;height:auto;flex-direction:row;padding:6px;z-index:40;gap:0}
-  .marca,.lado .fundo{display:none}
+  .marca,.lado .fundo,.procurar{display:none}
   .nav{display:flex;width:100%;justify-content:space-around}
+  .nav a.sec{display:none}
+  .nav .mais{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex:1;min-height:52px;border:0;background:none;color:rgba(255,255,255,.75);font-weight:600;font-size:.66rem;position:relative;cursor:pointer}
+  .nav .mais svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
+  .nav .mais .conta{position:absolute;top:2px;right:8px}
   .nav a{flex-direction:column;gap:3px;padding:8px 4px;font-size:.66rem;flex:1;text-align:center;min-height:52px;justify-content:center}
   .nav .conta{position:absolute;top:2px;right:8px;margin:0}
   main{padding:20px 16px 96px}
@@ -190,8 +201,6 @@ h4.mini{font-size:.85rem;margin-top:8px;font-family:'Inter',sans-serif}
   .inbox.a-ler .conversas{display:none}
   .inbox:not(.a-ler) .fio{display:none}
   .topo h1{font-size:1.5rem}
-  .nav a{font-size:.6rem;padding:8px 2px}
-  .nav a span:not(.conta){max-width:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .barras th{white-space:normal;width:auto;max-width:120px}
   .colunas{gap:2px}
   .colunas small{font-size:.58rem}
@@ -236,5 +245,7 @@ h4.mini{font-size:.85rem;margin-top:8px;font-family:'Inter',sans-serif}
 <script src="/assets/gestao-numeros.js"></script>
 <script src="/assets/gestao-estrategia.js"></script>
 <script src="/assets/gestao.js"></script>
+<script src="/assets/gestao-moderacao.js"></script>
+<script src="/assets/gestao-pesquisa.js"></script>
 </body>
 </html>

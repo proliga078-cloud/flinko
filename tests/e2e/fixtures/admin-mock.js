@@ -31,7 +31,7 @@ function baseTables() {
 }
 
 // Simula o Supabase e as funções Netlify. Devolve o registo de pedidos feitos.
-async function openAdmin(page, { role = 'owner', tables = {}, fail = {}, fns = {}, view, me = {}, path = '/admin.html' } = {}) {
+async function openAdmin(page, { role = 'owner', tables = {}, fail = {}, fns = {}, view, me = {}, path = '/admin.html', dialogo } = {}) {
   const T = Object.assign(baseTables(), tables), calls = [];
   await page.addInitScript(() => localStorage.setItem('fk_session', JSON.stringify({ access_token: 'tok', refresh_token: 'r', user: { id: 'admin-1', email: 'dono@flinko.pt' } })));
   await page.route(SB + '/**', async (route) => {
@@ -67,7 +67,7 @@ async function openAdmin(page, { role = 'owner', tables = {}, fail = {}, fns = {
     const res = typeof h === 'function' ? h(body) : h;
     return route.fulfill(res && res.status ? res : { json: res || {} });
   });
-  page.on('dialog', (d) => d.accept());
+  page.on('dialog', (d) => (dialogo ? dialogo(d) : d.accept()));
   // Painel novo (gestao.html): mesmo simulador, outra página.
   if (path !== '/admin.html') { await page.goto(path); return calls; }
   await page.goto('/admin.html');

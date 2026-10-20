@@ -184,6 +184,7 @@ const preencher = (txt, p) => String(txt || "")
 /* ================= navegação ================= */
 const ICONES = {
   estrategia: '<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-7"/>',
+  moderacao: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>',
   hoje: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',
   profissionais: '<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M17 11a3 3 0 1 0 0-6"/><path d="M22 21c0-3-2-5-5-5.5"/>',
   mensagens: '<path d="M21 12a8 8 0 0 1-11.5 7.2L4 21l1.8-5.5A8 8 0 1 1 21 12z"/>',
@@ -191,10 +192,23 @@ const ICONES = {
   angariacao: '<path d="M3 11v2a2 2 0 0 0 2 2h2l5 4V5L7 9H5a2 2 0 0 0-2 2z"/><path d="M16 8a5 5 0 0 1 0 8"/>',
   dinheiro: '<circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.6-1-1.7-1.5-3-1.5-1.7 0-3 .9-3 2.2 0 3 6 1.6 6 4.6 0 1.3-1.3 2.2-3 2.2-1.4 0-2.6-.6-3.1-1.6M12 6v2M12 16v2"/>'
 };
-const PARTES = [["hoje", "Hoje"], ["estrategia", "Estratégia"], ["profissionais", "Profissionais"], ["mensagens", "Mensagens"], ["clientes", "Clientes e pedidos"], ["angariacao", "Angariação"], ["dinheiro", "Dinheiro e equipa"]];
+const PARTES = [["hoje", "Hoje"], ["estrategia", "Estratégia"], ["profissionais", "Profissionais"], ["mensagens", "Mensagens"], ["clientes", "Clientes e pedidos"], ["moderacao", "Moderação e apoio"], ["angariacao", "Angariação"], ["dinheiro", "Dinheiro e equipa"]];
 let parte = "hoje";
+// No telemóvel só cabem 5 botões em baixo: 4 partes principais e "Mais".
+const PRINCIPAIS = ["hoje", "profissionais", "mensagens", "clientes"];
 function desenharNav(contas = {}) {
-  $("#nav").innerHTML = PARTES.map(([id, nome]) => `<a href="#${id}"${id === parte ? ' aria-current="page"' : ""}><svg viewBox="0 0 24 24" aria-hidden="true">${ICONES[id]}</svg><span>${esc(nome)}</span>${contas[id] ? `<span class="conta" aria-label="${contas[id]} por tratar">${contas[id]}</span>` : ""}</a>`).join("");
+  const outras = PARTES.filter(([id]) => !PRINCIPAIS.includes(id));
+  const outrasPorTratar = outras.reduce((s, [id]) => s + (contas[id] || 0), 0);
+  $("#nav").innerHTML = PARTES.map(([id, nome]) => `<a href="#${id}"${PRINCIPAIS.includes(id) ? "" : ' class="sec"'}${id === parte ? ' aria-current="page"' : ""}><svg viewBox="0 0 24 24" aria-hidden="true">${ICONES[id]}</svg><span>${esc(nome)}</span>${contas[id] ? `<span class="conta" aria-label="${contas[id]} por tratar">${contas[id]}</span>` : ""}</a>`).join("") +
+    `<button type="button" class="mais" id="bMais" aria-label="Mais partes e procurar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg><span>Mais</span>${outrasPorTratar ? `<span class="conta">${outrasPorTratar}</span>` : ""}</button>`;
+  $("#bMais").onclick = () => {
+    abrirFicha(`<div class="cab"><div><h2>Mais</h2></div><button class="fechar" aria-label="Fechar">×</button></div>
+      <button type="button" class="btn linha" style="width:100%;margin-bottom:12px" id="mProcurar">Procurar pessoas, pedidos, contactos…</button>
+      <ul class="lista">${outras.map(([id, nome]) => `<li><a href="#${id}" class="info" style="text-decoration:none" data-fechar><b>${esc(nome)}</b></a>${contas[id] ? `<span class="tag laranja">${contas[id]}</span>` : ""}</li>`).join("")}
+        <li><a href="/admin.html" class="info" style="text-decoration:none"><b>Painel antigo</b></a></li></ul>`);
+    $("#mProcurar").onclick = () => { fecharFicha(); if (typeof abrirPesquisa === "function") abrirPesquisa(); };
+    $("#ficha").querySelectorAll("[data-fechar]").forEach(a => a.addEventListener("click", fecharFicha));
+  };
 }
 // As partes desenham-se uma de cada vez, por ordem: se mudas de parte enquanto
 // a anterior ainda carrega, a anterior não escreve por cima da nova.
@@ -340,19 +354,20 @@ document.addEventListener("click", e => {
 /* ================= 3. Mensagens ================= */
 VISTAS.mensagens = async main => {
   const partes = location.hash.split("/");
-  const aba = partes[1] === "enviar" ? "enviar" : "conversas";
-  main.innerHTML = topo("Mensagens", "Conversas da Flinko com os profissionais, e envios a um grupo.") + `
-  <div class="tabs" role="tablist"><button role="tab" aria-selected="${aba === "conversas"}" data-aba="conversas">Conversas</button><button role="tab" aria-selected="${aba === "enviar"}" data-aba="enviar">Enviar a um grupo</button></div><div id="abaMsg"></div>`;
-  main.querySelectorAll("[data-aba]").forEach(b => b.onclick = () => { location.hash = b.dataset.aba === "enviar" ? "#mensagens/enviar" : "#mensagens"; });
+  const aba = ["enviar", "outros"].includes(partes[1]) ? partes[1] : "conversas";
+  main.innerHTML = topo("Mensagens", "Conversas da Flinko com profissionais e clientes, e envios a um grupo.") + `
+  <div class="tabs" role="tablist"><button role="tab" aria-selected="${aba === "conversas"}" data-aba="">Conversas</button><button role="tab" aria-selected="${aba === "enviar"}" data-aba="enviar">Enviar a um grupo</button><button role="tab" aria-selected="${aba === "outros"}" data-aba="outros">Outros envios</button></div><div id="abaMsg"></div>`;
+  main.querySelectorAll("[data-aba]").forEach(b => b.onclick = () => { location.hash = "#mensagens" + (b.dataset.aba ? "/" + b.dataset.aba : ""); });
   if (aba === "enviar") return enviarGrupo($("#abaMsg"), partes[2]);
+  if (aba === "outros") return outrosEnvios($("#abaMsg"));
   return conversas($("#abaMsg"), partes[1]);
 };
 
 async function conversas(box, abrir) {
   const lista = await caixa(true);
   box.innerHTML = `<div class="cartao inbox${abrir ? " a-ler" : ""}" id="inbox"><div class="conversas" id="convs"></div><div class="fio" id="fio"><p class="vazio" style="padding:20px">Escolhe uma conversa.</p></div></div>`;
-  if (!lista.length) { box.innerHTML = `<div class="cartao"><p class="vazio">Ainda não há conversas da Flinko. Quando enviares uma mensagem a um profissional, a conversa aparece aqui e as respostas também.</p><a class="btn" href="#mensagens/enviar">Enviar a um grupo</a></div>`; return; }
-  $("#convs").innerHTML = lista.map(c => `<button type="button" data-conv="${esc(c.id)}"${c.id === abrir ? ' aria-current="true"' : ""}>${av(c)}<span class="info"><b>${esc(c.name)}</b><small>${esc(c.lastMessage || "")}</small></span>${c.porResponder ? '<span class="tag laranja">Responder</span>' : ""}</button>`).join("");
+  if (!lista.length) { box.innerHTML = `<div class="cartao"><p class="vazio">Ainda não há conversas da Flinko. Quando enviares uma mensagem a alguém, a conversa aparece aqui e as respostas também.</p><a class="btn" href="#mensagens/enviar">Enviar a um grupo</a></div>`; return; }
+  $("#convs").innerHTML = lista.map(c => `<button type="button" data-conv="${esc(c.id)}"${c.id === abrir ? ' aria-current="true"' : ""}>${av(c)}<span class="info"><b>${esc(c.name)}</b><small>${c.tipo === "cliente" ? "Cliente · " : ""}${esc(c.lastMessage || "")}</small></span>${c.porResponder ? '<span class="tag laranja">Responder</span>' : ""}</button>`).join("");
   $("#convs").querySelectorAll("[data-conv]").forEach(b => b.onclick = () => { location.hash = "#mensagens/" + b.dataset.conv; });
   if (abrir) await fio(lista.find(c => c.id === abrir));
 }
@@ -361,7 +376,7 @@ async function fio(c) {
   if (!c) { box.innerHTML = '<p class="vazio" style="padding:20px">Conversa não encontrada.</p>'; return; }
   box.innerHTML = '<p class="vazio" style="padding:20px">A carregar…</p>';
   const { messages } = await fn("admin-flinko-message", { action: "thread", conversationId: c.id });
-  box.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)"><a class="btn peq linha" href="#mensagens" aria-label="Voltar às conversas">←</a>${av(c)}<b>${esc(c.name)}</b><button class="btn peq linha" style="margin-left:auto" data-ficha="${esc(c.professionalId)}">Ficha</button></div>
+  box.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)"><a class="btn peq linha" href="#mensagens" aria-label="Voltar às conversas">←</a>${av(c)}<b>${esc(c.name)}</b>${c.tipo === "cliente" ? '<span class="tag">Cliente</span>' : ""}${c.professionalId ? `<button class="btn peq linha" style="margin-left:auto" data-ficha="${esc(c.professionalId)}">Ficha</button>` : ""}</div>
     <div class="msgs" id="msgs">${messages.map(m => `<div class="bolha ${m.deFlinko ? "eu" : "ele"}">${esc(m.content)}<small>${m.deFlinko ? "Flinko" : esc(primeiro(c.name))} · ${new Date(m.createdAt).toLocaleString("pt-PT", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}</small></div>`).join("") || '<p class="vazio">Sem mensagens.</p>'}</div>
     <form id="fResp"><label class="hidden" for="tResp">Resposta</label><textarea class="campo" id="tResp" placeholder="Escreve a resposta. Sai em nome da Flinko." required></textarea><button class="btn laranja" type="submit">Enviar</button></form>`;
   const msgs = $("#msgs"); msgs.scrollTop = msgs.scrollHeight;
@@ -377,47 +392,132 @@ async function fio(c) {
   };
 }
 
+// Grupos de clientes (o envio a clientes entrou na fase 1 do painel único).
+const GRUPOS_CLI = [
+  ["todos", "Todos", () => true],
+  ["compedido", "Com pedidos", c => c._pedidos > 0],
+  ["sempedido", "Sem pedidos", c => !c._pedidos],
+  ["novos", "Novos (30 dias)", c => Date.now() - new Date(c.created_at) < 30 * DIA]
+];
+const MODELOS_CLI = [
+  { id: "livre", nome: "Escrever do zero", texto: "" },
+  { id: "pedido", nome: "O teu pedido", texto: "Olá {nome}! Vimos que publicaste um pedido no Flinko. Já recebeste propostas? Se precisares de ajuda a escolher, responde a esta mensagem e nós ajudamos." },
+  { id: "avaliar", nome: "Avaliar o profissional", texto: "Olá {nome}! Como correu o trabalho? Se puderes, deixa uma avaliação ao profissional: ajuda outras pessoas a escolher e ajuda quem trabalha bem." },
+  { id: "voltar", nome: "Precisas de mais alguma coisa?", texto: "Olá {nome}! Precisas de mais algum serviço em casa ou na empresa? No Flinko encontras eletricistas, canalizadores, limpezas, programadores e muito mais, com preços à vista: flinko.pt" }
+];
+async function modelosMeus(forcar) {
+  if (C.modelos && !forcar) return C.modelos;
+  const rows = await todas("admin_items?select=id,kind,data&kind=eq.template&order=id").catch(() => []);
+  C.modelos = rows.map(r => ({ id: r.id, nome: (r.data && (r.data.name || r.data.nome)) || "Modelo", texto: (r.data && (r.data.text || r.data.texto)) || "", publico: (r.data && r.data.publico) || "pros", meu: true }));
+  return C.modelos;
+}
+
 async function enviarGrupo(box, umId) {
-  const pros = await profissionais();
+  const [pros, reqs, meus] = await Promise.all([profissionais(), pedidos().catch(() => []), modelosMeus()]);
+  const nPed = reqs.reduce((m, r) => (m[r.client_id] = (m[r.client_id] || 0) + 1, m), {});
+  const clis = (C.clientes || []).filter(c => !c.suspended).map(c => Object.assign(c, { _pedidos: nPed[c.id] || 0 }));
+  let publico = umId && clis.some(c => c.id === umId) ? "clientes" : "pros";
   let escolhidos = new Set(umId ? [umId] : []);
   let grupo = umId ? null : "todos";
+  const pessoas = () => publico === "clientes" ? clis : pros;
+  const grupos = () => publico === "clientes" ? GRUPOS_CLI : GRUPOS.filter(g => g[0] !== "suspensos");
+  const modelos = () => (publico === "clientes" ? MODELOS_CLI : MODELOS).concat(meus.filter(m => m.publico === publico));
   box.innerHTML = `<div class="grelha g2">
-    <div class="cartao"><h2>1. Para quem</h2><p class="sub">Escolhe um grupo e tira quem não quiseres.</p>
-      <div class="chips" id="gEnv">${GRUPOS.filter(g => g[0] !== "suspensos").map(([id, nome, f]) => `<button type="button" data-g="${id}" aria-pressed="${grupo === id}">${esc(nome)}<span>${pros.filter(f).length}</span></button>`).join("")}</div>
+    <div class="cartao"><h2>1. Para quem</h2>
+      <div class="chips" role="group" aria-label="Público"><button type="button" data-pub="pros">Profissionais</button><button type="button" data-pub="clientes">Clientes</button></div>
+      <p class="sub">Escolhe um grupo e tira quem não quiseres.</p>
+      <div class="chips" id="gEnv"></div>
       <div class="destinos" id="destinos"></div><p class="nota" id="nDest"></p></div>
     <div class="cartao"><h2>2. A mensagem</h2>
       <label class="rot" for="canal">Como enviar</label>
       <select class="campo" id="canal"><option value="flinko">Mensagem no Flinko (com aviso por email)</option>${dono() ? '<option value="email">Só email</option>' : ""}</select>
       <div id="assuntoBox" class="hidden"><label class="rot" for="assunto">Assunto do email</label><input class="campo" id="assunto" value="Novidades do Flinko para ti"/></div>
-      <label class="rot" for="modelo">Texto pronto</label><select class="campo" id="modelo">${MODELOS.map(m => `<option value="${m.id}">${esc(m.nome)}</option>`).join("")}</select>
+      <label class="rot" for="modelo">Texto pronto</label><select class="campo" id="modelo"></select>
       <label class="rot" for="texto">Mensagem</label><textarea class="campo" id="texto" style="min-height:170px"></textarea>
-      <p class="nota">Podes usar {nome}, {categoria} e {falta}: cada pessoa recebe o seu.</p>
+      <p class="nota" id="varsNota"></p>
+      <div class="acoes" style="margin-top:8px"><button type="button" class="btn peq linha" id="gModelo">Guardar como modelo</button><button type="button" class="btn peq perigo hidden" id="aModelo">Apagar este modelo</button></div>
       <div id="previa" class="nota"></div>
       <button class="btn laranja" id="bEnviar" style="margin-top:14px;width:100%">Enviar</button>
       <div id="resultado"></div></div></div>`;
+  const desenharModelos = () => {
+    $("#modelo").innerHTML = modelos().map(m => `<option value="${esc(m.id)}">${m.meu ? "★ " : ""}${esc(m.nome)}</option>`).join("");
+    $("#varsNota").textContent = publico === "clientes" ? "Podes usar {nome}: cada pessoa recebe o seu." : "Podes usar {nome}, {categoria} e {falta}: cada pessoa recebe o seu.";
+    $("#aModelo").classList.add("hidden");
+  };
+  const desenharGrupos = () => {
+    box.querySelectorAll("[data-pub]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pub === publico)));
+    $("#gEnv").innerHTML = grupos().map(([id, nome, f]) => `<button type="button" data-g="${id}" aria-pressed="${grupo === id}">${esc(nome)}<span>${pessoas().filter(f).length}</span></button>`).join("");
+    $("#gEnv").querySelectorAll("[data-g]").forEach(b => b.onclick = () => { grupo = b.dataset.g; desenharGrupos(); desenhar(); });
+  };
   const desenhar = () => {
-    const base = grupo ? pros.filter((GRUPOS.find(g => g[0] === grupo) || GRUPOS[0])[2]) : pros.filter(p => escolhidos.has(p.id));
+    const base = grupo ? pessoas().filter((grupos().find(g => g[0] === grupo) || grupos()[0])[2]) : pessoas().filter(p => escolhidos.has(p.id));
     if (grupo) escolhidos = new Set(base.map(p => p.id));
-    $("#destinos").innerHTML = base.map(p => `<label><input type="checkbox" data-id="${esc(p.id)}"${escolhidos.has(p.id) ? " checked" : ""}/> ${esc(p.name)} <small style="color:var(--muted)">${esc(p.category || "")}</small></label>`).join("") || '<p class="vazio">Ninguém neste grupo.</p>';
+    $("#destinos").innerHTML = base.map(p => `<label><input type="checkbox" data-id="${esc(p.id)}"${escolhidos.has(p.id) ? " checked" : ""}/> ${esc(p.name || "Sem nome")} <small style="color:var(--muted)">${esc(publico === "clientes" ? (p._pedidos ? p._pedidos + " pedido(s)" : "sem pedidos") : (p.category || ""))}</small></label>`).join("") || '<p class="vazio">Ninguém neste grupo.</p>';
     $("#destinos").querySelectorAll("input").forEach(i => i.onchange = () => { i.checked ? escolhidos.add(i.dataset.id) : escolhidos.delete(i.dataset.id); conta(); });
     conta();
   };
   const conta = () => { $("#nDest").textContent = escolhidos.size + " selecionado(s)"; $("#bEnviar").textContent = "Enviar a " + escolhidos.size; previa(); };
-  const previa = () => { const p = pros.find(x => escolhidos.has(x.id)); const t = $("#texto").value; $("#previa").innerHTML = p && t.trim() ? `<b>Como ${esc(primeiro(p.name))} vai ler:</b><br/>${esc(preencher(t, p))}` : ""; };
-  box.querySelectorAll("[data-g]").forEach(b => b.onclick = () => { grupo = b.dataset.g; box.querySelectorAll("[data-g]").forEach(x => x.setAttribute("aria-pressed", String(x === b))); desenhar(); });
-  $("#modelo").onchange = () => { const m = MODELOS.find(x => x.id === $("#modelo").value); $("#texto").value = m ? m.texto : ""; previa(); };
+  const previa = () => { const p = pessoas().find(x => escolhidos.has(x.id)); const t = $("#texto").value; $("#previa").innerHTML = p && t.trim() ? `<b>Como ${esc(primeiro(p.name))} vai ler:</b><br/>${esc(preencher(t, p))}` : ""; };
+  box.querySelectorAll("[data-pub]").forEach(b => b.onclick = () => { if (publico === b.dataset.pub) return; publico = b.dataset.pub; grupo = "todos"; desenharModelos(); desenharGrupos(); desenhar(); });
+  $("#modelo").onchange = () => { const m = modelos().find(x => x.id === $("#modelo").value); $("#texto").value = m ? m.texto : ""; $("#aModelo").classList.toggle("hidden", !(m && m.meu)); previa(); };
   $("#texto").oninput = previa;
   $("#canal").onchange = () => $("#assuntoBox").classList.toggle("hidden", $("#canal").value !== "email");
-  desenhar();
+  $("#gModelo").onclick = async () => {
+    const texto = $("#texto").value.trim(); if (texto.length < 5) return aviso("Escreve primeiro o texto do modelo.", true);
+    const nome = (prompt("Nome do modelo (ex.: Lembrete de fotos):") || "").trim(); if (!nome) return;
+    const id = uid();
+    await api("admin_items", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=minimal" }, body: { id, kind: "template", data: { name: nome, text: texto, publico } } });
+    meus.push({ id, nome, texto, publico, meu: true }); desenharModelos(); $("#modelo").value = id; $("#aModelo").classList.remove("hidden"); aviso("Modelo guardado.");
+  };
+  $("#aModelo").onclick = async () => {
+    const m = meus.find(x => x.id === $("#modelo").value); if (!m || !confirm("Apagar o modelo \"" + m.nome + "\"?")) return;
+    await api("admin_items?id=eq." + encodeURIComponent(m.id), { method: "DELETE", headers: { Prefer: "return=minimal" } });
+    meus.splice(meus.indexOf(m), 1); desenharModelos(); $("#texto").value = ""; previa(); aviso("Modelo apagado.");
+  };
+  desenharModelos(); desenharGrupos(); desenhar();
   $("#bEnviar").onclick = async () => {
     const texto = $("#texto").value.trim();
-    const lista = pros.filter(p => escolhidos.has(p.id));
+    const lista = pessoas().filter(p => escolhidos.has(p.id));
     if (!lista.length) return aviso("Escolhe pelo menos uma pessoa.", true);
     if (texto.length < 2) return aviso("Escreve a mensagem.", true);
     const canal = $("#canal").value;
-    if (!confirm(`Enviar a ${lista.length} profissional(is) ${canal === "email" ? "por email" : "no Flinko, com aviso por email"}? Não dá para desfazer.`)) return;
+    if (!confirm(`Enviar a ${lista.length} ${publico === "clientes" ? "cliente(s)" : "profissional(is)"} ${canal === "email" ? "por email" : "no Flinko, com aviso por email"}? Não dá para desfazer.`)) return;
     await enviarAosPoucos(lista, texto, canal, $("#assunto").value.trim());
   };
+}
+
+// Envios especiais que antes estavam espalhados pelo painel antigo.
+async function outrosEnvios(box) {
+  box.innerHTML = `<div class="grelha g2">
+    <div class="cartao" id="cMeio"><h2>Registos a meio</h2><p class="sub">Pessoas que criaram conta e confirmaram o email mas nunca ficaram com perfil. O convite leva-as a acabar o registo.</p><p class="vazio">A ver quantas são…</p></div>
+    <div class="cartao"><h2>Email de teste</h2><p class="sub">Envia um email só para ti, para confirmares que os emails do Flinko estão a sair.</p>
+      ${dono() ? '<button class="btn linha" id="bTeste">Enviar email de teste para mim</button>' : '<p class="vazio">Só para donos.</p>'}<p class="nota" id="rTeste"></p></div></div>`;
+  const t = $("#bTeste");
+  if (t) t.onclick = async () => {
+    t.disabled = true;
+    try { const j = await fn("admin-send-campaign", { action: "test", subject: "Email de teste do Flinko", message: "Se estás a ler isto, os emails do Flinko estão a sair." }); $("#rTeste").textContent = "Enviado para " + j.to + ". Vê a caixa de correio (e o spam)."; }
+    catch (e) { $("#rTeste").textContent = "Não saiu: " + e.message; }
+    t.disabled = false;
+  };
+  const card = $("#cMeio");
+  if (!dono()) { card.querySelector(".vazio").textContent = "Só para donos."; return; }
+  const desenhar = async () => {
+    try {
+      const I = await fn("admin-registos-a-meio", { action: "preview" });
+      const ex = I.exemplo || {};
+      card.innerHTML = `<h2>Registos a meio (${num(I.total || 0)})</h2><p class="sub">Pessoas que criaram conta e confirmaram o email mas nunca ficaram com perfil.</p>
+        ${I.total ? `<ul class="lista">${(I.contas || []).slice(0, 8).map(c => `<li><div class="info"><b>${esc(c.email)}</b><small>conta criada ${fdata(c.criada)}${c.convidado ? " · convite enviado " + fdata(c.convidado) : " · ainda sem convite"}</small></div></li>`).join("")}</ul>` : '<p class="vazio">Ninguém com o registo a meio.</p>'}
+        ${I.porConvidar ? `<details style="margin-top:10px"><summary class="nota">Ver o email que vai ser enviado</summary><p class="nota"><b>${esc(ex.assunto || "")}</b><br/>${esc(ex.texto || "")}</p></details><button class="btn laranja" id="bMeio" style="margin-top:10px">Enviar convite a ${I.porConvidar}</button>` : ""}<p class="nota" id="rMeio"></p>`;
+      const b = $("#bMeio");
+      if (b) b.onclick = async () => {
+        if (!confirm(`Enviar o convite por email a ${I.porConvidar} pessoa(s)?`)) return;
+        b.disabled = true;
+        try { const j = await fn("admin-registos-a-meio", { action: "send" }); aviso(`Convite enviado a ${j.sent} pessoa(s)${j.failed ? ", " + j.failed + " falharam" : ""}.`, !!j.failed); desenhar(); }
+        catch (e) { $("#rMeio").textContent = "Não saiu: " + e.message; b.disabled = false; }
+      };
+    } catch (e) { card.innerHTML = `<h2>Registos a meio</h2><p class="vazio">Não consegui ver: ${esc(e.message)}</p>`; }
+  };
+  desenhar();
 }
 
 // Envia em lotes pequenos: cada pedido ao servidor demora poucos segundos,

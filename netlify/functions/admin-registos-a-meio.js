@@ -12,13 +12,13 @@
 //                       últimos 30 dias e regista em admin_audit
 const{createClient}=require('@supabase/supabase-js')
 const{json,requireAdmin,audit}=require('./_admin.js')
+const{enviarEmails}=require('./_resend')
 const admin=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY)
 
 const FROM=process.env.RESEND_FROM||'Flinko <onboarding@resend.dev>'
 const REPLY_TO=process.env.RESEND_REPLY_TO||'flinkogeral@gmail.com'
 const LINK='https://flinko.pt/auth?tab=login'
 const DIAS_ENTRE_CONVITES=30
-const BATCH=100
 
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
 
@@ -109,19 +109,11 @@ exports.handler=async(event)=>{
     if(!alvo.length)return json(400,{error:'Não há ninguém por convidar.'})
     if(!process.env.RESEND_API_KEY)return json(503,{error:'RESEND_API_KEY não está configurada no Netlify.'})
 
-    const sent=[],failed=[]
-    for(let i=0;i<alvo.length;i+=BATCH){
-      const chunk=alvo.slice(i,i+BATCH)
-      const res=await fetch('https://api.resend.com/emails/batch',{
-        method:'POST',
-        headers:{Authorization:`Bearer ${process.env.RESEND_API_KEY}`,'Content-Type':'application/json'},
-        body:JSON.stringify(chunk.map(c=>({from:FROM,to:[c.email],reply_to:REPLY_TO,subject:assunto(),html:emailHtml(c),text:texto(c)})))
-      })
-      if(res.ok)chunk.forEach(c=>sent.push(c.id))
-      else{console.error('admin-registos-a-meio: Resend',res.status,await res.text().catch(()=>''));chunk.forEach(c=>failed.push(c.id))}
-    }
-    await audit(admin,auth.user,'convite_registo',{targetType:'campaign',summary:`Convite para acabar o registo enviado a ${sent.length} conta(s)${failed.length?` (${failed.length} falharam)`:''}`,details:{sent,failed}})
-    return json(200,{sent:sent.length,failed:failed.length})
+    const res=await enviarEmails(alvo.map(c=>({from:FROM,to:[c.email],reply_to:REPLY_TO,subject:assunto(),html:emailHtml(c),text:texto(c)})))
+    const sent=[],failed=[],falhas=[]
+    alvo.forEach((c,i)=>{if(res[i]&&res[i].ok)sent.push(c.id);else{failed.push(c.id);falhas.push({id:c.id,email:c.email,motivo:(res[i]&&res[i].motivo)||'erro'})}})
+    await audit(admin,auth.user,'convite_registo',{targetType:'campaign',summary:`Convite para acabar o registo enviado a ${sent.length} conta(s)${failed.length?` (${failed.length} falharam)`:''}`,details:{sent,failed,falhas}})
+    return json(200,{sent:sent.length,failed:failed.length,falhas})
   }catch(err){
     console.error('admin-registos-a-meio error:',err)
     return json(500,{error:err.message})
