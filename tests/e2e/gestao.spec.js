@@ -177,5 +177,7 @@ test('Estratégia: no telemóvel não desliza para o lado', async ({ page }) => 
   await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
   await page.goto('/gestao.html#estrategia');
   await expect(page.locator('#main h1')).toHaveText('Estratégia');
+  // Letra larga, como a de reserva no servidor do GitHub (lá passava 11px).
+  await page.addStyleTag({ content: '*{font-family:Verdana,sans-serif!important}' });
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
 });
