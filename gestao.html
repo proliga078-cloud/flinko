@@ -220,6 +220,28 @@ h4.mini{font-size:.85rem;margin-top:8px;font-family:'Inter',sans-serif}
   #kanban{grid-template-columns:1fr!important}
   .lista li{flex-wrap:wrap}
 }
+/* fase 4: objetivos, histórico, relatório, empresa */
+.g3{grid-template-columns:repeat(3,1fr)}
+.lista{grid-template-columns:minmax(0,1fr)}
+.lista.longa .info b{white-space:normal;overflow-wrap:anywhere}
+.progresso{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin:6px 0 4px}
+.progresso span{display:block;height:100%;background:var(--muted-2);border-radius:99px}
+.progresso.verde span{background:var(--mint)}
+.progresso.laranja span{background:var(--orange)}
+.progresso.vermelho span{background:var(--red)}
+.okr{padding:12px 0;border-bottom:1px solid var(--line)}
+.okr:last-child{border-bottom:0}
+svg.linha{width:100%;height:160px;display:block}
+.linha-eixo{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-top:4px}
+pre.relatorio{white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.6 ui-monospace,Menlo,Consolas,monospace;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:14px;margin:0}
+.verif{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.verif input{margin-top:3px;width:18px;height:18px;flex:none}
+.verif.feito span{text-decoration:line-through;color:var(--muted)}
+details.processo{border-bottom:1px solid var(--line);padding:10px 0}
+details.processo summary{cursor:pointer;font-weight:600}
+details.processo p{white-space:pre-wrap;color:var(--muted);margin:8px 0}
+@media (max-width:900px){.g3{grid-template-columns:1fr}}
+@media print{.lado,.tabs,.no-print,.topo .btn{display:none!important}main{padding:0}.cartao{border:0}}
 </style>
 </head>
 <body>
@@ -263,6 +285,8 @@ h4.mini{font-size:.85rem;margin-top:8px;font-family:'Inter',sans-serif}
 <script src="/assets/gestao-guias.js"></script>
 <script src="/assets/gestao-dinheiro.js"></script>
 <script src="/assets/gestao-marketing.js"></script>
+<script src="/assets/gestao-plano.js"></script>
+<script src="/assets/gestao-empresa.js"></script>
 <script src="/assets/gestao-pesquisa.js"></script>
 </body>
 </html>

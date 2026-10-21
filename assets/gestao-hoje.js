@@ -98,7 +98,7 @@ async function avisos(todos) {
   if (C.meio && C.meio.porConvidar) add("regmeio", "all", "atencao", `${C.meio.porConvidar} pessoa(s) criaram conta mas o registo ficou a meio`, "#mensagens/outros");
   const nv = pros.filter(p => !p.verified && !p.suspended).length; if (nv) add("unver", "all", "atencao", `${nv} profissional(is) por verificar`, "#profissionais/verificar");
   const nc = pros.filter(p => !p.category && !p.suspended).length; if (nc) add("nocat", "all", "atencao", `${nc} profissional(is) sem categoria (não aparecem nas pesquisas)`, "#profissionais/incompleto");
-  if (notif.length) add("notif", "all", "mau", `${notif.length} notificação(ões) falharam o envio`, "/admin-antigo.html");
+  if (notif.length) add("notif", "all", "mau", `${notif.length} notificação(ões) falharam o envio`, "#empresa/registo");
   const rq = reqs.filter(r => r.status !== "resolved" && !r._propostas && t - new Date(r.created_at) > DIA); if (rq.length) add("req", "all", "mau", `${rq.length} pedido(s) de clientes sem nenhuma proposta há mais de 24 h`, "#clientes");
   pros.filter(p => p.plan && p.plan !== "free" && p.plan_expires_at && new Date(p.plan_expires_at) < t + 7 * DIA).forEach(p => { const d = Math.ceil((new Date(p.plan_expires_at) - t) / DIA); add("exp", p.id, d <= 2 ? "mau" : "atencao", `Plano ${p.plan} de ${p.name} expira ${d <= 0 ? "hoje" : "em " + d + " dia(s)"}`, "ficha:" + p.id); });
   const tk = mod.apoio.filter(x => (x.status || "aberto") !== "resolvido" && t - new Date(x.created_at || x.created) > 2 * DIA).length; if (tk) add("ticket", "all", "mau", `${tk} pedido(s) de apoio há mais de 48 h sem resolução`, "#moderacao/apoio");

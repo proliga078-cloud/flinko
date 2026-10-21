@@ -190,9 +190,10 @@ const ICONES = {
   mensagens: '<path d="M21 12a8 8 0 0 1-11.5 7.2L4 21l1.8-5.5A8 8 0 1 1 21 12z"/>',
   clientes: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/>',
   angariacao: '<path d="M3 11v2a2 2 0 0 0 2 2h2l5 4V5L7 9H5a2 2 0 0 0-2 2z"/><path d="M16 8a5 5 0 0 1 0 8"/>',
+  empresa: '<path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16"/><path d="M15 9h4a1 1 0 0 1 1 1v11"/><path d="M3 21h18M8 8h3M8 12h3M8 16h3"/>',
   dinheiro: '<circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.6-1-1.7-1.5-3-1.5-1.7 0-3 .9-3 2.2 0 3 6 1.6 6 4.6 0 1.3-1.3 2.2-3 2.2-1.4 0-2.6-.6-3.1-1.6M12 6v2M12 16v2"/>'
 };
-const PARTES = [["hoje", "Hoje"], ["estrategia", "Estratégia"], ["profissionais", "Profissionais"], ["mensagens", "Mensagens"], ["clientes", "Clientes e pedidos"], ["moderacao", "Moderação e apoio"], ["angariacao", "Angariação"], ["dinheiro", "Dinheiro e equipa"]];
+const PARTES = [["hoje", "Hoje"], ["estrategia", "Estratégia"], ["profissionais", "Profissionais"], ["mensagens", "Mensagens"], ["clientes", "Clientes e pedidos"], ["moderacao", "Moderação e apoio"], ["angariacao", "Angariação"], ["dinheiro", "Dinheiro"], ["empresa", "Empresa"]];
 let parte = "hoje";
 // No telemóvel só cabem 5 botões em baixo: 4 partes principais e "Mais".
 const PRINCIPAIS = ["hoje", "profissionais", "mensagens", "clientes"];
@@ -634,16 +635,16 @@ function fichaLead(l) {
   if (ap) ap.onclick = async () => { if (!confirm("Apagar " + l.name + "?")) return; await api("admin_items?id=eq." + encodeURIComponent(l.id), { method: "DELETE", headers: { Prefer: "return=minimal" } }); C.leads = null; fecharFicha(); ir(); };
 }
 
-/* ================= 6. Dinheiro e equipa ================= */
+/* ================= 6. Dinheiro ================= */
 VISTAS.dinheiro = async main => {
   const pros = await profissionais();
   const pagos = pros.filter(p => p.plan && p.plan !== "free");
-  main.innerHTML = topo("Dinheiro e equipa", "Planos pagos, recebimentos e quem gere o Flinko.") + `
+  main.innerHTML = topo("Dinheiro", "Planos pagos, recebimentos, caixa e faturas.") + `
   <div class="grelha g4" id="stripe">${dono() ? '<div class="cartao"><p class="vazio">A ler a Stripe…</p></div>' : '<div class="cartao"><p class="vazio">Os números da Stripe são só para donos.</p></div>'}</div>
   <div class="grelha g2" style="margin-top:16px">
     <div class="cartao"><h2>Profissionais com plano pago</h2>${pagos.length ? `<ul class="lista">${pagos.map(p => `<li style="cursor:pointer" data-ficha="${esc(p.id)}">${av(p)}<div class="info"><b>${esc(p.name)}</b><small>${esc(p.category || "")}${p.plan_expires_at ? " · até " + fdata(p.plan_expires_at) : ""}</small></div><span class="tag laranja">${esc(p.plan)}</span></li>`).join("")}</ul>` : '<p class="vazio">Ainda ninguém tem plano pago. Quando os perfis tiverem visitas e pedidos, é a altura de propor.</p>'}</div>
     <div class="cartao"><h2>Equipa</h2><p class="sub">Quem tem acesso a este painel.</p><ul class="lista">${(C.admins || []).map(a => `<li>${av(a)}<div class="info"><b>${esc(a.name)}</b><small>${a.admin_role === "support" ? "Apoio (sem dinheiro nem envios em massa)" : "Dono"}</small></div></li>`).join("")}</ul>
-      <p class="nota" style="margin-top:12px">O registo de ações e as permissões da equipa chegam na próxima fase. Até lá estão no <a href="/admin-antigo.html">painel antigo</a>.</p></div>
+      <p class="nota" style="margin-top:12px">Dar ou tirar acesso e ver quem fez o quê: <a href="#empresa">Empresa</a>.</p></div>
   </div>`;
   if (!dono()) return;
   try {

@@ -1,4 +1,4 @@
-// Painel de gestão: "Dinheiro e equipa" completo (fase 3 do painel único).
+// Painel de gestão: "Dinheiro" completo (fase 3 do painel único).
 // Traz do painel antigo Finanças e Faturação, arrumados em 4 separadores:
 // Resumo (Stripe, caixa, quanto tempo a caixa aguenta, valor por cliente),
 // Movimentos (o livro de receitas e despesas), Faturas e Preços e projeção.
@@ -103,7 +103,7 @@ VISTAS.dinheiro = async main => {
 async function vistaMovimentos(main, tabs) {
   const K = await contas();
   const L = K.L.slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
-  main.innerHTML = topo("Dinheiro e equipa", "O livro de receitas e despesas do Flinko.", '<button class="btn laranja" id="novoMov">Novo movimento</button>') + tabs + `
+  main.innerHTML = topo("Dinheiro", "O livro de receitas e despesas do Flinko.", '<button class="btn laranja" id="novoMov">Novo movimento</button>') + tabs + `
     <div class="grelha g2" style="margin-bottom:16px"><div class="cartao"><h2>Pressupostos</h2>
       <label class="rot" for="cx0">Saldo inicial da conta (€)</label><input class="campo" id="cx0" type="number" step="0.01" value="${K.caixa0}"/>
       <label class="rot" for="churn">Percentagem de clientes pagantes que desistem por mês (%)</label><input class="campo" id="churn" type="number" step="0.1" min="0" value="${(K.churn * 100).toFixed(1)}"/>
@@ -123,7 +123,7 @@ async function vistaFaturas(main, tabs) {
   const tri = Math.floor(new Date().getMonth() / 3), noTri = i => { const d = new Date(i.date); return d.getFullYear() === new Date().getFullYear() && Math.floor(d.getMonth() / 3) === tri; };
   const proximoNumero = () => { const y = new Date().getFullYear(); return `FT ${y}/${String(I.filter(i => String(i.number).includes(y + "/")).length + 1).padStart(3, "0")}`; };
   const ESTADO = { rascunho: ["Rascunho", ""], emitida: ["Emitida", "laranja"], paga: ["Paga", "verde"], anulada: ["Anulada", "vermelho"] };
-  main.innerHTML = topo("Dinheiro e equipa", "Controlo das faturas que emites e do IVA.", '<button class="btn laranja" id="novaFat">Nova fatura</button>') + tabs + `
+  main.innerHTML = topo("Dinheiro", "Controlo das faturas que emites e do IVA.", '<button class="btn laranja" id="novaFat">Nova fatura</button>') + tabs + `
     <p class="nota" style="margin-bottom:12px">Isto é um controlo interno. As faturas legais têm de ser emitidas num programa certificado pela Autoridade Tributária. Confirma o IVA e os prazos com o teu contabilista.</p>
     <div class="grelha g4" style="margin-bottom:16px">
       <div class="cartao kpi"><strong>${euro(vivas.filter(i => String(i.date).slice(0, 7) === td.slice(0, 7)).reduce((s, i) => s + (+i.net || 0), 0))}</strong><span>emitido este mês (sem IVA)</span></div>
@@ -157,7 +157,7 @@ async function vistaPrecos(main, tabs) {
     linhas.push({ m, pros: Math.round(pros), pagantes: Math.round(pagantes * 10) / 10, rec, liq, acum });
   }
   const equilibrio = linhas.find(l => l.liq >= 0);
-  main.innerHTML = topo("Dinheiro e equipa", "Preços dos planos, custos fixos e projeção a 12 meses.") + tabs + `
+  main.innerHTML = topo("Dinheiro", "Preços dos planos, custos fixos e projeção a 12 meses.") + tabs + `
     <div class="grelha g2">
       <div class="cartao"><h2>Preços dos planos (€/mês)</h2><p class="sub">Usados para estimar a receita. Os preços cobrados são os da Stripe.</p>
         ${["starter", "pro", "premium"].map(k => `<label class="rot" for="pr_${k}">${k[0].toUpperCase() + k.slice(1)}</label><input class="campo" id="pr_${k}" type="number" step="0.01" value="${K.precos[k]}"/>`).join("")}

@@ -10,10 +10,10 @@ const abrir = (page, opts = {}) => openAdmin(page, { path: '/gestao.html', ...op
 const INBOX = { conversations: [{ id: 'conv-1', professionalId: 'pro-1', name: 'Rui Alves', category: 'Eletricistas', lastMessage: 'Já completei o perfil!', lastAt: iso(0.1), porResponder: true }] };
 const muitos = (n) => Array.from({ length: n }, (_, i) => ({ ...PRO, id: 'p' + i, name: 'Pro ' + i, verified: true }));
 
-test('entra direto com a sessão de admin e mostra as 8 partes', async ({ page }) => {
+test('entra direto com a sessão de admin e mostra as 9 partes', async ({ page }) => {
   await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
   await expect(page.locator('#main h1')).toHaveText('Hoje');
-  await expect(page.locator('#nav a')).toHaveText([/Hoje/, /Estratégia/, /Profissionais/, /Mensagens/, /Clientes e pedidos/, /Moderação e apoio/, /Angariação/, /Dinheiro e equipa/]);
+  await expect(page.locator('#nav a')).toHaveText([/Hoje/, /Estratégia/, /Profissionais/, /Mensagens/, /Clientes e pedidos/, /Moderação e apoio/, /Angariação/, /Dinheiro/, /Empresa/]);
 });
 
 test('Hoje: o que há para fazer (mensagens, verificar, pedidos)', async ({ page }) => {
@@ -437,4 +437,104 @@ test('Marketing: campanha com custo por registo e link de campanha', async ({ pa
   await page.locator('#g_text').fill('Antes e depois de uma sala pintada pelo Rui');
   await page.locator('#fGen').getByRole('button', { name: 'Guardar' }).click();
   await expect.poll(() => postsDe(calls, 'post')[0]?.data).toMatchObject({ text: 'Antes e depois de uma sala pintada pelo Rui', status: 'ideia' });
+});
+
+/* ===== Fase 4: o resto da Estratégia e a parte Empresa ===== */
+const definicao = (calls, key) => calls.filter((c) => c.method === 'POST' && c.path === '/rest/v1/admin_settings' && c.body && c.body.key === key).map((c) => c.body.value).pop();
+
+test('Objetivos: cria um objetivo com resultado-chave que se mede sozinho, e guarda metas', async ({ page }) => {
+  const calls = await abrir(page, { tables: { admin_items: [{ id: 'o1', kind: 'okr', data: { objective: 'Provar que há clientes', quarter: 'T4 2026', krs: [] } }] }, fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#estrategia/objetivos');
+  await expect(page.locator('#main')).toContainText('Nota global da empresa');
+  await page.getByRole('button', { name: 'Juntar resultado-chave' }).click();
+  await page.locator('#g_text').fill('Chegar a 2 profissionais');
+  await page.locator('#g_metric').selectOption('pros');
+  await page.locator('#g_target').fill('2');
+  await page.locator('#fGen').getByRole('button', { name: 'Guardar' }).click();
+  await expect.poll(() => postsDe(calls, 'okr').pop()?.data.krs).toEqual([expect.objectContaining({ text: 'Chegar a 2 profissionais', metric: 'pros', target: 2 })]);
+  await expect(page.locator('.okr')).toContainText('1 de 2 · 50%');
+  await page.locator('#meta_pros').fill('100');
+  await page.getByRole('button', { name: 'Guardar metas' }).click();
+  await expect.poll(() => definicao(calls, 'goals')).toEqual({ pros: 100, clients: 0, reviews: 0, mrr: 0 });
+});
+
+test('Plano e decisões: junta uma sugestão ao plano e regista uma decisão', async ({ page }) => {
+  const calls = await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#estrategia/plano');
+  await expect(page.locator('#main')).toContainText('Ainda sem ideias no plano');
+  await page.locator('[data-sug-rm="0"]').click();
+  await expect.poll(() => postsDe(calls, 'backlog')[0]?.data).toMatchObject({ title: 'Pedir avaliações depois de cada trabalho', impact: 5, effort: 2, status: 'ideia' });
+  await page.getByRole('button', { name: 'Nova decisão' }).click();
+  await page.locator('#g_title').fill('Começar só por Braga');
+  await page.locator('#fGen').getByRole('button', { name: 'Guardar' }).click();
+  await expect.poll(() => postsDe(calls, 'decision')[0]?.data.title).toBe('Começar só por Braga');
+});
+
+test('Histórico: tabela de crescimento e fotografia diária dos números', async ({ page }) => {
+  const calls = await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#estrategia/historico');
+  const linha = page.locator('tr', { has: page.locator('th', { hasText: 'Profissionais' }) });
+  await expect(linha.locator('td').first()).toHaveText('1');
+  await expect(page.locator('svg.linha')).toBeVisible();
+  await expect.poll(() => postsDe(calls, 'snapshot')[0]?.data).toMatchObject({ pros: 1, clients: 1 });
+});
+
+test('Relatório e investidores: texto pronto a copiar e mercado guardado', async ({ page }) => {
+  const calls = await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#estrategia/relatorio');
+  await expect(page.locator('#relTxt')).toContainText('RELATÓRIO FLINKO · últimos 7 dias');
+  await expect(page.locator('#relTxt')).toContainText('1 pedido(s) de clientes sem nenhuma proposta');
+  await page.getByRole('button', { name: '30 dias' }).click();
+  await expect(page.locator('#relTxt')).toContainText('últimos 30 dias');
+  await page.locator('[data-est="investidores"]').click();
+  await page.locator('#t_n').fill('1000');
+  await page.locator('#t_arpu').fill('10');
+  await page.locator('#t_sam').fill('50');
+  await page.locator('#t_som').fill('10');
+  await page.getByRole('button', { name: 'Guardar', exact: true }).click();
+  await expect.poll(() => definicao(calls, 'tam')).toEqual({ n: 1000, arpu: 10, sam: 50, som: 10 });
+  await expect(page.locator('.kpi', { hasText: 'mercado total por ano' })).toContainText(/120\s000,00/);
+  await expect(page.locator('#invTxt')).toContainText('Profissionais: 1 (0 verificados)');
+});
+
+test('Empresa: o dono muda o papel de alguém', async ({ page }) => {
+  const calls = await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#empresa');
+  await expect(page.locator('#nav a')).toHaveText([/Hoje/, /Estratégia/, /Profissionais/, /Mensagens/, /Clientes e pedidos/, /Moderação e apoio/, /Angariação/, /Dinheiro/, /Empresa/]);
+  await page.locator('[data-papel="dono@flinko.pt"]').selectOption('support');
+  await expect.poll(() => calls.find((c) => c.path === '/rest/v1/rpc/admin_set_role')?.body).toEqual({ p_email: 'dono@flinko.pt', p_role: 'support' });
+});
+
+test('Empresa: quem é apoio não pode mudar acessos', async ({ page }) => {
+  await abrir(page, { role: 'support', fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#empresa');
+  await expect(page.locator('#main')).toContainText('dono@flinko.pt');
+  await expect(page.locator('[data-papel]')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Dar acesso' })).toHaveCount(0);
+});
+
+test('Registo de ações: procura e notificações falhadas', async ({ page }) => {
+  await abrir(page, { tables: { notification_queue: [{ id: 1, status: 'failed' }, { id: 2, status: 'sent' }] }, fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#empresa/registo');
+  await expect(page.locator('#rgTab')).toContainText('Rui Alves: suspended');
+  await expect(page.locator('.kpi', { hasText: 'notificações que falharam' }).locator('strong')).toHaveText('1');
+  await page.locator('#rgQ').fill('ninguém');
+  await expect(page.locator('#rgTab')).toContainText('Nada com estes filtros');
+});
+
+test('Conformidade: marca um ponto da lista e junta um risco comum', async ({ page }) => {
+  const calls = await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#empresa/conformidade');
+  await page.getByText('Termos e condições publicados').click();
+  await expect.poll(() => Object.keys(definicao(calls, 'checks') || {})).toEqual(['RGPD:1']);
+  await page.locator('[data-sug-risco="0"]').click();
+  await expect.poll(() => postsDe(calls, 'risk')[0]?.data).toMatchObject({ title: 'Poucos clientes: profissionais sem procura', prob: 5, impact: 5 });
+});
+
+test('Notas de reunião: as ações passam a tarefas', async ({ page }) => {
+  const calls = await abrir(page, { tables: { admin_items: [{ id: 'n1', kind: 'note', data: { date: '2026-10-20', title: 'Reunião com o contabilista', actions: 'Abrir atividade\nPedir orçamento do seguro' } }] }, fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#empresa/contactos');
+  await page.getByRole('button', { name: 'Passar a tarefas' }).click();
+  await expect.poll(() => calls.filter((c) => c.method === 'POST' && c.path === '/rest/v1/admin_tasks').map((c) => c.body.title)).toEqual(['Abrir atividade', 'Pedir orçamento do seguro']);
+  await expect.poll(() => postsDe(calls, 'note')[0]?.data.tasksDone).toBe(true);
 });
