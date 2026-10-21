@@ -18,7 +18,7 @@ function abrirPesquisa() {
     const tem = (...v) => v.join(" ").toLowerCase().includes(q);
     const r = [];
     F.pros.forEach(p => { if (tem(p.name, p.category, p.location, p._tel, F.mails[p.id])) r.push({ tipo: "Profissional", nome: p.name, sub: [p.category, p.location].filter(Boolean).join(" · "), abrir: () => fichaPro(p.id), p }); });
-    F.clientes.forEach(c => { if (tem(c.name, F.mails[c.id])) r.push({ tipo: "Cliente", nome: c.name || "Sem nome", sub: F.mails[c.id] || "cliente", abrir: () => { fecharFicha(); location.hash = "#mensagens/enviar/" + c.id; }, p: c }); });
+    F.clientes.forEach(c => { if (tem(c.name, F.mails[c.id])) r.push({ tipo: "Cliente", nome: c.name || "Sem nome", sub: F.mails[c.id] || "cliente", abrir: () => (typeof fichaCliente === "function" ? fichaCliente(c.id) : (fecharFicha(), location.hash = "#mensagens/enviar/" + c.id)), p: c }); });
     F.lds.forEach(l => { if (tem(l.name, l.phone, l.category, l.zone)) r.push({ tipo: "Angariação", nome: l.name, sub: [l.category, l.zone, l.phone].filter(Boolean).join(" · "), abrir: () => { fecharFicha(); location.hash = "#angariacao"; setTimeout(() => fichaLead(l), 400); } }); });
     F.reqs.forEach(x => { if (tem(x.title, x.category, x.location, x.description)) r.push({ tipo: "Pedido", nome: x.title, sub: [x.category, x.location].filter(Boolean).join(" · "), abrir: () => { fecharFicha(); location.hash = "#clientes"; } }); });
     F.tickets.forEach(t => { if (tem(t.subject, t.name, t.email, t.message, t.text)) r.push({ tipo: t.kind === "denuncia" ? "Denúncia" : "Apoio", nome: t.subject || "(sem assunto)", sub: t.name || "", abrir: () => { fecharFicha(); location.hash = "#moderacao/" + (t.kind === "denuncia" ? "denuncias" : "apoio"); } }); });

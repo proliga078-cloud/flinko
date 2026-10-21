@@ -604,6 +604,8 @@ VISTAS.angariacao = async main => {
     l.log = [{ at: new Date().toISOString(), txt: "WhatsApp · primeiro contacto" }].concat(l.log || []);
     if (!l.next || l.next <= hoje()) l.next = new Date(Date.now() + 3 * DIA).toISOString().slice(0, 10);
     await guardarLead(l).catch(e => aviso("Não guardei o contacto: " + e.message, true));
+    // Como no painel antigo: o primeiro contacto marca seguimentos aos 3 e 7 dias (parte Hoje).
+    if (typeof comecarSequencia === "function") await comecarSequencia("lead", l.id, "d1").catch(() => {});
   }));
 };
 function fichaLead(l) {

@@ -267,3 +267,94 @@ test('telemóvel: 4 partes em baixo e o "Mais" com o resto e a pesquisa', async 
   await expect(page.locator('#main h1')).toHaveText('Moderação e apoio');
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
 });
+
+/* ===== Fase 2: Hoje, Profissionais e Clientes completos ===== */
+const hojeD = () => new Date().toISOString().slice(0, 10);
+const espiaJanelas = (page) => page.evaluate(() => { window.__abertos = []; window.open = (u) => { window.__abertos.push(u); return null; }; });
+
+test('Hoje: avisos com "adiar" e escolher que avisos aparecem', async ({ page }) => {
+  const calls = await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
+  const avisos = page.locator('#cAvisos');
+  await expect(avisos).toContainText('1 profissional(is) por verificar');
+  await expect(avisos).toContainText('denúncia');
+  await avisos.locator('li', { hasText: 'por verificar' }).getByRole('button', { name: 'Adiar 7 dias' }).click();
+  await expect.poll(() => calls.find((c) => c.method === 'POST' && c.path === '/rest/v1/admin_items' && c.body.kind === 'snooze')?.body.data.key).toBe('unver:all');
+  await page.getByRole('button', { name: 'Escolher avisos' }).click();
+  await page.locator('#fRegras input[value="den"]').uncheck();
+  await page.locator('#fRegras').getByRole('button', { name: 'Guardar' }).click();
+  await expect.poll(() => calls.find((c) => c.method === 'POST' && c.path === '/rest/v1/admin_settings')?.body).toEqual({ key: 'alertrules', value: { off: ['den'] } });
+});
+
+test('Hoje: seguimento automático por WhatsApp envia e marca o passo seguinte', async ({ page }) => {
+  const calls = await abrir(page, {
+    tables: { admin_items: [
+      { id: 'l1', kind: 'lead', data: { name: 'Carlos Pinto', phone: '912000111', category: 'Canalizador', stage: 'contactado' } },
+      { id: 'f1', kind: 'followup', data: { target: 'lead', ref: 'l1', seq: 'd1', step: 0, tpl: 'd6', due: hojeD(), created: iso(3) } },
+    ] },
+    fns: { 'admin-flinko-message': INBOX },
+  });
+  await expect(page.locator('#main')).toContainText('Seguimentos automáticos');
+  await espiaJanelas(page);
+  await page.locator('[data-seg="f1"]').click();
+  await expect.poll(() => page.evaluate(() => window.__abertos[0] || '')).toContain('wa.me');
+  const seg = () => calls.filter((c) => c.method === 'POST' && c.path === '/rest/v1/admin_items' && c.body.kind === 'followup').map((c) => c.body);
+  await expect.poll(() => seg().some((b) => b.id === 'f1' && b.data.done === 'enviado')).toBe(true);
+  await expect.poll(() => seg().some((b) => b.id !== 'f1' && b.data.tpl === 'd7' && b.data.step === 1)).toBe(true);
+});
+
+test('Tarefas: junta, move e mostra no calendário', async ({ page }) => {
+  const calls = await abrir(page, { tables: { admin_tasks: [{ id: 't1', title: 'Ligar à administradora', status: 'todo', priority: 'alta', due_date: hojeD(), created_at: iso(1) }] }, fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#hoje/tarefas');
+  await page.locator('#tTit').fill('Rever perfis novos');
+  await page.getByRole('button', { name: 'Juntar' }).click();
+  await expect.poll(() => calls.find((c) => c.method === 'POST' && c.path === '/rest/v1/admin_tasks')?.body).toMatchObject({ title: 'Rever perfis novos', status: 'todo' });
+  await page.locator('[data-mover="t1"][data-para="done"]').click();
+  await expect.poll(() => calls.some((c) => c.method === 'POST' && c.path === '/rest/v1/admin_tasks' && c.body.id === 't1' && c.body.status === 'done')).toBe(true);
+  await page.goto('/gestao.html#hoje/calendario');
+  await page.locator('[data-dia="' + hojeD() + '"]').click();
+  await expect(page.locator('#calDia')).toContainText('Ligar à administradora');
+});
+
+test('Profissionais: contas suspeitas, Excel, e ficha com consentimento, tarefa e reembolso', async ({ page }) => {
+  const resposta = (m) => m.startsWith('Por que canal') ? 'WhatsApp' : m.startsWith('Quanto') ? '' : m.startsWith('Tarefa') ? 'Ajudar com as fotos' : 'Respondeu SIM';
+  const calls = await abrir(page, {
+    dialogo: (d) => (d.type() === 'prompt' ? d.accept(resposta(d.message())) : d.accept()),
+    tables: { profiles: [{ id: 'admin-1', name: 'Admin', is_admin: true, account_type: 'professional', created_at: iso(100) }, PRO, { ...PRO, id: 'pro-2', name: 'teste', created_at: iso(40) }] },
+    fns: { 'admin-flinko-message': INBOX, 'admin-refund': (b) => (b.action === 'list' ? { charges: [{ id: 'ch_1', amount: 1999, amount_refunded: 0, currency: 'eur', paid: true, created: 1792000000 }] } : { ok: true }) },
+  });
+  await page.goto('/gestao.html#profissionais/suspeitos');
+  await expect(page.locator('#listaPros')).toContainText('teste');
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Exportar para Excel' }).click();
+  expect((await download).suggestedFilename()).toMatch(/^flinko-profissionais-.*\.csv$/);
+  await page.goto('/gestao.html#profissionais/todos');
+  await page.locator('#listaPros li', { hasText: 'Rui Alves' }).click();
+  const ficha = page.locator('#ficha');
+  await expect(ficha).toContainText('Atividade');
+  await ficha.getByRole('button', { name: 'Registar consentimento' }).click();
+  await expect.poll(() => calls.find((c) => c.method === 'POST' && c.body && c.body.kind === 'consent')?.body.data).toMatchObject({ ref: 'pro-1', status: 'dado', channel: 'WhatsApp', source: 'Respondeu SIM' });
+  await ficha.getByRole('button', { name: 'Nova tarefa para esta pessoa' }).click();
+  await expect.poll(() => calls.find((c) => c.method === 'POST' && c.path === '/rest/v1/admin_tasks')?.body).toMatchObject({ title: 'Ajudar com as fotos', profile_id: 'pro-1' });
+  await ficha.getByRole('button', { name: 'Ver pagamentos e reembolsos' }).click();
+  await ficha.getByRole('button', { name: 'Reembolsar' }).click();
+  await expect.poll(() => calls.find((c) => c.fn === 'admin-refund' && c.body.action === 'refund')?.body).toMatchObject({ targetProfileId: 'pro-1', chargeId: 'ch_1' });
+});
+
+test('Clientes: lista com pedidos e ficha do cliente (suspender)', async ({ page }) => {
+  const calls = await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#clientes/clientes');
+  await expect(page.locator('#listaCli')).toContainText('Ana Cliente');
+  await expect(page.locator('#listaCli')).toContainText('1 pedido(s)');
+  await page.locator('#listaCli li', { hasText: 'Ana Cliente' }).click();
+  await expect(page.locator('#ficha')).toContainText('Instalar tomadas');
+  await page.locator('#ficha').getByRole('button', { name: 'Suspender' }).click();
+  await expect.poll(() => calls.find((c) => c.method === 'PATCH' && c.path === '/rest/v1/profiles')?.body).toEqual({ suspended: true });
+});
+
+test('Angariação: o WhatsApp do primeiro contacto marca o seguimento dos 3 dias', async ({ page }) => {
+  const calls = await abrir(page, { tables: { admin_items: [{ id: 'l1', kind: 'lead', data: { name: 'Carlos Pinto', phone: '912000111', category: 'Canalizador', stage: 'novo' } }] }, fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#angariacao');
+  await page.evaluate(() => document.addEventListener('click', (e) => { if (e.target.closest('[data-wa-lead]')) e.preventDefault(); }, true));
+  await page.locator('[data-wa-lead="l1"]').click();
+  await expect.poll(() => calls.find((c) => c.method === 'POST' && c.body && c.body.kind === 'followup')?.body.data).toMatchObject({ target: 'lead', ref: 'l1', seq: 'd1', tpl: 'd6' });
+});

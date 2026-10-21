@@ -56,7 +56,9 @@ async function openAdmin(page, { role = 'owner', tables = {}, fail = {}, fns = {
       return route.fulfill({ status: 200, json: null });
     }
     if (method !== 'GET') return route.fulfill({ status: 204, body: '' });
-    const rows = T[name] || [];
+    let rows = T[name] || [];
+    // Como a base de dados: admin_items filtra-se por tipo (kind=eq.lead, ...).
+    if (name === 'admin_items' && q.get('kind')) rows = rows.filter((r) => 'eq.' + r.kind === q.get('kind'));
     const off = Number(q.get('offset') || 0), lim = q.has('limit') ? Number(q.get('limit')) : rows.length;
     return route.fulfill({ json: rows.slice(off, off + lim) });
   });
