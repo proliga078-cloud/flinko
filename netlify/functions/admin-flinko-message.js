@@ -1,4 +1,4 @@
-// Mensagens da Flinko para um grupo de profissionais (admin.html › Contactar
+// Mensagens da Flinko para um grupo de profissionais (admin-antigo.html › Contactar
 // profissionais › "Mensagem da Flinko").
 //
 // Cada profissional recebe a mensagem na sua conversa com a Flinko, dentro da

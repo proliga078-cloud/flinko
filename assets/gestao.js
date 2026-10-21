@@ -205,7 +205,7 @@ function desenharNav(contas = {}) {
     abrirFicha(`<div class="cab"><div><h2>Mais</h2></div><button class="fechar" aria-label="Fechar">×</button></div>
       <button type="button" class="btn linha" style="width:100%;margin-bottom:12px" id="mProcurar">Procurar pessoas, pedidos, contactos…</button>
       <ul class="lista">${outras.map(([id, nome]) => `<li><a href="#${id}" class="info" style="text-decoration:none" data-fechar><b>${esc(nome)}</b></a>${contas[id] ? `<span class="tag laranja">${contas[id]}</span>` : ""}</li>`).join("")}
-        <li><a href="/admin.html" class="info" style="text-decoration:none"><b>Painel antigo</b></a></li></ul>`);
+        <li><a href="/admin-antigo.html" class="info" style="text-decoration:none"><b>Painel antigo</b></a></li></ul>`);
     $("#mProcurar").onclick = () => { fecharFicha(); if (typeof abrirPesquisa === "function") abrirPesquisa(); };
     $("#ficha").querySelectorAll("[data-fechar]").forEach(a => a.addEventListener("click", fecharFicha));
   };
@@ -329,12 +329,16 @@ async function fichaPro(id) {
   f.querySelector('[data-acao="mensagem"]').onclick = () => { fecharFicha(); location.hash = "#mensagens/enviar/" + id; };
   f.querySelector('[data-acao="verificar"]').onclick = async () => {
     await rpc("admin_set_verified", { p_profile: id, p_value: !p.verified });
-    p.verified = !p.verified; aviso(p.verified ? "Verificado." : "Verificação retirada."); fichaPro(id); if (parte === "profissionais" || parte === "hoje") ir();
+    // Atualiza só o botão: redesenhar a ficha apagava as notas que estavam a ser escritas.
+    p.verified = !p.verified; aviso(p.verified ? "Verificado." : "Verificação retirada.");
+    const bv = f.querySelector('[data-acao="verificar"]'); bv.textContent = p.verified ? "Retirar verificação" : "Verificar"; bv.className = "btn peq " + (p.verified ? "linha" : "verde");
+    if (parte === "profissionais" || parte === "hoje") ir();
   };
   f.querySelector('[data-acao="suspender"]').onclick = async () => {
     if (!confirm(p.suspended ? "Reativar a conta de " + p.name + "?" : "Suspender " + p.name + "? O perfil deixa de aparecer no site.")) return;
     await api("profiles?id=eq." + encodeURIComponent(id), { method: "PATCH", headers: { Prefer: "return=minimal" }, body: { suspended: !p.suspended } });
-    p.suspended = !p.suspended; aviso(p.suspended ? "Conta suspensa." : "Conta reativada."); fichaPro(id); ir();
+    p.suspended = !p.suspended; aviso(p.suspended ? "Conta suspensa." : "Conta reativada.");
+    f.querySelector('[data-acao="suspender"]').textContent = p.suspended ? "Reativar conta" : "Suspender"; ir();
   };
   const pl = f.querySelector('[data-acao="plano"]');
   if (pl) pl.onchange = async () => {
@@ -637,7 +641,7 @@ VISTAS.dinheiro = async main => {
   <div class="grelha g2" style="margin-top:16px">
     <div class="cartao"><h2>Profissionais com plano pago</h2>${pagos.length ? `<ul class="lista">${pagos.map(p => `<li style="cursor:pointer" data-ficha="${esc(p.id)}">${av(p)}<div class="info"><b>${esc(p.name)}</b><small>${esc(p.category || "")}${p.plan_expires_at ? " · até " + fdata(p.plan_expires_at) : ""}</small></div><span class="tag laranja">${esc(p.plan)}</span></li>`).join("")}</ul>` : '<p class="vazio">Ainda ninguém tem plano pago. Quando os perfis tiverem visitas e pedidos, é a altura de propor.</p>'}</div>
     <div class="cartao"><h2>Equipa</h2><p class="sub">Quem tem acesso a este painel.</p><ul class="lista">${(C.admins || []).map(a => `<li>${av(a)}<div class="info"><b>${esc(a.name)}</b><small>${a.admin_role === "support" ? "Apoio (sem dinheiro nem envios em massa)" : "Dono"}</small></div></li>`).join("")}</ul>
-      <p class="nota" style="margin-top:12px">RGPD, faturação, registo de ações e o resto continuam no <a href="/admin.html">painel antigo</a>.</p></div>
+      <p class="nota" style="margin-top:12px">RGPD, faturação, registo de ações e o resto continuam no <a href="/admin-antigo.html">painel antigo</a>.</p></div>
   </div>`;
   if (!dono()) return;
   try {

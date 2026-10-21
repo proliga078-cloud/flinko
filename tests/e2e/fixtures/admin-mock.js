@@ -1,5 +1,5 @@
 // Simulador da API REST do Supabase e das funções Netlify para os testes do
-// painel de gestão (admin.html). Ver tests/e2e/admin-gestao.spec.js.
+// painel de gestão (admin-antigo.html). Ver tests/e2e/admin-gestao.spec.js.
 const { expect } = require('@playwright/test');
 
 const SB = 'https://cdwinidhtfxfxowflize.supabase.co';
@@ -31,7 +31,7 @@ function baseTables() {
 }
 
 // Simula o Supabase e as funções Netlify. Devolve o registo de pedidos feitos.
-async function openAdmin(page, { role = 'owner', tables = {}, fail = {}, fns = {}, view, me = {}, path = '/admin.html', dialogo } = {}) {
+async function openAdmin(page, { role = 'owner', tables = {}, fail = {}, fns = {}, view, me = {}, path = '/admin-antigo.html', dialogo } = {}) {
   const T = Object.assign(baseTables(), tables), calls = [];
   await page.addInitScript(() => localStorage.setItem('fk_session', JSON.stringify({ access_token: 'tok', refresh_token: 'r', user: { id: 'admin-1', email: 'dono@flinko.pt' } })));
   await page.route(SB + '/**', async (route) => {
@@ -69,8 +69,8 @@ async function openAdmin(page, { role = 'owner', tables = {}, fail = {}, fns = {
   });
   page.on('dialog', (d) => (dialogo ? dialogo(d) : d.accept()));
   // Painel novo (gestao.html): mesmo simulador, outra página.
-  if (path !== '/admin.html') { await page.goto(path); return calls; }
-  await page.goto('/admin.html');
+  if (path !== '/admin-antigo.html') { await page.goto(path); return calls; }
+  await page.goto('/admin-antigo.html');
   await expect(page.locator('#app')).toBeVisible();
   await expect(page.locator('#main h1')).toHaveText('Painel');
   if (view) await page.evaluate((v) => go(v), view);

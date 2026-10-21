@@ -1,4 +1,4 @@
-// Funil de clientes no painel (admin.html › Crescimento e funil): junta os
+// Funil de clientes no painel (admin-antigo.html › Crescimento e funil): junta os
 // eventos contados no servidor (admin_event_counts) com o que já está na base
 // de dados (perfis vistos, conversas, pedidos, trabalhos).
 const { test, expect } = require('@playwright/test');

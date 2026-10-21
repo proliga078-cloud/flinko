@@ -1,5 +1,5 @@
 // Envio de emails a um grupo de profissionais a partir do painel admin
-// (admin.html › Contactar profissionais). Só donos.
+// (admin-antigo.html › Contactar profissionais). Só donos.
 //
 // Antes, o painel só abria o mailto: de uma pessoa de cada vez. Aqui o admin
 // escolhe um segmento (ex.: "perfil incompleto"), escreve o texto uma vez e o

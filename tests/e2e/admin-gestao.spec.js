@@ -1,4 +1,4 @@
-// Testes E2E do painel de gestão (admin.html).
+// Testes E2E do painel de gestão (admin-antigo.html).
 //
 // O painel fala diretamente com a API REST do Supabase (fetch, sem o SDK) e
 // com as funções Netlify. Aqui essas duas APIs são simuladas com page.route:

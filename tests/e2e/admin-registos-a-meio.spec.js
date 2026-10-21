@@ -1,4 +1,4 @@
-// admin.html › Avisos: contas com o registo a meio e convite para acabarem.
+// admin-antigo.html › Avisos: contas com o registo a meio e convite para acabarem.
 const { test, expect } = require('@playwright/test');
 const { openAdmin, modalOk } = require('./fixtures/admin-mock');
 

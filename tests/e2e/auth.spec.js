@@ -5,7 +5,7 @@
 // comportamentos de segurança já existentes no código:
 //  - proteção contra open-redirect (safeRedirect só aceita caminhos do
 //    próprio site, nunca um domínio externo passado em ?redirect=)
-//  - o email de admin ser sempre encaminhado para admin.html
+//  - o email de admin ser sempre encaminhado para o painel de gestão (gestao.html)
 const { test, expect } = require('@playwright/test');
 const path = require('path');
 
@@ -54,7 +54,7 @@ test.describe('auth.html — login', () => {
     await page.waitForURL('**/dashboard.html');
   });
 
-  test('login de conta admin (is_admin() = true no servidor) redireciona para admin.html', async ({ page }) => {
+  test('login de conta admin (is_admin() = true no servidor) redireciona para o painel de gestão (gestao.html)', async ({ page }) => {
     await withFakeSupabase(page, {
       loginUser: { id: 'admin-1', email: 'admin@example.com' },
       loginSession: { access_token: 'tok-admin', user: { id: 'admin-1', email: 'admin@example.com' } },
@@ -64,7 +64,7 @@ test.describe('auth.html — login', () => {
     await page.fill('#login-email', 'admin@example.com');
     await page.fill('#login-password', 'adminpass');
     await page.click('#login-btn');
-    await page.waitForURL('**/admin.html');
+    await page.waitForURL('**/gestao.html');
   });
 
   test('?redirect= para um caminho do próprio site é respeitado', async ({ page }) => {
