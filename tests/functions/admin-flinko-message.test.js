@@ -35,7 +35,7 @@ function setup({ isAdmin = true } = {}) {
   scenario.getUser = async () => ({ data: { user: { id: ADMIN, email: 'david@flinko.pt' } }, error: null });
   const ins = (table, calls) => { const c = calls.find((x) => x.method === 'insert'); if (c) (scenario.inserts[table] = scenario.inserts[table] || []).push(...[].concat(c.args[0])); return c; };
   scenario.queries = {
-    profiles: (calls) => calls[0].args[0] === 'is_admin,admin_role' ? { data: [{ is_admin: isAdmin, admin_role: 'owner' }], error: null } : { data: PROFILES, error: null },
+    profiles: (calls) => calls.some((c) => c.method === 'eq' && c.args[0] === 'is_admin') ? { data: [{ id: ADMIN }], error: null } : calls[0].args[0] === 'is_admin,admin_role' ? { data: [{ is_admin: isAdmin, admin_role: 'owner' }], error: null } : { data: PROFILES, error: null },
     user_blocks: () => ({ data: [{ blocker_id: 'blq' }], error: null }),
     conversations: (calls) => {
       if (ins('conversations', calls)) return { data: [{ id: 'conv-ana', professional_id: 'ana' }], error: null };
@@ -123,7 +123,7 @@ test('reply: qualquer admin responde numa conversa da Flinko, em nome da Flinko'
   setup();
   scenario.getUser = async () => ({ data: { user: { id: MATILDE, email: 'matilde@flinko.pt' } }, error: null });
   scenario.queries.conversations = () => ({ data: [{ id: 'conv-rui', professional_id: 'rui', client_id: ADMIN, is_flinko: true }], error: null });
-  scenario.queries.profiles = (calls) => calls[0].args[0] === 'is_admin,admin_role' ? { data: [{ is_admin: true, admin_role: 'owner' }], error: null } : { data: [{ id: 'rui', name: 'Rui Alves', notify_email: true }], error: null };
+  scenario.queries.profiles = (calls) => calls.some((c) => c.method === 'eq' && c.args[0] === 'is_admin') ? { data: [{ id: ADMIN }], error: null } : calls[0].args[0] === 'is_admin,admin_role' ? { data: [{ is_admin: true, admin_role: 'owner' }], error: null } : { data: [{ id: 'rui', name: 'Rui Alves', notify_email: true }], error: null };
   const emails = [];
   global.fetch = async (url, opts) => { emails.push(JSON.parse(opts.body)); return { ok: true }; };
   const res = await handler(evr({ action: 'reply', conversationId: 'conv-rui', message: 'Já tratámos disso.' }));
@@ -146,7 +146,7 @@ test('inbox: lista só as conversas da Flinko, com o nome do profissional e se e
     assert.ok(calls.some((c) => c.method === 'eq' && c.args[0] === 'is_flinko' && c.args[1] === true));
     return { data: [{ id: 'conv-rui', professional_id: 'rui', client_id: ADMIN, last_message: 'Obrigado!', last_message_at: '2026-10-20T10:00:00Z' }], error: null };
   };
-  scenario.queries.profiles = (calls) => calls[0].args[0] === 'is_admin,admin_role' ? { data: [{ is_admin: true, admin_role: 'owner' }], error: null } : { data: [{ id: 'rui', name: 'Rui Alves', category: 'Eletricistas', photo_url: null }], error: null };
+  scenario.queries.profiles = (calls) => calls.some((c) => c.method === 'eq' && c.args[0] === 'is_admin') ? { data: [{ id: ADMIN }], error: null } : calls[0].args[0] === 'is_admin,admin_role' ? { data: [{ is_admin: true, admin_role: 'owner' }], error: null } : { data: [{ id: 'rui', name: 'Rui Alves', category: 'Eletricistas', photo_url: null }], error: null };
   scenario.queries.messages = () => ({ data: [{ conversation_id: 'conv-rui', sender_id: 'rui', created_at: '2026-10-20T10:00:00Z' }], error: null });
   const res = await handler(evr({ action: 'inbox' }));
   assert.equal(res.statusCode, 200);
@@ -180,4 +180,60 @@ test('send: uma conversa normal que o admin já tinha com o profissional passa a
   assert.equal(res.statusCode, 200);
   assert.ok(atualizada.some((c) => c.method === 'update' && c.args[0].is_flinko === true));
   assert.deepEqual(scenario.inserts.messages.map((m) => m.conversation_id), ['conv-rui', 'conv-ana-antiga']);
+});
+
+// Fase 1 do painel único (out/2026): o dono quer escrever também aos
+// clientes pela conta da Flinko. Na conversa com um cliente, a Flinko fica
+// do lado do profissional (professional_id = admin) e o cliente do seu lado.
+test('send: a clientes cria a conversa com a Flinko no lugar do profissional', async () => {
+  setup();
+  scenario.queries.profiles = (calls) => calls[0].args[0] === 'is_admin,admin_role'
+    ? { data: [{ is_admin: true, admin_role: 'owner' }], error: null }
+    : { data: [{ id: 'cli-1', name: 'Ana Cliente', account_type: 'client', notify_email: true }], error: null };
+  let procura = null;
+  scenario.queries.conversations = (calls) => {
+    const ins = calls.find((c) => c.method === 'insert');
+    if (ins) { (scenario.inserts.conversations = scenario.inserts.conversations || []).push(...ins.args[0]); return { data: [{ id: 'conv-cli', professional_id: ADMIN, client_id: 'cli-1' }], error: null }; }
+    procura = calls; return { data: [], error: null };
+  };
+  global.fetch = async () => ({ ok: true });
+  const res = await handler(evr({ action: 'send', profileIds: ['cli-1'], message: 'Olá {nome}, o teu pedido já tem propostas?' }));
+  assert.equal(res.statusCode, 200);
+  assert.ok(procura.some((c) => c.method === 'in' && c.args[0] === 'client_id'), 'procura a conversa da Flinko pelo lado do cliente');
+  assert.deepEqual(scenario.inserts.conversations, [{ professional_id: ADMIN, client_id: 'cli-1', is_flinko: true }]);
+  assert.deepEqual(scenario.inserts.messages.map((m) => [m.conversation_id, m.sender_id, m.content]), [['conv-cli', ADMIN, 'Olá Ana, o teu pedido já tem propostas?']]);
+});
+
+test('reply e thread: numa conversa com um cliente, a Flinko é o lado do profissional', async () => {
+  setup();
+  scenario.queries.conversations = () => ({ data: [{ id: 'conv-cli', professional_id: ADMIN, client_id: 'cli-1', is_flinko: true }], error: null });
+  scenario.queries.profiles = (calls) => {
+    if (calls[0].args[0] === 'is_admin,admin_role') return { data: [{ is_admin: true, admin_role: 'owner' }], error: null };
+    if (calls.some((c) => c.method === 'eq' && c.args[0] === 'is_admin')) return { data: [{ id: ADMIN }], error: null };
+    return { data: [{ id: 'cli-1', name: 'Ana Cliente', notify_email: true }], error: null };
+  };
+  scenario.queries.messages = (calls) => { if (calls.some((c) => c.method === 'insert')) { (scenario.inserts.messages = scenario.inserts.messages || []).push(calls.find((c) => c.method === 'insert').args[0]); return { data: null, error: null }; } return { data: [{ id: 'm1', sender_id: 'cli-1', content: 'Obrigada!', created_at: '2026-10-20T10:00:00Z' }], error: null }; };
+  global.fetch = async () => ({ ok: true });
+  const t = JSON.parse((await handler(evr({ action: 'thread', conversationId: 'conv-cli' }))).body);
+  assert.deepEqual(t.messages.map((m) => [m.content, m.deFlinko]), [['Obrigada!', false]]);
+  const r = await handler(evr({ action: 'reply', conversationId: 'conv-cli', message: 'De nada!' }));
+  assert.equal(r.statusCode, 200);
+  assert.deepEqual(scenario.inserts.messages.map((m) => [m.sender_id, m.content]), [[ADMIN, 'De nada!']]);
+  assert.deepEqual(scenario.pushes.map((p) => p.id), ['cli-1']);
+});
+
+test('inbox: conversas com clientes aparecem com o nome do cliente e marcadas como cliente', async () => {
+  setup();
+  scenario.queries.conversations = () => ({ data: [{ id: 'conv-cli', professional_id: ADMIN, client_id: 'cli-1', last_message: 'Obrigada!', last_message_at: '2026-10-20T10:00:00Z' }], error: null });
+  scenario.queries.profiles = (calls) => {
+    if (calls[0].args[0] === 'is_admin,admin_role') return { data: [{ is_admin: true, admin_role: 'owner' }], error: null };
+    if (calls.some((c) => c.method === 'eq' && c.args[0] === 'is_admin')) return { data: [{ id: ADMIN }], error: null };
+    return { data: [{ id: 'cli-1', name: 'Ana Cliente', account_type: 'client' }], error: null };
+  };
+  scenario.queries.messages = () => ({ data: [{ conversation_id: 'conv-cli', sender_id: 'cli-1', created_at: '2026-10-20T10:00:00Z' }], error: null });
+  const [c] = JSON.parse((await handler(evr({ action: 'inbox' }))).body).conversations;
+  assert.equal(c.name, 'Ana Cliente');
+  assert.equal(c.tipo, 'cliente');
+  assert.equal(c.personId, 'cli-1');
+  assert.equal(c.porResponder, true);
 });

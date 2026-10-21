@@ -945,7 +945,7 @@ function renderSidebar(pro){
   const joined=new Date(pro.created_at).toLocaleDateString('pt-PT',{month:'long',year:'numeric'})
   items.push(`<div class="info-row"><span class="info-icon">${svgCal}</span>Membro desde ${joined}</div>`)
   document.getElementById('info-items').innerHTML=items.join('')
-  // Denúncias chegam ao painel de gestão (admin.html › Moderação), ver assets/support-form.js.
+  // Denúncias chegam ao painel de gestão (admin-antigo.html › Moderação), ver assets/support-form.js.
   window.__reportPro={id:pro.id,name:pro.name}
   const rb=document.getElementById('report-btn');if(rb)rb.style.display='inline'
   if(pro.plan==='pro'||pro.plan==='premium'){

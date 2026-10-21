@@ -83,10 +83,31 @@ test('send: envia a quem ainda não foi convidado e regista no histórico', asyn
   const lotes = [];
   global.fetch = async (url, opts) => { lotes.push({ url, emails: JSON.parse(opts.body) }); return { ok: true }; };
   const r = JSON.parse((await handler(ev({ action: 'send' }))).body);
-  assert.deepEqual(r, { sent: 2, failed: 0 });
+  assert.deepEqual(r, { sent: 2, failed: 0, falhas: [] });
   assert.equal(lotes[0].url, 'https://api.resend.com/emails/batch');
   assert.deepEqual(lotes[0].emails.map((e) => e.to[0]), ['ana@x.pt', 'rui@x.pt']);
   assert.match(lotes[0].emails[0].html, /Acabar o registo/);
   assert.equal(scenario.audits[0].action, 'convite_registo');
   assert.deepEqual(scenario.audits[0].details.sent, ['ana', 'rui']);
+});
+
+// 17/10: o convite falhou aos 14 de uma vez. A Resend recusa o lote inteiro
+// quando um endereço não serve. Agora, se o lote for recusado, envia um a um:
+// só falha quem tem de falhar, e com o motivo.
+test('send: lote recusado → envia um a um e só falha quem não serve', async () => {
+  setup();
+  const chamadas = [];
+  global.fetch = async (url, opts) => {
+    const corpo = JSON.parse(opts.body);
+    chamadas.push(url);
+    if (url.endsWith('/batch')) return { ok: false, status: 422, text: async () => '{"message":"Invalid to field"}' };
+    if (corpo.to[0] === 'rui@x.pt') return { ok: false, status: 422, text: async () => '{"message":"Invalid `to` field."}' };
+    return { ok: true, json: async () => ({ id: 'e1' }) };
+  };
+  const r = JSON.parse((await handler(ev({ action: 'send' }))).body);
+  assert.equal(r.sent, 1);
+  assert.equal(r.failed, 1);
+  assert.match(r.falhas[0].motivo, /Invalid/);
+  assert.ok(chamadas.filter((u) => u.endsWith('/emails')).length === 2, 'tentou um a um');
+  assert.deepEqual(scenario.audits[0].details.sent, ['ana']);
 });

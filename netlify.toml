@@ -95,17 +95,30 @@
   status = 200
   force = false
 
-# O painel antigo (admin-classico.html) foi apagado em set/2026: tudo o que
-# fazia esta no painel de gestao (admin.html).
+# Out/2026: o painel de gestao novo (gestao.html) passou a ser o painel.
+# /admin abre-o; o anterior ficou em /admin-antigo.html enquanto as suas
+# funcoes passam para o novo. O admin-classico (set/2026) tambem vai para la.
+[[redirects]]
+  from = "/admin.html"
+  to = "/gestao"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/admin"
+  to = "/gestao"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/admin-classico.html"
-  to = "/admin.html"
+  to = "/gestao"
   status = 301
   force = true
 
 [[redirects]]
   from = "/admin-classico"
-  to = "/admin.html"
+  to = "/gestao"
   status = 301
   force = true
 

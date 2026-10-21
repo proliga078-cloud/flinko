@@ -1,4 +1,4 @@
-// Proteções de dinheiro e segurança no painel de gestão (admin.html).
+// Proteções de dinheiro e segurança no painel de gestão (admin-antigo.html).
 //
 // Estes casos eram testados no painel antigo (admin-classico.html, apagado em
 // set/2026) e passaram para o painel atual:

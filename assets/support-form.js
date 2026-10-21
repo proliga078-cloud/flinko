@@ -1,5 +1,5 @@
 // Pedidos de apoio e denúncias que chegam diretamente ao painel de gestão
-// (tabela support_tickets; ver admin.html › Apoio a clientes e › Moderação).
+// (tabela support_tickets; ver admin-antigo.html › Apoio a clientes e › Moderação).
 //
 // Usado em contacto.html (formulário de contacto) e profile.html (botão
 // "Denunciar perfil"). Fala com a API do Supabase diretamente, sem o SDK, com

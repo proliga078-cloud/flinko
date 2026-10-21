@@ -10,10 +10,10 @@ const abrir = (page, opts = {}) => openAdmin(page, { path: '/gestao.html', ...op
 const INBOX = { conversations: [{ id: 'conv-1', professionalId: 'pro-1', name: 'Rui Alves', category: 'Eletricistas', lastMessage: 'Já completei o perfil!', lastAt: iso(0.1), porResponder: true }] };
 const muitos = (n) => Array.from({ length: n }, (_, i) => ({ ...PRO, id: 'p' + i, name: 'Pro ' + i, verified: true }));
 
-test('entra direto com a sessão de admin e mostra as 7 partes', async ({ page }) => {
+test('entra direto com a sessão de admin e mostra as 8 partes', async ({ page }) => {
   await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
   await expect(page.locator('#main h1')).toHaveText('Hoje');
-  await expect(page.locator('#nav a')).toHaveText([/Hoje/, /Estratégia/, /Profissionais/, /Mensagens/, /Clientes e pedidos/, /Angariação/, /Dinheiro e equipa/]);
+  await expect(page.locator('#nav a')).toHaveText([/Hoje/, /Estratégia/, /Profissionais/, /Mensagens/, /Clientes e pedidos/, /Moderação e apoio/, /Angariação/, /Dinheiro e equipa/]);
 });
 
 test('Hoje: o que há para fazer (mensagens, verificar, pedidos)', async ({ page }) => {
@@ -179,5 +179,91 @@ test('Estratégia: no telemóvel não desliza para o lado', async ({ page }) => 
   await expect(page.locator('#main h1')).toHaveText('Estratégia');
   // Letra larga, como a de reserva no servidor do GitHub (lá passava 11px).
   await page.addStyleTag({ content: '*{font-family:Verdana,sans-serif!important}' });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
+});
+
+/* ===== Fase 1 do painel único: tudo do antigo, mais arrumado ===== */
+
+test('Mensagens: envia também a clientes, pela Flinko', async ({ page }) => {
+  const calls = await abrir(page, { fns: { 'admin-flinko-message': (b) => b.action === 'inbox' ? { conversations: [] } : { sent: b.profileIds.length, sentIds: b.profileIds, skipped: [] } } });
+  await page.goto('/gestao.html#mensagens/enviar');
+  await page.getByRole('button', { name: 'Clientes' }).click();
+  await expect(page.locator('#destinos')).toContainText('Ana Cliente');
+  await page.locator('#modelo').selectOption('pedido');
+  await expect(page.locator('#previa')).toContainText('Olá Ana!');
+  await page.getByRole('button', { name: 'Enviar a 1' }).click();
+  await expect(page.locator('#resultado')).toContainText('1 enviada(s)');
+  const envio = calls.find((c) => c.fn === 'admin-flinko-message' && c.body.action === 'send');
+  expect(envio.body.profileIds).toEqual(['cli-1']);
+});
+
+test('Mensagens: guarda um texto como modelo para usar depois', async ({ page }) => {
+  const calls = await abrir(page, { dialogo: (d) => d.type() === 'prompt' ? d.accept('Lembrete de fotos') : d.accept(), fns: { 'admin-flinko-message': { conversations: [] } } });
+  await page.goto('/gestao.html#mensagens/enviar');
+  await page.locator('#texto').fill('Olá {nome}, não te esqueças das fotos!');
+  await page.getByRole('button', { name: 'Guardar como modelo' }).click();
+  await expect(page.locator('#modelo')).toContainText('★ Lembrete de fotos');
+  const g = calls.find((c) => c.method === 'POST' && c.path === '/rest/v1/admin_items');
+  expect(g.body).toMatchObject({ kind: 'template', data: { name: 'Lembrete de fotos', text: 'Olá {nome}, não te esqueças das fotos!', publico: 'pros' } });
+});
+
+test('Outros envios: convite aos registos a meio e email de teste', async ({ page }) => {
+  const calls = await abrir(page, {
+    fns: {
+      'admin-flinko-message': { conversations: [] },
+      'admin-registos-a-meio': (b) => b.action === 'preview' ? { total: 2, porConvidar: 2, contas: [{ email: 'a@x.pt', criada: iso(5) }, { email: 'b@x.pt', criada: iso(9) }], exemplo: { assunto: 'Acaba o registo', texto: 'Olá!' } } : { sent: 1, failed: 1 },
+      'admin-send-campaign': { sent: 1, to: 'dono@flinko.pt' },
+    },
+  });
+  await page.goto('/gestao.html#mensagens/outros');
+  await expect(page.locator('#cMeio')).toContainText('a@x.pt');
+  await page.getByRole('button', { name: 'Enviar convite a 2' }).click();
+  await expect(page.locator('#aviso')).toContainText('1 falharam');
+  await page.getByRole('button', { name: 'Enviar email de teste para mim' }).click();
+  await expect(page.locator('#rTeste')).toContainText('dono@flinko.pt');
+  expect(calls.some((c) => c.fn === 'admin-registos-a-meio' && c.body.action === 'send')).toBe(true);
+});
+
+test('Moderação: denúncia, avaliação, verificação e RGPD', async ({ page }) => {
+  const calls = await abrir(page, { dialogo: (d) => d.type() === 'prompt' ? d.accept(d.message().includes('nome exato') ? 'Ana Cliente' : 'Documento confirmado') : d.accept(), fns: { 'admin-flinko-message': { conversations: [] }, 'admin-gdpr': { filesRemoved: 2 } } });
+  await page.goto('/gestao.html#moderacao/denuncias');
+  await expect(page.locator('#abaMod')).toContainText('Perfil falso · Rui Alves');
+  await page.getByRole('button', { name: 'Suspender o perfil' }).click();
+  await expect.poll(() => calls.find((c) => c.method === 'PATCH' && c.path === '/rest/v1/profiles')?.body).toEqual({ suspended: true });
+
+  await page.goto('/gestao.html#moderacao/avaliacoes');
+  await expect(page.locator('#abaMod')).toContainText('linguagem ofensiva');
+  await page.locator('[data-av-apagar="rev-bad"]').click();
+  await expect.poll(() => calls.some((c) => c.method === 'DELETE' && c.path === '/rest/v1/reviews' && c.search.includes('rev-bad'))).toBe(true);
+
+  await page.goto('/gestao.html#moderacao/verificacoes');
+  await expect(page.locator('#abaMod')).toContainText('Cartão de cidadão');
+  await page.getByRole('button', { name: 'Aprovar' }).click();
+  await expect.poll(() => calls.find((c) => c.path === '/rest/v1/rpc/admin_resolve_verification')?.body).toEqual({ p_request: 'ver-1', p_approve: true, p_note: 'Documento confirmado' });
+
+  await page.goto('/gestao.html#moderacao/rgpd');
+  await expect(page.locator('#abaMod')).toContainText('Apagar a conta · Ana Cliente');
+  await page.getByRole('button', { name: 'Apagar a conta' }).click();
+  await expect.poll(() => calls.find((c) => c.fn === 'admin-gdpr')?.body).toEqual({ action: 'delete', requestId: 'gd-1', confirmName: 'Ana Cliente' });
+});
+
+test('Pesquisa global: Ctrl+K encontra um profissional e abre a ficha', async ({ page }) => {
+  await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
+  await expect(page.locator('#main h1')).toHaveText('Hoje');
+  await page.keyboard.press('Control+k');
+  await page.locator('#pq').fill('rui');
+  await expect(page.locator('#pqRes')).toContainText('Profissional');
+  await page.locator('#pq').press('Enter');
+  await expect(page.locator('#ficha')).toContainText('912345678');
+});
+
+test('telemóvel: 4 partes em baixo e o "Mais" com o resto e a pesquisa', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 800 });
+  await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
+  await expect(page.locator('#main h1')).toHaveText('Hoje');
+  await expect(page.locator('#nav a:visible')).toHaveCount(4);
+  await page.getByRole('button', { name: 'Mais partes e procurar' }).click();
+  await page.locator('#ficha').getByRole('link', { name: 'Moderação e apoio' }).click();
+  await expect(page.locator('#main h1')).toHaveText('Moderação e apoio');
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
 });

@@ -9,7 +9,7 @@ const path = require('path');
 const FAKE_SDK_PATH = path.join(__dirname, 'fixtures', 'fake-supabase-sdk.js');
 const SUPABASE_CDN_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3';
 const RAIZ = path.join(__dirname, '..', '..');
-const paginas = fs.readdirSync(RAIZ).filter((f) => f.endsWith('.html') && !['admin.html', 'dashboard.html'].includes(f)).sort();
+const paginas = fs.readdirSync(RAIZ).filter((f) => f.endsWith('.html') && !['admin-antigo.html', 'dashboard.html'].includes(f)).sort();
 
 const pro = { id: 'p1', name: 'Carlos Alexandre Moura Pendão de Sousa e Silva', slug: null, category: 'Eletricistas', location: 'Lisboa – Lisboa', plan: 'free', verified: true, bio: 'Técnico com experiência em instalações elétricas, manutenção e diagnóstico de avarias em casas e empresas.', photo_url: null, created_at: '2026-02-01T00:00:00Z', avg_response_minutes: null, response_sample_count: 0 };
 

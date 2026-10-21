@@ -1,7 +1,7 @@
-// Muda o plano de um profissional a partir do painel admin (admin.html),
+// Muda o plano de um profissional a partir do painel admin (admin-antigo.html),
 // mas de forma segura para quem já tem uma subscrição Stripe real.
 //
-// Bug encontrado em auditoria: admin.html mudava profiles.plan diretamente
+// Bug encontrado em auditoria: admin-antigo.html mudava profiles.plan diretamente
 // do browser (saveProfileEdit / saveSubEdit / revertToFreePlan), sem tocar
 // em stripe_subscription_id. Se o profissional tivesse uma subscrição Stripe
 // ainda ativa nesse momento:

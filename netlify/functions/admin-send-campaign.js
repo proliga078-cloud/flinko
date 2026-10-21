@@ -1,5 +1,5 @@
 // Envio de emails a um grupo de profissionais a partir do painel admin
-// (admin.html › Contactar profissionais). Só donos.
+// (admin-antigo.html › Contactar profissionais). Só donos.
 //
 // Antes, o painel só abria o mailto: de uma pessoa de cada vez. Aqui o admin
 // escolhe um segmento (ex.: "perfil incompleto"), escreve o texto uma vez e o
@@ -18,13 +18,13 @@
 //   action:"send"    -> envia e regista o envio em admin_audit.
 const{createClient}=require('@supabase/supabase-js')
 const{json,requireAdmin,audit}=require('./_admin.js')
+const{enviarEmails}=require('./_resend')
 const admin=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY)
 
 const FROM=process.env.RESEND_FROM||'Flinko <onboarding@resend.dev>'
 const REPLY_TO=process.env.RESEND_REPLY_TO||'flinkogeral@gmail.com'
 const SITE='https://flinko.pt'
 const MAX_RECIPIENTS=500
-const BATCH=100
 
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
 const firstName=n=>String(n||'').trim().split(/\s+/)[0]||''
@@ -36,7 +36,7 @@ function emailHtml(text){
 <div style="max-width:520px;margin:0 auto;padding:28px 20px">
   <div style="font-size:20px;font-weight:800;color:#14181F;margin-bottom:22px">Flink<span style="color:#BB5C08">o</span></div>
   <div style="background:#fff;border-radius:14px;padding:26px;box-shadow:0 2px 12px rgba(20,24,31,.06)">${body}</div>
-  <p style="font-size:12px;color:#707580;text-align:center;margin-top:20px;line-height:1.6">Recebeste este email porque tens uma conta profissional na Flinko.<br/>Para deixares de receber emails da Flinko, desliga os avisos por email no teu <a href="${SITE}/dashboard.html" style="color:#B85608">dashboard</a> ou responde a esta mensagem com PARAR.</p>
+  <p style="font-size:12px;color:#707580;text-align:center;margin-top:20px;line-height:1.6">Recebeste este email porque tens uma conta na Flinko.<br/>Para deixares de receber emails da Flinko, desliga os avisos por email no teu <a href="${SITE}/dashboard.html" style="color:#B85608">dashboard</a> ou responde a esta mensagem com PARAR.</p>
 </div></body></html>`
 }
 
@@ -132,21 +132,10 @@ exports.handler=async(event)=>{
     const per=messages&&typeof messages==='object'?messages:{}
     const textFor=p=>typeof per[p.id]==='string'&&per[p.id].trim()?String(per[p.id]).trim().slice(0,5000):fill(msg,p)
 
+    // Lote recusado (um endereço mau) → _resend envia um a um: só falha quem tem de falhar.
+    const res=await enviarEmails(ok.map(p=>({from:FROM,to:[p.email],reply_to:REPLY_TO,subject:fill(subj,p),html:emailHtml(textFor(p)),text:textFor(p)})))
     const sent=[],failed=[]
-    for(let i=0;i<ok.length;i+=BATCH){
-      const chunk=ok.slice(i,i+BATCH)
-      const res=await fetch('https://api.resend.com/emails/batch',{
-        method:'POST',
-        headers:{Authorization:`Bearer ${process.env.RESEND_API_KEY}`,'Content-Type':'application/json'},
-        body:JSON.stringify(chunk.map(p=>({from:FROM,to:[p.email],reply_to:REPLY_TO,subject:fill(subj,p),html:emailHtml(textFor(p)),text:textFor(p)})))
-      })
-      if(res.ok)chunk.forEach(p=>sent.push(p.id))
-      else{
-        const txt=await res.text().catch(()=>'')
-        console.error('admin-send-campaign: Resend recusou o lote:',res.status,txt)
-        chunk.forEach(p=>failed.push({id:p.id,reason:'Resend '+res.status}))
-      }
-    }
+    ok.forEach((p,i)=>{if(res[i]&&res[i].ok)sent.push(p.id);else failed.push({id:p.id,reason:(res[i]&&res[i].motivo)||'erro'})})
 
     await audit(admin,auth.user,'email_massa',{targetType:'campaign',summary:`Email${promo?' promocional':''} “${subj}” enviado a ${sent.length} profissional(is)${failed.length?` (${failed.length} falharam)`:''}`,
       details:{subject:subj,message:msg,promo:!!promo,sent,failed,skipped}})

@@ -1,4 +1,4 @@
-// Angariação e cobrança no painel de gestão (admin.html): textos por
+// Angariação e cobrança no painel de gestão (admin-antigo.html): textos por
 // categoria, sequências de seguimento automáticas, resultados por modelo e
 // registo de consentimentos para promoções.
 const { test, expect } = require('@playwright/test');
