@@ -54,7 +54,7 @@ let guiaAtual = "atrair";
 async function vistaGuias(main, tabs) {
   const G = (window.FlinkoGuias || []).filter(g => g.id !== "resultados");
   const g = G.find(x => x.id === guiaAtual) || G[0];
-  const contactos = await itens("contact").catch(() => []);
+  const contactos = (await itens("contact").catch(() => [])).filter(c => c.tpl);
   const porModelo = contactos.reduce((m, c) => { const k = c.tpl || "—"; m[k] = (m[k] || 0) + 1; return m; }, {});
   main.innerHTML = topo("Angariação", "Como angariar profissionais e clientes, ativá-los e fazê-los pagar, com textos prontos.") + tabs + `
     <div class="chips">${G.map(x => `<button type="button" data-guia="${esc(x.id)}" aria-pressed="${x.id === g.id}">${esc(x.title)}</button>`).join("")}</div>
