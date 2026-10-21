@@ -103,7 +103,7 @@ async function avisos(todos) {
   pros.filter(p => p.plan && p.plan !== "free" && p.plan_expires_at && new Date(p.plan_expires_at) < t + 7 * DIA).forEach(p => { const d = Math.ceil((new Date(p.plan_expires_at) - t) / DIA); add("exp", p.id, d <= 2 ? "mau" : "atencao", `Plano ${p.plan} de ${p.name} expira ${d <= 0 ? "hoje" : "em " + d + " dia(s)"}`, "ficha:" + p.id); });
   const tk = mod.apoio.filter(x => (x.status || "aberto") !== "resolvido" && t - new Date(x.created_at || x.created) > 2 * DIA).length; if (tk) add("ticket", "all", "mau", `${tk} pedido(s) de apoio há mais de 48 h sem resolução`, "#moderacao/apoio");
   const dn = mod.denuncias.filter(x => (x.status || "aberto") !== "resolvido"); if (dn.length) add("den", "all", dn.some(x => t - new Date(x.created_at) > 2 * DIA) ? "mau" : "atencao", `${dn.length} denúncia(s) de perfis por resolver`, "#moderacao/denuncias");
-  const iv = faturas.filter(i => i.status === "emitida" && i.due && i.due < td); if (iv.length) add("inv", "all", "mau", `${iv.length} fatura(s) vencida(s) por cobrar`, "/admin-antigo.html");
+  const iv = faturas.filter(i => i.status === "emitida" && i.due && i.due < td); if (iv.length) add("inv", "all", "mau", `${iv.length} fatura(s) vencida(s) por cobrar`, "#dinheiro/faturas");
   const ta = tks.filter(x => x.status !== "done" && x.due_date && x.due_date < td); if (ta.length) add("task", "all", "atencao", `${ta.length} tarefa(s) atrasada(s)`, "#hoje/tarefas");
   const ld = lds.filter(l => l.next && l.next <= td && !["registado", "perdido"].includes(l.stage)).length; if (ld) add("lead", "all", "atencao", `${ld} contacto(s) de angariação para hoje ou atrasados`, "#angariacao");
   const sg = segs.filter(f => f.due <= td).length; if (sg) add("seg", "all", "atencao", `${sg} seguimento(s) para enviar hoje`, "#hoje");
@@ -198,8 +198,8 @@ async function eventos() {
   mod.rgpd.filter(g => ["pending", "in_progress"].includes(g.status)).forEach(g => E.push({ dia: d10(new Date(new Date(g.created_at).getTime() + 30 * DIA).toISOString()), tipo: "RGPD", texto: "Prazo do pedido RGPD", ir: "#moderacao/rgpd" }));
   mod.apoio.concat(mod.denuncias).filter(x => (x.status || "aberto") !== "resolvido").forEach(x => E.push({ dia: d10(new Date(new Date(x.created_at || x.created).getTime() + 2 * DIA).toISOString()), tipo: "Apoio", texto: "Responder: " + (x.subject || x.assunto || "pedido"), ir: "#moderacao/" + (x.kind === "denuncia" ? "denuncias" : "apoio") }));
   segs.forEach(f => E.push({ dia: d10(f.due), tipo: "Seguimento", texto: "Seguimento a " + f._a.nome, ir: "#hoje" }));
-  faturas.filter(i => i.status === "emitida" && i.due).forEach(i => E.push({ dia: d10(i.due), tipo: "Fatura", texto: "Fatura " + (i.number || "") + " vence", ir: "/admin-antigo.html" }));
-  posts.filter(p => p.date && p.status !== "publicado").forEach(p => E.push({ dia: d10(p.date), tipo: "Publicação", texto: p.title || p.text || "Publicação", ir: "/admin-antigo.html" }));
+  faturas.filter(i => i.status === "emitida" && i.due).forEach(i => E.push({ dia: d10(i.due), tipo: "Fatura", texto: "Fatura " + (i.number || "") + " vence", ir: "#dinheiro/faturas" }));
+  posts.filter(p => p.date && p.status !== "publicado").forEach(p => E.push({ dia: d10(p.date), tipo: "Publicação", texto: p.title || p.text || "Publicação", ir: "#angariacao/marketing" }));
   return E;
 }
 async function vistaCalendario(main, tabs) {

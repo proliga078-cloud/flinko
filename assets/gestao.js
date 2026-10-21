@@ -643,7 +643,7 @@ VISTAS.dinheiro = async main => {
   <div class="grelha g2" style="margin-top:16px">
     <div class="cartao"><h2>Profissionais com plano pago</h2>${pagos.length ? `<ul class="lista">${pagos.map(p => `<li style="cursor:pointer" data-ficha="${esc(p.id)}">${av(p)}<div class="info"><b>${esc(p.name)}</b><small>${esc(p.category || "")}${p.plan_expires_at ? " · até " + fdata(p.plan_expires_at) : ""}</small></div><span class="tag laranja">${esc(p.plan)}</span></li>`).join("")}</ul>` : '<p class="vazio">Ainda ninguém tem plano pago. Quando os perfis tiverem visitas e pedidos, é a altura de propor.</p>'}</div>
     <div class="cartao"><h2>Equipa</h2><p class="sub">Quem tem acesso a este painel.</p><ul class="lista">${(C.admins || []).map(a => `<li>${av(a)}<div class="info"><b>${esc(a.name)}</b><small>${a.admin_role === "support" ? "Apoio (sem dinheiro nem envios em massa)" : "Dono"}</small></div></li>`).join("")}</ul>
-      <p class="nota" style="margin-top:12px">RGPD, faturação, registo de ações e o resto continuam no <a href="/admin-antigo.html">painel antigo</a>.</p></div>
+      <p class="nota" style="margin-top:12px">O registo de ações e as permissões da equipa chegam na próxima fase. Até lá estão no <a href="/admin-antigo.html">painel antigo</a>.</p></div>
   </div>`;
   if (!dono()) return;
   try {
