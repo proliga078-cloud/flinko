@@ -358,3 +358,83 @@ test('Angariação: o WhatsApp do primeiro contacto marca o seguimento dos 3 dia
   await page.locator('[data-wa-lead="l1"]').click();
   await expect.poll(() => calls.find((c) => c.method === 'POST' && c.body && c.body.kind === 'followup')?.body.data).toMatchObject({ target: 'lead', ref: 'l1', seq: 'd1', tpl: 'd6' });
 });
+
+/* ===== Fase 3: Dinheiro, Angariação e marketing ===== */
+const postsDe = (calls, kind) => calls.filter((c) => c.method === 'POST' && c.path === '/rest/v1/admin_items' && c.body && c.body.kind === kind).map((c) => c.body);
+
+test('Dinheiro: caixa a partir dos movimentos e novo movimento', async ({ page }) => {
+  const calls = await abrir(page, {
+    tables: { admin_settings: [{ key: 'cash0', value: 500 }], admin_items: [{ id: 'm1', kind: 'ledger', data: { date: '2026-10-01', type: 'despesa', category: 'Marketing', desc: 'Anúncios', amount: 100 } }] },
+    fns: { 'admin-flinko-message': INBOX, 'admin-stripe-summary': { mrr: 0, last30: { net: 0 }, subscriptions: { active: 0 }, pastDue: [] } },
+  });
+  await page.goto('/gestao.html#dinheiro');
+  await expect(page.locator('#main')).toContainText('caixa atual');
+  await expect(page.locator('.kpi', { hasText: 'caixa atual' })).toContainText('400,00');
+  await page.goto('/gestao.html#dinheiro/movimentos');
+  await page.getByRole('button', { name: 'Novo movimento' }).click();
+  await page.locator('#g_type').selectOption('receita');
+  await page.locator('#g_desc').fill('Plano Pro do Rui');
+  await page.locator('#g_amount').fill('19.99');
+  await page.locator('#fGen').getByRole('button', { name: 'Guardar' }).click();
+  await expect.poll(() => postsDe(calls, 'ledger')[0]?.data).toMatchObject({ type: 'receita', desc: 'Plano Pro do Rui', amount: 19.99 });
+});
+
+test('Faturas: número automático, e "Paga" junta a receita aos movimentos', async ({ page }) => {
+  const calls = await abrir(page, {
+    tables: { admin_items: [{ id: 'i1', kind: 'invoice', data: { number: 'FT 2026/001', date: '2026-10-01', due: '2026-10-15', client: 'Rui Alves', description: 'Plano Pro', net: 19.99, vat: 23, status: 'emitida' } }] },
+    fns: { 'admin-flinko-message': INBOX },
+  });
+  await page.goto('/gestao.html#dinheiro/faturas');
+  await expect(page.locator('#main')).toContainText('Atrasada');
+  await page.getByRole('button', { name: 'Nova fatura' }).click();
+  await expect(page.locator('#g_number')).toHaveValue(/^FT \d{4}\/00\d$/);
+  await page.locator('#ficha .fechar').click();
+  await page.getByRole('button', { name: 'Paga', exact: true }).click();
+  await expect.poll(() => postsDe(calls, 'invoice').find((b) => b.id === 'i1')?.data.status).toBe('paga');
+  await expect.poll(() => postsDe(calls, 'ledger')[0]?.data).toMatchObject({ type: 'receita', amount: 19.99, ref: 'FT 2026/001' });
+});
+
+test('Preços e projeção: guarda preços e custos', async ({ page }) => {
+  const calls = await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#dinheiro/precos');
+  await page.locator('#pr_pro').fill('24.99');
+  await page.getByRole('button', { name: 'Guardar preços' }).click();
+  await expect.poll(() => calls.find((c) => c.path === '/rest/v1/admin_settings' && c.body && c.body.key === 'prices')?.body.value).toEqual({ starter: 9.99, pro: 24.99, premium: 29.99 });
+  await page.locator('#cNome').fill('Supabase');
+  await page.locator('#cValor').fill('25');
+  await page.getByRole('button', { name: 'Juntar' }).click();
+  await expect.poll(() => calls.find((c) => c.path === '/rest/v1/admin_settings' && c.body && c.body.key === 'costs')?.body.value).toEqual([{ name: 'Supabase', amount: 25 }]);
+  await expect(page.locator('#main')).toContainText('Projeção a 12 meses');
+});
+
+test('Angariação: importar uma lista (sem repetir telemóveis)', async ({ page }) => {
+  const calls = await abrir(page, { tables: { admin_items: [{ id: 'l1', kind: 'lead', data: { name: 'Carlos Pinto', phone: '912000111', stage: 'novo' } }] }, fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#angariacao');
+  await page.getByRole('button', { name: 'Importar lista' }).click();
+  await page.locator('#impTxt').fill('Carlos Pinto; 912 000 111; Canalizador; Braga\nMaria Reis; 913222333; Pintora; Porto');
+  await page.locator('#impOrig').fill('OLX');
+  await page.getByRole('button', { name: 'Importar', exact: true }).click();
+  await expect(page.locator('#aviso')).toContainText('1 contacto(s) importados, 1 já existiam');
+  expect(postsDe(calls, 'lead').map((b) => b.data)).toEqual([expect.objectContaining({ name: 'Maria Reis', phone: '913222333', category: 'Pintora', zone: 'Porto', source: 'OLX', stage: 'novo' })]);
+});
+
+test('Angariação: guias com textos prontos que se guardam como modelo', async ({ page }) => {
+  const calls = await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#angariacao/guias');
+  await expect(page.locator('#main')).toContainText('Plano de 30 dias');
+  await page.locator('.texto-pronto').first().getByRole('button', { name: 'Guardar como modelo' }).click();
+  await expect.poll(() => postsDe(calls, 'template')[0]?.data.publico).toBe('pros');
+});
+
+test('Marketing: campanha com custo por registo e link de campanha', async ({ page }) => {
+  const calls = await abrir(page, { tables: { admin_items: [{ id: 'c1', kind: 'campaign', data: { name: 'Cartazes Braga', channel: 'Cartazes / flyers', spend: 40, signups: 4, status: 'ativa', start: '2026-10-01' } }] }, fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#angariacao/marketing');
+  await expect(page.locator('#main')).toContainText('10,00');
+  await page.locator('#u_source').fill('Facebook');
+  await page.locator('#u_campaign').fill('braga outubro');
+  await expect(page.locator('#u_out')).toHaveValue('https://flinko.pt?utm_source=facebook&utm_campaign=braga-outubro');
+  await page.getByRole('button', { name: 'Nova publicação' }).click();
+  await page.locator('#g_text').fill('Antes e depois de uma sala pintada pelo Rui');
+  await page.locator('#fGen').getByRole('button', { name: 'Guardar' }).click();
+  await expect.poll(() => postsDe(calls, 'post')[0]?.data).toMatchObject({ text: 'Antes e depois de uma sala pintada pelo Rui', status: 'ideia' });
+});
