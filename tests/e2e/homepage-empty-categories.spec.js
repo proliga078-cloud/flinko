@@ -2,8 +2,8 @@
 //
 // Regra (ver loadCategoryCounts()): o tile mostra a contagem REAL de
 // profissionais ("2 profissionais", "1 profissional") só quando é maior que
-// zero. Categorias ainda vazias mostram "Em breve" — nunca "0
-// profissionais", que desencorajava e não acrescentava nada. Todos os tiles
+// zero. Categorias ainda vazias levam a publicar o pedido nessa categoria,
+// nunca "0 profissionais", que desencorajava e não acrescentava nada. Todos os tiles
 // ficam sempre visíveis e com link para a página da categoria.
 const { test, expect } = require('@playwright/test');
 const path = require('path');
