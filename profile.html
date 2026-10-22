@@ -322,7 +322,7 @@
     <div class="fk-actions">
       <div id="nav-guest" class="fk-group">
         <a href="/auth?tab=login" class="fk-btn fk-btn-ghost fk-hide-sm">Entrar</a>
-        <a href="/auth?tab=register" class="fk-btn fk-btn-dark">Criar conta grátis</a>
+        <a href="/pedidos?publicar=1" class="fk-btn fk-btn-dark">Publicar pedido</a>
       </div>
       <div id="nav-user" class="fk-group" style="display:none">
         <a href="/dashboard" class="fk-btn fk-btn-dark">O meu painel</a>
@@ -1136,7 +1136,7 @@ async function submitReview(){
   const comment=document.getElementById('rev-comment').value.trim()
   const btn=document.getElementById('rev-btn')
   const{data:{session}}=await db.auth.getSession()
-  if(!session){location.href='auth.html?tab=login&intent=client&redirect='+encodeURIComponent(location.pathname+location.search);return}
+  if(!session){location.href='auth.html?tab=register&intent=client&redirect='+encodeURIComponent(location.pathname+location.search);return}
   if(!name)return showMsg('rev-error','Escreve o teu nome.')
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return showMsg('rev-error','Escreve um email válido.')
   if(!currentRating)return showMsg('rev-error','Escolhe uma classificação.')
@@ -1173,7 +1173,7 @@ if(window.flinkoTrack)window.flinkoTrack('perfil_contactar',{perfil:proId})
 const btn=document.getElementById('msg-btn')
 const{data:{session}}=await db.auth.getSession()
 if(!session){
-location.href='auth.html?tab=login&redirect='+encodeURIComponent('messages.html?with='+proId)+'&intent=client'
+location.href='auth.html?tab=register&redirect='+encodeURIComponent('messages.html?with='+proId)+'&intent=client'
 return
 }
 if(session.user.id===proId){
