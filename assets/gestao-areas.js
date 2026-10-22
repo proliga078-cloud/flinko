@@ -93,6 +93,8 @@ VISTAS.hoje = async main => {
   // 3. Os 5 números que contam, com meta.
   const M = Object.assign({}, METAS_BASE, def.metas5 || {}), t30 = Date.now() - 30 * DIA;
   const ped30 = reqs.filter(r => new Date(r.created_at) > t30).length;
+  const pedAnt = reqs.filter(r => { const d = new Date(r.created_at); return d <= t30 && d > t30 - 30 * DIA; }).length;
+  const delta = (a, b) => a === b ? "igual aos 30 dias anteriores" : `${a > b ? "+" : ""}${a - b} face aos 30 dias anteriores`;
   const tempos = pros.map(p => +p.avg_response_minutes).filter(x => x > 0).sort((a, b) => a - b), resp = tempos.length ? tempos[Math.floor(tempos.length / 2)] : null;
   const ativos = pros.filter(p => !p.suspended), prontos = pctDe(ativos.filter(p => p._pontos >= 60).length, ativos.length);
   const mkt = K ? K.L.filter(e => e.type === "despesa" && /marketing|anúnc|anunc/i.test(e.category || "") && new Date(e.date) > t30).reduce((s, e) => s + (+e.amount || 0), 0) : 0;
@@ -100,7 +102,7 @@ VISTAS.hoje = async main => {
   const horas = m => m < 60 ? Math.round(m) + " min" : (m / 60).toFixed(m < 600 ? 1 : 0).replace(".", ",") + " h";
   const estado = (v, meta, maior) => v == null ? "" : (maior ? v >= meta : v <= meta) ? "bom" : (maior ? v >= meta / 2 : v <= meta * 2) ? "meio" : "mau";
   const NUM = [
-    [num(ped30), "pedidos de clientes (30 dias)", "meta " + M.pedidos, estado(ped30, M.pedidos, true)],
+    [num(ped30), "pedidos de clientes (30 dias)", "meta " + M.pedidos, estado(ped30, M.pedidos, true), delta(ped30, pedAnt)],
     [resp == null ? "—" : horas(resp), "até à 1.ª resposta (mediana)", "meta até " + horas(M.resposta), estado(resp, M.resposta, false)],
     [prontos + "%", "perfis prontos (60% ou mais)", "meta " + M.prontos + "%", estado(prontos, M.prontos, true)],
     [custo == null ? "—" : euro(custo), "custo de marketing por pedido", custo == null ? "sem gasto em marketing registado" : "meta até " + euro(M.custo), estado(custo, M.custo, false)],
@@ -118,7 +120,9 @@ VISTAS.hoje = async main => {
     <div class="cartao" style="padding:4px 16px">${L.length ? `<ul class="tratar">${L.map(x => `<li><span class="tag ${x.n === 0 ? "vermelho" : x.n === 1 ? "laranja" : ""}">${esc(x.tipo)}</span><div class="txt">${x.txt}</div>${x.quando ? `<small class="nota">${ha(x.quando)}</small>` : ""}<div class="acoes">${x.acao}</div></li>`).join("")}</ul>` : '<p class="vazio">Está tudo tratado. Bom momento para trabalhar numa das decisões acima.</p>'}
       <div style="padding:8px 0 10px;border-top:1px solid var(--line)"><button class="btn peq fantasma" id="bRegras">Escolher que avisos aparecem</button></div></div>
     <h2 class="tit-sec">5 números que contam <button class="btn peq fantasma" id="bMetas" style="margin-left:6px">Mudar metas</button></h2>
-    <div class="numeros">${NUM.map(([v, t, meta, e]) => `<div class="numero ${e}"><strong>${v}</strong><span>${t}</span><small>${esc(meta)}</small></div>`).join("")}</div>
+    <div class="numeros">${NUM.map(([v, t, meta, e, d]) => `<div class="numero ${e}"><strong>${v}</strong><span>${t}</span>${d ? `<div class="delta">${esc(d)}</div>` : ""}<small>${esc(meta)}</small></div>`).join("")}</div>
+    ${An ? `<h2 class="tit-sec">Evolução nas últimas 12 semanas</h2>
+    <div class="evolucao">${[["Visitantes reais", An.sem], ["Pedidos de clientes", An.semReqs], ["Profissionais novos", An.semPros]].map(([n, s]) => `<div class="cartao"><h3>${n}</h3><strong>${num(s.reduce((x, w) => x + w.n, 0))}</strong>${linha(s.map(w => ({ x: w.desde, y: w.n })), n + " por semana")}</div>`).join("")}</div>` : ""}
     <p class="nota" style="margin-top:8px">Verde: na meta. Laranja: a meio caminho. Vermelho: longe da meta. O detalhe está em Negócio.</p>`;
 
   main.querySelectorAll("[data-decidir]").forEach(b => b.onclick = async () => {

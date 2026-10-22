@@ -309,6 +309,75 @@ main{padding:24px 30px 60px}
   .decisao details,.decisao .acoes{margin-left:0}
   .nav-sep{display:none}
 }
+
+/* Tema profissional (out/2026): o aspeto das ferramentas de gestão. Menu
+   claro, uma só letra (Inter), cinzentos neutros, cor de marca só nos botões
+   principais, e vermelho/âmbar/verde só para dizer o estado das coisas. */
+:root{--ink:#101828;--muted:#475467;--muted-2:#5D6679;--line:#E4E7EC;--bg:#F6F7F9;--orange:#B54708;--orange-dark:#93370D;--orange-soft:#FFFAEB;--red:#B42318;--red-soft:#FEF3F2;--mint:#067647;--mint-dark:#05603A;--mint-soft:#ECFDF3;--shadow:0 1px 2px rgba(16,24,40,.06)}
+h1,h2,h3,.marca,.numero strong,.kpi strong{font-family:'Inter',system-ui,sans-serif!important;letter-spacing:-.01em}
+h1,h2,h3{font-weight:600}
+.lado{background:#fff;color:var(--ink);border-right:1px solid var(--line)}
+.marca{font-weight:700;font-size:1.05rem;padding:6px 12px 18px}
+.marca span{color:#C4600D}
+.procurar{border-color:var(--line);background:var(--bg);color:var(--muted);font-weight:500}
+.procurar:hover{color:var(--ink);border-color:#D0D5DD}
+.procurar kbd{border-color:var(--line);opacity:1;color:var(--muted-2)}
+.nav a{color:#344054;font-weight:500}
+.nav a:hover{background:#F2F4F7;color:var(--ink)}
+.nav a[aria-current="page"]{background:#F2F4F7;color:var(--ink);font-weight:600}
+.nav svg{stroke-width:1.8;color:var(--muted-2)}
+.nav a[aria-current="page"] svg{color:var(--ink)}
+.nav .conta{background:#F2F4F7;color:#344054;border:1px solid var(--line);font-weight:600}
+.nav-sep{background:var(--line)}
+.lado .fundo{color:var(--muted);border-top-color:var(--line)}
+.lado .fundo a{color:var(--ink)}
+.lado .fundo button{border-color:var(--line);color:var(--ink);border-radius:6px}
+.topo h1{font-size:1.4rem}
+.topo p{color:var(--muted)}
+.cartao{border-color:var(--line);border-radius:8px;box-shadow:var(--shadow)}
+.cartao h2{font-weight:600}
+.kpi strong,.numero strong{font-weight:600;font-variant-numeric:tabular-nums}
+.btn{border-radius:6px;font-weight:600;background:var(--ink)}
+.btn.laranja{background:#C4600D}
+.btn.verde{background:var(--mint)}
+.btn.linha{border:1px solid #D0D5DD;box-shadow:var(--shadow)}
+.btn.perigo{border:1px solid #FECDCA}
+.tag{background:#F2F4F7;color:#344054;border:1px solid var(--line);border-radius:4px;font-weight:500}
+.tag.verde{background:var(--mint-soft);color:var(--mint-dark);border-color:#ABEFC6}
+.tag.laranja{background:var(--orange-soft);color:var(--orange-dark);border-color:#FEDF89}
+.tag.vermelho{background:var(--red-soft);color:var(--red);border-color:#FECDCA}
+.chips button{border-color:#D0D5DD;font-weight:500;color:#344054}
+.chips button[aria-pressed="true"]{background:#F2F4F7;color:var(--ink);border-color:#98A2B3}
+.subnav a{font-weight:500}
+.subnav a[aria-current="page"]{border-bottom-color:var(--ink);font-weight:600}
+.tabela thead th{background:#F9FAFB;color:var(--muted);font-weight:500}
+.campo{border:1px solid #D0D5DD;border-radius:6px}
+.campo:focus{border-color:#98A2B3;box-shadow:0 0 0 3px #F2F4F7}
+.destaque{background:#fff;border:1px solid var(--line);border-left:3px solid #C4600D;border-radius:8px;box-shadow:var(--shadow)}
+.destaque-rot{color:var(--muted)}
+.decisao{border-radius:8px;box-shadow:var(--shadow)}
+.decisao-n{background:#F2F4F7;color:var(--ink);border:1px solid var(--line)}
+.decisao summary{color:var(--ink)}
+.rec-corpo h4{color:var(--muted)}
+.numero{border-radius:8px;box-shadow:var(--shadow);border-top-width:1px}
+.numero.bom,.numero.meio,.numero.mau{border-top-width:1px;border-top-color:var(--line)}
+.numero small::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;background:var(--muted-2);vertical-align:1px}
+.numero.bom small::before{background:var(--mint)}
+.numero.meio small::before{background:#DC6803}
+.numero.mau small::before{background:var(--red)}
+.numero .delta{font-size:.76rem;margin-top:2px;color:var(--muted)}
+.evolucao{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.evolucao .cartao{padding:12px 14px}
+.evolucao h3{font-size:.86rem;font-weight:500;color:var(--muted)}
+.evolucao strong{display:block;font-size:1.3rem;font-weight:600;margin:2px 0 6px;font-variant-numeric:tabular-nums}
+.evolucao svg.linha{height:70px}
+.av{background:#F2F4F7;color:#344054}
+@media (max-width:900px){
+  .lado{border-right:0;border-top:1px solid var(--line)}
+  .nav a,.nav .mais{color:#344054}
+  .nav a[aria-current="page"]{background:#F2F4F7}
+  .evolucao{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
