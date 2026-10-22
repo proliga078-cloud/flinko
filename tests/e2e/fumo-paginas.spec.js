@@ -40,11 +40,11 @@ const perfis = {
   cliente: { id: 'u1', name: 'Rui Cliente', plan: 'free', account_type: 'client', notify_email: true },
   admin: { id: 'u1', name: 'Admin', plan: 'pro', account_type: 'professional', category: 'Eletricistas', location: 'Porto' },
 };
-const privadas = ['dashboard.html', 'messages.html', 'pedidos.html', 'admin-antigo.html', 'pricing.html'];
+const privadas = ['dashboard.html', 'messages.html', 'pedidos.html', 'gestao.html', 'pricing.html'];
 
 for (const [tipo, perfil] of Object.entries(perfis)) {
   for (const pagina of privadas) {
-    if (pagina === 'admin-antigo.html' && tipo !== 'admin') continue;
+    if (pagina === 'gestao.html' && tipo !== 'admin') continue;
     test(`sem erros de JavaScript com sessão (${tipo}): ${pagina}`, async ({ page }) => {
       const erros = [];
       page.on('pageerror', (e) => erros.push('pageerror: ' + e.message));

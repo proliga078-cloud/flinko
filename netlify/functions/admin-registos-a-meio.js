@@ -1,4 +1,4 @@
-// Contas com o registo a meio (admin-antigo.html › Avisos).
+// Contas com o registo a meio (gestao.html › Hoje e Mensagens).
 //
 // Entre junho e agosto de 2026 houve contas criadas e confirmadas que nunca
 // chegaram a ter perfil (uma falha no registo, entretanto corrigida). Essas

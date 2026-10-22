@@ -1,4 +1,4 @@
-// Receita real vinda do Stripe, para o painel admin (admin-antigo.html). Só donos.
+// Receita real vinda do Stripe, para o painel admin (gestao.html › Dinheiro). Só donos.
 //
 // O MRR do painel era uma estimativa (nº de perfis com plano pago × preço que
 // o admin escreve nas Definições): não sabia de descontos, pagamentos
