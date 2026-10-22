@@ -56,8 +56,8 @@
  // desligado enquanto o id (AW-...) estiver vazio; as etiquetas vêm das
  // "ações de conversão" criadas na conta Google Ads (Objetivos > Conversões).
  var GOOGLE_ADS=window.FLINKO_GOOGLE_ADS||{
-   id:'',
-   conversoes:{conta_criada:'',pedido_publicado:'',perfil_contactar:''}
+   id:'AW-18002306256',
+   conversoes:{conta_criada:'G8fwCMi__KUdENDJlYhD',pedido_publicado:'xMabCMu5_KUdENDJlYhD',perfil_contactar:'RRBiCI7uh6YdENDJlYhD'}
  };
  var adsLigado=/^AW-\d+$/.test(GOOGLE_ADS.id||'');
  if(adsLigado){

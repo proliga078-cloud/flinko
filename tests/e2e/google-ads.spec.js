@@ -41,7 +41,15 @@ test('eventos de antes do consentimento (na fila) também contam', async ({ page
   await expect.poll(() => conversoes(page)).toEqual(['AW-123456789/abcConta']);
 });
 
-for (const [nome, caso] of [['sem consentimento', { analytics: false, ads: ADS }], ['sem id', { analytics: true, ads: null }]]) {
+test('a configuração do site usa a conta Google Ads da Flinko e as três conversões', async ({ page }) => {
+  const pedidosGoogle = await abrir(page, { analytics: true, ads: null });
+  await expect.poll(() => pedidosGoogle.length).toBe(1);
+  expect(pedidosGoogle[0]).toContain('id=AW-18002306256');
+  await page.evaluate(() => ['conta_criada', 'pedido_publicado', 'perfil_contactar'].forEach((n) => window.flinkoTrack(n, {})));
+  expect(await conversoes(page)).toEqual(['AW-18002306256/G8fwCMi__KUdENDJlYhD', 'AW-18002306256/xMabCMu5_KUdENDJlYhD', 'AW-18002306256/RRBiCI7uh6YdENDJlYhD']);
+});
+
+for (const [nome, caso] of [['sem consentimento', { analytics: false, ads: ADS }], ['com o id vazio', { analytics: true, ads: { id: '', conversoes: {} } }]]) {
   test(nome + ': nada da Google é carregado', async ({ page }) => {
     const pedidosGoogle = await abrir(page, caso);
     await page.evaluate(() => window.flinkoTrack && window.flinkoTrack('pedido_publicado', {}));
