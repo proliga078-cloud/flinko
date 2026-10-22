@@ -164,7 +164,7 @@
       r.push({
         id: 'canal', prioridade: 2,
         titulo: 'Investir mais em ' + melhor.canal,
-        situacao: melhor.canal + ' trouxe ' + melhor.visitantes + ' visitantes reais, e ' + melhor.viramPerfil + ' (' + pct(melhor.viramPerfil, melhor.visitantes) + '%) chegaram a um perfil ou aos pedidos. É o canal de fora que melhor está a funcionar neste período. Os outros: ' + canaisFora.filter(function (c) { return c !== melhor; }).map(function (c) { return c.canal + ' ' + c.visitantes; }).join(', ') + '.',
+        situacao: melhor.canal + ' trouxe ' + melhor.visitantes + ' visitantes reais, e ' + melhor.viramPerfil + ' (' + pct(melhor.viramPerfil, melhor.visitantes) + '%) chegaram a um perfil ou aos pedidos. É o canal de fora que melhor está a funcionar neste período.' + (canaisFora.length > 1 ? ' Os outros: ' + canaisFora.filter(function (c) { return c !== melhor; }).map(function (c) { return c.canal + ' ' + c.visitantes; }).join(', ') + '.' : ' Ainda não há outro canal de fora a trazer visitas.'),
         estudo: 'A regra dos marketplaces que cresceram (Lenny Rachitsky estudou como arrancaram os maiores marketplaces de consumo, 2020) é concentrar esforço nos poucos canais que já mostram resultado, em vez de estar em todo o lado. Cada canal novo só se testa com um objetivo e um prazo.',
         passos: melhor.canal === 'Google' ? [
           'Cria o Perfil da Empresa no Google (business.google.com) para o Flinko, com fotos, horário e o link do site. É grátis.',

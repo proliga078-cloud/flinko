@@ -10,18 +10,28 @@ const abrir = (page, opts = {}) => openAdmin(page, { path: '/gestao.html', ...op
 const INBOX = { conversations: [{ id: 'conv-1', professionalId: 'pro-1', name: 'Rui Alves', category: 'Eletricistas', lastMessage: 'Já completei o perfil!', lastAt: iso(0.1), porResponder: true }] };
 const muitos = (n) => Array.from({ length: n }, (_, i) => ({ ...PRO, id: 'p' + i, name: 'Pro ' + i, verified: true }));
 
-test('entra direto com a sessão de admin e mostra as 9 partes', async ({ page }) => {
+test('entra direto com a sessão de admin e mostra as 5 áreas e a Empresa', async ({ page }) => {
   await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
   await expect(page.locator('#main h1')).toHaveText('Hoje');
-  await expect(page.locator('#nav a')).toHaveText([/Hoje/, /Estratégia/, /Profissionais/, /Mensagens/, /Clientes e pedidos/, /Moderação e apoio/, /Angariação/, /Dinheiro/, /Empresa/]);
+  await expect(page.locator('#nav a')).toHaveText([/Hoje/, /Pessoas/, /Comunicação/, /Operação/, /Negócio/, /Empresa/]);
 });
 
-test('Hoje: o que há para fazer (mensagens, verificar, pedidos)', async ({ page }) => {
-  await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
+test('Hoje: o que mais pesa, decisões com conselho, uma lista do que tratar e 5 números', async ({ page }) => {
+  const calls = await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
   const main = page.locator('#main');
-  await expect(main.locator('.cartao', { has: page.locator('h2', { hasText: 'Mensagens por responder' }) })).toContainText('Rui Alves');
-  await expect(main.locator('.cartao', { has: page.locator('h2', { hasText: 'Profissionais por verificar' }) })).toContainText('Rui Alves');
-  await expect(main.locator('.cartao', { has: page.locator('h2', { hasText: 'Pedidos de clientes' }) })).toContainText('Instalar tomadas');
+  await expect(main.locator('.destaque')).toContainText('O que mais pesa agora');
+  const dec = main.locator('.decisao');
+  expect(await dec.count()).toBeGreaterThan(0);
+  expect(await dec.count()).toBeLessThanOrEqual(3);
+  await dec.first().locator('summary').click();
+  await expect(dec.first()).toContainText('O que dizem os estudos');
+  await dec.first().getByRole('button', { name: 'Criar tarefa para esta semana' }).click();
+  await expect.poll(() => calls.find((c) => c.method === 'POST' && c.path === '/rest/v1/admin_tasks')?.body.status).toBe('todo');
+  const tratar = main.locator('.tratar');
+  await expect(tratar).toContainText('Rui Alves: “Já completei o perfil!”');
+  await expect(tratar).toContainText('1 profissional(is) por verificar');
+  await expect(main.locator('.numero')).toHaveCount(5);
+  await expect(main.locator('.numero').first()).toContainText('pedidos de clientes (30 dias)');
   await expect(page.locator('#nav a[href="#mensagens"] .conta')).toHaveText('1');
 });
 
@@ -150,7 +160,7 @@ test('Estratégia: números sem a equipa, recomendações completas, plano, estu
   });
   await page.goto('/gestao.html#estrategia');
   const main = page.locator('#main');
-  await expect(main.locator('h1')).toHaveText('Estratégia');
+  await expect(main.locator('h1')).toHaveText('Negócio');
   await expect(main.locator('.kpi').first()).toContainText('2');
   await expect(main.locator('.kpi').first()).toContainText('visitantes reais');
   const trafego = main.locator('.rec', { hasText: 'o problema é falta de gente' });
@@ -176,7 +186,7 @@ test('Estratégia: no telemóvel não desliza para o lado', async ({ page }) => 
   await page.setViewportSize({ width: 375, height: 800 });
   await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
   await page.goto('/gestao.html#estrategia');
-  await expect(page.locator('#main h1')).toHaveText('Estratégia');
+  await expect(page.locator('#main h1')).toHaveText('Negócio');
   // Letra larga, como a de reserva no servidor do GitHub (lá passava 11px).
   await page.addStyleTag({ content: '*{font-family:Verdana,sans-serif!important}' });
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
@@ -257,15 +267,31 @@ test('Pesquisa global: Ctrl+K encontra um profissional e abre a ficha', async ({
   await expect(page.locator('#ficha')).toContainText('912345678');
 });
 
-test('telemóvel: 4 partes em baixo e o "Mais" com o resto e a pesquisa', async ({ page }) => {
+test('telemóvel: 4 áreas em baixo e o "Mais" com o resto e a pesquisa', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 });
   await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
   await expect(page.locator('#main h1')).toHaveText('Hoje');
   await expect(page.locator('#nav a:visible')).toHaveCount(4);
-  await page.getByRole('button', { name: 'Mais partes e procurar' }).click();
-  await page.locator('#ficha').getByRole('link', { name: 'Moderação e apoio' }).click();
-  await expect(page.locator('#main h1')).toHaveText('Moderação e apoio');
+  await page.getByRole('button', { name: 'Mais áreas e procurar' }).click();
+  await page.locator('#ficha').getByRole('link', { name: 'Negócio' }).click();
+  await expect(page.locator('#main h1')).toHaveText('Negócio');
+  await expect(page.locator('.subnav a[aria-current="page"]')).toHaveText('Análise');
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
+});
+
+test('sub-menu: cada área mostra as suas páginas no lugar dos separadores antigos', async ({ page }) => {
+  await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#angariacao/guias');
+  await expect(page.locator('#nav a[aria-current="page"]')).toContainText('Comunicação');
+  await expect(page.locator('.subnav a[aria-current="page"]')).toHaveText('Textos prontos');
+  await expect(page.locator('#main .tabs[role="tablist"]')).toHaveCount(0);
+  await page.goto('/gestao.html#moderacao/rgpd');
+  await expect(page.locator('#nav a[aria-current="page"]')).toContainText('Operação');
+  await expect(page.locator('.subnav a', { hasText: 'RGPD' })).toContainText('1');
+  await page.locator('.subnav a', { hasText: 'Faturas' }).count().then((n) => expect(n).toBe(0));
+  await page.goto('/gestao.html#dinheiro/faturas');
+  await expect(page.locator('#nav a[aria-current="page"]')).toContainText('Negócio');
+  await expect(page.locator('.subnav a[aria-current="page"]')).toHaveText('Faturas');
 });
 
 /* ===== Fase 2: Hoje, Profissionais e Clientes completos ===== */
@@ -274,12 +300,12 @@ const espiaJanelas = (page) => page.evaluate(() => { window.__abertos = []; wind
 
 test('Hoje: avisos com "adiar" e escolher que avisos aparecem', async ({ page }) => {
   const calls = await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
-  const avisos = page.locator('#cAvisos');
-  await expect(avisos).toContainText('1 profissional(is) por verificar');
-  await expect(avisos).toContainText('denúncia');
-  await avisos.locator('li', { hasText: 'por verificar' }).getByRole('button', { name: 'Adiar 7 dias' }).click();
+  const lista = page.locator('.tratar');
+  await expect(lista).toContainText('1 profissional(is) por verificar');
+  await expect(lista).toContainText('denúncia');
+  await lista.locator('li', { hasText: 'por verificar' }).getByRole('button', { name: 'Adiar' }).click();
   await expect.poll(() => calls.find((c) => c.method === 'POST' && c.path === '/rest/v1/admin_items' && c.body.kind === 'snooze')?.body.data.key).toBe('unver:all');
-  await page.getByRole('button', { name: 'Escolher avisos' }).click();
+  await page.getByRole('button', { name: 'Escolher que avisos aparecem' }).click();
   await page.locator('#fRegras input[value="den"]').uncheck();
   await page.locator('#fRegras').getByRole('button', { name: 'Guardar' }).click();
   await expect.poll(() => calls.find((c) => c.method === 'POST' && c.path === '/rest/v1/admin_settings')?.body).toEqual({ key: 'alertrules', value: { off: ['den'] } });
@@ -293,7 +319,7 @@ test('Hoje: seguimento automático por WhatsApp envia e marca o passo seguinte',
     ] },
     fns: { 'admin-flinko-message': INBOX },
   });
-  await expect(page.locator('#main')).toContainText('Seguimentos automáticos');
+  await expect(page.locator('.tratar')).toContainText('Carlos Pinto');
   await espiaJanelas(page);
   await page.locator('[data-seg="f1"]').click();
   await expect.poll(() => page.evaluate(() => window.__abertos[0] || '')).toContain('wa.me');
@@ -486,7 +512,7 @@ test('Relatório e investidores: texto pronto a copiar e mercado guardado', asyn
   await expect(page.locator('#relTxt')).toContainText('1 pedido(s) de clientes sem nenhuma proposta');
   await page.getByRole('button', { name: '30 dias' }).click();
   await expect(page.locator('#relTxt')).toContainText('últimos 30 dias');
-  await page.locator('[data-est="investidores"]').click();
+  await page.locator('.subnav a', { hasText: 'Investidores' }).click();
   await page.locator('#t_n').fill('1000');
   await page.locator('#t_arpu').fill('10');
   await page.locator('#t_sam').fill('50');
@@ -500,7 +526,7 @@ test('Relatório e investidores: texto pronto a copiar e mercado guardado', asyn
 test('Empresa: o dono muda o papel de alguém', async ({ page }) => {
   const calls = await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
   await page.goto('/gestao.html#empresa');
-  await expect(page.locator('#nav a')).toHaveText([/Hoje/, /Estratégia/, /Profissionais/, /Mensagens/, /Clientes e pedidos/, /Moderação e apoio/, /Angariação/, /Dinheiro/, /Empresa/]);
+  await expect(page.locator('#nav a[aria-current="page"]')).toContainText('Empresa');
   await page.locator('[data-papel="dono@flinko.pt"]').selectOption('support');
   await expect.poll(() => calls.find((c) => c.path === '/rest/v1/rpc/admin_set_role')?.body).toEqual({ p_email: 'dono@flinko.pt', p_role: 'support' });
 });
