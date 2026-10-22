@@ -165,6 +165,8 @@
 # servico novo (outra CDN, um mapa, um video...), acrescenta a origem aqui,
 # senao deixa de funcionar. Atencao: o Simple Analytics nao esta no codigo,
 # e injetado pelo Netlify (Snippet injection); por isso esta aqui a mao.
+# As origens da Google (googletagmanager, googleadservices, doubleclick) sao
+# da medicao do Google Ads em assets/tracking.js (so com consentimento).
 # Mantem 'unsafe-inline' porque as paginas usam
 # <script> e onclick= inline; o objetivo a medio prazo e remove-los e tirar o
 # 'unsafe-inline'.
@@ -176,7 +178,7 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(self), payment=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://scripts.simpleanalyticscdn.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.open-meteo.com https://queue.simpleanalyticscdn.com; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://scripts.simpleanalyticscdn.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.open-meteo.com https://queue.simpleanalyticscdn.com https://www.google.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.googletagmanager.com; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://td.doubleclick.net https://www.googletagmanager.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
 
 # Cache de assets estaticos no browser do visitante. Os nomes dos ficheiros
 # NAO tem hash de versao, por isso os tempos sao propositadamente moderados
