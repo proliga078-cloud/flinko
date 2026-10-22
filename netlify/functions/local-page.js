@@ -39,13 +39,16 @@ function cartao(p){
   const resposta=p.response_sample_count>0&&p.avg_response_minutes!=null&&Number(p.avg_response_minutes)<=60
     ?`<span class="chip">Responde em ~${Math.max(1,Math.round(p.avg_response_minutes))} min</span>`:''
   return `<a class="card" href="${url}">
-  <div class="av">${avatar}</div>
-  <div class="cbody">
-    <div class="cname">${esc(p.name)}${p.verified?' <span class="ver" title="Perfil verificado">✓ Verificado</span>':''}</div>
-    <div class="cmeta">${esc(p.location||'Portugal')}</div>
-    ${bio?`<p class="cbio">${bio}</p>`:''}
-    ${resposta}
+  <div class="ctop">
+    <div class="av">${avatar}</div>
+    <div class="cbody">
+      <div class="cname">${esc(p.name)}${p.verified?' <span class="ver" title="Perfil revisto pela Flinko">✓</span>':''}</div>
+      <div class="cmeta">${esc(p.location||'Portugal')}</div>
+    </div>
   </div>
+  ${bio?`<p class="cbio">${bio}</p>`:''}
+  ${resposta}
+  <div class="cfoot"><span>Orçamento grátis</span><span class="cgo">Ver perfil e falar</span></div>
 </a>`
 }
 
@@ -149,49 +152,61 @@ exports.handler=async(event)=>{
 <meta property="og:url" content="${esc(canonical)}">
 <meta property="og:image" content="${SITE}/assets/og-image.png">
 <meta property="og:locale" content="pt_PT">
-<meta name="theme-color" content="#132420">
+<meta name="theme-color" content="#FBF6EF">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/site-header.js" defer></script>
 <script src="/assets/pwa.js" defer></script>
 <link rel="manifest" href="/manifest.json">
 ${jsonLdHtml}
 <style>
-:root{--ink:#132420;--soft:#4E5C57;--line:#E1EEE6;--surface:#F3FBF6;--accent:#BB5C08;--accent-deep:#B85608;--fresh:#0F8B5F}
+/* Direção "calorosa e local" (ver CLAUDE.md): papel creme, terracota, títulos em Fraunces. */
+:root{--ink:#2B2118;--soft:#6B5A4C;--line:#E6D9CB;--paper:#FBF6EF;--paper-2:#F4ECE1;--accent:#B9502A;--accent-deep:#9A3F1F;--fresh:#3E8E5E}
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--ink);background:#fff;line-height:1.55}
+body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6}
 a{color:inherit}
-.wrap{max-width:1040px;margin:0 auto;padding:0 5%}
+.fk-header{background:rgba(251,246,239,.94);border-bottom-color:var(--line)}
+.fk-header::after{display:none}
+.fk-footer{background:var(--ink)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
 .crumbs{font-size:13px;color:var(--soft);padding:18px 0 4px}.crumbs a{text-decoration:none}
-.hero{padding:10px 0 26px}
-h1{font-size:clamp(1.7rem,4.2vw,2.5rem);line-height:1.15;letter-spacing:-.02em;margin:8px 0 12px}
-.lead{color:var(--soft);max-width:640px;margin:0 0 20px;font-size:1.02rem}
-.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:12px}
+.hero{padding:10px 0 28px}
+h1,h2{font-family:Fraunces,Georgia,serif;font-weight:600;letter-spacing:-.01em}
+h1{font-size:clamp(2rem,5vw,2.8rem);line-height:1.1;margin:8px 0 12px}
+.lead{color:var(--soft);max-width:600px;margin:0 0 22px;font-size:1.05rem}
+.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:600;padding:13px 22px;border-radius:999px}
 .btn:hover{background:var(--accent-deep)}
-.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line);margin-left:8px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:8px 0 8px}
-.card{display:flex;gap:14px;padding:16px;border:1px solid var(--line);border-radius:16px;text-decoration:none;background:#fff;transition:box-shadow .15s,border-color .15s}
-.card:hover{border-color:#CFE4D9;box-shadow:0 6px 20px rgba(19,36,32,.08)}
-.av{flex:0 0 56px;width:56px;height:56px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden}
+.ou{display:block;margin-top:12px;font-size:.95rem;color:var(--soft)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:16px;margin:8px 0}
+.card{display:flex;flex-direction:column;gap:10px;padding:18px;border:1px solid var(--line);border-radius:12px;text-decoration:none;background:#fff}
+.card:hover{border-color:var(--soft)}
+.ctop{display:flex;gap:14px;align-items:center}
+.av{flex:0 0 52px;width:52px;height:52px;border-radius:50%;background:var(--paper-2);color:var(--accent);font-family:Fraunces,Georgia,serif;display:flex;align-items:center;justify-content:center;font-weight:600;overflow:hidden}
 .av img{width:100%;height:100%;object-fit:cover}
-.cbody{min-width:0}.cname{font-weight:700}.cmeta{font-size:13px;color:var(--soft)}
-.ver{font-size:11px;font-weight:700;color:var(--fresh);background:#D7F5E4;padding:2px 8px;border-radius:99px;white-space:nowrap}
-.cbio{font-size:13.5px;color:var(--soft);margin:8px 0 6px}
-.chip{display:inline-block;font-size:11.5px;font-weight:600;color:var(--fresh);background:var(--surface);padding:3px 9px;border-radius:99px}
-.vazio{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:28px;margin:8px 0}
-.vazio h2{margin:0 0 8px;font-size:1.25rem}.vazio p{color:var(--soft);margin:0 0 16px}
-.mais{margin:10px 0 0;font-weight:600}
-section{margin:34px 0}
-h2{font-size:1.25rem;margin:0 0 12px}
+.cbody{min-width:0}.cname{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:1.12rem;line-height:1.25}.cmeta{font-size:13.5px;color:var(--soft)}
+.ver{font-family:Inter,sans-serif;font-size:.85rem;font-weight:700;color:var(--fresh)}
+.cbio{font-size:14px;color:var(--soft);margin:0}
+.chip{align-self:flex-start;font-size:12.5px;color:var(--soft)}
+.cfoot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px;border-top:1px solid var(--line);font-size:14px}
+.cgo{color:var(--accent);font-weight:600}
+.vazio{background:var(--paper-2);border-radius:14px;padding:28px;margin:8px 0}
+.vazio h2{margin:0 0 8px;font-size:1.35rem}.vazio p{color:var(--soft);margin:0 0 16px}
+.mais{margin:12px 0 0;font-weight:600}
+section{margin:40px 0}
+h2{font-size:1.45rem;margin:0 0 12px}
+.passos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.passos strong{display:block;font-family:Fraunces,Georgia,serif;font-size:1.08rem;margin-bottom:4px}
+.passos p{margin:0;color:var(--soft);font-size:.95rem}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chips a{border:1px solid var(--line);border-radius:99px;padding:7px 14px;text-decoration:none;font-size:14px;font-weight:600}
+.chips a{border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 14px;text-decoration:none;font-size:14px}
 .chips a:hover{border-color:var(--accent);color:var(--accent-deep)}
 details{border-bottom:1px solid var(--line);padding:12px 0}summary{cursor:pointer;font-weight:600}details p{color:var(--soft);margin:8px 0 0}
-.cta{background:var(--ink);color:#fff;border-radius:20px;padding:28px;margin:34px 0}
-.cta h2{margin:0 0 6px}.cta p{margin:0 0 16px;color:#cfe4d9}
+.cta{border-top:1px solid var(--line);padding:24px 0 8px;margin:40px 0 0;color:var(--soft);font-size:.95rem}
+.cta a{color:var(--accent);font-weight:600}
+@media (max-width:700px){.passos{grid-template-columns:minmax(0,1fr);gap:16px}}
 </style>
 </head>
 <body>
@@ -201,12 +216,18 @@ ${siteHeader('categoria')}
 <header class="hero">
 <h1>${esc(servico)} em ${esc(placeName)}</h1>
 <p class="lead">${total?`${esc(plural(total,'profissional','profissionais'))} em ${esc(placeName)}. Vê os perfis, compara e fala diretamente com quem quiseres, sem comissões e sem intermediários.`:`Ainda não temos ${esc(servico.toLowerCase())} em ${esc(placeName)}, mas podes publicar um pedido grátis e receber propostas.`}</p>
-<a class="btn" href="${pedidoUrl}">Publicar pedido grátis</a><a class="btn ghost" href="/${cat.slug}">Ver todo o país</a>
+<a class="btn" href="${pedidoUrl}">Publicar pedido grátis</a>
+<span class="ou">${total?'Ou escolhe abaixo com quem queres falar.':`Ou vê os <a href="/${cat.slug}">profissionais de todo o país</a>.`}</span>
 </header>
 ${lista}
+<section><h2>Como funciona</h2><div class="passos">
+<div><strong>Escolhes ou pedes</strong><p>Falas com quem te parecer bem, ou publicas o pedido e recebes propostas de quem está perto.</p></div>
+<div><strong>Combinas direto</strong><p>Preço, data e visita combinam-se entre vocês, por mensagem. Sem intermediários.</p></div>
+<div><strong>Não pagas à Flinko</strong><p>Pagas ao profissional, como sempre fizeste. A Flinko não fica com nada.</p></div>
+</div></section>
 ${ligacoes}
 ${faqHtml}
-<div class="cta"><h2>És ${esc(servico.toLowerCase())} em ${esc(placeName)}?</h2><p>Cria o teu perfil grátis e recebe pedidos de clientes da tua zona.</p><a class="btn" href="/auth.html?tab=register">Criar perfil grátis</a></div>
+<p class="cta">Trabalhas nesta área em ${esc(placeName)}? <a href="/profissionais">Cria o teu perfil grátis e recebe pedidos da tua zona</a>.</p>
 </main>
 ${siteFooter()}
 <script src="/assets/cookie-consent.js" defer></script>

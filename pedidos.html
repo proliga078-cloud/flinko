@@ -246,7 +246,7 @@ nav{flex-wrap:wrap;height:auto;padding:10px 4%;row-gap:8px}
     <div class="fk-actions">
       <div id="nav-guest" class="fk-group">
         <a href="/auth?tab=login" class="fk-btn fk-btn-ghost fk-hide-sm">Entrar</a>
-        <a href="/auth?tab=register" class="fk-btn fk-btn-dark">Criar conta grátis</a>
+        <a href="/pedidos?publicar=1" class="fk-btn fk-btn-dark">Publicar pedido</a>
       </div>
       <div id="nav-user" class="fk-group" style="display:none">
         <a href="/dashboard" class="fk-btn fk-btn-dark">O meu painel</a>
@@ -897,7 +897,7 @@ document.getElementById('acc-password').setAttribute('autocomplete',mode==='new'
 function backToRequest(){showMsg('error','');showStep('request')}
 function continueWithGoogle(){
 saveDraft()
-location.href='auth.html?tab=login&intent=client&redirect='+encodeURIComponent('pedidos.html?publicar=1')
+location.href='auth.html?tab=register&intent=client&redirect='+encodeURIComponent('pedidos.html?publicar=1')
 }
 function afterSignIn(s){
 session=s

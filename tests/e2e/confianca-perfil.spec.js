@@ -26,7 +26,7 @@ test('sem sessão, "Entrar para avaliar" leva ao login e volta ao perfil', async
   await abrirAvaliacoes(page);
   await expect(page.locator('#rev-btn')).toHaveText('Entrar para avaliar');
   await page.click('#rev-btn');
-  await page.waitForURL(/auth\.html\?tab=login&intent=client&redirect=/);
+  await page.waitForURL(/auth\.html\?tab=register&intent=client&redirect=/);
   expect(decodeURIComponent(page.url())).toContain('redirect=/profile.html?id=pro-1');
 });
 
