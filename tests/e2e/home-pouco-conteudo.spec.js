@@ -1,6 +1,6 @@
 // A homepage tem de parecer cuidada mesmo com pouco conteúdo dos profissionais:
 // cartões sem bio nem experiência não ficam vazios, e categorias sem
-// profissionais dizem todas o mesmo ("Em breve").
+// profissionais levam a publicar o pedido nessa categoria.
 const { test, expect } = require('@playwright/test');
 const path = require('path');
 
@@ -45,9 +45,33 @@ test('perfis sem categoria não contam para o total nem aparecem na montra; os c
   expect(nomes).toEqual(['Completo', 'Só Nome']);
 });
 
-test('categorias sem profissionais mostram "Em breve"; com profissionais mostram a contagem', async ({ page }) => {
+test('categorias sem profissionais levam a publicar o pedido; com profissionais mostram a contagem', async ({ page }) => {
   await abrir(page, [pro('1'), pro('2')]);
   await expect(page.locator('.cat-tile[data-cat="Eletricistas"] .desc')).toHaveText('2 profissionais');
-  await expect(page.locator('.cat-tile[data-cat="Jardineiros"] .desc')).toHaveText('Em breve');
-  await expect(page.locator('.cat-tile[data-cat="Carpinteiros"] .desc')).toHaveText('Em breve');
+  await expect(page.locator('.cat-tile[data-cat="Eletricistas"]')).toHaveAttribute('href', '/eletricistas');
+  for (const cat of ['Jardineiros', 'Carpinteiros']) {
+    const tile = page.locator('.cat-tile[data-cat="' + cat + '"]');
+    await expect(tile.locator('.desc')).toHaveText('Publica o pedido e avisamos quem trabalha perto');
+    await expect(tile).toHaveAttribute('href', '/pedidos?publicar=1&cat=' + cat);
+  }
+  await expect(page.locator('body')).not.toContainText('Em breve');
+});
+
+test('a zona do cartão ignora localidades estragadas e listas de terras', async ({ page }) => {
+  await abrir(page, [
+    pro('1', { name: 'Estragada', location: 'Lisboa – I’m' }),
+    pro('2', { name: 'Lista', location: 'Leiria – Caldas da Rainha, Nazare,Alcobaça' }),
+    pro('3', { name: 'Normal', location: 'Braga – Guimarães' }),
+  ]);
+  const meta = (n) => page.locator('#proGrid .pro-card', { hasText: n }).locator('.pro-meta');
+  await expect(meta('Estragada')).toHaveText('Eletricistas · Lisboa');
+  await expect(meta('Lista')).toHaveText('Eletricistas · Caldas da Rainha');
+  await expect(meta('Normal')).toHaveText('Eletricistas · Guimarães');
+});
+
+test('sem os tiques de site feito por IA: etiquetas por cima, passos numerados, emojis e faixa de vantagens', async ({ page }) => {
+  await abrir(page, [pro('1')]);
+  await expect(page.locator('main .kicker, main .hi-block, main .step-num, main .tag-pill, .value-strip')).toHaveCount(0);
+  const texto = await page.locator('main').innerText();
+  expect(texto).not.toMatch(/[🌀-🫿]|especialista certo|—/u);
 });

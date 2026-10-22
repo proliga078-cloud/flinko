@@ -597,8 +597,6 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
 .search-card:focus-within{box-shadow:0 34px 70px -28px rgba(0,0,0,.6);transform:translateY(-2px)}
 
 /* scroll reveal */
-[data-reveal]{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.16,.8,.24,1),transform .7s cubic-bezier(.16,.8,.24,1)}
-[data-reveal].is-in{opacity:1;transform:none}
 [data-reveal="d1"]{transition-delay:.08s}
 [data-reveal="d2"]{transition-delay:.16s}
 [data-reveal="d3"]{transition-delay:.24s}
@@ -998,41 +996,15 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   </div>
   </div>
 
-  <!-- VALUE STRIP (floating over hero) -->
-  <div class="value-strip">
-    <div class="wrap">
-      <div class="value-card" data-reveal>
-        <div class="value-item">
-          <span class="ic ic-orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></span>
-          <div><strong>Sem custos escondidos</strong><span>Preços claros, sem surpresas</span></div>
-        </div>
-        <div class="value-item">
-          <span class="ic ic-mint"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/></svg></span>
-          <div><strong>Perfis verificados</strong><span>Revistos à mão, um a um</span></div>
-        </div>
-        <div class="value-item">
-          <span class="ic ic-purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg></span>
-          <div><strong>Contacto direto</strong><span>Falas logo com o profissional</span></div>
-        </div>
-        <div class="value-item">
-          <span class="ic ic-dark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
-          <div><strong>Sem comissões</strong><span>O que combinares fica entre vocês</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- CATEGORIES -->
   <section style="padding-top:0">
     <div class="wrap">
       <div class="section-head center" data-reveal>
-        <span class="kicker">Categorias</span>
-        <h2>Explora por <span class="hi-block">categoria</span></h2>
-        <p>Encontra o especialista certo para cada trabalho</p>
+        <h2>Escolhe o ofício</h2>
+        <p>Abre a categoria e vês quem trabalha perto de ti, com preços e avaliações.</p>
       </div>
       <div class="cat-grid" data-reveal>
         <a href="/eletricistas" class="cat-tile" data-cat="Eletricistas"><span class="glow-spot"></span>
-          <span class="tag-pill">Mais procurada</span>
           <span class="ic ic-orange"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg></span>
           <div><h3>Eletricistas</h3><span class="desc">Instalações e reparações</span></div>
         </a>
@@ -1075,28 +1047,24 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   <section>
     <div class="wrap">
       <div class="section-head center" data-reveal>
-        <span class="kicker">Passo a passo</span>
         <h2>Como funciona</h2>
         <p>Um exemplo: a Ana precisa de um eletricista em Cascais. Do primeiro clique à obra marcada.</p>
       </div>
       <div class="steps-grid">
         <div class="step-card" data-reveal="d1"><span class="glow-spot"></span>
-          <span class="step-num">01</span>
           <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>
           <h3>Ana escreve o que precisa</h3>
-          <p>"Eletricista" + "Cascais" na pesquisa. Vê logo os profissionais verificados da zona, com preços "a partir de" e avaliações — sem ter de pedir orçamento a cada um.</p>
+          <p>"Eletricista" + "Cascais" na pesquisa. Vê logo os profissionais verificados da zona, com preços "a partir de" e avaliações. Não tens de pedir orçamento a cada um.</p>
         </div>
         <div class="step-card" data-reveal="d2"><span class="glow-spot"></span>
-          <span class="step-num">02</span>
           <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg></span>
           <h3>Compara e fala diretamente</h3>
           <p>Abre os perfis, vê serviços, fotos de trabalhos e avaliações, e envia mensagem direta a perguntar disponibilidade esta semana.</p>
         </div>
         <div class="step-card" data-reveal="d3"><span class="glow-spot"></span>
-          <span class="step-num">03</span>
           <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></span>
           <h3>Combina a visita e marca a obra</h3>
-          <p>O profissional responde, combinam a visita diretamente no chat e marcam data. A Ana não pagou nada à Flinko — nem para procurar, nem para fechar o trabalho.</p>
+          <p>O profissional responde, combinam a visita diretamente no chat e marcam data. A Ana não pagou nada à Flinko, nem para procurar nem para fechar o trabalho.</p>
         </div>
       </div>
     </div>
@@ -1106,8 +1074,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   <section class="pros-section">
     <div class="wrap">
       <div class="section-head center" data-reveal>
-        <span class="kicker">Profissionais verificados</span>
-        <h2>Quem já está na <span class="hi-block mint">Flinko</span></h2>
+        <h2>Quem já está na Flinko</h2>
         <p>Cada perfil é revisto à mão pela nossa equipa antes de receber o selo de verificado. Vê as avaliações, os preços e fala diretamente.</p>
       </div>
       <div id="sponsoredContainer"></div>
@@ -1122,17 +1089,16 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   <section class="app-section" id="app">
     <div class="wrap app-inner">
       <div data-reveal>
-        <span class="kicker">App Flinko</span>
-        <h2>A Flinko no teu telemóvel, como uma <span class="hi-block">app</span></h2>
+        <h2>A Flinko no teu telemóvel, como uma app</h2>
         <p class="app-lead">Instala em 10 segundos, sem ir à loja de apps. Fica no ecrã principal, abre num toque e avisa-te quando alguém te responde.</p>
         <div class="app-benefits">
-          <div class="app-benefit"><span class="ic">🔔</span><div><strong>Avisos na hora</strong><span>Mensagens e propostas chegam como notificação.</span></div></div>
-          <div class="app-benefit"><span class="ic">⚡</span><div><strong>Abre num toque</strong><span>Em ecrã inteiro, sem procurar o site no browser.</span></div></div>
-          <div class="app-benefit"><span class="ic">🧰</span><div><strong>Para profissionais</strong><span>Pedidos da tua zona, agenda e orçamentos sempre à mão.</span></div></div>
-          <div class="app-benefit"><span class="ic">🪶</span><div><strong>Grátis e leve</strong><span>Não ocupa espaço como uma app normal.</span></div></div>
+          <div class="app-benefit"><div><strong>Avisos na hora</strong><span>Mensagens e propostas chegam como notificação.</span></div></div>
+          <div class="app-benefit"><div><strong>Abre num toque</strong><span>Em ecrã inteiro, sem procurar o site no browser.</span></div></div>
+          <div class="app-benefit"><div><strong>Para profissionais</strong><span>Pedidos da tua zona, agenda e orçamentos sempre à mão.</span></div></div>
+          <div class="app-benefit"><div><strong>Grátis e leve</strong><span>Não ocupa espaço como uma app normal.</span></div></div>
         </div>
         <div class="app-cta">
-          <button type="button" class="btn btn-orange" data-fk-install onclick="window.flinkoInstallApp&&window.flinkoInstallApp()">📲 Instalar a app</button>
+          <button type="button" class="btn btn-orange" data-fk-install onclick="window.flinkoInstallApp&&window.flinkoInstallApp()">Instalar a app</button>
           <span class="app-hint">No iPhone: Partilhar → “Adicionar ao ecrã principal”.</span>
           <span class="app-done">✓ Já tens a app Flinko instalada</span>
         </div>
@@ -1615,7 +1581,8 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
             if(descEl) descEl.textContent = n + (n === 1 ? ' profissional' : ' profissionais');
           } else {
             var descVazio = tile.querySelector('.desc');
-            if(descVazio) descVazio.textContent = 'Em breve';
+            if(descVazio) descVazio.textContent = 'Publica o pedido e avisamos quem trabalha perto';
+            tile.href = '/pedidos?publicar=1&cat=' + encodeURIComponent(tile.getAttribute('data-cat'));
           }
         });
       })
@@ -1626,7 +1593,14 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   // Cartões dos profissionais: foto (ou iniciais), zona, avaliação real,
   // tempo de resposta e preço "a partir de" vindos da base de dados. O cartão
   // inteiro é o link para o perfil.
-  function cidade(loc){ var p = String(loc || '').split(/\s[–-]\s/); return (p[1] || p[0] || '').trim(); }
+  // A localidade é escrita à mão pelo profissional: fica só a primeira de uma
+  // lista e, se não parecer um nome de terra ("I’m"), mostra-se o distrito.
+  function cidade(loc){
+    var p = String(loc || '').split(/\s[–-]\s/);
+    var distrito = (p[0] || '').trim();
+    var terra = (p[1] || '').split(',')[0].trim();
+    return /^[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ .]{2,}$/.test(terra) ? terra : distrito;
+  }
   function euros(v){ var n = Number(v); return isFinite(n) && n > 0 ? n.toLocaleString('pt-PT', {style:'currency', currency:'EUR', maximumFractionDigits:0}) : ''; }
   function chipsHtml(p){
     var out = [];
@@ -1682,7 +1656,7 @@ header.condensed{box-shadow:0 10px 30px -22px rgba(19,36,32,.4)}
   }
   function emptyStateHtml(){
     return '<div class="pro-card" style="text-align:center;grid-column:1/-1">' +
-      '<p class="bio" style="margin-bottom:14px">Ainda não temos profissionais verificados para mostrar aqui — podes ser o primeiro.</p>' +
+      '<p class="bio" style="margin-bottom:14px">Ainda não temos profissionais verificados para mostrar aqui. Podes ser o primeiro.</p>' +
       '<a href="/auth" class="btn btn-orange">Criar perfil grátis</a>' +
     '</div>';
   }
