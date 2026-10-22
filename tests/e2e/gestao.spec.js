@@ -272,6 +272,8 @@ test('telemóvel: 4 áreas em baixo e o "Mais" com o resto e a pesquisa', async 
   await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
   await expect(page.locator('#main h1')).toHaveText('Hoje');
   await expect(page.locator('#nav a:visible')).toHaveCount(4);
+  const mais = await page.locator('#bMais').boundingBox();
+  expect(mais.x + mais.width).toBeLessThanOrEqual(375);
   await page.getByRole('button', { name: 'Mais áreas e procurar' }).click();
   await page.locator('#ficha').getByRole('link', { name: 'Negócio' }).click();
   await expect(page.locator('#main h1')).toHaveText('Negócio');
@@ -424,7 +426,10 @@ test('Preços e projeção: guarda preços e custos', async ({ page }) => {
   const calls = await abrir(page, { fns: { 'admin-flinko-message': INBOX } });
   await page.goto('/gestao.html#dinheiro/precos');
   await page.locator('#pr_pro').fill('24.99');
+  // Guardar redesenha a página: espera pela página nova antes de escrever o custo.
+  await page.locator('#cNome').evaluate((el) => { el.dataset.antigo = '1'; });
   await page.getByRole('button', { name: 'Guardar preços' }).click();
+  await expect(page.locator('#cNome:not([data-antigo])')).toBeVisible();
   await expect.poll(() => calls.find((c) => c.path === '/rest/v1/admin_settings' && c.body && c.body.key === 'prices')?.body.value).toEqual({ starter: 9.99, pro: 24.99, premium: 29.99 });
   await page.locator('#cNome').fill('Supabase');
   await page.locator('#cValor').fill('25');
