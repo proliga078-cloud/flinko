@@ -127,7 +127,7 @@ if(!window.flinkoTrack){
     bar.setAttribute('aria-label', 'Consentimento de cookies');
     bar.innerHTML =
       '<p class="fk-cookie-text">Usamos cookies essenciais para o site funcionar e, só com a tua autorização, '
-      + 'cookies de analytics para percebermos como é usado e melhorá-lo. '
+      + 'cookies de análise para percebermos como é usado e medir os nossos anúncios no Google. '
       + 'Podes ler mais na <a href="/cookies.html">política de cookies</a>.</p>'
       + '<div class="fk-cookie-actions">'
       + '<button type="button" class="fk-cookie-btn fk-cookie-reject" data-fk-action="reject">Rejeitar não essenciais</button>'

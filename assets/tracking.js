@@ -51,8 +51,34 @@
      keepalive:true
    }).catch(function(){})
  }
+ // Google Ads: mede que anúncios trazem contas, pedidos e contactos. Só corre
+ // aqui, depois do consentimento de análise e medição de anúncios. Fica
+ // desligado enquanto o id (AW-...) estiver vazio; as etiquetas vêm das
+ // "ações de conversão" criadas na conta Google Ads (Objetivos > Conversões).
+ var GOOGLE_ADS=window.FLINKO_GOOGLE_ADS||{
+   id:'',
+   conversoes:{conta_criada:'',pedido_publicado:'',perfil_contactar:''}
+ };
+ var adsLigado=/^AW-\d+$/.test(GOOGLE_ADS.id||'');
+ if(adsLigado){
+   window.dataLayer=window.dataLayer||[];
+   window.gtag=window.gtag||function(){window.dataLayer.push(arguments)};
+   window.gtag('js',new Date());
+   // Só medição: sem listas de remarketing nem anúncios personalizados (é o
+   // que a política de cookies promete).
+   window.gtag('config',GOOGLE_ADS.id,{allow_ad_personalization_signals:false});
+   var g=document.createElement('script');
+   g.async=true;
+   g.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(GOOGLE_ADS.id);
+   document.head.appendChild(g);
+ }
+ function conversao(name){
+   var etiqueta=adsLigado&&(GOOGLE_ADS.conversoes||{})[name];
+   if(etiqueta)try{window.gtag('event','conversion',{send_to:GOOGLE_ADS.id+'/'+etiqueta})}catch(e){}
+ }
+
  var fila=window.__fkq||[];
- window.flinkoTrack=function(name,props){sendEvent(name,props)};
- fila.forEach(function(e){sendEvent(e[0],e[1],e[2])});
+ window.flinkoTrack=function(name,props){sendEvent(name,props);conversao(name)};
+ fila.forEach(function(e){sendEvent(e[0],e[1],e[2]);conversao(e[0])});
  window.__fkq=[];
 })();
