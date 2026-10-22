@@ -91,8 +91,13 @@ $("#ficha").addEventListener("click", e => { if (e.target.id === "ficha" || e.ta
 const C = {};
 const PESOS = [["Categoria", p => !!p.category, 15], ["Localização", p => !!p.location, 10], ["Descrição", p => !!String(p.bio || "").trim(), 15], ["Foto", p => !!p.photo_url, 15], ["Capa", p => !!p.cover_url, 5], ["Serviço", p => p._servicos > 0, 15], ["Portfólio", p => p._portfolio > 0, 10], ["Verificado", p => !!p.verified, 10], ["Telemóvel", p => !!p._tel, 5]];
 
-async function profissionais(forcar) {
-  if (C.pros && !forcar) return C.pros;
+// Duas vistas podem pedir os profissionais ao mesmo tempo: lê-os uma só vez.
+function profissionais(forcar) {
+  if (C.pros && !forcar) return Promise.resolve(C.pros);
+  if (!C._prosP || forcar) C._prosP = lerProfissionais().finally(() => { C._prosP = null; });
+  return C._prosP;
+}
+async function lerProfissionais() {
   const [perfis, privados, tels, servicos, portfolio, crm, convs] = await Promise.all([
     todas("profiles?select=id,name,category,location,plan,verified,approved,suspended,is_demo,created_at,account_type,bio,photo_url,cover_url,slug,avg_response_minutes&order=created_at.desc,id"),
     todas("rpc/admin_profiles_private?order=id").catch(() => []),
@@ -695,7 +700,8 @@ function colunas(sem, nome) {
   const m = Math.max(1, ...sem.map(s => s.n));
   return `<div class="colunas" role="img" aria-label="${esc(nome)} por semana: ${sem.map(s => fdata(s.desde) + " " + s.n).join(", ")}">${sem.map(s => `<div class="col" title="Semana de ${fdata(s.desde)}: ${s.n}"><span style="height:${Math.max(3, s.n / m * 100)}%"></span><small>${new Date(s.desde).getDate()}/${new Date(s.desde).getMonth() + 1}</small></div>`).join("")}</div>`;
 }
-VISTAS.estrategia = async main => {
+// Os números e as recomendações da Estratégia, também usados na página Hoje.
+async function analise(periodo) {
   const N = window.FlinkoNumeros, E = window.FlinkoEstrategia;
   const [pros, reqs, linhas, eventos, wa, avs] = await Promise.all([
     profissionais(), pedidos(),
@@ -728,6 +734,11 @@ VISTAS.estrategia = async main => {
   const sem = N.semanas(todos, 12, hojeS);
   const semPros = N.contarPorSemana(pros.map(p => p.created_at), sem);
   const semReqs = N.contarPorSemana(reqs.map(r => r.created_at), sem);
+  return { pros, reqs, vis, visAnt, reqsP, reqsAnt, caminho, caminhoBase, canais, po, distritos, cpro, faltaMaisComum, recs, plano, sem, semPros, semReqs, avs };
+}
+VISTAS.estrategia = async main => {
+  const E = window.FlinkoEstrategia;
+  const { vis, visAnt, reqsP, reqsAnt, caminho, caminhoBase, canais, po, distritos, cpro, faltaMaisComum, recs, plano, sem, semPros, semReqs } = await analise(periodo);
   const pctTxt = (a, b) => b ? Math.round(a / b * 100) + "%" : "—";
   const kpi = (v, t, delta) => `<div class="cartao kpi"><strong>${v}</strong><span>${t}</span>${delta == null ? "" : `<div>${seta(delta)} <small class="nota">vs. ${periodo} dias antes</small></div>`}</div>`;
 

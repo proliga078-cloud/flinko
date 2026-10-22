@@ -97,3 +97,11 @@ test('semanas: conta visitantes reais por semana, de segunda a domingo', () => {
   const s = N.semanas(vis, 2, '2026-10-20');
   assert.deepEqual(s.map((x) => [x.desde, x.ate, x.n]), [['2026-10-12', '2026-10-18', 1], ['2026-10-19', '2026-10-25', 1]]);
 });
+
+test('recomendação de canal: com um só canal de fora não escreve "Os outros: ."', () => {
+  const vis = N.visitantes([linha('a', '/canalizadores', 'google.com'), linha('b', '/', 'google.com')], new Set());
+  const rec = N.recomendacoes({ dias: 30, avaliacoes: 0, caminho: N.caminho(vis), canais: N.porCanal(vis), procuraOferta: [], distritos: [], caminhoPro: N.caminhoPro([], new Set()) });
+  const canal = rec.find((r) => r.id === 'canal');
+  assert.ok(canal, 'há recomendação de canal');
+  assert.ok(!/Os outros: \./.test(canal.situacao), canal.situacao);
+});
