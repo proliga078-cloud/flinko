@@ -1,4 +1,4 @@
-// Reembolsos Stripe a partir do painel admin (admin-antigo.html).
+// Reembolsos Stripe a partir do painel admin (gestao.html › ficha do profissional).
 //
 // Lacuna encontrada em auditoria: quando havia uma disputa (chargeback) ou
 // uma reclamação legítima de um cliente, o admin conseguia suspender o

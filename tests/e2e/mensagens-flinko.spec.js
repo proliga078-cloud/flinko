@@ -3,25 +3,23 @@
 // painel propõe um reforço por WhatsApp (links wa.me, enviados à mão).
 const { test, expect } = require('@playwright/test');
 const path = require('path');
-const { openAdmin, modalOk } = require('./fixtures/admin-mock');
+const { openAdmin } = require('./fixtures/admin-mock');
 
 test('admin: mensagem da Flinko a um profissional e reforço por WhatsApp a quem não entra há muito', async ({ page }) => {
   const calls = await openAdmin(page, {
-    fns: { 'admin-flinko-message': (b) => b.action === 'preview' ? { recipients: 1, skipped: [] } : { sent: 1, emailed: 1, sentIds: ['pro-1'] } },
+    fns: { 'admin-flinko-message': (b) => (b.action === 'inbox' ? { conversations: [] } : { sent: 1, emailed: 1, sentIds: ['pro-1'], skipped: [] }) },
   });
-  await page.evaluate(() => openPro('pro-1'));
-  await page.locator('#drawer').getByRole('button', { name: '💬 Mensagem da Flinko' }).click();
-  await page.locator('#modal #ff_text').fill('Olá {nome}! Tens pedidos novos em {categoria} à tua espera.');
-  await modalOk(page);
-  await modalOk(page); // confirmar o envio
-  await expect.poll(() => calls.filter((c) => c.fn === 'admin-flinko-message').map((c) => c.body.action)).toEqual(['preview', 'send']);
+  await page.goto('/gestao.html#mensagens/enviar/pro-1');
+  await page.locator('#texto').fill('Olá {nome}! Tens pedidos novos em {categoria} à tua espera.');
+  await page.getByRole('button', { name: 'Enviar a 1' }).click();
+  await expect(page.locator('#resultado')).toContainText('1 enviada(s)');
   const send = calls.find((c) => c.fn === 'admin-flinko-message' && c.body.action === 'send').body;
-  expect(send).toEqual({ action: 'send', profileIds: ['pro-1'], message: 'Olá {nome}! Tens pedidos novos em {categoria} à tua espera.' });
+  expect(send.profileIds).toEqual(['pro-1']);
+  expect(send.message).toBe('Olá {nome}! Tens pedidos novos em {categoria} à tua espera.');
   // o Rui nunca foi visto no site: aparece o reforço por WhatsApp
-  const box = page.getByRole('dialog', { name: 'Reforçar por WhatsApp' });
+  const box = page.getByRole('region', { name: 'Reforçar por WhatsApp' });
   await expect(box).toContainText('Rui Alves');
-  const link = box.getByRole('link', { name: 'Abrir WhatsApp' });
-  const href = await link.getAttribute('href');
+  const href = await box.getByRole('link', { name: 'Abrir WhatsApp' }).getAttribute('href');
   expect(href.startsWith('https://wa.me/351912345678?text=')).toBe(true);
   const txt = new URL(href).searchParams.get('text');
   expect(txt).toContain('Olá Rui! Aqui é a equipa Flinko');

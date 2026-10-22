@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=optional" rel="stylesheet"/>
 <style>
 /* Painel de gestão novo (out/2026): 6 partes em vez de 29, e cada parte só
-   carrega o que mostra. O painel antigo continua em /admin para o resto. */
+   carrega o que mostra. Desde a fase 4 é o único painel (o antigo foi retirado). */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --ink:#132420;--muted:#4E5C57;--muted-2:#69756F;--line:#E3ECE7;--bg:#F5F7F6;--paper:#fff;
@@ -265,7 +265,6 @@ details.processo p{white-space:pre-wrap;color:var(--muted);margin:8px 0}
     <nav class="nav" id="nav" aria-label="Partes do painel"></nav>
     <div class="fundo">
       <div id="quem"></div>
-      <a href="/admin-antigo.html">Abrir o painel antigo</a><br/>
       <button type="button" id="sair">Sair</button>
     </div>
   </aside>

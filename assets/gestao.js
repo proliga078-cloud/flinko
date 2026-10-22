@@ -205,8 +205,7 @@ function desenharNav(contas = {}) {
   $("#bMais").onclick = () => {
     abrirFicha(`<div class="cab"><div><h2>Mais</h2></div><button class="fechar" aria-label="Fechar">×</button></div>
       <button type="button" class="btn linha" style="width:100%;margin-bottom:12px" id="mProcurar">Procurar pessoas, pedidos, contactos…</button>
-      <ul class="lista">${outras.map(([id, nome]) => `<li><a href="#${id}" class="info" style="text-decoration:none" data-fechar><b>${esc(nome)}</b></a>${contas[id] ? `<span class="tag laranja">${contas[id]}</span>` : ""}</li>`).join("")}
-        <li><a href="/admin-antigo.html" class="info" style="text-decoration:none"><b>Painel antigo</b></a></li></ul>`);
+      <ul class="lista">${outras.map(([id, nome]) => `<li><a href="#${id}" class="info" style="text-decoration:none" data-fechar><b>${esc(nome)}</b></a>${contas[id] ? `<span class="tag laranja">${contas[id]}</span>` : ""}</li>`).join("")}</ul>`);
     $("#mProcurar").onclick = () => { fecharFicha(); if (typeof abrirPesquisa === "function") abrirPesquisa(); };
     $("#ficha").querySelectorAll("[data-fechar]").forEach(a => a.addEventListener("click", fecharFicha));
   };
@@ -413,7 +412,7 @@ const MODELOS_CLI = [
 async function modelosMeus(forcar) {
   if (C.modelos && !forcar) return C.modelos;
   const rows = await todas("admin_items?select=id,kind,data&kind=eq.template&order=id").catch(() => []);
-  C.modelos = rows.map(r => ({ id: r.id, nome: (r.data && (r.data.name || r.data.nome)) || "Modelo", texto: (r.data && (r.data.text || r.data.texto)) || "", publico: (r.data && r.data.publico) || "pros", meu: true }));
+  C.modelos = rows.map(r => ({ id: r.id, nome: (r.data && (r.data.name || r.data.nome)) || "Modelo", texto: (r.data && (r.data.text || r.data.texto)) || "", publico: (r.data && r.data.publico) || "pros", promo: !!(r.data && r.data.promo), meu: true }));
   return C.modelos;
 }
 
@@ -445,7 +444,7 @@ async function enviarGrupo(box, umId) {
       <button class="btn laranja" id="bEnviar" style="margin-top:14px;width:100%">Enviar</button>
       <div id="resultado"></div></div></div>`;
   const desenharModelos = () => {
-    $("#modelo").innerHTML = modelos().map(m => `<option value="${esc(m.id)}">${m.meu ? "★ " : ""}${esc(m.nome)}</option>`).join("");
+    $("#modelo").innerHTML = modelos().map(m => `<option value="${esc(m.id)}">${m.meu ? "★ " : ""}${esc(m.nome)}${m.promo ? " (promoção: só a quem consentiu)" : ""}</option>`).join("");
     $("#varsNota").textContent = publico === "clientes" ? "Podes usar {nome}: cada pessoa recebe o seu." : "Podes usar {nome}, {categoria} e {falta}: cada pessoa recebe o seu.";
     $("#aModelo").classList.add("hidden");
   };
@@ -482,11 +481,20 @@ async function enviarGrupo(box, umId) {
   desenharModelos(); desenharGrupos(); desenhar();
   $("#bEnviar").onclick = async () => {
     const texto = $("#texto").value.trim();
-    const lista = pessoas().filter(p => escolhidos.has(p.id));
+    let lista = pessoas().filter(p => escolhidos.has(p.id));
     if (!lista.length) return aviso("Escolhe pelo menos uma pessoa.", true);
+    // Como no painel antigo: um texto promocional só vai a quem deu consentimento (o último registo conta).
+    const m = modelos().find(x => x.id === $("#modelo").value);
+    let fora = 0;
+    if (m && m.promo) {
+      const cs = (await itens("consent", true).catch(() => [])).slice().sort((a, b) => String(a.date + (a.at || "")).localeCompare(String(b.date + (b.at || ""))));
+      const ultimo = {}; cs.forEach(c => ultimo[c.ref] = c.status);
+      const antes = lista.length; lista = lista.filter(p => ultimo[p.id] === "dado"); fora = antes - lista.length;
+      if (!lista.length) return aviso("Este texto é promocional e ninguém dos escolhidos deu consentimento. Regista o consentimento na ficha de cada pessoa.", true);
+    }
     if (texto.length < 2) return aviso("Escreve a mensagem.", true);
     const canal = $("#canal").value;
-    if (!confirm(`Enviar a ${lista.length} ${publico === "clientes" ? "cliente(s)" : "profissional(is)"} ${canal === "email" ? "por email" : "no Flinko, com aviso por email"}? Não dá para desfazer.`)) return;
+    if (!confirm(`Enviar a ${lista.length} ${publico === "clientes" ? "cliente(s)" : "profissional(is)"} ${canal === "email" ? "por email" : "no Flinko, com aviso por email"}?${fora ? ` Ficam de fora ${fora} sem consentimento para promoções.` : ""} Não dá para desfazer.`)) return;
     await enviarAosPoucos(lista, texto, canal, $("#assunto").value.trim());
   };
 }
@@ -557,6 +565,24 @@ async function enviarAosPoucos(lista, texto, canal, assunto) {
     ${fora.length ? `<p class="sub" style="margin-top:10px">Ficaram de fora:</p><ul class="lista">${fora.map(linha).join("")}</ul>` : ""}</div>`;
   b.disabled = false;
   const r = $("#repetir"); if (r) r.onclick = () => enviarAosPoucos(falhou.map(x => x.p).filter(Boolean), texto, canal, assunto);
+  if (canal !== "email" && ok.length) reforcoWhatsApp(res, ok, texto);
+}
+// Como no painel antigo: quem não entra há 14+ dias dificilmente vê o aviso.
+// Abre o WhatsApp de cada um com o aviso já escrito; quem envia és tu, um a um.
+async function reforcoWhatsApp(res, enviados, texto) {
+  if (!window.flinkoWhatsApp) return;
+  await atividade().catch(() => {});
+  const parados = enviados.filter(p => p._tel && flinkoWhatsApp.numero(p._tel) && (!p._ultimo || Date.now() - p._ultimo > 14 * DIA));
+  if (!parados.length) return;
+  const trecho = t => { t = String(t).replace(/\s+/g, " ").trim(); return t.length > 220 ? t.slice(0, 217) + "…" : t; };
+  const aviso1 = p => `Olá ${primeiro(p.name)}! Aqui é a equipa Flinko.\n\nDeixámos-te uma mensagem na tua conta:\n«${trecho(preencher(texto, p))}»\n\nVê e responde aqui: https://flinko.pt/messages`;
+  res.insertAdjacentHTML("beforeend", `<section class="cartao" style="margin-top:14px" aria-label="Reforçar por WhatsApp"><h2>Reforçar por WhatsApp</h2>
+    <p class="sub">${parados.length} destes profissionais não entra no Flinko há mais de 14 dias e pode não ver o aviso. Carrega em cada um: o WhatsApp abre com o texto pronto e és tu que envias.</p>
+    <ul class="lista">${parados.map(p => `<li><div class="info"><b>${esc(p.name)}</b><small>${p._ultimo ? "visto " + ha(p._ultimo) : "nunca visto no site"}</small></div><a class="btn peq verde" target="_blank" rel="noopener noreferrer" data-wa="${esc(p.id)}" href="${esc(flinkoWhatsApp.link(p._tel, aviso1(p)))}">Abrir WhatsApp</a></li>`).join("")}</ul></section>`);
+  res.querySelectorAll("[data-wa]").forEach(a => a.addEventListener("click", () => {
+    a.textContent = "Aberto"; a.classList.replace("verde", "linha");
+    guardarItem("contact", { profile_id: a.dataset.wa, ref: a.dataset.wa, at: new Date().toISOString(), channel: "WhatsApp", tpl: "Mensagem da Flinko (reforço)" }).catch(() => {});
+  }));
 }
 
 /* ================= 4. Clientes e pedidos ================= */

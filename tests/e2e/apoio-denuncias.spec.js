@@ -4,7 +4,7 @@
 // Antes, a página de contacto só tinha links mailto: e os pedidos perdiam-se
 // no email; não havia forma de denunciar um perfil. Agora o formulário de
 // contacto e o botão "Denunciar este perfil" criam uma linha em
-// support_tickets, que aparece em admin-antigo.html › Apoio a clientes / Moderação.
+// support_tickets, que aparece em gestao.html › Moderação e apoio.
 const { test, expect } = require('@playwright/test');
 const path = require('path');
 

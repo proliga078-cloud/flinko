@@ -538,3 +538,71 @@ test('Notas de reunião: as ações passam a tarefas', async ({ page }) => {
   await expect.poll(() => calls.filter((c) => c.method === 'POST' && c.path === '/rest/v1/admin_tasks').map((c) => c.body.title)).toEqual(['Abrir atividade', 'Pedir orçamento do seguro']);
   await expect.poll(() => postsDe(calls, 'note')[0]?.data.tasksDone).toBe(true);
 });
+
+/* ===== Retirar o painel antigo: proteções que ele tinha ===== */
+test('Enviar a um grupo: um modelo promocional só vai a quem consentiu', async ({ page }) => {
+  const calls = await abrir(page, {
+    tables: {
+      profiles: [{ id: 'admin-1', name: 'Admin', is_admin: true, account_type: 'professional', created_at: iso(100) }, ...muitos(3)],
+      admin_items: [
+        { id: 'tp', kind: 'template', data: { name: 'Promoção Pro', text: 'Olá {nome}, o Pro está com desconto.', publico: 'pros', promo: 1 } },
+        { id: 'c1', kind: 'consent', data: { ref: 'p1', status: 'dado', date: '2026-10-01', at: '2026-10-01T10:00:00Z' } },
+        { id: 'c2', kind: 'consent', data: { ref: 'p2', status: 'dado', date: '2026-10-01', at: '2026-10-01T10:00:00Z' } },
+        { id: 'c3', kind: 'consent', data: { ref: 'p2', status: 'retirado', date: '2026-10-10', at: '2026-10-10T10:00:00Z' } },
+      ],
+    },
+    fns: { 'admin-flinko-message': (b) => (b.action === 'inbox' ? { conversations: [] } : { sent: b.profileIds.length, sentIds: b.profileIds, skipped: [] }) },
+  });
+  await page.goto('/gestao.html#mensagens/enviar');
+  await page.locator('#modelo').selectOption('tp');
+  await page.getByRole('button', { name: 'Enviar a 3' }).click();
+  await expect(page.locator('#resultado')).toContainText('1 enviada(s)');
+  const envios = calls.filter((c) => c.fn === 'admin-flinko-message' && c.body.action === 'send');
+  expect(envios.flatMap((c) => c.body.profileIds)).toEqual(['p1']);
+});
+
+test('lê todas as linhas página a página (sem o limite de 1000 linhas da API)', async ({ page }) => {
+  const calls = await abrir(page, { tables: { profiles: [{ id: 'admin-1', name: 'Admin', is_admin: true, account_type: 'professional', created_at: iso(100) }, ...muitos(2500)] }, fns: { 'admin-flinko-message': INBOX } });
+  await expect(page.locator('#main h1')).toHaveText('Hoje');
+  await expect.poll(() => calls.filter((c) => c.path === '/rest/v1/profiles').map((c) => new URLSearchParams(c.search).get('offset'))).toEqual(['0', '1000', '2000', '2501']);
+});
+
+test('SEGURANÇA: mudar o plano passa pelo servidor e nunca escreve o plano no perfil', async ({ page }) => {
+  const calls = await abrir(page, { fns: { 'admin-flinko-message': INBOX, 'admin-set-plan': { ok: true } } });
+  await page.goto('/gestao.html#profissionais');
+  await page.locator('#listaPros li', { hasText: 'Rui Alves' }).click();
+  await page.locator('#ficha [data-acao="plano"]').selectOption('pro');
+  await expect.poll(() => calls.find((c) => c.fn === 'admin-set-plan')?.body).toEqual({ targetProfileId: 'pro-1', plan: 'pro' });
+  expect(calls.some((c) => c.method === 'PATCH' && c.path === '/rest/v1/profiles' && c.body && 'plan' in c.body)).toBe(false);
+});
+
+test('SEGURANÇA: caminho malicioso de um documento de verificação não executa código', async ({ page }) => {
+  const mau = `pro-1/x"><img src=x onerror="window.__pwn=1">.pdf`;
+  const calls = await abrir(page, { tables: { verification_requests: [{ id: 'ver-1', profile_id: 'pro-1', status: 'pending', documents: [{ path: mau, name: 'Documento' }], created_at: iso(1) }] }, fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#moderacao/verificacoes');
+  await expect(page.locator('#main')).toContainText('Rui Alves');
+  expect(await page.evaluate(() => window.__pwn)).toBeUndefined();
+  const popup = page.waitForEvent('popup');
+  await page.getByRole('button', { name: 'Documento' }).click();
+  await (await popup).close();
+  expect(await page.evaluate(() => window.__pwn)).toBeUndefined();
+  expect(calls.some((c) => c.path && c.path.startsWith('/storage/v1/object/sign/verification-docs/'))).toBe(true);
+});
+
+test('SEGURANÇA: conta de apoio não vê pagamentos, plano, RGPD nem pede dados só de donos', async ({ page }) => {
+  const calls = await abrir(page, { role: 'support', fns: { 'admin-flinko-message': INBOX } });
+  await page.goto('/gestao.html#profissionais');
+  await page.locator('#listaPros li', { hasText: 'Rui Alves' }).click();
+  await expect(page.locator('#ficha')).toContainText('Rui Alves');
+  await expect(page.locator('#ficha [data-acao="plano"]')).toHaveCount(0);
+  await expect(page.locator('#fPagamentos')).toHaveCount(0);
+  await page.goto('/gestao.html#moderacao/rgpd');
+  await expect(page.locator('#main')).toContainText('Ana Cliente');
+  await expect(page.getByRole('button', { name: 'Exportar dados' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Apagar a conta' })).toHaveCount(0);
+  await page.goto('/gestao.html#dinheiro');
+  await expect(page.locator('#main')).toContainText('só para donos');
+  await page.goto('/gestao.html#hoje');
+  await expect(page.locator('#main h1')).toHaveText('Hoje');
+  expect(calls.some((c) => ['admin-stripe-summary', 'admin-registos-a-meio', 'admin-refund', 'admin-gdpr'].includes(c.fn))).toBe(false);
+});

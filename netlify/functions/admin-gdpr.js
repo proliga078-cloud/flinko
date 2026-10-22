@@ -1,4 +1,4 @@
-// Pedidos RGPD a partir do painel admin (admin-antigo.html), só para donos.
+// Pedidos RGPD a partir do painel admin (gestao.html › Moderação e apoio), só para donos.
 //
 // Antes, o painel só mostrava os pedidos: exportar os dados de alguém ou
 // apagar uma conta tinha de ser feito à mão no Supabase, e com o prazo legal

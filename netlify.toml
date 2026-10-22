@@ -95,9 +95,9 @@
   status = 200
   force = false
 
-# Out/2026: o painel de gestao novo (gestao.html) passou a ser o painel.
-# /admin abre-o; o anterior ficou em /admin-antigo.html enquanto as suas
-# funcoes passam para o novo. O admin-classico (set/2026) tambem vai para la.
+# Out/2026: o painel de gestao novo (gestao.html) e o unico painel. Os
+# enderecos dos paineis anteriores (admin, admin-antigo, admin-classico)
+# abrem-no, para nao partir favoritos.
 [[redirects]]
   from = "/admin.html"
   to = "/gestao"
@@ -106,6 +106,18 @@
 
 [[redirects]]
   from = "/admin"
+  to = "/gestao"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/admin-antigo.html"
+  to = "/gestao"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/admin-antigo"
   to = "/gestao"
   status = 301
   force = true
